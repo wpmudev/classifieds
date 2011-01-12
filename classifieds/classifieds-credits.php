@@ -21,6 +21,7 @@ function classifieds_admin_menu_credits_pages() {
         add_submenu_page( 'classifieds', 'Credit Options', 'Credit Options', 'edit_users', 'classifieds_credits', 'classifieds_page_config_output');
 
     if ( get_site_option('classifieds_credits_enabled') )
+        add_submenu_page( 'classifieds', 'Credits User List', 'Credits User List', 'edit_users', 'classifieds_credits_user_list', 'classifieds_page_credits_list');
         add_submenu_page('classifieds', 'My Credits', 'My Credits', 'read', 'classifieds_credits_management', 'classifieds_page_credits_output' );
 } 
 add_action('admin_menu', 'classifieds_admin_menu_credits_pages');
@@ -623,5 +624,33 @@ function classifieds_page_credits_output() {
             break;
 	}
 	echo '</div>';
+}
+
+function classifieds_page_credits_list() {
+    global $wpdb;
+    
+    $query = "SELECT * FROM {$wpdb->base_prefix}classifieds_credits";
+    $result = $wpdb->get_results( $query, ARRAY_A ); ?>
+
+    <div class="wrap">
+        <h2><?php _e('Credits List', 'classifieds'); ?></h2>
+        <table class="widefat">
+            <tr>
+                <th><?php _e('User ID', 'classifieds'); ?></th>
+                <th><?php _e('Username', 'classifieds'); ?></th>
+                <th><?php _e('Available Credits', 'classifieds'); ?></th>
+            </tr>
+            <?php $i = 0; foreach( $result as $result ): ?>
+                <?php $user_info = get_userdata($result['user_ID']); ?>
+                <?php if ( !$user_info->ID ) continue; ?>
+                <?php $style = ( $i % 2 ) ? 'style="background-color: #F2F2F2;"' : ''; $i++; ?>
+                <tr <?php echo $style; ?>>
+                    <td><?php echo( $user_info->ID ); ?></td>
+                    <td><?php echo( $user_info->user_login ); ?></td>
+                    <td><?php echo( $result['credits'] ); ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    </div> <?php
 }
 ?>

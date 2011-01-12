@@ -632,29 +632,49 @@ function classifieds_page_main_output() {
 				}
 			}
             if ( current_user_can('edit_users') ): ?>
-                <h2><?php _e('Edit Ad by ID') ?></h2>
-                <form name="form1" method="POST" action="admin.php?page=classifieds&action=edit_ad">
-                    <table class="optiontable">
-                        <tr valign="top">
-                            <th scope="row"><?php _e('Ad ID:') ?></th>
-                            <td><input type="text" name="aid" value=""  />
-                            <br />
-                            <?php _e('Enter the ID of the ad you wish the modify' ); ?>
-                            </td>
-                        </tr>
-                    </table>
-                    <p class="submit"><input type="submit" name="Submit" value="<?php _e('Continue &raquo;') ?>" /></p>
-                </form>
+                <div class="cf-edit-ad" style="float:left; margin-right: 50px;">
+                    <h2><?php _e('Edit Ad by ID') ?></h2>
+                    <form name="form1" method="POST" action="admin.php?page=classifieds&action=edit_ad">
+                        <table class="optiontable">
+                            <tr valign="top">
+                                <th scope="row"><?php _e('Ad ID:') ?></th>
+                                <td><input type="text" name="aid" value=""  />
+                                <br />
+                                <?php _e('Enter the ID of the ad you wish to modify.' ); ?>
+                                </td>
+                            </tr>
+                        </table>
+                        <p class="submit"><input type="submit" name="Submit" value="<?php _e('Continue &raquo;') ?>" /></p>
+                    </form>
+                </div>
+                <div class="cf-delete-ad" style="float:left">
+                    <h2><?php _e('Delete Ad by ID') ?></h2>
+                    <form name="form-del" method="POST" action="admin.php?page=classifieds&action=delete_ad">
+                        <table class="optiontable">
+                            <tr valign="top">
+                                <th scope="row"><?php _e('Ad ID:') ?></th>
+                                <td><input type="text" name="aid" value=""  />
+                                <br />
+                                <?php _e('Enter the ID of the ad you wish to delete. ( Warning cannot be undone! )' ); ?>
+                                </td>
+                            </tr>
+                        </table>
+                        <p class="submit"><input type="submit" name="Submit" value="<?php _e('Continue &raquo;') ?>" /></p>
+                    </form>
+                </div>
             <?php endif;
             break;
 		//---------------------------------------------------//
 		case "delete_ad":
-			classifieds_delete_ad($_GET['aid']);
-			echo "
-			<script type='text/javascript'>
-                window.location='admin.php?page=classifieds&updated=true&updatedmsg=" . urlencode(__('Ad Removed!')) . "';
-			</script>
-			";
+            if (current_user_can('edit_users')) {
+                classifieds_delete_ad($_GET['aid']);
+                classifieds_delete_ad($_POST['aid']);
+                echo "
+                <script type='text/javascript'>
+                    window.location='admin.php?page=classifieds&updated=true&updatedmsg=" . urlencode(__('Ad Removed!')) . "';
+                </script>
+                ";
+            }
             break;
 		//---------------------------------------------------//
 		case "change_image":

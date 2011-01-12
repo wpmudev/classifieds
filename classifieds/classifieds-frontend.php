@@ -391,10 +391,15 @@ function classifieds_frontend_display_navigation( $tmp_cat, $tmp_per_page, $tmp_
     </table> <?php
 }
 
-function classifieds_frontend_search_form() { 
+function classifieds_frontend_search_form() {
+    
+    /**
+     * @todo
+     * Bug with the paths !
+     */
     $cf_path = ( is_multisite() ) ? 'classifieds/' : '/classifieds/'; ?>
 
-    <form method="post" action="<?php echo get_site_option('siteurl') . $cf_path; ?>">
+    <form method="post" action="<?php echo get_site_option('siteurl') . '/classifieds/'; ?>">
         <input name="search" size="12" maxlength="50" value="" type="text">
         <input value="Go &raquo;" type="submit">
     </form> <?php
@@ -415,8 +420,14 @@ function classifieds_frontend_list_categories() {
                 $tmp_ad_count = $wpdb->get_var("SELECT COUNT(*) FROM " . $wpdb->base_prefix . "classifieds_ads WHERE (ad_primary_category = '" . $categories['category_ID'] . "' OR ad_secondary_category = '" . $categories['category_ID'] . "') AND ad_status = 'active'");
                 if ( $tmp_ad_count > 0 ) { ?>
                     <li>
+                        <?php
+                        /**
+                         * @todo
+                         * Bug with the paths !
+                         */
+                        ?>
                         <?php $cf_path = ( is_multisite() ) ? 'classifieds/' : '/classifieds/'; ?>
-                        <a href="<?php echo get_site_option('siteurl') . $cf_path; ?>?cat=<?php echo $categories['category_ID']; ?>" title="<?php echo $categories['category_description']; ?>">
+                        <a href="<?php echo get_site_option('siteurl') . '/classifieds/'; ?>?cat=<?php echo $categories['category_ID']; ?>" title="<?php echo $categories['category_description']; ?>">
                         <?php echo $categories['category_name']; ?> (<?php echo $tmp_ad_count; ?>)</a>
                     </li><?php
                 }

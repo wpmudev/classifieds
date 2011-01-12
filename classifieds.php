@@ -4,7 +4,7 @@
 Plugin Name: Classifieds
 Plugin URI: http://premium.wpmudev.org/project/classifieds
 Description: Add Classifieds to your blog, network or BuddyPress site. Create and manage ads, upload images, send emails, play with the provided set of widgets, enable the credit system and charge your users for placing ads on your network or BuddyPress site.
-Version: 1.1.1
+Version: 1.1.2
 Author: Andrew Billits, Ivan Shaovchev
 Author URI:
 License: GNU General Public License (Version 2 - GPLv2)
