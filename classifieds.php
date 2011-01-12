@@ -53,4 +53,11 @@ include_once 'classifieds/classifieds.php';
 include_once 'core/core.php';
 include_once 'submodules/content-types/ct-loader.php';
 
+/* tmp debug func */
+function cf_debug( $param ) {
+    echo '<pre>';
+    print_r( (array) $param );
+    echo '</pre>';
+}
+
 ?>

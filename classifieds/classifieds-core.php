@@ -178,12 +178,14 @@ function classifieds_admin_styles() { ?>
     <style type="text/css">
         .classifieds table { text-align: left; }
         .classifieds table th { width: 200px; }
+        <?php /*
         .classifieds table td input { width: 250px; }
         .classifieds table td select { width: 250px; }
         .classifieds table td textarea { width: 250px; }
+         */ ?>
     </style> <?php
 }
-add_action( 'admin_head', 'classifieds_admin_styles' );
+//add_action( 'admin_head', 'classifieds_admin_styles' );
 
 /*
  * Create admin menu pages
