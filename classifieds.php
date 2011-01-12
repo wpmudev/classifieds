@@ -37,6 +37,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * @since 1.1.0
  */
 
+
+
 /* Define plugin version */
 define ( 'CF_VERSION', '1.2.0' );
 define ( 'CF_DB_VERSION', '2.0' );

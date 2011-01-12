@@ -25,8 +25,8 @@ function classifieds_bp_add_settings_nav() {
 	bp_core_new_subnav_item( array( 'name' => __( 'My Classifieds', 'buddypress' ), 'slug' => 'my-classifieds', 'parent_url' => $classifieds_link, 'parent_slug' => $bp->classifieds->slug, 'screen_function' => 'classifieds_bp_page', 'position' => 10, 'user_has_access' => true ) );
 
 }
-add_action( 'wp', 'classifieds_bp_add_settings_nav', 2 );
-add_action( 'admin_menu', 'classifieds_bp_add_settings_nav', 2 );
+//add_action( 'wp', 'classifieds_bp_add_settings_nav', 2 );
+//add_action( 'admin_menu', 'classifieds_bp_add_settings_nav', 2 );
 
 /*
  * Load theme template file for page classifieds
@@ -57,7 +57,7 @@ function classifieds_print_user_classifieds() {
     <?php endif; ?>
     </ul> <?php
 }
-add_action('bp_template_content', 'classifieds_print_user_classifieds');
+//add_action('bp_template_content', 'classifieds_print_user_classifieds');
 
 function classifieds_bp_admin_menu_item() {
     if ( bp_is_my_profile() ) { ?>
@@ -74,7 +74,7 @@ function classifieds_bp_admin_menu_item() {
         <?php endif;
     }
 }
-add_action('bp_member_plugin_options_nav', 'classifieds_bp_admin_menu_item');
+//add_action('bp_member_plugin_options_nav', 'classifieds_bp_admin_menu_item');
 
 /*
  * Show member profile link on ad preview
