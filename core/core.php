@@ -29,6 +29,31 @@ class Classifieds_Core {
     var $user_role = 'cf_member';
     /** @var boolean True if submitted form is valid. */
     var $form_valid = true;
+    /** @var boolean True if BuddyPress is active. */
+    var $bp_active;
+    /** @var boolean Login error flag */
+    var $login_error;
+
+    /**
+     * Constructor.
+     *
+     * @return void
+     **/
+    function Classifieds_Core() {
+        add_action( 'init', array( &$this, 'init' ) );
+    }
+
+    /**
+     * Intiate plugin.
+     *
+     * @return void
+     **/
+    function init() {
+        add_action( 'wp_loaded', array( &$this, 'handle_login' ) );
+        add_action( 'wp_loaded', array( &$this, 'scheduly_expiration_check' ) );
+        add_action( 'check_expiration_dates', array( &$this, 'check_expiration_dates_callback' ) );
+        add_shortcode( 'classifieds_checkout', array( &$this, 'classifieds_checkout_shortcode' ) );
+    }
 
     /**
      * Initiate variables.
@@ -38,13 +63,25 @@ class Classifieds_Core {
     function init_vars() {
         $this->taxonomy_objects = get_taxonomies( array( 'object_type' => array( $this->post_type ), '_builtin' => false ), 'objects' );
         $this->taxonomy_names   = get_taxonomies( array( 'object_type' => array( $this->post_type ), '_builtin' => false ), 'names' );
+        /* Get all custom fields values with their ID's as keys */
         $custom_fields = get_site_option('ct_custom_fields');
-        foreach ( $custom_fields as $key => $value ) {
-            if ( in_array( $this->post_type, $value['object_type'] ) );
-                $this->custom_fields[$key] = $value;
+        if ( is_array( $custom_fields ) ) {
+            foreach ( $custom_fields as $key => $value ) {
+                if ( in_array( $this->post_type, $value['object_type'] ) );
+                    $this->custom_fields[$key] = $value;
+            }
         }
+        /* Assign key 'duration' to predifined Custom Field ID */
+        $this->custom_fields['duration'] = '_ct_selectbox_4cf582bd61fa4';
     }
 
+    /**
+     * Process login request.
+     *
+     * @param string $username 
+     * @param string $password
+     * @return object $result->errors 
+     **/
     function login( $username, $password ) {
         /* Check whether the required information is submitted */
         if ( empty( $username ) || empty( $password ) )
@@ -62,28 +99,33 @@ class Classifieds_Core {
     }
 
     /**
+     * Handle user login.
+     *
+     * @return void
+     **/
+    function handle_login() {
+        if ( isset( $_POST['login_submit'] ) )
+            $this->login_error = $this->login( $_POST['username'], $_POST['password'] );
+    }
+
+    /**
      * Insert User
      *
      * @param <type> $email
      * @param <type> $first_name
      * @param <type> $last_name
      * @return <type>
-     */
+     **/
     function insert_user( $email, $first_name, $last_name, $billing ) {
-
         require_once( ABSPATH . WPINC . '/registration.php' );
-
         // variables
         $user_login     = sanitize_user( strtolower( $first_name ));
         $user_email     = $email;
         $user_pass      = wp_generate_password();
-
         if ( username_exists( $user_login ) )
             $user_login .= '-' . sanitize_user( strtolower( $last_name ));
-
         if ( username_exists( $user_login ) )
             $user_login .= rand(1,9);
-
         if ( email_exists( $user_email )) {
             $user = get_user_by( 'email', $user_email );
 
@@ -95,16 +137,15 @@ class Classifieds_Core {
                 return;
             }
         }
-
-        $user_id = wp_insert_user( array( 'user_login'   => $user_login,
-                                          'user_pass'    => $user_pass,
-                                          'user_email'   => $email,
-                                          'display_name' => $first_name . ' ' . $last_name,
-                                          'first_name'   => $first_name,
-                                          'last_name'    => $last_name,
-                                          'role'         => $this->user_role
-                                        )) ;
-
+        $user_id = wp_insert_user( array(
+            'user_login'   => $user_login,
+            'user_pass'    => $user_pass,
+            'user_email'   => $email,
+            'display_name' => $first_name . ' ' . $last_name,
+            'first_name'   => $first_name,
+            'last_name'    => $last_name,
+            'role'         => $this->user_role
+        ) ) ;
         update_user_meta( $user_id, 'dp_billing', $billing );
         wp_new_user_notification( $user_id, $user_pass );
         $credentials = array( 'remember'=>true, 'user_login' => $user_login, 'user_password' => $user_pass );
@@ -115,7 +156,7 @@ class Classifieds_Core {
      * Update or insert ad if no ID is passed.
      *
      * @param array $params Array of $_POST data
-     * @param array $file   Array of $_FILE data
+     * @param array|NULL $file Array of $_FILES data
      * @return void
      **/
     function update_ad( $params, $file = NULL ) {
@@ -139,8 +180,10 @@ class Classifieds_Core {
             foreach ( $params['terms'] as $taxonomy => $terms  )
                 wp_set_object_terms( $post_id, $terms, $taxonomy );
             /* Set custom fields data */
-            foreach ( $params['custom_fields'] as $key => $value )
-                update_post_meta( $post_id, $key, $value );
+            if ( is_array( $params['custom_fields'] ) ) {
+                foreach ( $params['custom_fields'] as $key => $value )
+                    update_post_meta( $post_id, $key, $value );
+            }
             /* Require WordPress utility functions for handling media uploads */
             require_once( ABSPATH . '/wp-admin/includes/media.php' );
             require_once( ABSPATH . '/wp-admin/includes/image.php' );
@@ -154,14 +197,161 @@ class Classifieds_Core {
     }
 
     /**
-     *
-     */
+     * Validate firelds
+     * 
+     * @param array $params $_POST data
+     * @param array|NULL $file $_FILES data
+     * @return void
+     **/
     function validate_fields( $params, $file = NULL ) {
         if ( empty( $params['title'] ) || empty( $params['description'] ) || empty( $params['terms'] ) || empty( $params['status'] )) {
             $this->form_valid = false;
         }
         if ( $file['image']['error'] !== 0 ) {
             $this->form_valid = false;
+        }
+    }
+
+    /**
+     * Save custom fields data
+     *
+     * @param int $post_id The post id of the post being edited
+     * @return NULL If there is autosave attempt
+     **/
+    function save_expiration_date( $post_id ) {
+        /* prevent autosave from deleting the custom fields */
+        if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
+            return;
+        /* Update  */
+        if ( isset( $_POST[$this->custom_fields['duration']] ) ) {
+            $date = $this->calculate_expiration_date( $post_id, $_POST[$this->custom_fields['duration']] );
+            update_post_meta( $post_id, '_expiration_date', $date );
+        } if ( isset( $_POST['custom_fields'][$this->custom_fields['duration']] ) ) {
+            $date = $this->calculate_expiration_date( $post_id, $_POST['custom_fields'][$this->custom_fields['duration']] );
+            update_post_meta( $post_id, '_expiration_date', $date );
+        } elseif ( isset( $_POST['duration'] ) ) {
+            $date = $this->calculate_expiration_date( $post_id, $_POST['duration'] );
+            update_post_meta( $post_id, '_expiration_date', $date );
+        }
+    }
+
+    /**
+     * Checkout shortcode.
+     *
+     * @return NULL If the payment gateway options are not configured.
+     **/
+    function classifieds_checkout_shortcode() {
+        /* Get site options */
+        $options = $this->get_options();
+        if ( is_user_logged_in() ) {
+            /** @todo Set redirect */
+            //$this->js_redirect( get_bloginfo('url') );
+        }
+        if ( empty( $options['paypal'] ) ) {
+            $this->render_front( 'classifieds/checkout', array( 'step' => 'disabled' ) );
+            return;
+        }
+        if ( isset( $_POST['terms_submit'] ) ) {
+            if ( empty( $_POST['tos_agree'] ) || empty( $_POST['billing'] ) ) {
+                if ( empty( $_POST['tos_agree'] ))
+                    add_action( 'tos_invalid', create_function('', 'echo "class=\"error\"";') );
+                if ( empty( $_POST['billing'] ))
+                    add_action( 'billing_invalid', create_function('', 'echo "class=\"error\"";') );
+                $this->render_front( 'includes/checkout', array( 'step' => 'terms' ) );
+            } else {
+                $this->render_front('includes/checkout', array( 'step' => 'payment_method' ) );
+            }
+        } elseif ( isset( $_POST['login_submit'] ) ) {
+            if ( isset( $this->login_error )) {
+                add_action( 'login_invalid', create_function('', 'echo "class=\"error\"";') );
+                $this->render_front( 'includes/checkout', array( 'step' => 'terms', 'error' => $this->login_error ) );
+            } else {
+                $this->js_redirect( get_bloginfo('url') );
+            }
+        } elseif ( isset( $_POST['payment_method_submit'] )) {
+            if ( $_POST['payment_method'] == 'paypal' ) {
+                $checkout = new Classifieds_Core_PayPal();
+                $checkout->call_shortcut_express_checkout( $_POST['cost'] );
+            } elseif ( $_POST['payment_method'] == 'cc' ) {
+                $this->render_front( 'includes/checkout', array( 'step' => 'cc_details' ) );
+            }
+        } elseif ( isset( $_POST['direct_payment_submit'] ) ) {
+            $checkout = new Classifieds_Core_PayPal();
+            $result = $checkout->direct_payment( $_POST['total_amount'], $_POST['cc_type'], $_POST['cc_number'], $_POST['exp_date'], $_POST['cvv2'], $_POST['first_name'], $_POST['last_name'], $_POST['street'], $_POST['city'], $_POST['state'], $_POST['zip'], $_POST['country_code'] );
+        } elseif ( isset( $_REQUEST['token'] ) && !isset( $_POST['confirm_payment_submit'] ) ) {
+            $checkout = new Classifieds_Core_PayPal();
+            $result = $checkout->get_shipping_details();
+            $this->render_front( 'includes/checkout', array( 'step' => 'confirm_payment', 'transaction_details' => $result ) );
+        } elseif ( isset( $_POST['confirm_payment_submit'] ) ) {
+            $checkout = new Classifieds_Core_PayPal();
+            $result = $checkout->confirm_payment( $_POST['total_amount'] );
+            if ( strtoupper( $result['ACK'] ) == 'SUCCESS' || strtoupper( $result['ACK'] ) == 'SUCCESSWITHWARNING' ) {
+                /** @todo Insert User */
+                // $this->insert_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'] );
+                $this->render_front( 'includes/checkout', array( 'step' => 'success' ) );
+            }
+        } else {
+            $this->render_front( 'includes/checkout', array( 'step' => 'terms' ) );
+        }
+    }
+
+    /**
+     * Calculate the Unix time stam of the modified posts
+     *
+     * @param int|string $post_id
+     * @param string $duration Valid value: "1 Week", "2 Weeks" ... etc
+     * @return int Unix timestamp
+     **/
+    function calculate_expiration_date( $post_id, $duration ) {
+        $post = get_post( $post_id );
+        $expiration_date = get_post_meta( $post_id, '_expiration_date', true );
+        if ( empty( $expiration_date ) )
+            $expiration_date = time();
+        elseif ( $expiration_date < time() )
+            $expiration_date = time();
+        $date = strtotime( "+{$duration}", $expiration_date );
+        return $date;
+    }
+
+    /**
+     * Get formated expiration date.
+     *
+     * @param int|string $post_id
+     * @return string Date/Time formated string
+     **/
+    function get_expiration_date( $post_id ) {
+        $date = get_post_meta( $post_id, '_expiration_date', true );
+        if ( !empty( $date ) )
+            return date( get_option('date_format'), $date );
+        else
+            return __( 'No expiration date set.', $this->text_domain );
+    }
+
+    /**
+     * Schedule expiration check for twice daily.
+     *
+     * @return void
+     **/
+    function scheduly_expiration_check() {
+        if ( !wp_next_scheduled( 'check_expiration_dates' ) ) {
+            wp_schedule_event( time(), 'twicedaily', 'check_expiration_dates' );
+        }
+    }
+
+    /**
+     * Check each post from the used post type and compare the expiration date/time
+     * with the current date/time. If the post is expired update it's status.
+     *
+     * @return void
+     **/
+    function check_expiration_dates_callback() {
+        $posts = get_posts( array( 'post_type' => $this->post_type, 'numberposts' => 0 ) );
+        foreach ( $posts as $post ) {
+            $expiration_date = get_post_meta( $post->ID, '_expiration_date', true );
+            if ( empty( $expiration_date ) )
+                $this->process_status( $post->ID, 'draft' );
+            elseif ( $expiration_date < time() )
+                $this->process_status( $post->ID, 'private' );
         }
     }
 
@@ -250,9 +440,14 @@ class Classifieds_Core {
         elseif ( file_exists( "{$this->plugin_dir}/ui-front/general/{$name}.php" ) )
             include "{$this->plugin_dir}/ui-front/general/{$name}.php";
         else
-            echo "<p>Rendering of template $name.php failed</p>";
+            echo "<p>Rendering of template {$name}.php failed</p>";
 	}
 
+    /**
+     * Redirect using JavaScript. Usful if headers are already sent.
+     *
+     * @param string $url The URL to which the function should redirect
+     **/
     function js_redirect( $url ) { ?>
         <p><?php _e( 'You are being redirected. Please wait.', $this->text_domain );  ?></p>
         <img src="<?php echo $this->plugin_url .'/ui-front/general/images/loader.gif'; ?>" alt="<?php _e( 'You are being redirected. Please wait.', $this->text_domain );  ?>" />
@@ -264,4 +459,8 @@ class Classifieds_Core {
     }
 }
 endif;
+
+/* Initiate Class */
+if ( class_exists('Classifieds_Core') )
+	$__classifieds_core = new Classifieds_Core();
 ?>

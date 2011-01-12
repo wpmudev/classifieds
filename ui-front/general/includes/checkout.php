@@ -32,14 +32,14 @@
         <strong><?php _e( 'Terms of Service', $this->text_domain ); ?></strong>
         <table>
             <tr>
-                <td class="dp-terms"><?php echo nl2br( $options['checkout']['tos_txt'] ); ?></td>
+                <td><div class="terms"><?php echo nl2br( $options['checkout']['tos_txt'] ); ?></div></td>
             </tr>
         </table>
         <br />
 
         <table  <?php do_action( 'tos_invalid' ); ?> >
             <tr>
-                <th><label for="tos_agree"><?php _e( 'I agree with the Terms of Service', $this->text_domain ); ?></label></th>
+                <td><label for="tos_agree"><?php _e( 'I agree with the Terms of Service', $this->text_domain ); ?></label></td>
                 <td><input type="checkbox" id="tos_agree" name="tos_agree" value="1" <?php if ( $_POST['tos_agree'] ) echo 'checked="checked"'; ?> /></td>
             </tr>
         </table>
@@ -115,11 +115,11 @@
         
     <?php $options = $this->get_options(); ?>
 
-    <form action="" method="post">
+    <form action="" method="post" class="cf-checkout">
 
         <strong><?php _e( 'Payment Details', $this->text_domain ); ?></strong>
         <div class="clear"></div>
-        <table  class="cf-checkout">
+        <table>
             <tr>
                 <td><label for="email"><?php _e( 'Email Adress', $this->text_domain ); ?>:</label></td>
                 <td><input type="text" id="email" name="email" value="" /></td>
@@ -411,7 +411,7 @@
             </tr>
         </table>
 
-        <table class="cf-checkout">
+        <table>
             <tr>
                 <td><label for="cc_type"><?php _e( 'Credit Card Type', $this->text_domain ); ?>:</label></td>
                 <td>
@@ -446,7 +446,7 @@
 
 <?php elseif ( $step == 'confirm_payment' ): ?>
         
-    <form action="" method="post">
+    <form action="" method="post" class="cf-checkout">
 
         <strong><?php _e( 'Confirm Payment', $this->text_domain ); ?></strong>
         <table>

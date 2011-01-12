@@ -14,6 +14,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
     function Classifieds_Core_Main() {
         add_action( 'init', array( &$this, 'init' ) );
         add_action( 'init', array( &$this, 'init_vars' ) );
+        add_action( 'bp_init', array( &$this, 'buddypress_active' ) );
         /* Start session */
         if ( !session_id() )
             add_action( 'init', 'session_start' );
@@ -25,18 +26,32 @@ class Classifieds_Core_Main extends Classifieds_Core {
      * @return void
      **/
     function init() {
-        $this->create_main_pages();
-        add_action( 'wp_head', array( &$this, 'print_main_styles' ) );
-        add_shortcode( 'classifieds', array( &$this, 'classifieds_shortcode' ) );
-        add_shortcode( 'classifieds_checkout', array( &$this, 'classifieds_checkout_shortcode' ) );
-        add_shortcode( 'classifieds_create_new', array( &$this, 'classifieds_create_new_shortcode' ) );
-        add_shortcode( 'classifieds_my', array( &$this, 'classifieds_my_shortcode' ) );
+        /* Load general WordPress front if BuddyPress is disabled */
+        if ( !$this->bp_active ) {
+            add_action( 'wp_loaded', array( &$this, 'create_main_pages' ) );
+            add_action( 'wp_print_scripts', array( &$this, 'enqueue_scripts' ) );
+            add_action( 'wp_head', array( &$this, 'print_scripts' ) );
+            add_action( 'wp_head', array( &$this, 'print_main_styles' ) );
+            add_shortcode( 'classifieds', array( &$this, 'classifieds_shortcode' ) );
+            add_shortcode( 'classifieds_create_new', array( &$this, 'classifieds_create_new_shortcode' ) );
+            add_shortcode( 'classifieds_my', array( &$this, 'classifieds_my_shortcode' ) );
+        }
+    }
+
+    /**
+     * Determine whether BuddyPress is active and based on that disable functions
+     * that may interfere with the BuddyPress install
+     *
+     * @return void
+     **/
+    function buddypress_active() {
+        $this->bp_active = true;
     }
 
     /**
      * Create the main Classifieds page.
      *
-     * @return
+     * @return void
      **/
     function create_main_pages() {
         $page['classifieds'] = get_page_by_title('Classifieds');
@@ -111,77 +126,59 @@ class Classifieds_Core_Main extends Classifieds_Core {
         // 
     }
 
+
+
     /**
-     * Checkout shortcode.
      *
-     * @return <type>
-     **/
-    function classifieds_checkout_shortcode() {
-        /* Get site options */
-        $options = $this->get_options();
-        if ( is_user_logged_in() ) {
-            /** @todo Set redirect */
-            //$this->js_redirect( get_bloginfo('url') );
-        }
-        if ( empty( $options['paypal'] ) ) {
-            $this->render_front( 'classifieds/checkout', array( 'step' => 'disabled' ) );
-            return;
-        }
-        if ( isset( $_POST['terms_submit'] ) ) {
-            if ( empty( $_POST['tos_agree'] ) || empty( $_POST['billing'] ) ) {
-                if ( empty( $_POST['tos_agree'] ))
-                    add_action( 'tos_invalid', create_function('', 'echo "class=\"error\"";') );
-                if ( empty( $_POST['billing'] ))
-                    add_action( 'billing_invalid', create_function('', 'echo "class=\"error\"";') );
-                $this->render_front( 'includes/checkout', array( 'step' => 'terms' ) );
+     */
+    function classifieds_create_new_shortcode() {
+        if ( isset( $_POST['save'] ) ) {
+            $this->validate_fields( $_POST, $_FILES );
+            if ( $this->form_valid ) {
+                $this->update_ad( $_POST, $_FILES );
+                $this->js_redirect( get_bloginfo('url') );
             } else {
-                $this->render_front('includes/checkout', array( 'step' => 'payment_method' ) );
-            }
-        } elseif ( isset( $_POST['login_submit'] ) ) {
-            $error = $this->login( $_POST['username'], $_POST['password'] );
-            if ( isset( $error )) {
-                add_action( 'login_invalid', create_function('', 'echo "class=\"error\"";') );
-                $this->render_front( 'includes/checkout', array( 'step' => 'terms', 'error' => $error ) );
-            } else {
-                /** @todo Login User */
-            }
-        } elseif ( isset( $_POST['payment_method_submit'] )) {
-            if ( $_POST['payment_method'] == 'paypal' ) {
-                $checkout = new Classifieds_Core_PayPal();
-                $checkout->call_shortcut_express_checkout( $_POST['cost'] );
-            } elseif ( $_POST['payment_method'] == 'cc' ) {
-                $this->render_front( 'includes/checkout', array( 'step' => 'cc_details' ) );
-            }
-        } elseif ( isset( $_POST['direct_payment_submit'] ) ) {
-            $checkout = new Classifieds_Core_PayPal();
-            $result = $checkout->direct_payment( $_POST['total_amount'], $_POST['cc_type'], $_POST['cc_number'], $_POST['exp_date'], $_POST['cvv2'], $_POST['first_name'], $_POST['last_name'], $_POST['street'], $_POST['city'], $_POST['state'], $_POST['zip'], $_POST['country_code'] );
-        } elseif ( isset( $_REQUEST['token'] ) && !isset( $_POST['confirm_payment_submit'] ) ) {
-            $checkout = new Classifieds_Core_PayPal();
-            $result = $checkout->get_shipping_details();
-            $this->render_front( 'includes/checkout', array( 'step' => 'confirm_payment', 'transaction_details' => $result ) );
-        } elseif ( isset( $_POST['confirm_payment_submit'] ) ) {
-            $checkout = new Classifieds_Core_PayPal();
-            $result = $checkout->confirm_payment( $_POST['total_amount'] );
-            if ( strtoupper( $result['ACK'] ) == 'SUCCESS' || strtoupper( $result['ACK'] ) == 'SUCCESSWITHWARNING' ) {
-                /** @todo Insert User */
-                // $this->insert_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'] );
-                $this->render_front( 'includes/checkout', array( 'step' => 'success' ) );
+                $this->render_front('classifieds/create-new');
             }
         } else {
-            $this->render_front( 'includes/checkout', array( 'step' => 'terms' ) );
+            $this->render_front('classifieds/create-new');
         }
     }
 
-    function classifieds_create_new_shortcode() {
-        $this->render_front('classifieds/create-new');
-    }
-
+    /**
+     *
+     */
     function classifieds_my_shortcode() {
-        $this->render_front('classifieds/my-classifieds');
+        if ( isset( $_POST['edit'] ) ) {
+            if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) )
+                $this->render_front('classifieds/edit-ad', array( 'post_id' => (int) $_POST['post_id'] ));
+            else
+                die( __( 'Security check failed!', $this->text_domain ) );
+        } elseif ( isset( $_POST['update'] ) ) {
+            $this->update_ad( $_POST, $_FILES );
+            $this->save_expiration_date( $_POST['post_id'] );
+            $this->render_front('classifieds/my-classifieds', array( 'action' => 'edit', 'post_title' => $_POST['post_title'] ));
+        } elseif ( isset( $_POST['confirm'] ) ) {
+            if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) ) {
+                if ( $_POST['action'] == 'end' ) {
+                    $this->process_status( (int) $_POST['post_id'], 'private' );
+                    $this->render_front('classifieds/my-classifieds', array( 'action' => 'end', 'post_title' => $_POST['post_title'] ));
+                } elseif ( $_POST['action'] == 'renew' ) {
+                    $this->process_status( (int) $_POST['post_id'], 'publish' );
+                    $this->save_expiration_date( $_POST['post_id'] );
+                    $this->render_front('classifieds/my-classifieds', array( 'action' => 'renew', 'post_title' => $_POST['post_title'] ));
+                } elseif ( $_POST['action'] == 'delete' ) {
+                    wp_delete_post( $_POST['post_id'] );
+                    $this->render_front('classifieds/my-classifieds', array( 'action' => 'delete', 'post_title' => $_POST['post_title'] ));
+                }
+            }
+        } else {
+            $this->render_front('classifieds/my-classifieds');
+        }
     }
 
     /**
-     * Print styles for BuddyPress pages
+     * Print styles for general WordPress pages
      *
      * @global object $bp
      * @return void
@@ -191,13 +188,86 @@ class Classifieds_Core_Main extends Classifieds_Core {
             .error { background: #FFEBE8; }
             .submit { margin: 10px 0; }
             .invalid-login { margin-top: 10px; }
+            .description { color:#888888; font-size:12px; }
+            .editfield label, .editfield .label { font-size:14px; color: #333; display: block; font-family:"Helvetica Neue",Arial,Helvetica,"Nimbus Sans L",sans-serif; }
+            .entry-content .editfield input { margin: 0; width: 100%; }
+            .entry-content .editfield textarea { margin: 0; width: 100%; }
+            .entry-content .editfield select, .entry-content .confirm-form select { margin: 0; }
+            .entry-content .cf-ad input { margin: 0; }
+            .entry-content .cf-checkout input { margin: 0; }
+            .entry-content .cf-login input { margin: 0; }
+            #content .editfield table { border:0; width:inherit; margin: 0; }
+            #content .editfield tr td { border-top:0; padding:0 15px 0 0; vertical-align: top; }
+            #content .cf-ad table { margin: 5px 5px 5px 15px ; width: 445px; border-width: 1px; border-style: solid; border-color: #ddd; border-collapse: collapse; }
+            .cf-ad { border: 1px solid #ddd; padding: 10px; display: block; overflow: hidden; float: left; margin: 0 0 15px 0;  }
+            .cf-ad table th { text-align: right; width: 50px; }
+            .cf-ad table th, .bp-cf-ad table td { border-width: 1px; border-style: inset; border-color: #ddd; }
+            .cf-ad form { padding-right: 7px; overflow: hidden; float: right; }
+            .cf-ad form.del-form { padding-right: 7px; }
+            .cf-image { float: left; }
+            .cf-info { float: left; }
+            ul.button-nav li { float: left; list-style: none; padding-right: 15px; }
+            #content .classifieds ul { overflow: hidden; margin: 0; padding-bottom: 15px; }
+            .cf-checkout { margin-right: 15px; }
+            #content .cf-checkout table { margin:0; }
+            #content .cf-checkout table tr td { padding:6px 0 6px 24px; }
+            #content .cf-login table { margin:0; }
+            .terms { height:100px; overflow-x: hidden; color:#888888; font-size:12px; font-family:"Helvetica Neue",Arial,Helvetica,"Nimbus Sans L",sans-serif; }
         </style> <?php
+    }
+
+    /**
+     * Enqueue scripts.
+     *
+     * @return void
+     **/
+    function enqueue_scripts() {
+        if ( !is_admin() )
+            wp_enqueue_script('jquery');
+    }
+
+    /**
+     * Print scripts for BuddyPress pages
+     *
+     * @global object $bp
+     * @return void
+     **/
+    function print_scripts() { ?>
+        <script type="text/javascript">
+        //<![CDATA[
+        jQuery(document).ready(function($) {
+            $('form.confirm-form').hide();
+        });
+        var classifieds = {
+            toggle_end: function(key) {
+                jQuery('#confirm-form-'+key).show();
+                jQuery('#action-form-'+key).hide();
+                jQuery('input[name="action"]').val('end');
+            },
+            toggle_renew: function(key) {
+                jQuery('#confirm-form-'+key).show();
+                jQuery('#action-form-'+key).hide();
+                jQuery('input[name="action"]').val('renew');
+            },
+            toggle_delete: function(key) {
+                jQuery('#confirm-form-'+key).show();
+                jQuery('#action-form-'+key).hide();
+                jQuery('input[name="action"]').val('delete');
+            },
+            cancel: function(key) {
+                jQuery('#confirm-form-'+key).hide();
+                jQuery('#action-form-'+key).show();
+            }
+        };
+        //]]>
+        </script> <?php
     }
 
 }
 endif;
 
 /* Initiate Class */
-if ( class_exists('Classifieds_Core_Main') )
+if ( class_exists('Classifieds_Core_Main') ) {
 	$__classifieds_core_main = new Classifieds_Core_Main();
+}
 ?>

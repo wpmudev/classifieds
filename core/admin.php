@@ -22,6 +22,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
     function Classifieds_Core_Admin() {
         /* Attach plugin to the "init" hook */
         add_action( 'init', array( &$this, 'init' ) );
+        add_action( 'init', array( &$this, 'init_vars' ) );
     }
 
     /**
@@ -35,8 +36,9 @@ class Classifieds_Core_Admin extends Classifieds_Core {
             /* Initiate core plugin vars */
             //$this->init_vars();
             /* Initiate admin menus and admin head */
-            add_action( 'admin_menu',  array( &$this, 'admin_menu' ) );
-            add_action( 'admin_init',  array( &$this, 'admin_head' ) );
+            add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
+            add_action( 'admin_init', array( &$this, 'admin_head' ) );
+            add_action( 'save_post',  array( &$this, 'save_expiration_date' ), 1, 1 );
         }
     }
 
@@ -48,7 +50,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
     function admin_menu() {
         add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'admin_output' ) );
         add_submenu_page( $this->menu_slug, __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'edit_users', $this->menu_slug, array( &$this, 'admin_output' ) );
-        add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', $this->sub_menu_slug, array( &$this, 'admin_output' ) );
+        add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', $this->sub_menu_slug , array( &$this, 'admin_output' ) );
     }
 
     /**
@@ -63,8 +65,10 @@ class Classifieds_Core_Admin extends Classifieds_Core {
                 if ( $_POST['action'] == 'end' )
                     $this->process_status( $_POST['post_id'], 'private' );
                 /* Change post status */
-                if ( $_POST['action'] == 'publish' )
+                if ( $_POST['action'] == 'publish' ) {
+                    $this->save_expiration_date( $_POST['post_id'] );
                     $this->process_status( $_POST['post_id'], 'publish' );
+                }
                 /* Delete post */
                 if ( $_POST['action'] == 'delete' )
                     wp_delete_post( $_POST['post_id'] );

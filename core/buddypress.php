@@ -6,9 +6,6 @@
 if ( !class_exists('Classifieds_Core_BuddyPress') ):
 class Classifieds_Core_BuddyPress extends Classifieds_Core {
 
-    /** @var boolean True if BuddyPress is active. */
-    var $bp_active;
-
     /**
      * Constructor. Hooks the whole module to the 'bp_init" hook.
      *
@@ -104,13 +101,30 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
         global $bp;
         if ( $bp->current_component == 'classifieds' && $bp->current_action == 'my-classifieds' ) {
             if ( isset( $_POST['edit'] ) ) {
-                $this->render_front('members/single/classifieds/edit-ad', array( 'post_id' => (int) $_POST['post_id'] ));
+                if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) )
+                    $this->render_front('members/single/classifieds/edit-ad', array( 'post_id' => (int) $_POST['post_id'] ));
+                else
+                    die( __( 'Security check failed!', $this->text_domain ) );
             } elseif ( isset( $_POST['update'] ) ) {
                 $this->update_ad( $_POST, $_FILES );
+                $this->save_expiration_date( $_POST['post_id'] );
                 $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'edit', 'post_title' => $_POST['post_title'] ));
             } elseif ( isset( $_POST['confirm'] ) ) {
-                wp_delete_post( $_POST['post_id'] );
-                $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'delete', 'post_title' => $_POST['post_title'] ));
+                if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) ) {
+                    if ( $_POST['action'] == 'end' ) {
+                        $this->process_status( (int) $_POST['post_id'], 'private' );
+                        $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'end', 'post_title' => $_POST['post_title'] ));
+                    } elseif ( $_POST['action'] == 'renew' ) {
+                        $this->process_status( (int) $_POST['post_id'], 'publish' );
+                        $this->save_expiration_date( $_POST['post_id'] );
+                        $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'renew', 'post_title' => $_POST['post_title'] ));
+                    } elseif ( $_POST['action'] == 'delete' ) {
+                        wp_delete_post( $_POST['post_id'] );
+                        $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'delete', 'post_title' => $_POST['post_title'] ));
+                    }
+                } else {
+                    die( __( 'Security check failed!', $this->text_domain ) );
+                }
             } else {
                 $this->render_front('members/single/classifieds/my-classifieds');
             }
@@ -133,7 +147,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
     /**
      * Filter the_content() function output.
      *
-     * @global <type> $post
+     * @global object $post
      * @param  string $content
      * @return string $content The HTML ready content of the ad
      **/
@@ -156,14 +170,14 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
         global $bp;
         if ( $bp->current_component == 'classifieds' ) { ?>
             <style type="text/css">
-                .bp-cf-ad    { border: 1px solid #ddd; padding: 10px; display: block; overflow: hidden; float: left; margin: 0 15px 15px 0;  }
-                .bp-cf-ad table { margin: 5px 5px 5px 15px ; width: 280px; border-width: 1px; border-style: solid; border-color: #ddd; border-collapse: collapse; }
-                .bp-cf-ad table th { text-align: right; width: 50px; }
-                .bp-cf-ad table th, .bp-cf-ad table td { border-width: 1px; border-style: inset; border-color: #ddd; }
-                .bp-cf-ad form { padding-left: 134px; overflow: hidden; }
-                .bp-cf-ad form.del-form { padding-left: 147px; }
-                .bp-cf-image { float: left;  }
-                .bp-cf-info  { float: left; }
+                .cf-ad    { border: 1px solid #ddd; padding: 10px; display: block; overflow: hidden; float: left; margin: 0 15px 15px 0; width: 450px;  }
+                .cf-ad table { margin: 5px 5px 5px 15px ; width: 280px; border-width: 1px; border-style: solid; border-color: #ddd; border-collapse: collapse; }
+                .cf-ad table th { text-align: right; width: 50px; }
+                .cf-ad table th, .bp-cf-ad table td { border-width: 1px; border-style: inset; border-color: #ddd; }
+                .cf-ad form {  float: right; padding-right: 5px; overflow: hidden; }
+                .cf-ad form.confirm-form { float: right; padding-right: 5px; }
+                .cf-image { float: left;  }
+                .cf-info  { float: left; }
                 .cf-ad-info { float: left; width: 450px; margin-left: 15px; }
                 .cf-ad-info th { width: 100px; vertical-align: top; }
                 .single-classifieds div.post p { margin: 0; padding: 0 5px 10px 0; }
@@ -171,7 +185,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
                 .cf-terms { width: inherit; }
                 .cf-terms td { vertical-align: top; }
             </style> <?php
-        } else { ?>
+        } elseif ( isset( $bp ) ) { ?>
             <style type="text/css">
                 .cf-checkout { width: 48%; float: left; margin-right: 15px; }
                 .cf-checkout img { margin-bottom: 0 !important; }
@@ -192,15 +206,26 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
             <script type="text/javascript">
             //<![CDATA[
             jQuery(document).ready(function($) {
-                $('form.del-form').hide();
+                $('form.confirm-form').hide();
             });
             var classifieds = {
-                toggle_delete: function(key) {
-                    jQuery('#del-form-'+key).show();
+                toggle_end: function(key) {
+                    jQuery('#confirm-form-'+key).show();
                     jQuery('#action-form-'+key).hide();
+                    jQuery('input[name="action"]').val('end');
+                },
+                toggle_renew: function(key) {
+                    jQuery('#confirm-form-'+key).show();
+                    jQuery('#action-form-'+key).hide();
+                    jQuery('input[name="action"]').val('renew');
+                },
+                toggle_delete: function(key) {
+                    jQuery('#confirm-form-'+key).show();
+                    jQuery('#action-form-'+key).hide();
+                    jQuery('input[name="action"]').val('delete');
                 },
                 cancel: function(key) {
-                    jQuery('#del-form-'+key).hide();
+                    jQuery('#confirm-form-'+key).hide();
                     jQuery('#action-form-'+key).show();
                 }
             };
