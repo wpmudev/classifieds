@@ -96,7 +96,7 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
              * has been succesfully authorized.
              * This is set to the value entered on the Integration Assistant.
              */
-            $this->return_url =  get_bloginfo('url') . '/classifieds-checkout/';
+            $this->return_url =  get_bloginfo('url') . '/checkout/';
 
             /*
              * The cancelURL is the location buyers are sent to when they hit the
@@ -138,7 +138,7 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
             $_SESSION['token'] = $token;
             /* Construct URL and redirect to PayPal */
             $paypal_url = $this->paypal_url . $result['TOKEN'];
-            $this->js_redirect( $paypal_url );
+            wp_redirect( $paypal_url );
         } else {
             /* Display a user friendly Error on the page using any of the following error information returned by PayPal */
             $error_code          = urldecode( $result['L_ERRORCODE0'] );

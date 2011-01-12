@@ -9,7 +9,7 @@
  */
 
 $prefix = '_ct_';
-$custom_fields = get_site_option( 'ct_custom_fields' ); ?>
+$custom_fields = get_site_option('ct_custom_fields'); ?>
 
 <?php foreach ( $custom_fields as $custom_field ): ?>
 

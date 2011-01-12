@@ -16,8 +16,6 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
         add_action( 'bp_init', array( &$this, 'init' ) );
         /* Initiate plugin variables */
         add_action( 'init', array( &$this, 'init_vars' ) );
-        /* Add theme support for post thumbnails */
-        add_theme_support( 'post-thumbnails' );
     }
 
     /**
@@ -31,7 +29,6 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
         add_action( 'bp_head', array( &$this, 'print_styles' ) );
         add_action( 'wp_head', array( &$this, 'print_scripts' ) );
         add_action( 'bp_template_content', array( &$this, 'template_content' ) );
-        add_filter( 'the_content', array( &$this, 'filter_the_content' ) );
         /* Set BuddyPress active state */
         $this->bp_active = true;
     }
@@ -141,22 +138,6 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
             } else {
                 $this->render_front('members/single/classifieds/create-new');
             }
-        }
-    }
-
-    /**
-     * Filter the_content() function output.
-     *
-     * @global object $post
-     * @param  string $content
-     * @return string $content The HTML ready content of the ad
-     **/
-    function filter_the_content( $content ) {
-        global $post;
-        if ( is_single() && $post->post_type == $this->post_type ) {
-            $this->render_front( 'members/single/classifieds/content-ad', array( 'post' => $post, 'content' => $content ) );
-        } else {
-            return $content;
         }
     }
     

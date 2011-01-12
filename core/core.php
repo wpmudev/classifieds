@@ -42,7 +42,10 @@ class Classifieds_Core {
      * @return void
      **/
     function Classifieds_Core() {
+        /* Hook the entire class to WordPress init hook */
         add_action( 'init', array( &$this, 'init' ) );
+        /* Add theme support for post thumbnails */
+        add_theme_support( 'post-thumbnails' );
     }
 
     /**
@@ -53,11 +56,12 @@ class Classifieds_Core {
     function init() {
         add_action( 'wp_loaded', array( &$this, 'handle_login' ) );
         add_action( 'wp_loaded', array( &$this, 'scheduly_expiration_check' ) );
+        add_filter( 'single_template', array( &$this, 'get_single_template' ) ) ;
         add_filter( 'page_template', array( &$this, 'get_page_template' ) ) ;
         add_filter( 'taxonomy_template', array( &$this, 'get_taxonomy_template' ) ) ;
         add_action( 'template_redirect', array( &$this, 'handle_checkout_requests' ) );
         add_action( 'check_expiration_dates', array( &$this, 'check_expiration_dates_callback' ) );
-        add_shortcode( 'classifieds_checkout', array( &$this, 'classifieds_checkout_shortcode' ) );
+        add_action( 'user_register', array( &$this, 'set_signup_user_credits' ) );
     }
 
     /**
@@ -163,7 +167,7 @@ class Classifieds_Core {
      *
      * @param array $params Array of $_POST data
      * @param array|NULL $file Array of $_FILES data
-     * @return void
+     * @return int $post_id 
      **/
     function update_ad( $params, $file = NULL ) {
         $current_user = wp_get_current_user();
@@ -199,23 +203,8 @@ class Classifieds_Core {
                 $thumbnail_id = media_handle_upload( 'image', $post_id );
                 update_post_meta( $post_id, '_thumbnail_id', $thumbnail_id );
             }
+            return $post_id;
        }
-    }
-
-    /**
-     * Validate firelds
-     * 
-     * @param array $params $_POST data
-     * @param array|NULL $file $_FILES data
-     * @return void
-     **/
-    function validate_fields( $params, $file = NULL ) {
-        if ( empty( $params['title'] ) || empty( $params['description'] ) || empty( $params['terms'] ) || empty( $params['status'] )) {
-            $this->form_valid = false;
-        }
-        if ( $file['image']['error'] !== 0 ) {
-            $this->form_valid = false;
-        }
     }
 
     /**
@@ -246,118 +235,101 @@ class Classifieds_Core {
      *
      * @return NULL If the payment gateway options are not configured.
      **/
-    function classifieds_checkout_shortcode() {
-        /* Get site options */
-        $options = $this->get_options();
-        if ( is_user_logged_in() ) {
-            /** @todo Set redirect */
-            //$this->js_redirect( get_bloginfo('url') );
-        }
-        if ( empty( $options['paypal'] ) ) {
-            $this->render_front( 'classifieds/checkout', array( 'step' => 'disabled' ) );
-            return;
-        }
-        if ( isset( $_POST['terms_submit'] ) ) {
-            if ( empty( $_POST['tos_agree'] ) || empty( $_POST['billing'] ) ) {
-                if ( empty( $_POST['tos_agree'] ))
-                    add_action( 'tos_invalid', create_function('', 'echo "class=\"error\"";') );
-                if ( empty( $_POST['billing'] ))
-                    add_action( 'billing_invalid', create_function('', 'echo "class=\"error\"";') );
-                $this->render_front( 'includes/checkout', array( 'step' => 'terms' ) );
-            } else {
-                $this->render_front('includes/checkout', array( 'step' => 'payment_method' ) );
-            }
-        } elseif ( isset( $_POST['login_submit'] ) ) {
-            if ( isset( $this->login_error )) {
-                add_action( 'login_invalid', create_function('', 'echo "class=\"error\"";') );
-                $this->render_front( 'includes/checkout', array( 'step' => 'terms', 'error' => $this->login_error ) );
-            } else {
-                $this->js_redirect( get_bloginfo('url') );
-            }
-        } elseif ( isset( $_POST['payment_method_submit'] )) {
-            if ( $_POST['payment_method'] == 'paypal' ) {
-                $checkout = new Classifieds_Core_PayPal();
-                $checkout->call_shortcut_express_checkout( $_POST['cost'] );
-            } elseif ( $_POST['payment_method'] == 'cc' ) {
-                $this->render_front( 'includes/checkout', array( 'step' => 'cc_details' ) );
-            }
-        } elseif ( isset( $_POST['direct_payment_submit'] ) ) {
-            $checkout = new Classifieds_Core_PayPal();
-            $result = $checkout->direct_payment( $_POST['total_amount'], $_POST['cc_type'], $_POST['cc_number'], $_POST['exp_date'], $_POST['cvv2'], $_POST['first_name'], $_POST['last_name'], $_POST['street'], $_POST['city'], $_POST['state'], $_POST['zip'], $_POST['country_code'] );
-        } elseif ( isset( $_REQUEST['token'] ) && !isset( $_POST['confirm_payment_submit'] ) ) {
-            $checkout = new Classifieds_Core_PayPal();
-            $result = $checkout->get_shipping_details();
-            $this->render_front( 'includes/checkout', array( 'step' => 'confirm_payment', 'transaction_details' => $result ) );
-        } elseif ( isset( $_POST['confirm_payment_submit'] ) ) {
-            $checkout = new Classifieds_Core_PayPal();
-            $result = $checkout->confirm_payment( $_POST['total_amount'] );
-            if ( strtoupper( $result['ACK'] ) == 'SUCCESS' || strtoupper( $result['ACK'] ) == 'SUCCESSWITHWARNING' ) {
-                /** @todo Insert User */
-                // $this->insert_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'] );
-                $this->render_front( 'includes/checkout', array( 'step' => 'success' ) );
-            }
-        } else {
-            $this->render_front( 'includes/checkout', array( 'step' => 'terms' ) );
-        }
-    }
-
-    /**
-     * Checkout shortcode.
-     *
-     * @return NULL If the payment gateway options are not configured.
-     **/
     function handle_checkout_requests() {
-        /* Get site options */
-        $options = $this->get_options();
-        if ( is_user_logged_in() ) {
-            /** @todo Set redirect */
-            //$this->js_redirect( get_bloginfo('url') );
-        }
-        if ( empty( $options['paypal'] ) ) {
-            $this->render_front( 'classifieds/checkout', array( 'step' => 'disabled' ) );
-            return;
-        }
-        if ( isset( $_POST['terms_submit'] ) ) {
-            if ( empty( $_POST['tos_agree'] ) || empty( $_POST['billing'] ) ) {
-                if ( empty( $_POST['tos_agree'] ))
-                    add_action( 'tos_invalid', create_function('', 'echo "class=\"error\"";') );
-                if ( empty( $_POST['billing'] ))
-                    add_action( 'billing_invalid', create_function('', 'echo "class=\"error\"";') );
-                $this->render_front( 'includes/checkout', array( 'step' => 'terms' ) );
-            } else {
-                $this->render_front('includes/checkout', array( 'step' => 'payment_method' ) );
+        /* Only handle request if on the proper page */
+        if ( is_page('checkout') ) {
+            /* Get site options */
+            $options = $this->get_options();
+            if ( is_user_logged_in() ) {
+                /** @todo Set redirect */
+                //wp_redirect( get_bloginfo('url') );
             }
-        } elseif ( isset( $_POST['login_submit'] ) ) {
-            if ( isset( $this->login_error )) {
-                add_action( 'login_invalid', create_function('', 'echo "class=\"error\"";') );
-                $this->render_front( 'includes/checkout', array( 'step' => 'terms', 'error' => $this->login_error ) );
-            } else {
-                $this->js_redirect( get_bloginfo('url') );
+            /* If not PayPal API credentials are set, disable the checkout process */
+            if ( empty( $options['paypal'] ) ) {
+                /* Set the proper step which will be loaded by "page-checkout.php" */
+                set_query_var( 'cf_step', 'disabled' );
+                return;
             }
-        } elseif ( isset( $_POST['payment_method_submit'] )) {
-            if ( $_POST['payment_method'] == 'paypal' ) {
+            /* If Terms and Costs step is submitted */
+            if ( isset( $_POST['terms_submit'] ) ) {
+                /* Validate fields */
+                if ( empty( $_POST['tos_agree'] ) || empty( $_POST['billing'] ) ) {
+                    if ( empty( $_POST['tos_agree'] ))
+                        add_action( 'tos_invalid', create_function('', 'echo "class=\"error\"";') );
+                    if ( empty( $_POST['billing'] ))
+                        add_action( 'billing_invalid', create_function('', 'echo "class=\"error\"";') );
+                    /* Set the proper step which will be loaded by "page-checkout.php" */
+                    set_query_var( 'cf_step', 'terms' );
+                } else {
+                    /* Set the proper step which will be loaded by "page-checkout.php" */
+                    set_query_var( 'cf_step', 'payment_method' );
+                }
+            }
+            /* If login attempt is made */
+            elseif ( isset( $_POST['login_submit'] ) ) {
+                if ( isset( $this->login_error )) {
+                    add_action( 'login_invalid', create_function('', 'echo "class=\"error\"";') );
+                    /* Set the proper step which will be loaded by "page-checkout.php" */
+                    set_query_var( 'cf_step', 'terms' );
+                    /* Pass error params to "page-checkout.php" */
+                    set_query_var( 'cf_error', $this->login_error );
+                } else {
+                    wp_redirect( get_bloginfo('url') . '/classifieds/my-classifieds/' );
+                }
+            }
+            /* If payment method is selected and submitted */
+            elseif ( isset( $_POST['payment_method_submit'] )) {
+                if ( $_POST['payment_method'] == 'paypal' ) {
+                    /* Initiate paypal class */
+                    $checkout = new Classifieds_Core_PayPal();
+                    /* Make API call */
+                    $checkout->call_shortcut_express_checkout( $_POST['cost'] );
+                } elseif ( $_POST['payment_method'] == 'cc' ) {
+                    /* Set the proper step which will be loaded by "page-checkout.php" */
+                    set_query_var( 'cf_step', 'cc_details' );
+                }
+            }
+            /* If direct CC payment is submitted */
+            elseif ( isset( $_POST['direct_payment_submit'] ) ) {
+                /* Initiate paypal class */
                 $checkout = new Classifieds_Core_PayPal();
-                $checkout->call_shortcut_express_checkout( $_POST['cost'] );
-            } elseif ( $_POST['payment_method'] == 'cc' ) {
-                $this->render_front( 'includes/checkout', array( 'step' => 'cc_details' ) );
+                /* Make API call */
+                $result = $checkout->direct_payment( $_POST['total_amount'], $_POST['cc_type'], $_POST['cc_number'], $_POST['exp_date'], $_POST['cvv2'], $_POST['first_name'], $_POST['last_name'], $_POST['street'], $_POST['city'], $_POST['state'], $_POST['zip'], $_POST['country_code'] );
+                /* Set the proper step which will be loaded by "page-checkout.php" */
+                set_query_var( 'cf_step', 'direct_payment' );
             }
-        } elseif ( isset( $_POST['direct_payment_submit'] ) ) {
-            $checkout = new Classifieds_Core_PayPal();
-            $result = $checkout->direct_payment( $_POST['total_amount'], $_POST['cc_type'], $_POST['cc_number'], $_POST['exp_date'], $_POST['cvv2'], $_POST['first_name'], $_POST['last_name'], $_POST['street'], $_POST['city'], $_POST['state'], $_POST['zip'], $_POST['country_code'] );
-        } elseif ( isset( $_REQUEST['token'] ) && !isset( $_POST['confirm_payment_submit'] ) ) {
-            $checkout = new Classifieds_Core_PayPal();
-            $result = $checkout->get_shipping_details();
-            $this->render_front( 'includes/checkout', array( 'step' => 'confirm_payment', 'transaction_details' => $result ) );
-        } elseif ( isset( $_POST['confirm_payment_submit'] ) ) {
-            $checkout = new Classifieds_Core_PayPal();
-            $result = $checkout->confirm_payment( $_POST['total_amount'] );
-            if ( strtoupper( $result['ACK'] ) == 'SUCCESS' || strtoupper( $result['ACK'] ) == 'SUCCESSWITHWARNING' ) {
-                /** @todo Insert User */
-                // $this->insert_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'] );
-                $this->render_front( 'includes/checkout', array( 'step' => 'success' ) );
+            /* If PayPal has redirected us back with the proper TOKEN */
+            elseif ( isset( $_REQUEST['token'] ) && !isset( $_POST['confirm_payment_submit'] ) ) {
+                /* Initiate paypal class */
+                $checkout = new Classifieds_Core_PayPal();
+                /* Make API call */
+                $result = $checkout->get_shipping_details();
+                /* Set the proper step which will be loaded by "page-checkout.php" */
+                set_query_var( 'cf_step', 'confirm_payment' );
+                /* Pass transaction details params to "page-checkout.php" */
+                set_query_var( 'cf_transaction_details', $result );
             }
-        } else {
-            $this->render_front( 'includes/checkout', array( 'step' => 'terms' ) );
+            /* If payment confirmation is submitted */
+            elseif ( isset( $_POST['confirm_payment_submit'] ) ) {
+                /* Initiate paypal class */
+                $checkout = new Classifieds_Core_PayPal();
+                /* Make API call */
+                $result = $checkout->confirm_payment( $_POST['total_amount'] );
+                if ( strtoupper( $result['ACK'] ) == 'SUCCESS' || strtoupper( $result['ACK'] ) == 'SUCCESSWITHWARNING' ) {
+                    /** @todo Insert User */
+                    // $this->insert_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'] );
+                    set_query_var( 'cf_step', 'success' );
+                }
+            }
+            /* If transaction processed successfully, redirect to my-classifieds */
+            elseif( isset( $_POST['redirect_my_classifieds'] ) ) {
+                wp_redirect( get_bloginfo('url') . '/classifieds/my-classifieds/' );
+            }
+            /* If no requests are made load default step */
+            else {
+                /* Set the proper step which will be loaded by "page-checkout.php" */
+                set_query_var( 'cf_step', 'terms' );
+            }
         }
     }
 
@@ -422,9 +394,25 @@ class Classifieds_Core {
     }
 
     /**
+     * Sets initial credits amount.
+     *
+     * @param int $user_id
+     * @return void
+     **/
+    function set_signup_user_credits( $user_id ) {
+        $options = $this->get_options('credits');
+        if ( $options['enable_credits'] == true ) {
+            if ( !empty( $options['signup_credits'] ) )
+                update_user_meta( $user_id, 'cf_credits', $options['signup_credits'] );
+        }
+    }
+
+
+    /**
      * Set user credits.
      *
      * @param string $credits Number of credits to add.
+     * @return void
      **/
     function update_user_credits( $credits ) {
         $available_credits = get_user_meta( $this->current_user->ID , 'cf_credits', true );
@@ -448,17 +436,10 @@ class Classifieds_Core {
     }
 
     /**
-     * 
-     */
-    function format_date( $date ) {
-        return date( get_option('date_format'), $date );
-    }
-
-    /**
      * Log user credits activity.
      *
      * @param string $credits How many credits to log
-     */
+     **/
     function update_user_credits_log( $credits ) {
         $date = time();
         $credits_log = array( array(
@@ -470,6 +451,11 @@ class Classifieds_Core {
         update_user_meta( $this->current_user->ID, 'cf_credits_log', $user_meta );
     }
 
+    /**
+     * Get the credits log of an user.
+     *
+     * @return string|array Log of credit events
+     **/
     function get_user_credits_log() {
         $credits_log =  get_user_meta( $this->current_user->ID , 'cf_credits_log', true );
         if ( !empty( $credits_log ) )
@@ -527,8 +513,84 @@ class Classifieds_Core {
     }
 
     /**
+     * Format date.
      *
-     */
+     * @param int $date unix timestamp
+     * @return string formatted date
+     **/
+    function format_date( $date ) {
+        return date( get_option('date_format'), $date );
+    }
+
+    /**
+     * Validate firelds
+     *
+     * @param array $params $_POST data
+     * @param array|NULL $file $_FILES data
+     * @return void
+     **/
+    function validate_fields( $params, $file = NULL ) {
+        if ( empty( $params['title'] ) || empty( $params['description'] ) || empty( $params['terms'] ) || empty( $params['status'] )) {
+            $this->form_valid = false;
+        }
+        if ( $file['image']['error'] !== 0 ) {
+            $this->form_valid = false;
+        }
+    }
+    
+    /**
+     * Filter the template path to single{}.php templates.
+     * Load from theme directory primary if it doesn't exist load from plugin dir.
+     *
+     * Learn more: http://codex.wordpress.org/Template_Hierarchy
+     * Learn more: http://codex.wordpress.org/Plugin_API/Filter_Reference#Template_Filters
+     *
+     * @global <type> $post Post object
+     * @param string Templatepath to filter
+     * @return string Templatepath
+     **/
+    function get_single_template( $template ) {
+        global $post;
+        if ( ! file_exists( get_template_directory() . "/single-{$post->post_type}.php" )
+            && file_exists( "{$this->plugin_dir}/ui-front/general/single-{$post->post_type}.php" ) )
+            return "{$this->plugin_dir}/ui-front/general/single-{$post->post_type}.php";
+        else
+            return $template;
+    }
+
+
+    /**
+     * Filter the template path to page{}.php templates.
+     * Load from theme directory primary if it doesn't exist load from plugin dir.
+     *
+     * Learn more: http://codex.wordpress.org/Template_Hierarchy
+     * Learn more: http://codex.wordpress.org/Plugin_API/Filter_Reference#Template_Filters
+     *
+     * @global <type> $post Post object
+     * @param string Templatepath to filter
+     * @return string Templatepath
+     **/
+    function get_page_template( $template ) {
+        global $post;
+        if ( ! file_exists( get_template_directory() . "/page-{$post->post_name}.php" )
+            && file_exists( "{$this->plugin_dir}/ui-front/general/page-{$post->post_name}.php" ) )
+            return "{$this->plugin_dir}/ui-front/general/page-{$post->post_name}.php";
+        else
+            return $template;
+    }
+
+
+    /**
+     * Filter the template path to taxonomy{}.php templates.
+     * Load from theme directory primary if it doesn't exist load from plugin dir.
+     *
+     * Learn more: http://codex.wordpress.org/Template_Hierarchy
+     * Learn more: http://codex.wordpress.org/Plugin_API/Filter_Reference#Template_Filters
+     *
+     * @global <type> $post Post object
+     * @param string Templatepath to filter
+     * @return string Templatepath
+     **/
     function get_taxonomy_template( $template ) {
         $taxonomy = get_query_var('taxonomy');
         $term = get_query_var('term');
@@ -543,20 +605,6 @@ class Classifieds_Core {
         elseif ( ! file_exists( get_template_directory() . "/taxonomy.php" )
                 && file_exists( "{$this->plugin_dir}/ui-front/general/taxonomy.php" ) )
             return "{$this->plugin_dir}/ui-front/general/taxonomy.php";
-        else
-            return $template;
-    }
-
-    /**
-     *
-     * @global <type> $post
-     * @return <type>
-     */
-    function get_page_template( $template ) {
-        global $post;
-        if ( ! file_exists( get_template_directory() . "/page-{$post->post_name}.php" )
-            && file_exists( "{$this->plugin_dir}/ui-front/general/page-{$post->post_name}.php" ) )
-            return "{$this->plugin_dir}/ui-front/general/page-{$post->post_name}.php";
         else
             return $template;
     }

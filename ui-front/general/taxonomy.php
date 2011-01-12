@@ -10,7 +10,7 @@
  */
 
 get_header(); ?>
-Samurai
+
 		<div id="container">
 			<div id="content" role="main">
 
@@ -23,7 +23,7 @@ Samurai
              */
             if ( have_posts() ) the_post(); ?>
 
-			<h1 class="page-title"><?php _e( 'Classifieds', 'classifieds' ); ?></h1>
+            <h1 class="page-title"><?php _e( 'Classifieds', 'classifieds' ); ?> / <?php echo get_query_var('taxonomy'); ?> / <?php echo get_query_var('term'); ?></h1>
 
             <?php
             /* Since we called the_post() above, we need to

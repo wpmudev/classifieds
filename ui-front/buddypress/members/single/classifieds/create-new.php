@@ -71,7 +71,7 @@ if ( !$this->form_valid ) {
         </div>
 
         <div class="editfield">
-            <?php $this->render_front('includes/custom-fields'); ?>
+            <?php $this->render_front('members/single/classifieds/custom-fields'); ?>
         </div>
 
         <div class="submit">

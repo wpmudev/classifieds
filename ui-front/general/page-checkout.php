@@ -15,26 +15,39 @@ get_header(); ?>
             <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
 				<div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-					<?php if ( is_front_page() ) { ?>
-						<h2 class="entry-title"><?php the_title(); ?></h2>
-					<?php } else { ?>
-						<h1 class="entry-title"><?php the_title(); ?></h1>
-					<?php } ?>
+
+					<h1 class="entry-title"><?php the_title(); ?></h1>
 
 					<div class="entry-content">
 
+                        <?php $step = get_query_var('cf_step'); ?>
+
                         <?php if ( $step == 'disabled' ): ?>
 
-                            <?php _e( 'This feature is currently disabled by the system administrator.', $this->text_domain ); ?>
+                            <?php _e( 'This feature is currently disabled by the system administrator.', 'classifieds' ); ?>
 
                         <?php elseif ( $step == 'terms' ): ?>
 
-                            <?php $options = $this->get_options(); ?>
+                            <?php $options = get_option('classifieds_options'); //cf_debug( $options ); ?>
 
                             <form action="" method="post"  class="cf-checkout">
 
-                                <strong><?php _e( 'Cost of Service', $this->text_domain ); ?></strong>
+                                <strong><?php _e( 'Cost of Service', 'classifieds' ); ?></strong>
                                 <table <?php do_action( 'billing_invalid' ); ?>>
+                                    <tr>
+                                        <td><label for="billing"><?php _e( 'Buy Credits', 'classifieds' ) ?></label></td>
+                                        <td>
+                                            <input type="radio" name="billing" value="annual" <?php if ( $_POST['billing'] == 'annual' ) echo 'checked="checked"'; ?> />
+                                            <input type="hidden" name="annual_cost" value="<?php echo $options['checkout']['annual_cost']; ?>" />
+                                            <select name="credits_cost">
+                                                <?php for ( $i = 1; $i <= 10; $i++ ): ?>
+                                                <?php $credits = 10 * $i; ?>
+                                                <?php $amount = $credits * $options['credits']['cost_credit']; ?>
+                                                <option value="<?php echo $amount; ?>" ><?php echo $credits; ?> Credits for <?php echo $amount . ' ' . $options['paypal']['currency']; ?></option>
+                                                <?php endfor; ?>
+                                            </select>
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td><label for="billing"><?php echo $options['checkout']['annual_txt']; ?></label></td>
                                         <td>
@@ -52,7 +65,7 @@ get_header(); ?>
                                 </table>
                                 <br />
 
-                                <strong><?php _e( 'Terms of Service', $this->text_domain ); ?></strong>
+                                <strong><?php _e( 'Terms of Service', 'classifieds' ); ?></strong>
                                 <table>
                                     <tr>
                                         <td><div class="terms"><?php echo nl2br( $options['checkout']['tos_txt'] ); ?></div></td>
@@ -62,26 +75,26 @@ get_header(); ?>
 
                                 <table  <?php do_action( 'tos_invalid' ); ?> >
                                     <tr>
-                                        <td><label for="tos_agree"><?php _e( 'I agree with the Terms of Service', $this->text_domain ); ?></label></td>
+                                        <td><label for="tos_agree"><?php _e( 'I agree with the Terms of Service', 'classifieds' ); ?></label></td>
                                         <td><input type="checkbox" id="tos_agree" name="tos_agree" value="1" <?php if ( $_POST['tos_agree'] ) echo 'checked="checked"'; ?> /></td>
                                     </tr>
                                 </table>
 
                                 <div class="submit">
-                                    <input type="submit" name="terms_submit" value="<?php _e( 'Continue', $this->text_domain ); ?>" />
+                                    <input type="submit" name="terms_submit" value="<?php _e( 'Continue', 'classifieds' ); ?>" />
                                 </div>
                             </form>
 
                             <form action="" method="post" class="cf-login">
 
-                                <strong><?php _e( 'Existing client', $this->text_domain ); ?></strong>
+                                <strong><?php _e( 'Existing client', 'classifieds' ); ?></strong>
                                 <table  <?php do_action( 'login_invalid' ); ?>>
                                     <tr>
-                                        <td><label for="username"><?php _e( 'Username', $this->text_domain ); ?>:</label></td>
+                                        <td><label for="username"><?php _e( 'Username', 'classifieds' ); ?>:</label></td>
                                         <td><input type="text" id="username" name="username" /></td>
                                     </tr>
                                     <tr>
-                                        <td><label for="password"><?php _e( 'Password', $this->text_domain ); ?>:</label></td>
+                                        <td><label for="password"><?php _e( 'Password', 'classifieds' ); ?>:</label></td>
                                         <td><input type="password" id="password" name="password" /></td>
                                     </tr>
                                 </table>
@@ -89,11 +102,13 @@ get_header(); ?>
                                 <div class="clear"></div>
 
                                 <div class="submit">
-                                    <input type="submit" name="login_submit" value="<?php _e( 'Continue', $this->text_domain ); ?>" />
+                                    <input type="submit" name="login_submit" value="<?php _e( 'Continue', 'classifieds' ); ?>" />
                                 </div>
 
                             </form>
 
+                            <?php $error = get_query_var('cf_error'); ?>
+                        
                             <?php if ( $error ): ?>
                                 <div class="invalid-login"><?php echo $error; ?></div>
                             <?php endif; ?>
@@ -102,20 +117,20 @@ get_header(); ?>
 
                             <form action="" method="post"  class="cf-checkout">
 
-                                <strong><?php _e('Choose Payment Method', $this->text_domain ); ?></strong>
+                                <strong><?php _e('Choose Payment Method', 'classifieds' ); ?></strong>
                                 <table>
                                     <tr>
-                                        <td><label for="payment_method"><?php _e( 'PayPal', $this->text_domain ); ?></label></td>
+                                        <td><label for="payment_method"><?php _e( 'PayPal', 'classifieds' ); ?></label></td>
                                         <td>
                                             <input type="radio" name="payment_method" value="paypal"/>
                                             <img  src="https://www.paypal.com/en_US/i/logo/PayPal_mark_37x23.gif" border="0" alt="Acceptance Mark">
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><label for="payment_method"><?php _e( 'Credit Card', $this->text_domain ); ?></label></td>
+                                        <td><label for="payment_method"><?php _e( 'Credit Card', 'classifieds' ); ?></label></td>
                                         <td>
                                             <input type="radio" name="payment_method" value="cc" />
-                                            <img  src="<?php echo $this->plugin_url; ?>ui-front/general/images/cc-logos-small.jpg" border="0" alt="Solution Graphics">
+                                            <img  src="<?php echo CF_PLUGIN_URL; ?>ui-front/general/images/cc-logos-small.jpg" border="0" alt="Solution Graphics">
                                         </td>
                                     </tr>
                                 </table>
@@ -130,49 +145,49 @@ get_header(); ?>
                                         <input type="hidden" name="billing" value="one_time" />
                                     <?php endif; ?>
 
-                                    <input type="submit" name="payment_method_submit" value="<?php _e( 'Continue', $this->text_domain ); ?>" />
+                                    <input type="submit" name="payment_method_submit" value="<?php _e( 'Continue', 'classifieds' ); ?>" />
                                 </div>
                             </form>
 
                         <?php elseif ( $step == 'cc_details' ): ?>
 
-                            <?php $options = $this->get_options(); ?>
+                            <?php $options = get_option('classifieds_options'); ?>
 
                             <form action="" method="post" class="cf-checkout">
 
-                                <strong><?php _e( 'Payment Details', $this->text_domain ); ?></strong>
+                                <strong><?php _e( 'Payment Details', 'classifieds' ); ?></strong>
                                 <div class="clear"></div>
                                 <table>
                                     <tr>
-                                        <td><label for="email"><?php _e( 'Email Adress', $this->text_domain ); ?>:</label></td>
+                                        <td><label for="email"><?php _e( 'Email Adress', 'classifieds' ); ?>:</label></td>
                                         <td><input type="text" id="email" name="email" value="" /></td>
                                     </tr>
                                     <tr>
-                                        <td><label for="first-name"><?php _e( 'First Name', $this->text_domain ); ?>:</label></td>
+                                        <td><label for="first-name"><?php _e( 'First Name', 'classifieds' ); ?>:</label></td>
                                         <td><input type="text" id="first-name" name="first_name" value="" /></td>
                                     </tr>
                                     <tr>
-                                        <td><label for="last-name"><?php _e( 'Last Name', $this->text_domain ); ?>:</label></td>
+                                        <td><label for="last-name"><?php _e( 'Last Name', 'classifieds' ); ?>:</label></td>
                                         <td><input type="text" id="last-name" name="last_name" value="" /></td>
                                     </tr>
                                     <tr>
-                                        <td><label for="street"><?php _e( 'Street', $this->text_domain ); ?>:</label></td>
+                                        <td><label for="street"><?php _e( 'Street', 'classifieds' ); ?>:</label></td>
                                         <td><input type="text" id="street" name="street" value="" /></td>
                                     </tr>
                                     <tr>
-                                        <td><label for="city"><?php _e( 'City', $this->text_domain ); ?>:</label></td>
+                                        <td><label for="city"><?php _e( 'City', 'classifieds' ); ?>:</label></td>
                                         <td><input type="text" id="city" name="city" value="" /></td>
                                     </tr>
                                     <tr>
-                                        <td><label for="state"><?php _e( 'State', $this->text_domain ); ?>:</label></td>
+                                        <td><label for="state"><?php _e( 'State', 'classifieds' ); ?>:</label></td>
                                         <td><input type="text" id="state" name="state" value="" /></td>
                                     </tr>
                                     <tr>
-                                        <td><label for="zip"><?php _e( 'ZIP', $this->text_domain ); ?>:</label></td>
+                                        <td><label for="zip"><?php _e( 'ZIP', 'classifieds' ); ?>:</label></td>
                                         <td><input type="text" id="zip" name="zip" value="" /></td>
                                     </tr>
                                     <tr>
-                                        <td><label for="country"><?php _e( 'Country', $this->text_domain ); ?>:</label></td>
+                                        <td><label for="country"><?php _e( 'Country', 'classifieds' ); ?>:</label></td>
                                         <td>
                                             <select id="country" name="country_code">
                                                 <option value="">Select One</option>
@@ -426,36 +441,36 @@ get_header(); ?>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><?php _e( 'Total Amount', $this->text_domain ); ?>:</td>
+                                        <td><?php _e( 'Total Amount', 'classifieds' ); ?>:</td>
                                         <td>
                                             <strong><?php echo $_POST['cost']; ?> <?php echo $options['paypal']['currency']; ?></strong>
                                             <input type="hidden" name="total_amount" value="<?php echo $_POST['cost']; ?>" />
                                         </td>
                                     </tr>
                                 </table>
-
+                                <br />
                                 <table>
                                     <tr>
-                                        <td><label for="cc_type"><?php _e( 'Credit Card Type', $this->text_domain ); ?>:</label></td>
+                                        <td><label for="cc_type"><?php _e( 'Credit Card Type', 'classifieds' ); ?>:</label></td>
                                         <td>
                                             <select name="cc_type">
-                                                <option><?php _e( 'Visa', $this->text_domain ); ?></option>
-                                                <option><?php _e( 'MasterCard', $this->text_domain ); ?></option>
-                                                <option><?php _e( 'Amex', $this->text_domain ); ?></option>
-                                                <option><?php _e( 'Discover', $this->text_domain ); ?></option>
+                                                <option><?php _e( 'Visa', 'classifieds' ); ?></option>
+                                                <option><?php _e( 'MasterCard', 'classifieds' ); ?></option>
+                                                <option><?php _e( 'Amex', 'classifieds' ); ?></option>
+                                                <option><?php _e( 'Discover', 'classifieds' ); ?></option>
                                             </select>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><label for="cc_number"><?php _e( 'Credit Card Number', $this->text_domain ); ?>:</label></td>
+                                        <td><label for="cc_number"><?php _e( 'Credit Card Number', 'classifieds' ); ?>:</label></td>
                                         <td><input type="text" name="cc_number" /></td>
                                     </tr>
                                     <tr>
-                                        <td><label for="exp_date"><?php _e( 'Expiration Date', $this->text_domain ); ?>:</label></td>
+                                        <td><label for="exp_date"><?php _e( 'Expiration Date', 'classifieds' ); ?>:</label></td>
                                         <td><input type="text" name="exp_date" /></td>
                                     </tr>
                                     <tr>
-                                        <td><label for="cvv2"><?php _e( 'CVV2', $this->text_domain ); ?>:</label></td>
+                                        <td><label for="cvv2"><?php _e( 'CVV2', 'classifieds' ); ?>:</label></td>
                                         <td><input type="text" name="cvv2" /></td>
                                     </tr>
                                 </table>
@@ -469,20 +484,22 @@ get_header(); ?>
 
                         <?php elseif ( $step == 'confirm_payment' ): ?>
 
+                            <?php $transaction_details = get_query_var('cf_transaction_details'); ?>
+                                
                             <form action="" method="post" class="cf-checkout">
 
-                                <strong><?php _e( 'Confirm Payment', $this->text_domain ); ?></strong>
+                                <strong><?php _e( 'Confirm Payment', 'classifieds' ); ?></strong>
                                 <table>
                                     <tr>
-                                        <td><label><?php _e( 'Email Adress', $this->text_domain ); ?>:</label></td>
+                                        <td><label><?php _e( 'Email Adress', 'classifieds' ); ?>:</label></td>
                                         <td><?php echo $transaction_details['EMAIL']; ?></td>
                                     </tr>
                                     <tr>
-                                        <td><label><?php _e( 'Name', $this->text_domain ); ?>:</label></td>
+                                        <td><label><?php _e( 'Name', 'classifieds' ); ?>:</label></td>
                                         <td><?php echo $transaction_details['FIRSTNAME'] . ' ' . $transaction_details['LASTNAME']; ?></td>
                                     </tr>
                                     <tr>
-                                        <td><label><?php _e( 'Address', $this->text_domain ); ?>:</label></td>
+                                        <td><label><?php _e( 'Address', 'classifieds' ); ?>:</label></td>
                                         <td><?php echo $transaction_details['SHIPTOSTREET']; ?>, <?php echo $transaction_details['SHIPTOCITY']; ?>, <?php echo $transaction_details['SHIPTOSTATE']; ?>, <?php echo $transaction_details['SHIPTOZIP']; ?>, <?php echo $transaction_details['SHIPTOCOUNTRYNAME']; ?></td>
                                     </tr>
                                     <tr>
@@ -508,13 +525,12 @@ get_header(); ?>
 
                         <?php elseif ( $step == 'success' ): ?>
 
-                            <div class="dp-thank-you"><?php _e( 'Thank you for your business. Transaction processed successfully!', $this->text_domain ); ?></div>
-                            <span class="dp-submit-txt"><?php _e( 'You can go to your profile and review/change your personal information. You can also go straight to the directory listing submission page.', $this->text_domain ); ?></span>
+                            <div class="dp-thank-you"><?php _e( 'Thank you for your business. Transaction processed successfully!', 'classifieds' ); ?></div>
+                            <span class="dp-submit-txt"><?php _e( 'You can go to your profile and review/change your personal information. You can also go straight to the directory listing submission page.', 'classifieds' ); ?></span>
                             <br /><br />
 
                             <form action="" method="post">
-                                <input type="submit" name="redirect_admin_profile" value="Proceed To Your Profile" />
-                                <input type="submit" name="redirect_admin_listings" value="Proceed To Adding a Directory Listing" />
+                                <input type="submit" name="redirect_my_classifieds" value="Proceed To Your Classifieds" />
                             </form>
 
                         <?php endif; ?>

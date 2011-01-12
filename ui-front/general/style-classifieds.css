@@ -1,0 +1,166 @@
+/*
+Styleshteet Name: Classifieds UI Front Main
+Description: You can override this file in your theme.
+*/
+
+/* =Styles for Classifieds Main component.
+-------------------------------------------------------------- */
+.error { 
+    background: #FFEBE8;
+}
+.submit { 
+    margin: 10px 0;
+}
+.invalid-login { 
+    margin-top: 10px;
+}
+.description {
+    color:#888888;
+    font-size:12px;
+}
+.editfield label, .editfield .label {
+    font-size:14px;
+    color: #333;
+    display: block;
+    font-family:"Helvetica Neue",Arial,Helvetica,"Nimbus Sans L",sans-serif;
+}
+.entry-content .editfield input {
+    margin: 0;
+    width: 100%;
+}
+.entry-content .editfield textarea {
+    margin: 0;
+    width: 100%;
+}
+.entry-content .editfield select, .entry-content .confirm-form select, .entry-content .cf-checkout select {
+    margin: 0;
+}
+.entry-content .cf-ad input { 
+    margin: 0;
+}
+.entry-content .cf-checkout input { 
+    margin: 0;
+}
+.entry-content .cf-login input { 
+    margin: 0;
+}
+#content .editfield table { 
+    border:0;
+    width:inherit;
+    margin: 0;
+}
+#content .editfield tr td { 
+    border-top:0;
+    padding:0 15px 0 0;
+    vertical-align: top;
+}
+#content .cf-ad table { 
+    margin: 0 0 0 15px;
+    width: 453px;
+    border: 1px solid #ddd;
+    border-collapse: collapse;
+}
+.cf-ad {
+    border: 1px solid #ddd;
+    padding: 10px;
+    display: block;
+    overflow: hidden;
+    float: left;
+    margin: 0 0 15px 0;
+}
+.cf-ad table th {
+    text-align: right;
+    width: 50px;
+}
+.cf-ad table th, .bp-cf-ad table td { 
+    border-width: 1px;
+    border-style: inset;
+    border-color: #ddd;
+}
+.cf-ad form { 
+    padding-right: 7px;
+    overflow: hidden;
+    float: right;
+}
+.cf-ad form.del-form { 
+    padding-right: 7px;
+}
+.cf-image { 
+    float: left;
+}
+.cf-info { 
+    float: left;
+}
+#content table.cf-ad-info {
+    float: left;
+    width: inherit;
+}
+#content table.cf-ad-info th { 
+    text-align: right;
+}
+ul.button-nav li {
+    float: left;
+    list-style: none;
+    padding-right: 15px;
+}
+#content .classifieds ul { 
+    overflow: hidden;
+    margin: 0;
+    padding-bottom: 15px;
+}
+.cf-checkout { 
+    margin-right: 15px;
+}
+#content .cf-checkout table {
+    margin:0;
+}
+#content .cf-checkout table tr td { 
+    padding:6px 0 6px 24px;
+}
+#content .cf-login table { 
+    margin:0;
+}
+.terms { 
+    height:100px;
+    overflow-x: hidden;
+    color:#888888;
+    font-size:12px;
+    font-family:"Helvetica Neue",Arial,Helvetica,"Nimbus Sans L",sans-serif;
+}
+.editfield .wp-post-image {
+    border: 1px solid #ddd;
+    padding: 15px;
+}
+.single-classifieds #content img.wp-post-image { 
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 0 15px 10px 0;
+}
+.button-nav { 
+    margin: 12px 0 0 0;
+}
+.button-nav li a {
+    text-decoration: none;
+    -moz-border-radius:3px 3px 3px 3px;
+    border:1px solid #DDDDDD;
+    color:#888888;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:normal;
+    padding:3px 10px;
+}
+.button-nav li.current a { 
+    color: #000;
+}
+.create-new-btn { 
+    float: right;
+}
+.cf-custom-fields .alt { 
+    background: #F3F3F3;
+}
+#content .cf-custom-fields tr th { 
+    border-top:1px solid #E7E7E7;
+}
+.action-form, .confirm-form { 
+    margin-top: 10px;
+}

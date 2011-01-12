@@ -63,7 +63,7 @@ $post_terms = wp_get_object_terms( $post->ID, $this->taxonomy_names );
         </div>
 
         <div class="editfield">
-            <?php $this->render_front('includes/custom-fields', array( 'post' => $post )); ?>
+            <?php $this->render_front('members/single/classifieds/custom-fields', array( 'post' => $post )); ?>
         </div>
 
         <div class="submit">
