@@ -51,6 +51,7 @@ if ( empty( $posts ) ) {
 <?php foreach ( $posts as $post ): ?>
 
     <div class="cf-ad">
+        
         <div class="cf-image"><?php echo get_the_post_thumbnail( $post->ID, array( 200, 150 ) ); ?></div>
         <div class="cf-info">
             <table>
@@ -74,6 +75,7 @@ if ( empty( $posts ) ) {
                 </tr>
             </table>
         </div>
+        
         <form action="" method="post" id="action-form-<?php echo $post->ID; ?>" class="action-form">
             <?php wp_nonce_field('verify'); ?>
             <input type="hidden" name="post_id" value="<?php echo $post->ID; ?>" />
@@ -103,7 +105,6 @@ if ( empty( $posts ) ) {
             <input type="submit" class="button confirm" value="<?php _e( 'Confirm', $this->text_domain ); ?>" name="confirm" />
             <input type="submit" class="button cancel"  value="<?php _e( 'Cancel', $this->text_domain ); ?>" onClick="classifieds.cancel('<?php echo $post->ID; ?>'); return false;" />
         </form>
-        
 
     </div>
 

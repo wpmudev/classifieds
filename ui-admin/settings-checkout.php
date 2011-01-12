@@ -17,7 +17,7 @@
                     <label for="annual_cost"><?php _e('Annual Payment Option', $this->text_domain ) ?></label>
                 </th>
                 <td>
-                    <input type="text" id="annual_cost" name="annual_cost" value="<?php echo $options['annual_cost']; ?>" />
+                    <input type="text" id="annual_cost" class="small-text" name="annual_cost" value="<?php echo $options['annual_cost']; ?>" />
                     <span class="description"><?php _e( 'Cost of "Annual" service.', $this->text_domain ); ?></span>
                     <br /><br />
                     <input type="text" name="annual_txt" value="<?php echo $options['annual_txt']; ?>" />
@@ -29,7 +29,7 @@
                     <label for="one_time_cost"><?php _e( 'One Time Payment Option', $this->text_domain ) ?></label>
                 </th>
                 <td>
-                    <input type="text" id="one_time_cost" name="one_time_cost" value="<?php echo $options['one_time_cost']; ?>" />
+                    <input type="text" id="one_time_cost" class="small-text" name="one_time_cost" value="<?php echo $options['one_time_cost']; ?>" />
                     <span class="description"><?php _e( 'Cost of "One Time" service.', $this->text_domain ); ?></span>
                     <br /><br />
                     <input type="text" name="one_time_txt" value="<?php echo $options['one_time_txt']; ?>" />

@@ -33,6 +33,8 @@ class Classifieds_Core {
     var $bp_active;
     /** @var boolean Login error flag */
     var $login_error;
+    /** @var boolean The current user; */
+    var $current_user;
 
     /**
      * Constructor.
@@ -51,6 +53,9 @@ class Classifieds_Core {
     function init() {
         add_action( 'wp_loaded', array( &$this, 'handle_login' ) );
         add_action( 'wp_loaded', array( &$this, 'scheduly_expiration_check' ) );
+        add_filter( 'page_template', array( &$this, 'get_page_template' ) ) ;
+        add_filter( 'taxonomy_template', array( &$this, 'get_taxonomy_template' ) ) ;
+        add_action( 'template_redirect', array( &$this, 'handle_checkout_requests' ) );
         add_action( 'check_expiration_dates', array( &$this, 'check_expiration_dates_callback' ) );
         add_shortcode( 'classifieds_checkout', array( &$this, 'classifieds_checkout_shortcode' ) );
     }
@@ -73,6 +78,7 @@ class Classifieds_Core {
         }
         /* Assign key 'duration' to predifined Custom Field ID */
         $this->custom_fields['duration'] = '_ct_selectbox_4cf582bd61fa4';
+        $this->current_user = wp_get_current_user();
     }
 
     /**
@@ -296,6 +302,66 @@ class Classifieds_Core {
     }
 
     /**
+     * Checkout shortcode.
+     *
+     * @return NULL If the payment gateway options are not configured.
+     **/
+    function handle_checkout_requests() {
+        /* Get site options */
+        $options = $this->get_options();
+        if ( is_user_logged_in() ) {
+            /** @todo Set redirect */
+            //$this->js_redirect( get_bloginfo('url') );
+        }
+        if ( empty( $options['paypal'] ) ) {
+            $this->render_front( 'classifieds/checkout', array( 'step' => 'disabled' ) );
+            return;
+        }
+        if ( isset( $_POST['terms_submit'] ) ) {
+            if ( empty( $_POST['tos_agree'] ) || empty( $_POST['billing'] ) ) {
+                if ( empty( $_POST['tos_agree'] ))
+                    add_action( 'tos_invalid', create_function('', 'echo "class=\"error\"";') );
+                if ( empty( $_POST['billing'] ))
+                    add_action( 'billing_invalid', create_function('', 'echo "class=\"error\"";') );
+                $this->render_front( 'includes/checkout', array( 'step' => 'terms' ) );
+            } else {
+                $this->render_front('includes/checkout', array( 'step' => 'payment_method' ) );
+            }
+        } elseif ( isset( $_POST['login_submit'] ) ) {
+            if ( isset( $this->login_error )) {
+                add_action( 'login_invalid', create_function('', 'echo "class=\"error\"";') );
+                $this->render_front( 'includes/checkout', array( 'step' => 'terms', 'error' => $this->login_error ) );
+            } else {
+                $this->js_redirect( get_bloginfo('url') );
+            }
+        } elseif ( isset( $_POST['payment_method_submit'] )) {
+            if ( $_POST['payment_method'] == 'paypal' ) {
+                $checkout = new Classifieds_Core_PayPal();
+                $checkout->call_shortcut_express_checkout( $_POST['cost'] );
+            } elseif ( $_POST['payment_method'] == 'cc' ) {
+                $this->render_front( 'includes/checkout', array( 'step' => 'cc_details' ) );
+            }
+        } elseif ( isset( $_POST['direct_payment_submit'] ) ) {
+            $checkout = new Classifieds_Core_PayPal();
+            $result = $checkout->direct_payment( $_POST['total_amount'], $_POST['cc_type'], $_POST['cc_number'], $_POST['exp_date'], $_POST['cvv2'], $_POST['first_name'], $_POST['last_name'], $_POST['street'], $_POST['city'], $_POST['state'], $_POST['zip'], $_POST['country_code'] );
+        } elseif ( isset( $_REQUEST['token'] ) && !isset( $_POST['confirm_payment_submit'] ) ) {
+            $checkout = new Classifieds_Core_PayPal();
+            $result = $checkout->get_shipping_details();
+            $this->render_front( 'includes/checkout', array( 'step' => 'confirm_payment', 'transaction_details' => $result ) );
+        } elseif ( isset( $_POST['confirm_payment_submit'] ) ) {
+            $checkout = new Classifieds_Core_PayPal();
+            $result = $checkout->confirm_payment( $_POST['total_amount'] );
+            if ( strtoupper( $result['ACK'] ) == 'SUCCESS' || strtoupper( $result['ACK'] ) == 'SUCCESSWITHWARNING' ) {
+                /** @todo Insert User */
+                // $this->insert_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'] );
+                $this->render_front( 'includes/checkout', array( 'step' => 'success' ) );
+            }
+        } else {
+            $this->render_front( 'includes/checkout', array( 'step' => 'terms' ) );
+        }
+    }
+
+    /**
      * Calculate the Unix time stam of the modified posts
      *
      * @param int|string $post_id
@@ -324,7 +390,7 @@ class Classifieds_Core {
         if ( !empty( $date ) )
             return date( get_option('date_format'), $date );
         else
-            return __( 'No expiration date set.', $this->text_domain );
+            return __( 'No expiration date set.', 'classifieds' );
     }
 
     /**
@@ -355,6 +421,62 @@ class Classifieds_Core {
         }
     }
 
+    /**
+     * Set user credits.
+     *
+     * @param string $credits Number of credits to add.
+     **/
+    function update_user_credits( $credits ) {
+        $available_credits = get_user_meta( $this->current_user->ID , 'cf_credits', true );
+        $total_credits = ( get_user_meta( $this->current_user->ID , 'cf_credits', true ) ) ? ( $available_credits + $credits ) : $credits;
+        update_user_meta( $this->current_user->ID, 'cf_credits', $total_credits );
+        $this->update_user_credits_log( $credits );
+    }
+
+    /**
+     * Get user credits.
+     *
+     * @return string User credits.
+     **/
+    function get_user_credits() {
+        $credits = get_user_meta( $this->current_user->ID, 'cf_credits', true );
+        $credits_log = get_user_meta( $this->current_user->ID, 'cf_credits_log', true );
+        if ( !empty( $credits ) )
+            return $credits;
+        else
+            return __( 'None', $this->text_domain );
+    }
+
+    /**
+     * 
+     */
+    function format_date( $date ) {
+        return date( get_option('date_format'), $date );
+    }
+
+    /**
+     * Log user credits activity.
+     *
+     * @param string $credits How many credits to log
+     */
+    function update_user_credits_log( $credits ) {
+        $date = time();
+        $credits_log = array( array(
+            'credits' => $credits,
+            'date' => $date
+        ));
+        $user_meta = get_user_meta( $this->current_user->ID , 'cf_credits_log', true );
+        $user_meta = ( get_user_meta( $this->current_user->ID , 'cf_credits_log', true ) ) ? array_merge( $user_meta, $credits_log ) : $credits_log;
+        update_user_meta( $this->current_user->ID, 'cf_credits_log', $user_meta );
+    }
+
+    function get_user_credits_log() {
+        $credits_log =  get_user_meta( $this->current_user->ID , 'cf_credits_log', true );
+        if ( !empty( $credits_log ) )
+            return $credits_log;
+        else
+            return __( 'No History', $this->text_domain );
+    }
 
     /**
      * Save plugin options.
@@ -402,6 +524,41 @@ class Classifieds_Core {
     function process_status( $post_id, $status ) {
         global $wpdb;
         $wpdb->update( $wpdb->posts, array( 'post_status' => $status ), array( 'ID' => $post_id ), array( '%s' ), array( '%d' ) );
+    }
+
+    /**
+     *
+     */
+    function get_taxonomy_template( $template ) {
+        $taxonomy = get_query_var('taxonomy');
+        $term = get_query_var('term');
+        /* Check whether the files dosn't exist in the active theme directrory,
+         * alos check for file to load in our general template directory */
+        if ( ! file_exists( get_template_directory() . "/taxonomy-{$taxonomy}-{$term}.php" )
+            && file_exists( "{$this->plugin_dir}/ui-front/general/taxonomy-{$taxonomy}-{$term}.php" ) )
+            return "{$this->plugin_dir}/ui-front/general/taxonomy-{$taxonomy}-{$term}.php";
+        elseif ( ! file_exists( get_template_directory() . "/taxonomy-{$taxonomy}.php" )
+                && file_exists( "{$this->plugin_dir}/ui-front/general/taxonomy-{$taxonomy}.php" ) )
+            return "{$this->plugin_dir}/ui-front/general/taxonomy-{$taxonomy}.php";
+        elseif ( ! file_exists( get_template_directory() . "/taxonomy.php" )
+                && file_exists( "{$this->plugin_dir}/ui-front/general/taxonomy.php" ) )
+            return "{$this->plugin_dir}/ui-front/general/taxonomy.php";
+        else
+            return $template;
+    }
+
+    /**
+     *
+     * @global <type> $post
+     * @return <type>
+     */
+    function get_page_template( $template ) {
+        global $post;
+        if ( ! file_exists( get_template_directory() . "/page-{$post->post_name}.php" )
+            && file_exists( "{$this->plugin_dir}/ui-front/general/page-{$post->post_name}.php" ) )
+            return "{$this->plugin_dir}/ui-front/general/page-{$post->post_name}.php";
+        else
+            return $template;
     }
 
     /**

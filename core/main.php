@@ -29,12 +29,13 @@ class Classifieds_Core_Main extends Classifieds_Core {
         /* Load general WordPress front if BuddyPress is disabled */
         if ( !$this->bp_active ) {
             add_action( 'wp_loaded', array( &$this, 'create_main_pages' ) );
+            add_action( 'template_redirect', array( &$this, 'page_handle_requests' ) );
             add_action( 'wp_print_scripts', array( &$this, 'enqueue_scripts' ) );
             add_action( 'wp_head', array( &$this, 'print_scripts' ) );
             add_action( 'wp_head', array( &$this, 'print_main_styles' ) );
             add_shortcode( 'classifieds', array( &$this, 'classifieds_shortcode' ) );
             add_shortcode( 'classifieds_create_new', array( &$this, 'classifieds_create_new_shortcode' ) );
-            add_shortcode( 'classifieds_my', array( &$this, 'classifieds_my_shortcode' ) );
+            //add_shortcode( 'classifieds_my', array( &$this, 'classifieds_my_shortcode' ) );
         }
     }
 
@@ -173,8 +174,57 @@ class Classifieds_Core_Main extends Classifieds_Core {
                 }
             }
         } else {
-            $this->render_front('classifieds/my-classifieds');
+            //$this->render_front('classifieds/my-classifieds');
         }
+    }
+
+    /**
+     *
+     */
+    function page_handle_requests() {
+        if ( is_page('my-classifieds') ) {
+            if ( isset( $_POST['edit'] ) ) {
+                if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) ) {
+                    set_query_var( 'cf_post_id', $_POST['post_id'] );
+                    set_query_var( 'cf_action', 'edit' );
+                }
+                else {
+                    die( __( 'Security check failed!', $this->text_domain ) );
+                }
+            } elseif ( isset( $_POST['update'] ) ) {
+                $this->update_ad( $_POST, $_FILES );
+                $this->save_expiration_date( $_POST['post_id'] );
+                set_query_var( 'cf_action', 'my-classifieds' );
+            } elseif ( isset( $_POST['confirm'] ) ) {
+                if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) ) {
+                    if ( $_POST['action'] == 'end' ) {
+                        $this->process_status( (int) $_POST['post_id'], 'private' );
+                    } elseif ( $_POST['action'] == 'renew' ) {
+                        $this->process_status( (int) $_POST['post_id'], 'publish' );
+                        $this->save_expiration_date( $_POST['post_id'] );
+                    } elseif ( $_POST['action'] == 'delete' ) {
+                        wp_delete_post( $_POST['post_id'] );
+                    }
+                    set_query_var( 'cf_action', 'my-classifieds' );
+                } else {
+                    die( __( 'Security check failed!', $this->text_domain ) );
+                }
+            } else {
+                set_query_var( 'cf_action', 'my-classifieds' );
+            }
+        } elseif ( is_page('create-new') ) {
+            if ( isset( $_POST['save'] ) ) {
+                $this->validate_fields( $_POST, $_FILES );
+                if ( $this->form_valid ) {
+                    $this->update_ad( $_POST, $_FILES );
+                    wp_redirect( get_bloginfo('url') );
+                } else {
+                    //$this->render_front('classifieds/create-new');
+                }
+            } else {
+                //$this->render_front('classifieds/create-new');
+            }
+        } 
     }
 
     /**
@@ -213,6 +263,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
             #content .cf-checkout table tr td { padding:6px 0 6px 24px; }
             #content .cf-login table { margin:0; }
             .terms { height:100px; overflow-x: hidden; color:#888888; font-size:12px; font-family:"Helvetica Neue",Arial,Helvetica,"Nimbus Sans L",sans-serif; }
+            .editfield .wp-post-image { border: 1px solid #ddd; padding: 15px; }
         </style> <?php
     }
 

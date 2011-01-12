@@ -43,7 +43,8 @@ $post_terms = wp_get_object_terms( $post->ID, $this->taxonomy_names );
         </div>
 
         <div class="editfield">
-            <label for="image"><?php _e( 'Upload Featured Image', $this->text_domain ); ?></label>
+            <?php echo get_the_post_thumbnail( $post->ID, array( 200, 150 ) ); ?>
+            <label for="image"><?php _e( 'Change Featured Image', $this->text_domain ); ?></label>
             <p id="featured-image">
                 <input type="file" id="image" name="image">
                 <input type="hidden" value="featured-image" id="action" name="action">

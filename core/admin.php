@@ -50,7 +50,8 @@ class Classifieds_Core_Admin extends Classifieds_Core {
     function admin_menu() {
         add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'admin_output' ) );
         add_submenu_page( $this->menu_slug, __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'edit_users', $this->menu_slug, array( &$this, 'admin_output' ) );
-        add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', $this->sub_menu_slug , array( &$this, 'admin_output' ) );
+        add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', 'classifieds_settings', array( &$this, 'admin_output' ) );
+        add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Credits', $this->text_domain ), 'edit_users', 'classifieds_credits' , array( &$this, 'admin_output' ) );
     }
 
     /**
@@ -78,29 +79,40 @@ class Classifieds_Core_Admin extends Classifieds_Core {
                 /* Render admin template */
                 $this->render_admin( 'dashboard' );
             }
-        } elseif ( $_GET['page'] == $this->sub_menu_slug ) {
+        } elseif ( $_GET['page'] == 'classifieds_settings' ) {
             if ( $_GET['tab'] == 'payments' ) {
                 if ( $_GET['sub'] == 'authorizenet' ) {
-                    $this->render_admin( 'authorizenet' );
+                    $this->render_admin( 'payments-authorizenet' );
                 } else {
                     /* Save options */
                     if ( isset( $_POST['save'] ) ) {
                         $this->save_options( $_POST );
                     }
                     /* Render admin template */
-                    $this->render_admin( 'paypal' );
+                    $this->render_admin( 'payments-paypal' );
                 }
             } else {
                 if ( $_GET['sub'] == 'checkout' ) {
                     if ( isset( $_POST['save'] ) ) {
                         $this->save_options( $_POST );
                     }
-                    $this->render_admin( 'checkout' );
+                    $this->render_admin( 'settings-checkout' );
                 } else {
                     if ( isset( $_POST['save'] ) ) {
                         $this->save_options( $_POST );
                     }
-                    $this->render_admin( 'credits' );
+                    $this->render_admin( 'settings-credits' );
+                }
+            }
+        } elseif ( $_GET['page'] == 'classifieds_credits' ) {
+            if ( $_GET['tab'] == 'send_credits' ) {
+                
+            } else {
+                if ( isset( $_POST['save'] ) ) {
+                    $this->update_user_credits( $_POST['purchase_credits'] );
+                    $this->render_admin( 'credits-my-credits' );
+                } else {
+                    $this->render_admin( 'credits-my-credits' );
                 }
             }
         }
@@ -136,7 +148,11 @@ class Classifieds_Core_Admin extends Classifieds_Core {
         <style type="text/css">
             .wrap table    { text-align: left; }
             .wrap table th { width: 200px; }
+            .classifieds_page_classifieds_settings .wrap h2 { border-bottom:1px solid #CCCCCC; padding-bottom:0; }
             .classifieds_page_classifieds_credits .wrap h2 { border-bottom:1px solid #CCCCCC; padding-bottom:0; }
+            .form-table #available_credits { color: #333; }
+            .purchase_credits .submit { padding: 0; margin: 0; float: left; }
+            .purchase_credits #purchase_credits { float: left; }
             .subsubsub h3 { margin: 0; }
         </style> <?php
     }
