@@ -24,11 +24,13 @@ if ( empty( $posts ) ) {
 
 <div class="profile">
 
+    <?php if ( bp_is_my_profile() ): ?>
     <ul class="button-nav">
         <li class="<?php if ( in_array( 'active', $bp->action_variables ) || empty( $bp->action_variables ) ) echo 'current'; ?>"><a href="<?php echo $bp->displayed_user->domain . 'classifieds/my-classifieds/active/'; ?>"><?php _e( 'Active Ads', $this->text_domain ); ?></a></li>
         <li class="<?php if ( in_array( 'saved',  $bp->action_variables ) ) echo 'current'; ?>"><a href="<?php echo $bp->displayed_user->domain . 'classifieds/my-classifieds/saved/'; ?>"><?php _e( 'Saved Ads', $this->text_domain ); ?></a></li>
         <li class="<?php if ( in_array( 'ended',  $bp->action_variables ) ) echo 'current'; ?>"><a href="<?php echo $bp->displayed_user->domain . 'classifieds/my-classifieds/ended/'; ?>"><?php _e( 'Ended Ads', $this->text_domain ); ?></a></li>
     </ul>
+    <?php endif; ?>
     <div class="clear"></div>
 
     <?php if ( $msg ): ?>
@@ -45,7 +47,9 @@ if ( empty( $posts ) ) {
             <table>
                 <tr>
                     <th><?php _e( 'Title', $this->text_domain ); ?></th>
-                    <td><?php echo $post->post_title; ?></td>
+                    <td>
+                        <a href="<?php echo get_permalink( $post->ID ); ?>"><?php echo $post->post_title; ?></a>
+                    </td>
                 </tr>
                 <tr>
                     <th><?php _e( 'Categories', $this->text_domain ); ?></th>
@@ -63,17 +67,20 @@ if ( empty( $posts ) ) {
         </div>
         <form action="" method="post" id="action-form-<?php echo $post->ID; ?>" class="action-form">
             <input type="hidden" name="post_id" value="<?php echo $post->ID; ?>" />
-            <input type="hidden" name="url" value="<?php echo $post->guid; ?>" />
-            <input type="submit" name="view" value="<?php _e('View Ad', $this->text_domain ); ?>" />
+            <input type="hidden" name="url" value="<?php echo get_permalink( $post->ID ); ?>" />
+            <?php if ( bp_is_my_profile() ): ?>
             <input type="submit" name="edit" value="<?php _e('Edit Ad', $this->text_domain ); ?>" />
             <input type="submit" name="delete" value="<?php _e('Delete Ad', $this->text_domain ); ?>" onClick="classifieds.toggle_delete('<?php echo $post->ID; ?>'); return false;" />
+            <?php endif; ?>
         </form>
+        <?php if ( bp_is_my_profile() ): ?>
         <form action="" method="post" id="del-form-<?php echo $post->ID; ?>" class="del-form">
             <input type="hidden" name="post_id" value="<?php echo $post->ID; ?>" />
             <input type="hidden" name="post_title" value="<?php echo $post->post_title; ?>" />
             <input type="submit" class="button confirm" value="<?php _e( 'Confirm', $this->text_domain ); ?>" name="confirm" />
             <input type="submit" class="button cancel"  value="<?php _e( 'Cancel', $this->text_domain ); ?>" onClick="classifieds.cancel('<?php echo $post->ID; ?>'); return false;" />
         </form>
+        <?php endif; ?>
 
     </div>
 

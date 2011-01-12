@@ -57,7 +57,7 @@
         </div>
 
         <div class="editfield">
-            <?php $this->render_front('members/single/classifieds/custom-fields'); ?>
+            <?php $this->render_front('buddypress/members/single/classifieds/custom-fields'); ?>
         </div>
 
         <div class="submit">

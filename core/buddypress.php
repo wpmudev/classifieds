@@ -31,7 +31,6 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
         $this->bp_active = true;
         add_action( 'wp', array( &$this, 'add_navigation' ), 2 );
         add_action( 'admin_menu', array( &$this, 'add_navigation' ), 2 );
-        add_action( 'init', array( &$this, 'redirects' ) );
         add_action( 'bp_head', array( &$this, 'print_styles' ) );
         add_action( 'wp_head', array( &$this, 'print_scripts' ) );
         add_action( 'bp_template_content', array( &$this, 'template_content' ) );
@@ -70,28 +69,16 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
             'position'        => 10,
             'user_has_access' => true
         ));
-        bp_core_new_subnav_item( array(
-            'name'            => __( 'Create New Ad', $this->text_domain ),
-            'slug'            => 'add-new',
-            'parent_url'      => $parent_url,
-            'parent_slug'     => $bp->classifieds->slug,
-            'screen_function' => array( &$this, 'load_template' ),
-            'position'        => 10,
-            'user_has_access' => true
-        ));
-    }
-
-    /**
-     *
-     * @global <type> $bp 
-     */
-    function redirects() {
-        global $bp;
-        if ( $bp->current_component == 'classifieds' ) {
-             if ( isset( $_POST['view'] ) ) {
-                wp_redirect( $_POST['url'] );
-                exit;
-             }
+        if ( bp_is_my_profile() ) {
+            bp_core_new_subnav_item( array(
+                'name'            => __( 'Create New Ad', $this->text_domain ),
+                'slug'            => 'add-new',
+                'parent_url'      => $parent_url,
+                'parent_slug'     => $bp->classifieds->slug,
+                'screen_function' => array( &$this, 'load_template' ),
+                'position'        => 10,
+                'user_has_access' => true
+            ));
         }
     }
 
@@ -117,21 +104,21 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
         global $bp;
         if ( $bp->current_component == 'classifieds' && $bp->current_action == 'my-classifieds' ) {
             if ( isset( $_POST['edit'] ) ) {
-                $this->render_front('members/single/classifieds/edit-ad', array( 'post_id' => (int) $_POST['post_id'] ));
+                $this->render_front('buddypress/members/single/classifieds/edit-ad', array( 'post_id' => (int) $_POST['post_id'] ));
             } elseif ( isset( $_POST['update'] ) ) {
                 $this->update_ad( $_POST, $_FILES );
-                $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'edit', 'post_title' => $_POST['post_title'] ));
+                $this->render_front('buddypress/members/single/classifieds/my-classifieds', array( 'action' => 'edit', 'post_title' => $_POST['post_title'] ));
             } elseif ( isset( $_POST['confirm'] ) ) {
                 wp_delete_post( $_POST['post_id'] );
-                $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'delete', 'post_title' => $_POST['post_title'] ));
+                $this->render_front('buddypress/members/single/classifieds/my-classifieds', array( 'action' => 'delete', 'post_title' => $_POST['post_title'] ));
             } else {
-                $this->render_front('members/single/classifieds/my-classifieds');
+                $this->render_front('buddypress/members/single/classifieds/my-classifieds');
             }
         } elseif ( $bp->current_component == 'classifieds' && $bp->current_action == 'add-new' ) {
             if ( isset( $_POST['save'] ) ) {
                 $this->update_ad( $_POST, $_FILES );
             }
-            $this->render_front('members/single/classifieds/add-new');
+            $this->render_front('buddypress/members/single/classifieds/add-new');
         }
     }
 
@@ -145,7 +132,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
     function filter_the_content( $content ) {
         global $post;
         if ( is_single() && $post->post_type == $this->post_type ) {
-            $this->render_front( 'members/single/classifieds/content-ad', array( 'post' => $post, 'content' => $content ) );
+            $this->render_front( 'buddypress/members/single/classifieds/content-ad', array( 'post' => $post, 'content' => $content ) );
         } else {
             return $content;
         }
@@ -207,7 +194,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
                 .bp-cf-ad table { margin: 5px 5px 5px 15px ; width: 280px; border-width: 1px; border-style: solid; border-color: #ddd; border-collapse: collapse; }
                 .bp-cf-ad table th { text-align: right; width: 50px; }
                 .bp-cf-ad table th, .bp-cf-ad table td { border-width: 1px; border-style: inset; border-color: #ddd; }
-                .bp-cf-ad form { padding-left: 56px; overflow: hidden; }
+                .bp-cf-ad form { padding-left: 134px; overflow: hidden; }
                 .bp-cf-ad form.del-form { padding-left: 147px; }
                 .bp-cf-image { float: left;  }
                 .bp-cf-info  { float: left; }
@@ -217,6 +204,12 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
                 #cf-fimage { float: left; border: 1px solid #eee; padding: 15px 15px 0; margin-bottom: 15px; }
                 .cf-terms { width: inherit; }
                 .cf-terms td { vertical-align: top; }
+            </style> <?php
+        } else { ?>
+            <style type="text/css">
+                .cf-checkout { width: 48%; float: left; margin-right: 15px; }
+                .cf-checkout img { margin-bottom: 0 !important; }
+                .cf-login { width: 48%; float: left; }
             </style> <?php
         }
     }

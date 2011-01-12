@@ -37,6 +37,6 @@ function classifieds_page_shortcode() {
         classifieds_frontend_display_ads( '', 20,'random',$tmp_base_url );
     }
 }
-add_shortcode('classifieds_page', 'classifieds_page_shortcode');
+//add_shortcode('classifieds_page', 'classifieds_page_shortcode');
 
 ?>

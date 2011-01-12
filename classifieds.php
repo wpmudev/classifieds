@@ -55,6 +55,7 @@ include_once 'classifieds/classifieds.php';
 include_once 'core/core.php';
 include_once 'core/admin.php';
 include_once 'core/buddypress.php';
+include_once 'core/paypal.php';
 include_once 'submodules/content-types/ct-loader.php';
 
 /* tmp debug func */

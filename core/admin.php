@@ -87,8 +87,11 @@ class Classifieds_Core_Admin extends Classifieds_Core {
                     $this->render_admin( 'paypal' );
                 }
             } else {
-                if ( $_GET['sub'] == 'something' ) {
-
+                if ( $_GET['sub'] == 'checkout' ) {
+                    if ( isset( $_POST['save'] ) ) {
+                        $this->save_options( $_POST );
+                    }
+                    $this->render_admin( 'checkout' );
                 } else {
                     if ( isset( $_POST['save'] ) ) {
                         $this->save_options( $_POST );
@@ -130,6 +133,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
             .wrap table    { text-align: left; }
             .wrap table th { width: 200px; }
             .classifieds_page_classifieds_credits .wrap h2 { border-bottom:1px solid #CCCCCC; padding-bottom:0; }
+            .subsubsub h3 { margin: 0; }
         </style> <?php
     }
 

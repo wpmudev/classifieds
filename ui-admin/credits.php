@@ -7,6 +7,8 @@
 
     <?php $this->render_admin( 'navigation', array( 'sub' => 'credits' ) ); ?>
 
+    <?php $this->render_admin( 'message' ); ?>
+
     <form action="" method="post">
         <table class="form-table">
             <tr>
@@ -46,9 +48,9 @@
                 </td>
             </tr>
         </table>
-        <?php wp_nonce_field('verify'); ?>
-        <input type="hidden" name="key" value="credits" />
         <p class="submit">
+            <?php wp_nonce_field('verify'); ?>
+            <input type="hidden" name="key" value="credits" />
             <input type="submit" class="button-primary" name="save" value="<?php _e( 'Save Changes', $this->text_domain ); ?>" />
         </p>
     </form>

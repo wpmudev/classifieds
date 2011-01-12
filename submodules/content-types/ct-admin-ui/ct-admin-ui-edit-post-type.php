@@ -71,7 +71,7 @@ function ct_admin_ui_edit_post_type( $args ) { ?>
                             <input type="checkbox" name="supports[revisions]" value="revisions" <?php if ( $args['supports']['revisions'] ) echo ( 'checked="checked"' ); ?>>
                             <span class="description"><strong><?php _e('Revisions', 'content_types') ?></strong> - <?php _e('Will store revisions.', 'content_types') ?></span>
                             <br />
-                            <input type="checkbox" name="supports[page_attributes]" value="page_attributes" <?php if ( $args['supports']['page_attributes'] ) echo ( 'checked="checked"' ); ?>>
+                            <input type="checkbox" name="supports[page_attributes]" value="page-attributes" <?php if ( $args['supports']['page_attributes'] ) echo ( 'checked="checked"' ); ?>>
                             <span class="description"><strong><?php _e('Page Attributes', 'content_types') ?></strong> - <?php _e('Template and menu order - Hierarchical must be true!', 'content_types') ?></span>
                         </td>
                     </tr>
