@@ -24,7 +24,7 @@ function classifieds_admin_menu_credits_pages() {
         add_submenu_page( 'classifieds', 'Credits User List', 'Credits User List', 'edit_users', 'classifieds_credits_user_list', 'classifieds_page_credits_list');
         add_submenu_page('classifieds', 'My Credits', 'My Credits', 'read', 'classifieds_credits_management', 'classifieds_page_credits_output' );
 } 
-add_action('admin_menu', 'classifieds_admin_menu_credits_pages');
+//add_action('admin_menu', 'classifieds_admin_menu_credits_pages');
 
 function classifieds_credits_admin_styles() {
     ?>

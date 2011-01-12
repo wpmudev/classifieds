@@ -193,7 +193,7 @@ function classifieds_admin_menu_pages() {
 	add_submenu_page( 'classifieds', 'Create an Ad &lsaquo; Classifieds', 'Create New Ad', 'read', 'classifieds_new', 'classifieds_page_new_output' );
     add_submenu_page( 'classifieds', 'Configuration &lsaquo; Classifieds', 'Categories', 'edit_users', 'classifieds_categories', 'classifieds_page_categories_output');
 }
-add_action( 'admin_menu', 'classifieds_admin_menu_pages' );
+//add_action( 'admin_menu', 'classifieds_admin_menu_pages' );
 
 /**
  * Inserts ad into the DB an returns the ad Id

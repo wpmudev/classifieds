@@ -37,9 +37,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  * @since 1.1.0
  */
 
+/* Define plugin version */
+define ( 'CF_VERSION', '1.2.0' );
+define ( 'CF_DB_VERSION', '2.0' );
+
+/* define the plugin folder url */
+define ( 'CF_PLUGIN_URL', WP_PLUGIN_URL . '/' . str_replace( basename(__FILE__), '', plugin_basename(__FILE__) ));
+/* define the plugin folder dir */
+define ( 'CF_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . str_replace( basename(__FILE__), '', plugin_basename(__FILE__) ));
+
 /* 
  * Load plugin files from folder
  */
 include_once 'classifieds/classifieds.php';
+include_once 'core/core.php';
+include_once 'submodules/content-types/ct-loader.php';
 
 ?>
