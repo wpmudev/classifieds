@@ -13,7 +13,6 @@ class Classifieds_Core_Admin extends Classifieds_Core {
     /** @var string $sub_menu_slug Submenu slug @todo better way of hadnling this */
     var $sub_menu_slug    = 'classifieds_credits';
 
-
     /**
      * Constructor. Hooks the whole module to the "init" hook.
      *
@@ -33,8 +32,6 @@ class Classifieds_Core_Admin extends Classifieds_Core {
     function init() {
         /* Init if admin only */
         if ( is_admin() ) {
-            /* Initiate core plugin vars */
-            //$this->init_vars();
             /* Initiate admin menus and admin head */
             add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
             add_action( 'admin_init', array( &$this, 'admin_head' ) );
@@ -48,10 +45,10 @@ class Classifieds_Core_Admin extends Classifieds_Core {
      * @return void 
      **/
     function admin_menu() {
-        add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'admin_output' ) );
-        add_submenu_page( $this->menu_slug, __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'admin_output' ) );
-        add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', 'classifieds_settings', array( &$this, 'admin_output' ) );
-        add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Credits', $this->text_domain ), 'edit_users', 'classifieds_credits' , array( &$this, 'admin_output' ) );
+        add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
+        add_submenu_page( $this->menu_slug, __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
+        add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', 'classifieds_settings', array( &$this, 'handle_admin_requests' ) );
+        add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Credits', $this->text_domain ), 'edit_users', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
     }
 
     /**
@@ -59,7 +56,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
      *
      * @return void
      **/
-    function admin_output() {
+    function handle_admin_requests() {
         if ( $_GET['page'] == $this->menu_slug ) {
             if ( isset( $_POST['confirm'] ) ) {
                 /* Change post status */
@@ -108,9 +105,8 @@ class Classifieds_Core_Admin extends Classifieds_Core {
             if ( $_GET['tab'] == 'send_credits' ) {
                 
             } else {
-                if ( isset( $_POST['save'] ) ) {
-                    $this->update_user_credits( $_POST['purchase_credits'] );
-                    $this->render_admin( 'credits-my-credits' );
+                if ( isset( $_POST['purchase'] ) ) {
+                    $this->js_redirect( get_bloginfo('url') . '/checkout/' );
                 } else {
                     $this->render_admin( 'credits-my-credits' );
                 }

@@ -19,7 +19,7 @@ get_header(); ?>
                 <?php if ( $action == 'my-classifieds' ): ?>
 
                     <h1 class="entry-title"><?php the_title(); ?></h1>
-                    <div class="av-credits"><?php _e( 'Available Credits:', 'classifieds' ); ?> <?php echo get_user_meta( get_current_user_id(), 'cf_credits', true ); ?></div>
+                    <div class="av-credits"><?php _e( 'Available Credits:', 'classifieds' ); ?> <?php $user_credits = ( get_user_meta( get_current_user_id(), 'cf_credits', true ) ) ? get_user_meta( get_current_user_id(), 'cf_credits', true ) : 0; echo $user_credits; ?></div>
 
                     <form method="post" action="" class="create-new-btn">
                         <input type="submit" value="Create New Classified" name="create_new">
@@ -78,7 +78,7 @@ get_header(); ?>
                                                 <tr>
                                                     <th><?php _e( 'Categories', 'classifieds' ); ?></th>
                                                     <td>
-                                                       <?php $taxonomies = get_taxonomies( array( 'object_type' => array( 'classifieds' ), '_builtin' => false ), 'names' ); ?>
+                                                       <?php $taxonomies = get_object_taxonomies( 'classifieds', 'names' ); ?>
                                                        <?php foreach ( $taxonomies as $taxonomy ): ?>
                                                            <?php echo get_the_term_list( get_the_ID(), $taxonomy, '', ', ', '' ) . ' '; ?>
                                                        <?php endforeach; ?>
@@ -164,9 +164,9 @@ get_header(); ?>
                                         <table class="cf-terms">
                                             <tr>
                                             <?php
-                                                  $taxonomies = get_taxonomies( array( 'object_type' => array( 'classifieds' ), '_builtin' => false ), 'names' );
+                                                  $taxonomies = get_object_taxonomies( 'classifieds', 'names' );
                                                   $post_terms = wp_get_object_terms( get_the_ID(), $taxonomies );
-                                                  $taxonomies = get_taxonomies( array( 'object_type' => array( 'classifieds' ), '_builtin' => false ), 'objects' ); ?>
+                                                  $taxonomies = get_object_taxonomies( 'classifieds', 'objects' ); ?>
                                             <?php foreach ( $taxonomies as $taxonomy_name => $taxonomy_object ): ?>
                                                 <?php $terms = get_terms( $taxonomy_name, array( 'hide_empty' => 0 ) ); ?>
                                                 <td>
@@ -232,6 +232,11 @@ get_header(); ?>
 
                     <h1 class="entry-title"><?php the_title(); ?> / <?php _e( 'Create New', 'classifieds' ); ?></h1>
 
+                    <?php $error = get_query_var('cf_error'); ?>
+                    <?php if ( !empty( $error ) ): ?>
+                        <br /><div class="error"><?php echo $error . '<br />'; ?></div>
+                    <?php endif; ?>
+
                     <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
                         <div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -264,7 +269,7 @@ get_header(); ?>
                                             <label for="terms"><?php _e( 'Terms ( Categories / Tags )', 'classifieds' ); ?> (<?php _e( 'required', 'classifieds' ); ?>)</label>
                                             <table class="cf-terms">
                                                 <tr>
-                                                    <?php $taxonomies = get_taxonomies( array( 'object_type' => array( 'classifieds' ), '_builtin' => false ), 'objects' ); ?>
+                                                    <?php $taxonomies = get_object_taxonomies( 'classifieds', 'objects' ); ?>
                                                     <?php foreach ( $taxonomies as $taxonomy_name => $taxonomy_object ): ?>
                                                         <?php $terms = get_terms( $taxonomy_name, array( 'hide_empty' => 0 ) ); ?>
                                                         <td>

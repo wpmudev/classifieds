@@ -18,6 +18,14 @@ get_header(); ?>
                 <h1 class="entry-title"><?php the_title(); ?></h1>
 
                 <?php query_posts( array( 'post_status' => 'publish' , 'post_type' => array( 'classifieds' )  ) ); ?>
+
+                <?php if ( !have_posts() ): ?>
+                        <br />
+                        <div class="info" id="message">
+                            <p><?php _e( 'No Classifieds found.', 'classifieds' ); ?></p>
+                        </div>
+                    <?php endif; ?>
+                        
                 <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
                     <div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -40,19 +48,19 @@ get_header(); ?>
                                             <td>
                                                 <?php /* For BuddyPress compatibility */ ?>
                                                 <?php if ( isset( $bp ) ): ?>
-                                                <a href="<?php echo bp_core_get_user_domain( get_the_author_ID() ) . 'classifieds/';?>" alt="<?php echo get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name'). '\'s Profile';  ?>" >
+                                                <a href="<?php echo bp_core_get_user_domain( get_the_author_ID() ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" >
                                                 <?php else: ?>
-                                                <a href="<?php echo get_author_posts_url( get_the_author_ID() ); ?>" alt="<?php echo get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name'). '\'s Profile';  ?>" >    
+                                                    <a href="<?php echo get_author_posts_url( get_the_author_ID() ); ?>" alt="<?php the_author(); ?> Profile" >
                                                 <?php endif; ?>
 
-                                                    <?php echo get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name'); ?></td>
+                                                <?php the_author(); ?></td>
 
                                                 </a>
                                         </tr>
                                         <tr>
                                             <th><?php _e( 'Categories', 'classifieds' ); ?></th>
                                             <td>
-                                               <?php $taxonomies = get_taxonomies( array( 'object_type' => array( 'classifieds' ), '_builtin' => false ), 'names' ); ?>
+                                               <?php $taxonomies = get_object_taxonomies( 'classifieds', 'names' ); ?>
                                                <?php foreach ( $taxonomies as $taxonomy ): ?>
                                                    <?php echo get_the_term_list( get_the_ID(), $taxonomy, '', ', ', '' ) . ' '; ?>
                                                <?php endforeach; ?>

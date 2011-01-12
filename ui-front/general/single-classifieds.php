@@ -32,12 +32,12 @@ get_header(); ?>
 
                                    <?php /* For BuddyPress compatibility */ ?>
                                    <?php if ( isset( $bp ) ): ?>
-                                   <a href="<?php echo bp_core_get_user_domain( get_the_author_ID() ) . 'classifieds/';?>" alt="<?php echo get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name'). '\'s Profile';  ?>" >
+                                   <a href="<?php echo bp_core_get_user_domain( get_the_author_ID() ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" >
                                    <?php else: ?>
-                                   <a href="<?php echo get_author_posts_url( get_the_author_ID() ); ?>" alt="<?php echo get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name'). '\'s Profile';  ?>" >
+                                   <a href="<?php echo get_author_posts_url( get_the_author_ID() ); ?>" alt="<?php the_author(); ?> Profile" >
                                    <?php endif; ?>
 
-                                   <?php echo get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name'); ?>
+                                   <?php the_author(); ?>
 
                                    </a>
                                    
@@ -46,7 +46,7 @@ get_header(); ?>
                            <tr>
                                <th><?php _e( 'Categories', 'classifieds' ); ?></th>
                                <td>
-                                   <?php $taxonomies = get_taxonomies( array( 'object_type' => array( 'classifieds' ), '_builtin' => false ), 'names' ); ?>
+                                   <?php $taxonomies = get_object_taxonomies( 'classifieds', 'names' ); ?>
                                    <?php foreach ( $taxonomies as $taxonomy ): ?>
                                        <?php echo get_the_term_list( $post->ID, $taxonomy, '', ', ', '' ) . ' '; ?>
                                    <?php endforeach; ?>

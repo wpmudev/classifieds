@@ -3,7 +3,7 @@
 /*
 Plugin Name: Classifieds
 Plugin URI: http://premium.wpmudev.org/project/classifieds
-Description: Add Classifieds to your blog, network or BuddyPress site. Create and manage ads, upload images, send emails, play with the provided set of widgets, enable the credit system and charge your users for placing ads on your network or BuddyPress site.
+Description: Add Classifieds to your blog, network or BuddyPress site. Create and manage ads, upload images, send emails, enable the credit system and charge your users for placing ads on your network or BuddyPress site.
 Version: 2.0.0
 Author: Ivan Shaovchev (Incsub)
 Author URI: http://ivan.sh
@@ -11,7 +11,7 @@ License: GNU General Public License (Version 2 - GPLv2)
 */
 
 /*
-Copyright 2007-2010 Incsub (http://incsub.com)
+Copyright 2007-2011 Incsub (http://incsub.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
@@ -37,22 +37,19 @@ define ( 'CF_PLUGIN_URL', WP_PLUGIN_URL . '/' . str_replace( basename(__FILE__),
 /* define the plugin folder dir */
 define ( 'CF_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . str_replace( basename(__FILE__), '', plugin_basename(__FILE__) ));
 
-/* 
- * Load plugin files from folder
- */
-include_once 'classifieds/classifieds.php';
+/* Load plugin files */
 include_once 'core/core.php';
+include_once 'core/data.php';
 include_once 'core/main.php';
 include_once 'core/admin.php';
 include_once 'core/buddypress.php';
 include_once 'core/paypal.php';
-include_once 'submodules/content-types/ct-loader.php';
+include_once 'submodules/content-types/loader.php';
 
-/* tmp debug func */
+/* Debug function */
 function cf_debug( $param ) {
     echo '<pre>';
     print_r( (array) $param );
     echo '</pre>';
 }
-
 ?>

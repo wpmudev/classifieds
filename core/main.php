@@ -26,10 +26,8 @@ class Classifieds_Core_Main extends Classifieds_Core {
      * @return void
      **/
     function init() {
-        /* Load general WordPress front if BuddyPress is disabled */
+        /* Load general WordPress front if BuddyPress is disabled and not admin */
         if ( !$this->bp_active && !is_admin() ) {
-            /* Create neccessary pages */
-            add_action( 'wp_loaded', array( &$this, 'create_main_pages' ) );
             /* Handle requests for plugin pages */
             add_action( 'template_redirect', array( &$this, 'handle_page_requests' ) );
             /* Enqueue styles */
@@ -49,60 +47,6 @@ class Classifieds_Core_Main extends Classifieds_Core {
      **/
     function buddypress_active() {
         $this->bp_active = true;
-    }
-
-    /**
-     * Create the main Classifieds page.
-     *
-     * @return void
-     **/
-    function create_main_pages() {
-        $page['classifieds'] = get_page_by_title('Classifieds');
-        if ( !isset( $page['classifieds'] ) ) {
-            $current_user = wp_get_current_user();
-            /* Construct args for the new post */
-            $args = array(
-                'post_title'     => 'Classifieds',
-                'post_content'   => '[classifieds]',
-                'post_status'    => 'publish',
-                'post_author'    => $current_user->ID,
-                'post_type'      => 'page',
-                'ping_status'    => 'closed',
-                'comment_status' => 'closed'
-            );
-            $parent_id = wp_insert_post( $args );
-        }
-        $page['my_classifieds'] = get_page_by_title('My Classifieds');
-        if ( !isset( $page['my_classifieds'] ) ) {
-            $current_user = wp_get_current_user();
-            /* Construct args for the new post */
-            $args = array(
-                'post_title'     => 'My Classifieds',
-                'post_content'   => '[classifieds_my]',
-                'post_status'    => 'publish',
-                'post_author'    => $current_user->ID,
-                'post_type'      => 'page',
-                'post_parent'    => $parent_id,
-                'ping_status'    => 'closed',
-                'comment_status' => 'closed'
-            );
-            wp_insert_post( $args );
-        }
-        $page['checkout'] = get_page_by_title('Checkout');
-        if ( !isset( $page['checkout'] ) ) {
-            $current_user = wp_get_current_user();
-            /* Construct args for the new post */
-            $args = array(
-                'post_title'     => 'Checkout',
-                'post_content'   => '[classifieds_checkout]',
-                'post_status'    => 'publish',
-                'post_author'    => $current_user->ID,
-                'post_type'      => 'page',
-                'ping_status'    => 'closed',
-                'comment_status' => 'closed'
-            );
-            wp_insert_post( $args );
-        }
     }
 
     /**
@@ -196,6 +140,10 @@ class Classifieds_Core_Main extends Classifieds_Core {
                     $post_id = $this->update_ad( $_POST, $_FILES );
                     $this->save_expiration_date( $post_id );
                     wp_redirect( get_bloginfo('url') . '/classifieds/my-classifieds/' );
+                } else {
+                    set_query_var( 'cf_action', 'create-new' );
+                    $error = __( 'Please make sure you fill all fields marked with (required)', $this->text_domain );
+                    set_query_var( 'cf_error', $error );
                 }
             }
             /* If user wants to go to My Classifieds main page  */

@@ -6,7 +6,7 @@
         <a class="nav-tab <?php if ( $_GET['tab'] == 'payments' ) echo 'nav-tab-active'; ?>" href="admin.php?page=classifieds_settings&tab=payments&sub=paypal"><?php _e( 'Payments', $this->text_domain ); ?></a>
     <?php elseif (  $_GET['tab'] == 'my_credits' || $_GET['tab'] == 'send_credits' || ( $_GET['page'] == 'classifieds_credits' && empty( $_GET['tab'] ) ) ): ?>
         <a class="nav-tab <?php if ( $_GET['tab'] == 'my_credits' || empty( $_GET['tab'] ) )  echo 'nav-tab-active'; ?>" href="admin.php?page=classifieds_credits&tab=my_credits"><?php _e( 'My Credits', $this->text_domain ); ?></a>
-        <a class="nav-tab <?php if ( $_GET['tab'] == 'send_credits' ) echo 'nav-tab-active'; ?>" href="admin.php?page=classifieds_credits&tab=send_credits"><?php _e( 'Send Credits', $this->text_domain ); ?></a>
+        <?php /* <a class="nav-tab <?php if ( $_GET['tab'] == 'send_credits' ) echo 'nav-tab-active'; ?>" href="admin.php?page=classifieds_credits&tab=send_credits"><?php _e( 'Send Credits', $this->text_domain ); ?></a> */ ?>
     <?php endif; ?>
 </h2>
 

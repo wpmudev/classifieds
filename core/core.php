@@ -5,6 +5,10 @@
 if ( !class_exists('Classifieds_Core') ):
 class Classifieds_Core {
 
+    /** @var plugin version */
+    var $plugin_version = CF_VERSION;
+    /** @var plugin database version */
+    var $plugin_db_version = CF_DB_VERSION;
     /** @var string $plugin_url Plugin URL */
     var $plugin_url    = CF_PLUGIN_URL;
     /** @var string $plugin_dir Path to plugin directory */
@@ -33,10 +37,12 @@ class Classifieds_Core {
     var $bp_active;
     /** @var boolean Login error flag */
     var $login_error;
-    /** @var boolean The current user; */
+    /** @var boolean The current user */
     var $current_user;
     /** @var string Current user credits */
     var $user_credits;
+    /** @var boolean flag whether to flush all plugin data on plugin deactivation */
+    var $flush_plugin_data = false;
 
     /**
      * Constructor.
@@ -46,6 +52,12 @@ class Classifieds_Core {
     function Classifieds_Core() {
         /* Hook the entire class to WordPress init hook */
         add_action( 'init', array( &$this, 'init' ) );
+        /* Load plugin translation file */
+        add_action( 'init', array( &$this, 'load_plugin_textdomain' ), 0 );
+        /* Register activation hook */
+        register_activation_hook( $this->plugin_dir . 'loader.php', array( &$this, 'plugin_activate' ) );
+        /* Register deactivation hook */
+        register_deactivation_hook( $this->plugin_dir . 'loader.php', array( &$this, 'plugin_deactivate' ) );
         /* Add theme support for post thumbnails */
         add_theme_support( 'post-thumbnails' );
     }
@@ -56,18 +68,32 @@ class Classifieds_Core {
      * @return void
      **/
     function init() {
-        //add_filter( 'map_meta_cap', array( &$this, 'map_meta_cap' ), 10, 4 );
+        /* Create neccessary pages */
+        add_action( 'wp_loaded', array( &$this, 'create_default_pages' ) );
+        /* Setup reles and capabilities */
         add_action( 'wp_loaded', array( &$this, 'roles' ) );
-        add_action( 'wp_loaded', array( &$this, 'handle_login' ) );
+        /* Schedule expiration check */
         add_action( 'wp_loaded', array( &$this, 'scheduly_expiration_check' ) );
+        /* Add template filter */
         add_filter( 'single_template', array( &$this, 'get_single_template' ) ) ;
+        /* Add template filter */
         add_filter( 'page_template', array( &$this, 'get_page_template' ) ) ;
+        /* Add template filter */
         add_filter( 'author_template', array( &$this, 'get_author_template' ) ) ;
+        /* Add template filter */
         add_filter( 'taxonomy_template', array( &$this, 'get_taxonomy_template' ) ) ;
+        /* Handle login requests */
+        add_action( 'template_redirect', array( &$this, 'handle_login_requests' ) );
+        /* Handle all requests for checkout */
         add_action( 'template_redirect', array( &$this, 'handle_checkout_requests' ) );
+        /* Handle all requests for contact form submission */
         add_action( 'template_redirect', array( &$this, 'handle_contact_form_requests' ) );
+        /* Cehck expiration dates */
         add_action( 'check_expiration_dates', array( &$this, 'check_expiration_dates_callback' ) );
+        /* Set signup credits for new users */
         add_action( 'user_register', array( &$this, 'set_signup_user_credits' ) );
+        /** Map meta capabilities @todo */
+        //add_filter( 'map_meta_cap', array( &$this, 'map_meta_cap' ), 10, 4 );
     }
 
     /**
@@ -77,8 +103,8 @@ class Classifieds_Core {
      **/
     function init_vars() {
         /* Set Taxonomy objects and names */
-        $this->taxonomy_objects = get_taxonomies( array( 'object_type' => array( $this->post_type ), '_builtin' => false ), 'objects' );
-        $this->taxonomy_names   = get_taxonomies( array( 'object_type' => array( $this->post_type ), '_builtin' => false ), 'names' );
+        $this->taxonomy_objects = get_object_taxonomies( $this->post_type, 'objects' ); 
+        $this->taxonomy_names   = get_object_taxonomies( $this->post_type, 'names' );
         /* Get all custom fields values with their ID's as keys */
         $custom_fields = get_site_option('ct_custom_fields');
         if ( is_array( $custom_fields ) ) {
@@ -93,6 +119,100 @@ class Classifieds_Core {
         $this->current_user = wp_get_current_user();
         /* Set current user credits */
         $this->user_credits = get_user_meta( $this->current_user->ID, 'cf_credits', true );
+    }
+
+
+    /**
+     * Loads "classifieds-[xx_XX].mo" language file from the "languages" directory
+     *
+     * @return void
+     **/
+    function load_plugin_textdomain() {
+        $plugin_dir = $this->plugin_dir . 'languages';
+        load_plugin_textdomain( 'classifieds', null, $plugin_dir );
+    }
+
+    /**
+     * Update plugin versions
+     *
+     * @return void
+     **/
+    function plugin_activate() {
+        /* Update plugin versions */
+        $versions = array( 'versions' => array( 'version' => $this->plugin_version, 'db_version' => $this->plugin_db_version ) );
+        $options = get_site_option( $this->options_name );
+        $options = ( isset( $options['versions'] ) ) ? array_merge( $options, $versions ) : $versions;
+        update_site_option( $this->options_name, $options );
+    }
+
+    /**
+     * Deactivate plugin. If $this->flush_plugin_data is set to "true"
+     * all plugin data will be deleted
+     *
+     * @return void
+     */
+    function plugin_deactivate() {
+        /* if $this->flush_plugin_data is set to true it will delete all plugin data */
+        if ( $this->flush_plugin_data ) {
+            delete_option( $this->options_name );
+            delete_site_option( $this->options_name );
+            delete_site_option( 'ct_custom_post_types' );
+            delete_site_option( 'ct_custom_taxonomies' );
+            delete_site_option( 'ct_custom_fields' );
+            delete_site_option( 'ct_flush_rewrite_rules' );
+        }
+    }
+
+    /**
+     * Create the default Classifieds pages.
+     *
+     * @return void
+     **/
+    function create_default_pages() {
+        /* Create neccasary pages */
+        $page['classifieds'] = get_page_by_title('Classifieds');
+        if ( !isset( $page['classifieds'] ) ) {
+            $current_user = wp_get_current_user();
+            /* Construct args for the new post */
+            $args = array(
+                'post_title'     => 'Classifieds',
+                'post_status'    => 'publish',
+                'post_author'    => $current_user->ID,
+                'post_type'      => 'page',
+                'ping_status'    => 'closed',
+                'comment_status' => 'closed'
+            );
+            $parent_id = wp_insert_post( $args );
+        }
+        $page['my_classifieds'] = get_page_by_title('My Classifieds');
+        if ( !isset( $page['my_classifieds'] ) ) {
+            $current_user = wp_get_current_user();
+            /* Construct args for the new post */
+            $args = array(
+                'post_title'     => 'My Classifieds',
+                'post_status'    => 'publish',
+                'post_author'    => $current_user->ID,
+                'post_type'      => 'page',
+                'post_parent'    => $parent_id,
+                'ping_status'    => 'closed',
+                'comment_status' => 'closed'
+            );
+            wp_insert_post( $args );
+        }
+        $page['checkout'] = get_page_by_title('Checkout');
+        if ( !isset( $page['checkout'] ) ) {
+            $current_user = wp_get_current_user();
+            /* Construct args for the new post */
+            $args = array(
+                'post_title'     => 'Checkout',
+                'post_status'    => 'publish',
+                'post_author'    => $current_user->ID,
+                'post_type'      => 'page',
+                'ping_status'    => 'closed',
+                'comment_status' => 'closed'
+            );
+            wp_insert_post( $args );
+        }
     }
 
     /**
@@ -119,23 +239,15 @@ class Classifieds_Core {
     }
 
     /**
-     * Handle user login.
-     *
-     * @return void
-     **/
-    function handle_login() {
-        if ( isset( $_POST['login_submit'] ) )
-            $this->login_error = $this->login( $_POST['username'], $_POST['password'] );
-    }
-
-    /**
      * Add custom role for Classifieds members. Add new capabiloties for admin.
      *
      * @global $wp_roles
+     * @return void
      **/
     function roles() {
         global $wp_roles;
         if ( $wp_roles ) {
+            /** @todo remove remove_role */
             $wp_roles->remove_role( $this->user_role );
             $wp_roles->add_role( $this->user_role, 'Classifieds Member', array(
                 'publish_classifieds'       => true,
@@ -151,7 +263,7 @@ class Classifieds_Core {
                 'assign_terms'              => true,
                 'read'                      => true 
             ) );
-
+            /* Set administrator roles */
             $wp_roles->add_cap( 'administrator', 'publish_classifieds' );
             $wp_roles->add_cap( 'administrator', 'edit_classifieds' );
             $wp_roles->add_cap( 'administrator', 'edit_others_classifieds' );
@@ -161,11 +273,12 @@ class Classifieds_Core {
             $wp_roles->add_cap( 'administrator', 'edit_classified' );
             $wp_roles->add_cap( 'administrator', 'delete_classified' );
             $wp_roles->add_cap( 'administrator', 'read_classified' );
+            $wp_roles->add_cap( 'administrator', 'assign_terms' );
         }
     }
 
     /**
-     * Map meta cap
+     * Map meta capabilities
      *
      * Learn more:
      * @link http://justintadlock.com/archives/2010/07/10/meta-capabilities-for-custom-post-types
@@ -188,7 +301,6 @@ class Classifieds_Core {
         }
         /* If editing a classified, assign the required capability. */
         if ( 'edit_classified' == $cap ) {
-
             if ( $user_id == $post->post_author )
                 $caps[] = $post_type->cap->edit_posts;
             else
@@ -196,7 +308,6 @@ class Classifieds_Core {
         }
         /* If deleting a classified, assign the required capability. */
         elseif ( 'delete_classified' == $cap ) {
-
             if ( $user_id == $post->post_author )
                 $caps[] = $post_type->cap->delete_posts;
             else
@@ -204,7 +315,6 @@ class Classifieds_Core {
         }
         /* If reading a private classified, assign the required capability. */
         elseif ( 'read_classified' == $cap ) {
-
             if ( 'private' != $post->post_status )
                 $caps[] = 'read';
             elseif ( $user_id == $post->post_author )
@@ -311,6 +421,16 @@ class Classifieds_Core {
     }
 
     /**
+     * Handle user login.
+     *
+     * @return void
+     **/
+    function handle_login_requests() {
+        if ( isset( $_POST['login_submit'] ) )
+            $this->login_error = $this->login( $_POST['username'], $_POST['password'] );
+    }
+
+    /**
      * Handle all checkout requests.
      * 
      * @uses session_start() We need to keep track of some session variables for the checkout
@@ -329,7 +449,7 @@ class Classifieds_Core {
                 /** @todo Set redirect */
                 //wp_redirect( get_bloginfo('url') );
             }
-            /* If not PayPal API credentials are set, disable the checkout process */
+            /* If no PayPal API credentials are set, disable the checkout process */
             if ( empty( $options['paypal'] ) ) {
                 /* Set the proper step which will be loaded by "page-checkout.php" */
                 set_query_var( 'cf_step', 'disabled' );
@@ -460,17 +580,16 @@ class Classifieds_Core {
         if ( get_post_type() == $this->post_type && is_single() ) {
             if ( isset( $_POST['contact_form_send'] ) ) {
                 global $post;
+                /** @todo validate fields */
                 $user_info = get_userdata( $post->post_author );
                 $to      = $user_info->user_email;
                 $subject = $_POST['subject'];
                 $message = $_POST['message'];
                 $headers = 'From: ' . $_POST['name'] . ' <' . $_POST['email'] . '>' . "\r\n";
-                wp_mail( 'ivan.shaovchev@gmail.com', $subject, $message, $headers );
+                wp_mail( $to, $subject, $message, $headers );
             }
         }
     }
-
-    
 
     /**
      * Save custom fields data
@@ -581,10 +700,10 @@ class Classifieds_Core {
     function get_user_credits() {
         $credits = get_user_meta( $this->current_user->ID, 'cf_credits', true );
         $credits_log = get_user_meta( $this->current_user->ID, 'cf_credits_log', true );
-        if ( !empty( $credits ) )
-            return $credits;
+        if ( empty( $credits ) )
+            return 0;
         else
-            return __( 'None', $this->text_domain );
+            return $credits;
     }
 
     /**

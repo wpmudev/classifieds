@@ -34,25 +34,10 @@
                     <label for="purchase_credits"><?php _e('Purchase Additional Credits', $this->text_domain ) ?></label>
                 </th>
                 <td>
-                    <select id="purchase_credits" name="purchase_credits">
-                        <option value="10"><?php _e('10 Credits', $this->text_domain ); ?></option>
-                        <option value="20"><?php _e('20 Credits', $this->text_domain ); ?></option>
-                        <option value="30"><?php _e('30 Credits', $this->text_domain ); ?></option>
-                        <option value="40"><?php _e('40 Credits', $this->text_domain ); ?></option>
-                        <option value="50"><?php _e('50 Credits', $this->text_domain ); ?></option>
-                        <option value="60"><?php _e('60 Credits', $this->text_domain ); ?></option>
-                        <option value="70"><?php _e('70 Credits', $this->text_domain ); ?></option>
-                        <option value="80"><?php _e('80 Credits', $this->text_domain ); ?></option>
-                        <option value="90"><?php _e('90 Credits', $this->text_domain ); ?></option>
-                        <option value="100"><?php _e('100 Credits', $this->text_domain ); ?></option>
-                    </select>
                     <p class="submit">
                         <?php wp_nonce_field('verify'); ?>
-                        <input type="hidden" name="key" value="purchase" />
-                        <input type="submit" class="button-secondary" name="save" value="<?php _e( 'Purchase', $this->text_domain ); ?>" />
+                        <input type="submit" class="button-secondary" name="purchase" value="<?php _e( 'Purchase', $this->text_domain ); ?>" />
                     </p>
-                    <br /><br />
-                    <span class="description"><?php _e( 'All of your currently available credits.', $this->text_domain ); ?></span>
                 </td>
             </tr>
         </table>

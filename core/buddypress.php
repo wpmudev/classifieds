@@ -24,17 +24,18 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
      * @return void 
      **/
     function init() {
-        /* Add navigation */
-        add_action( 'wp', array( &$this, 'add_navigation' ), 2 );
-        /* Add navigation */
-        add_action( 'admin_menu', array( &$this, 'add_navigation' ), 2 );
-        /* Enqueue styles */
-        add_action( 'wp_print_styles', array( &$this, 'enqueue_styles' ) );
-        add_action( 'wp_head', array( &$this, 'print_scripts' ) );
-        add_action( 'bp_template_content', array( &$this, 'template_content' ) );
-
-        /* Set BuddyPress active state */
-        $this->bp_active = true;
+        if ( !is_admin() ) {
+            /* Set BuddyPress active state */
+            $this->bp_active = true;
+            /* Add navigation */
+            add_action( 'wp', array( &$this, 'add_navigation' ), 2 );
+            /* Add navigation */
+            add_action( 'admin_menu', array( &$this, 'add_navigation' ), 2 );
+            /* Enqueue styles */
+            add_action( 'wp_print_styles', array( &$this, 'enqueue_styles' ) );
+            add_action( 'wp_head', array( &$this, 'print_scripts' ) );
+            add_action( 'bp_template_content', array( &$this, 'handle_template_requests' ) );
+        }
     }
 
     /**
@@ -93,12 +94,12 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
     }
 
     /**
-     * Load the content for the specific classifieds component
+     * Load the content for the specific classifieds component and handle requests
      *
      * @global object $bp
      * @return void
      **/
-    function template_content() {
+    function handle_template_requests() {
         global $bp;
         if ( $bp->current_component == 'classifieds' && $bp->current_action == 'my-classifieds' ) {
             if ( isset( $_POST['edit'] ) ) {
@@ -136,7 +137,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
                     global $bp;
                     $post_id = $this->update_ad( $_POST, $_FILES );
                     $this->save_expiration_date( $post_id );
-                    $this->js_redirect( $bp->loggedin_user->userdata->user_url );
+                    $this->js_redirect( $bp->loggedin_user->userdata->user_url . '/classifieds/my-classifieds/' );
                 } else {
                     $this->render_front('members/single/classifieds/create-new');
                 }
@@ -166,7 +167,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
      **/
     function print_scripts() {
         global $bp;
-        if ( $bp->current_component == 'classifieds' ) { ?>
+        if ( $bp->current_component == 'classifieds' || is_single() ) { ?>
             <script type="text/javascript">
             //<![CDATA[
             jQuery(document).ready(function($) {

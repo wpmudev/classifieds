@@ -75,7 +75,7 @@ elseif ( in_array( 'ended',  $bp->action_variables ) ) {
                     <tr>
                         <th><?php _e( 'Categories', $this->text_domain ); ?></th>
                         <td>
-                           <?php $taxonomies = get_taxonomies( array( 'object_type' => array( 'classifieds' ), '_builtin' => false ), 'names' ); ?>
+                           <?php $taxonomies = get_object_taxonomies( 'classifieds', 'names' ); ?>
                            <?php foreach ( $taxonomies as $taxonomy ): ?>
                                <?php echo get_the_term_list( get_the_ID(), $taxonomy, '', ', ', '' ) . ' '; ?>
                            <?php endforeach; ?>
