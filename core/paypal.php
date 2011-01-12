@@ -1,7 +1,7 @@
 <?php
 
-if ( !class_exists('Classifieds_PayPal_Express') ):
-class Classifieds_PayPal_Express {
+if ( !class_exists('Classifieds_PayPal') ):
+class Classifieds_PayPal {
 
     /* PayPal API Module
      *
@@ -678,6 +678,6 @@ class Classifieds_PayPal_Express {
 }
 endif;
 
-if ( class_exists('Classifieds_PayPal_Express') )
-	$__classifieds_paypal_express = new Classifieds_PayPal_Express();
+if ( class_exists('Classifieds_PayPal') )
+	$__classifieds_paypal_express = new Classifieds_PayPal();
 ?>
