@@ -1,0 +1,84 @@
+
+
+/* Frontend 
+*******************************************************************************/
+
+.cf-ad-table img {
+    margin-bottom: 0 !important;
+    padding: 5px;
+    border: 1px solid #ddd;
+}
+.cf-main-img {
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+.cf-ad-table {
+     width: 100%;
+}
+.cf-ad-table .odd td {
+    background-color:#F2F2EA !important;
+}
+.cf-ad-table .even td {
+    background-color:#FFFFFF;
+}
+.cf-ad-table .odd td.key {
+    width: 20%;
+}
+.cf-ad-table .odd td.value {
+    width: 80%;
+}
+.cf-ad-table .cf-title {
+    border-bottom: 1px solid #CFD0CB;
+    font-weight: bold;
+    text-align: center;
+}
+.cf-ad-table input, .cf-ad-table textarea {
+    width: 100%;
+}
+.cf-form-error {
+    color: red;
+}
+.cf-form-ok {
+    color: green;
+}
+.cf-ad-table .cf-cat {
+    font-weight: bold;
+    text-align: center;
+}
+.cf-nav-right {
+    text-align: right;
+}
+.cf-ad-table .value {
+    vertical-align: middle;
+}
+/* Widgets
+*******************************************************************************/
+
+.classifieds-ads-widget ul li a img {
+    float: left;
+    padding: 5px;
+    border: 1px solid #ddd;
+    margin: 0 5px 15px 0;
+}
+.classifieds-ads-widget ul li {
+    clear: left;
+    list-style: none;
+}
+.classifieds-ads-widget .widget-title {
+    margin-bottom: 10px;
+}
+
+/* BuddyPress
+*******************************************************************************/
+
+.bp-classifieds-ads {
+    overflow: hidden;
+}
+.bp-classifieds-ads li {
+    float: left;
+    margin-right: 25px;
+}
+.bp-classifieds-ads li a img {
+    padding: 5px;
+    border: 1px solid #ddd;
+}

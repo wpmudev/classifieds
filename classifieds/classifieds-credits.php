@@ -1,33 +1,5 @@
 <?php
 
-/*
-Plugin Name: Classifieds
-Plugin URI: http://premium.wpmudev.org/project/classifieds
-Description: A brief description of the Plugin.
-Version: 1.1.0
-Author: Andrew Billits, Ivan Shaovchev
-Author URI:
-License: GNU General Public License (Version 2 - GPLv2)
-*/
-
-/*
-Copyright 2007-2010 Incsub (http://incsub.com)
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-*/
-
 /**
  * Classifieds CREDITS
  * Handles the overall operations of the credits module
@@ -44,13 +16,13 @@ $classifieds_credits_plural = __('Credits');
 
 function classifieds_admin_menu_credits_pages() {
 	global $wpdb;
+	
+    if ( current_user_can('edit_users' ) )
+        add_submenu_page( 'classifieds', 'Credit Options', 'Credit Options', 'edit_users', 'classifieds_credits', 'classifieds_page_config_output');
 
-	if ( $wpdb->siteid == '1' ) {
-         add_submenu_page( 'classifieds', 'Credit Options', 'Credit Options', 'edit_users', 'classifieds_credits', 'classifieds_page_config_output');
-         if ( get_site_option('classifieds_credits_enabled') )
-            add_submenu_page('classifieds', 'My Credits', 'My Credits', 'edit_users', 'classifieds_credits_management', 'classifieds_page_credits_output' );
-	}
-}
+    if ( get_site_option('classifieds_credits_enabled') )
+        add_submenu_page('classifieds', 'My Credits', 'My Credits', 'read', 'classifieds_credits_management', 'classifieds_page_credits_output' );
+} 
 add_action('admin_menu', 'classifieds_admin_menu_credits_pages');
 
 function classifieds_credits_admin_styles() {
@@ -521,7 +493,7 @@ function classifieds_page_config_output() {
 function classifieds_page_credits_output() {
     
 	global $wpdb, $wp_roles, $current_user, $classifieds_credits_singular, $classifieds_credits_plural;
-	if(!current_user_can('edit_users')) {
+	if( !current_user_can('read') ) {
 		echo "<p>Nice Try...</p>";  //If accessed properly, this message doesn't appear.
 		return;
 	}

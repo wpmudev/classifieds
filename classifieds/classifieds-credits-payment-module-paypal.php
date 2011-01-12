@@ -1,33 +1,5 @@
 <?php
 
-/*
-Plugin Name: Classifieds
-Plugin URI: http://premium.wpmudev.org/project/classifieds
-Description: A brief description of the Plugin.
-Version: 1.1.0
-Author: Andrew Billits, Ivan Shaovchev
-Author URI:
-License: GNU General Public License (Version 2 - GPLv2)
-*/
-
-/*
-Copyright 2007-2010 Incsub (http://incsub.com)
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-*/
-
 /**
  * Classifieds CREDITS
  * Handles the overall operations of the credits payment module
@@ -60,18 +32,18 @@ add_action('classifieds_payment_module_buy_100', 'classifieds_payment_module_pay
 //------------------------------------------------------------------------//
 function classifieds_payment_module_paypal_process(){
 	global $wpdb, $current_site;
-	if (get_site_option( "classifieds_paypal_email" ) == '') {
-		add_site_option( 'classifieds_paypal_email', $_POST['classifieds_paypal_email'] );
+	if ( get_site_option( "classifieds_paypal_email" ) == '') {
+		 update_site_option( 'classifieds_paypal_email', $_POST['classifieds_paypal_email'] );
 	} else {
 		update_site_option( "classifieds_paypal_email", $_POST['classifieds_paypal_email'] );
 	}
 	if (get_site_option( "classifieds_paypal_site" ) == '') {
-		add_site_option( 'classifieds_paypal_site', $_POST['classifieds_paypal_site'] );
+		update_site_option( 'classifieds_paypal_site', $_POST['classifieds_paypal_site'] );
 	} else {
 		update_site_option( "classifieds_paypal_site", $_POST['classifieds_paypal_site'] );
 	}
 	if (get_site_option( "classifieds_paypal_status" ) == '') {
-		add_site_option( 'classifieds_paypal_status', $_POST['classifieds_paypal_status'] );
+		update_site_option( 'classifieds_paypal_status', $_POST['classifieds_paypal_status'] );
 	} else {
 		update_site_option( "classifieds_paypal_status", $_POST['classifieds_paypal_status'] );
 	}
@@ -79,7 +51,7 @@ function classifieds_payment_module_paypal_process(){
 //------------------------------------------------------------------------//
 //---Output Functions-----------------------------------------------------//
 //------------------------------------------------------------------------//
-function classifieds_payment_module_paypal_options(){
+function classifieds_payment_module_paypal_options() {
 	global $wpdb, $current_site;
 	?>
     <fieldset class="options"> 
@@ -137,16 +109,21 @@ function classifieds_payment_module_paypal_options(){
     <?php
 }
 
-function classifieds_payment_module_paypal_button_output($tmp_credits) {
+function classifieds_payment_module_paypal_button_output( $tmp_credits ) {
 	global $wpdb, $current_site, $current_user;
 	// Live URL:	https://www.paypal.com/cgi-bin/webscr
 	// Sandbox URL:	https://www.sandbox.paypal.com/cgi-bin/webscr
-	if (get_site_option( "classifieds_paypal_status" ) == 'live'){
+	if ( get_site_option( "classifieds_paypal_status" ) == 'live' ){
 		$action = 'https://www.paypal.com/cgi-bin/webscr';
 	} else {
 		$action = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
 	}
-	$blog_url = get_blogaddress_by_id($wpdb->blogid);
+    
+    if ( is_multisite() )
+        $blog_url = get_blogaddress_by_id( $wpdb->blogid );
+    else
+        $blog_url = get_bloginfo('url') . '/';
+
 	$tmp_amount = get_site_option( "classifieds_cost_per_credit" );
 	$tmp_amount = $tmp_amount * $tmp_credits;
 

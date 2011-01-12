@@ -1,33 +1,5 @@
 <?php
 
-/*
-Plugin Name: Classifieds
-Plugin URI: http://premium.wpmudev.org/project/classifieds
-Description: A brief description of the Plugin.
-Version: 1.1.0
-Author: Andrew Billits, Ivan Shaovchev
-Author URI:
-License: GNU General Public License (Version 2 - GPLv2)
-*/
-
-/*
-Copyright 2007-2010 Incsub (http://incsub.com)
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-*/
-
 /**
  * Classifieds CORE
  * Handles the overall operations of the plugin
@@ -41,10 +13,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 define ( 'CLASSIFIEDS_VERSION', '1.1.0' );
 define ( 'CLASSIFIEDS_DB_VERSION', 1.1 );
 
+/** assign the variable a value depending on whether plugin is in "plugins" or "mu-plugins" folder */
+$cf_plugin_folder = str_replace( WP_CONTENT_DIR, '', dirname( dirname( __FILE__ )) );
+define ( 'CLASSIFIEDS_PLUGIN_FOLDER', $cf_plugin_folder );
+
 /** Define path constants */
 define ( 'CLASSIFIEDS_PATH', 'classifieds/' );
-define ( 'CLASSIFIEDS_UPLOAD_PATH', ABSPATH . 'wp-content/classifieds-images/' );
-define ( 'CLASSIFIEDS_DEFAULT_IMAGE_PATH', ABSPATH . 'wp-content/mu-plugins/classifieds/classifieds_default.png' );
+define ( 'CLASSIFIEDS_UPLOAD_PATH', WP_CONTENT_DIR . '/classifieds-images/' );
+define ( 'CLASSIFIEDS_DEFAULT_IMAGE_PATH', dirname( __FILE__ ) . '/classifieds_default.png' );
 
 /** Currencies list */
 $currencies = array(
@@ -115,14 +91,6 @@ function classifieds_global_install() {
     $wpdb->query( $classifieds_table2 );
     $wpdb->query( $classifieds_table3 );
 
-    // check whether the page "classifieds" exists
-    $page_exists = $wpdb->get_var( "SELECT COUNT(*) FROM " . $wpdb->posts . " WHERE post_name = 'classifieds' AND post_type = 'page'" );
-
-    // if no create it 
-    if ( !$page_exists )
-        $wpdb->query( "INSERT INTO " . $wpdb->posts . " ( post_author, post_date, post_date_gmt, post_content, post_title, post_excerpt, post_status, comment_status, ping_status, post_password, post_name, to_ping, pinged, post_modified, post_modified_gmt, post_content_filtered, post_parent, guid, menu_order, post_type, post_mime_type, comment_count )
-                       VALUES ( '" . $user_ID . "', '" . current_time( 'mysql' ) . "', '" . current_time( 'mysql' ) . "', '[classifieds_page]', '" . __('Classifieds') . "', '', 'publish', 'closed', 'closed', '', 'classifieds', '', '', '" . current_time( 'mysql' ) . "', '" . current_time( 'mysql' ) . "', '', 0, '', 0, 'page', '', 0 )" );
-    
     // initiate configuration options
     update_site_option( 'classifieds_installed', true );
     update_site_option( 'classifieds_version', CLASSIFIEDS_VERSION );
@@ -131,6 +99,20 @@ function classifieds_global_install() {
     // disable the credits module by default
     update_site_option( 'classifieds_credits_enabled', false );
 
+    add_action('init', 'classifieds_create_page');
+}
+
+function classifieds_create_page() {
+    
+    $args = array(
+        'post_title' => 'Classifieds',
+        'post_content' => '[classifieds_page]',
+        'post_status' => 'publish',
+        'post_type' => 'page',
+        'ping_status' => 'closed',
+        'comment_status' => 'closed');
+
+    wp_insert_post( $args );
 }
 
 /*
@@ -145,8 +127,8 @@ function classifieds_plug_scripts() {
 	echo "<script type='text/javascript' src='" . get_option('siteurl') . "/wp-includes/js/scriptaculous/dragdrop.js?ver=1.7.0'></script>";
 	echo "<script type='text/javascript' src='" . get_option('siteurl') . "/wp-includes/js/scriptaculous/slider.js?ver=1.7.0'></script>";
 	echo "<script type='text/javascript' src='" . get_option('siteurl') . "/wp-includes/js/scriptaculous/controls.js?ver=1.7.0'></script>";
-	echo "<script type='text/javascript' src='" . get_option('siteurl') . "/wp-includes/js/crop/cropper.js'></script>";
-	?>
+	echo "<script type='text/javascript' src='" . get_option('siteurl') . "/wp-includes/js/crop/cropper.js'></script>";?>
+
 	<script type="text/javascript">
         function onEndCrop( coords, dimensions ) {
             $( 'x1' ).value = coords.x1;
@@ -180,18 +162,26 @@ if ( $_GET['page'] == 'classifieds_new' || $_GET['action'] == 'change_image_crop
 }
 
 /*
+ * Load frontend CSS
+ */
+function classifieds_front_styles() { ?>
+    <link rel="stylesheet" href="<?php echo WP_CONTENT_URL . CLASSIFIEDS_PLUGIN_FOLDER; ?>/classifieds/classifieds.css" type="text/css" media="screen" />
+    <?php
+}
+add_action( 'wp_head', 'classifieds_front_styles' );
+
+/*
  * Add css styling to the admin pages
  */
-function classifieds_admin_styles() {
-    ?>
+function classifieds_admin_styles() { ?>
+    
     <style type="text/css">
         .classifieds table { text-align: left; }
         .classifieds table th { width: 200px; }
         .classifieds table td input { width: 250px; }
         .classifieds table td select { width: 250px; }
         .classifieds table td textarea { width: 250px; }
-    </style>
-    <?php
+    </style> <?php
 }
 add_action( 'admin_head', 'classifieds_admin_styles' );
 
@@ -199,8 +189,8 @@ add_action( 'admin_head', 'classifieds_admin_styles' );
  * Create admin menu pages
  */
 function classifieds_admin_menu_pages() {
-	add_menu_page( 'Classifieds', 'Classifieds', 'activate_plugins', 'classifieds', 'classifieds_page_main_output' );
-	add_submenu_page( 'classifieds', 'Create an Ad &lsaquo; Classifieds', 'Create New Ad', 'activate_plugins', 'classifieds_new', 'classifieds_page_new_output' );
+	add_menu_page( 'Classifieds', 'Classifieds', 'read', 'classifieds', 'classifieds_page_main_output' );
+	add_submenu_page( 'classifieds', 'Create an Ad &lsaquo; Classifieds', 'Create New Ad', 'read', 'classifieds_new', 'classifieds_page_new_output' );
     add_submenu_page( 'classifieds', 'Configuration &lsaquo; Classifieds', 'Categories', 'edit_users', 'classifieds_categories', 'classifieds_page_categories_output');
 }
 add_action( 'admin_menu', 'classifieds_admin_menu_pages' );
@@ -277,12 +267,13 @@ function classifieds_send_email( $tmp_ad_id, $tmp_ad_title, $tmp_to_email, $tmp_
 	wp_mail( $tmp_to_email, $subject_content, $tmp_content, $message_headers );
 }
 
-function classifieds_delete_ad( $tmp_ad_id ){
+function classifieds_delete_ad( $tmp_ad_id ) {
 	global $wpdb;
     
 	$wpdb->query( "DELETE FROM " . $wpdb->base_prefix . "classifieds_ads WHERE ad_ID = '" . $tmp_ad_id . "'" );
     
 	classifieds_delete_file( CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id . '-500.png' );
+    classifieds_delete_file( CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id . '-200.png');
 	classifieds_delete_file( CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id . '-80.png'  );
 	classifieds_delete_file( CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id . '-40.png'  );
 	classifieds_delete_file( CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id . '-16.png'  );
@@ -292,97 +283,51 @@ function classifieds_create_default_images( $tmp_ad_id ) {
 	
 	$im = ImageCreateFrompng( CLASSIFIEDS_DEFAULT_IMAGE_PATH );
 
-	//----------------------------------------------------------------//
-	//----------------------------------------------------------------//
-	$im_dest = imagecreatetruecolor (500, 375);
-	imagecopyresampled($im_dest, $im, 0, 0, 0, 0, 500, 375, 500, 375);
-	if ($tmp_image_type == 'png'){
-		imagesavealpha($im_dest, true);
-	}
-	imagepng($im_dest, CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id .'-500.png');
-	//----------------------------------------------------------------//
-	//----------------------------------------------------------------//
-	$im_dest = imagecreatetruecolor (80, 60);
-	imagecopyresampled($im_dest, $im, 0, 0, 0, 0, 80, 60, 500, 375);
-	if ($tmp_image_type == 'png'){
-		imagesavealpha($im_dest, true);
-	}
-	imagepng($im_dest, CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id .'-80.png');
-	//----------------------------------------------------------------//
-	//----------------------------------------------------------------//
-	$im_dest = imagecreatetruecolor (40, 30);
-	imagecopyresampled($im_dest, $im, 0, 0, 0, 0, 40, 30, 500, 375);
-	if ($tmp_image_type == 'png'){
-		imagesavealpha($im_dest, true);
-	}
-	imagepng($im_dest, CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id .'-40.png');
-	//----------------------------------------------------------------//
-	//----------------------------------------------------------------//
-	$im_dest = imagecreatetruecolor (16, 12);
-	imagecopyresampled($im_dest, $im, 0, 0, 0, 0, 16, 12, 500, 375);
-	if ($tmp_image_type == 'png'){
-		imagesavealpha($im_dest, true);
-	}
-	imagepng($im_dest, CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id .'-16.png');
-	//----------------------------------------------------------------//
-	//----------------------------------------------------------------//
+    $img_size = array (
+        array ( 'width' => 500, 'height'=> 375 ),
+        array ( 'width' => 200, 'height'=> 150 ),
+        array ( 'width' => 80, 'height'=> 60 ),
+        array ( 'width' => 40, 'height'=> 30 ),
+        array ( 'width' => 16, 'height'=> 12 ));
+
+    foreach ( $img_size as $img_size ) {
+        $im_dest = imagecreatetruecolor( $img_size['width'], $img_size['height'] );
+        $tmp_image_width = $tmp_x2 - $tmp_x1;
+        $tmp_image_height = $tmp_y2 - $tmp_y1;
+        imagecopyresampled($im_dest, $im, 0, 0, $tmp_x1, $tmp_y1, $img_size['width'], $img_size['height'], $tmp_image_width, $tmp_image_height);
+        if ($tmp_image_type == 'png')
+            imagesavealpha($im_dest, true);
+        imagepng($im_dest, CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id ."-{$img_size['width']}.png");
+    }
 }
 
 function classifieds_create_image( $tmp_ad_id, $tmp_image_type, $tmp_file_name, $tmp_x1, $tmp_y1, $tmp_x2, $tmp_y2 ) {
 	
-	if ($tmp_image_type == 'jpeg') {
-		$im = ImageCreateFromjpeg(CLASSIFIEDS_UPLOAD_PATH . $tmp_file_name);
-	}
-	if ($tmp_image_type == 'png') {
-		$im = ImageCreateFrompng(CLASSIFIEDS_UPLOAD_PATH . $tmp_file_name);
-	}
-	if ($tmp_image_type == 'gif') {
-		$im = ImageCreateFromgif(CLASSIFIEDS_UPLOAD_PATH . $tmp_file_name);
-	}
-	
-	//----------------------------------------------------------------//
-	//----------------------------------------------------------------//
-	$im_dest = imagecreatetruecolor (500, 375);
-	$tmp_image_width = $tmp_x2 - $tmp_x1;
-	$tmp_image_height = $tmp_y2 - $tmp_y1;
-	imagecopyresampled($im_dest, $im, 0, 0, $tmp_x1, $tmp_y1, 500, 375, $tmp_image_width, $tmp_image_height);
-	if ($tmp_image_type == 'png'){
-		imagesavealpha($im_dest, true);
-	}
-	imagepng($im_dest, CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id .'-500.png');
-	//----------------------------------------------------------------//
-	//----------------------------------------------------------------//
-	$im_dest = imagecreatetruecolor (80, 60);
-	$tmp_image_width = $tmp_x2 - $tmp_x1;
-	$tmp_image_height = $tmp_y2 - $tmp_y1;
-	imagecopyresampled($im_dest, $im, 0, 0, $tmp_x1, $tmp_y1, 80, 60, $tmp_image_width, $tmp_image_height);
-	if ($tmp_image_type == 'png'){
-		imagesavealpha($im_dest, true);
-	}
-	imagepng($im_dest, CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id .'-80.png');
-	//----------------------------------------------------------------//
-	//----------------------------------------------------------------//
-	$im_dest = imagecreatetruecolor (40, 30);
-	$tmp_image_width = $tmp_x2 - $tmp_x1;
-	$tmp_image_height = $tmp_y2 - $tmp_y1;
-	imagecopyresampled($im_dest, $im, 0, 0, $tmp_x1, $tmp_y1, 40, 30, $tmp_image_width, $tmp_image_height);
-	if ($tmp_image_type == 'png'){
-		imagesavealpha($im_dest, true);
-	}
-	imagepng($im_dest, CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id .'-40.png');
-	//----------------------------------------------------------------//
-	//----------------------------------------------------------------//
-	$im_dest = imagecreatetruecolor (16, 12);
-	imagecopyresampled($im_dest, $im, 0, 0, 0, 0, 16, 12, 500, 375);
-	if ($tmp_image_type == 'png'){
-		imagesavealpha($im_dest, true);
-	}
-	imagepng($im_dest, CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id .'-16.png');
-	//----------------------------------------------------------------//
-	//----------------------------------------------------------------//
+	if ($tmp_image_type == 'jpeg')
+		$im = ImageCreateFromjpeg( CLASSIFIEDS_UPLOAD_PATH . $tmp_file_name );
+	if ($tmp_image_type == 'png')
+		$im = ImageCreateFrompng( CLASSIFIEDS_UPLOAD_PATH . $tmp_file_name );
+	if ($tmp_image_type == 'gif')
+		$im = ImageCreateFromgif( CLASSIFIEDS_UPLOAD_PATH . $tmp_file_name );
+
+    $img_size = array (
+        array ( 'width' => 500, 'height'=> 375 ),
+        array ( 'width' => 200, 'height'=> 150 ),
+        array ( 'width' => 80, 'height'=> 60 ),
+        array ( 'width' => 40, 'height'=> 30 ),
+        array ( 'width' => 16, 'height'=> 12 ));
+    
+    foreach ( $img_size as $img_size ) {
+        $im_dest = imagecreatetruecolor( $img_size['width'], $img_size['height'] );
+        $tmp_image_width = $tmp_x2 - $tmp_x1;
+        $tmp_image_height = $tmp_y2 - $tmp_y1;
+        imagecopyresampled($im_dest, $im, 0, 0, $tmp_x1, $tmp_y1, $img_size['width'], $img_size['height'], $tmp_image_width, $tmp_image_height);
+        if ($tmp_image_type == 'png')
+            imagesavealpha($im_dest, true);
+        imagepng($im_dest, CLASSIFIEDS_UPLOAD_PATH . $tmp_ad_id ."-{$img_size['width']}.png");
+    }
     
 	classifieds_delete_file( CLASSIFIEDS_UPLOAD_PATH . $tmp_file_name );
-
 }
 
 /*
@@ -402,8 +347,7 @@ function classifieds_dashboard_output() {
 		<p><?php _e('Your Active Ads:'); ?> <strong><?php echo $tmp_active_ads_count; ?></strong></p>
 		<p><?php _e('Your Ended Ads:'); ?> <strong><?php echo $tmp_ended_ads_count; ?></strong></p>
 		<p><?php _e('<a href="admin.php?page=classifieds_new">Click here to place a new ad &raquo;</a>'); ?></p>
-	</div>
-	<?php
+	</div> <?php
 }
 add_action('activity_box_end', 'classifieds_dashboard_output');
 
@@ -548,7 +492,10 @@ function classifieds_page_categories_output() {
 function classifieds_page_main_output() {
 	global $wpdb, $current_user, $current_site, $classifieds_credits_singular, $classifieds_credits_plural;
 	
-	$classifieds_path = 'http://' . $current_site->domain . $current_site->path . CLASSIFIEDS_PATH ;
+	if ( is_multisite() )
+        $classifieds_path = 'http://' . $current_site->domain . $current_site->path . CLASSIFIEDS_PATH ;
+    else
+        $classifieds_path = get_bloginfo('url') . '/' . CLASSIFIEDS_PATH;
 	
 	if ( isset( $_GET['updated'] ) ) {
 		?><div id="message" class="updated fade"><p><?php _e('' . urldecode($_GET['updatedmsg']) . '') ?></p></div><?php
