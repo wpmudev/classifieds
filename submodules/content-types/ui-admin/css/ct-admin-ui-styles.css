@@ -78,6 +78,7 @@
 }
 .ct-object-type {
     width: 200px;
+    height: inherit !important;
 }
 .ct-field-type-options {
     display: none;
