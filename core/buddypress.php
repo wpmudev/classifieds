@@ -2,11 +2,11 @@
 
 /**
  * Classifieds Core BuddyPress Class
- */
+ **/
 if ( !class_exists('Classifieds_Core_BuddyPress') ):
 class Classifieds_Core_BuddyPress extends Classifieds_Core {
 
-    /** @var boolean $bp_active True if BuddyPress is active. */
+    /** @var boolean True if BuddyPress is active. */
     var $bp_active;
 
     /**
@@ -17,6 +17,8 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
     function Classifieds_Core_BuddyPress() {
         /* Init plugin BuddyPress integration when BP is ready */
         add_action( 'bp_init', array( &$this, 'init' ) );
+        /* Initiate plugin variables */
+        add_action( 'init', array( &$this, 'init_vars' ) );
         /* Add theme support for post thumbnails */
         add_theme_support( 'post-thumbnails' );
     }
@@ -27,14 +29,14 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
      * @return void 
      **/
     function init() {
-        /* Set BuddyPress active state */
-        $this->bp_active = true;
         add_action( 'wp', array( &$this, 'add_navigation' ), 2 );
         add_action( 'admin_menu', array( &$this, 'add_navigation' ), 2 );
         add_action( 'bp_head', array( &$this, 'print_styles' ) );
         add_action( 'wp_head', array( &$this, 'print_scripts' ) );
         add_action( 'bp_template_content', array( &$this, 'template_content' ) );
         add_filter( 'the_content', array( &$this, 'filter_the_content' ) );
+        /* Set BuddyPress active state */
+        $this->bp_active = true;
     }
 
     /**
@@ -43,8 +45,6 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
      * @return void 
      **/
     function add_navigation() {
-        /** Init vars @todo move to another function or to core */
-        $this->init_vars();
         global $bp;
         /* Set up classifieds as a sudo-component for identification and nav selection */
         $bp->classifieds->slug = 'classifieds';
@@ -72,7 +72,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
         if ( bp_is_my_profile() ) {
             bp_core_new_subnav_item( array(
                 'name'            => __( 'Create New Ad', $this->text_domain ),
-                'slug'            => 'add-new',
+                'slug'            => 'create-new',
                 'parent_url'      => $parent_url,
                 'parent_slug'     => $bp->classifieds->slug,
                 'screen_function' => array( &$this, 'load_template' ),
@@ -104,21 +104,29 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
         global $bp;
         if ( $bp->current_component == 'classifieds' && $bp->current_action == 'my-classifieds' ) {
             if ( isset( $_POST['edit'] ) ) {
-                $this->render_front('buddypress/members/single/classifieds/edit-ad', array( 'post_id' => (int) $_POST['post_id'] ));
+                $this->render_front('members/single/classifieds/edit-ad', array( 'post_id' => (int) $_POST['post_id'] ));
             } elseif ( isset( $_POST['update'] ) ) {
                 $this->update_ad( $_POST, $_FILES );
-                $this->render_front('buddypress/members/single/classifieds/my-classifieds', array( 'action' => 'edit', 'post_title' => $_POST['post_title'] ));
+                $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'edit', 'post_title' => $_POST['post_title'] ));
             } elseif ( isset( $_POST['confirm'] ) ) {
                 wp_delete_post( $_POST['post_id'] );
-                $this->render_front('buddypress/members/single/classifieds/my-classifieds', array( 'action' => 'delete', 'post_title' => $_POST['post_title'] ));
+                $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'delete', 'post_title' => $_POST['post_title'] ));
             } else {
-                $this->render_front('buddypress/members/single/classifieds/my-classifieds');
+                $this->render_front('members/single/classifieds/my-classifieds');
             }
-        } elseif ( $bp->current_component == 'classifieds' && $bp->current_action == 'add-new' ) {
+        } elseif ( $bp->current_component == 'classifieds' && $bp->current_action == 'create-new' ) {
             if ( isset( $_POST['save'] ) ) {
-                $this->update_ad( $_POST, $_FILES );
+                $this->validate_fields( $_POST, $_FILES );
+                if ( $this->form_valid ) {
+                    global $bp;
+                    $this->update_ad( $_POST, $_FILES );
+                    $this->js_redirect( $bp->loggedin_user->userdata->user_url . 'classifieds/' );
+                } else {
+                    $this->render_front('members/single/classifieds/create-new');
+                }
+            } else {
+                $this->render_front('members/single/classifieds/create-new');
             }
-            $this->render_front('buddypress/members/single/classifieds/add-new');
         }
     }
 
@@ -132,54 +140,12 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
     function filter_the_content( $content ) {
         global $post;
         if ( is_single() && $post->post_type == $this->post_type ) {
-            $this->render_front( 'buddypress/members/single/classifieds/content-ad', array( 'post' => $post, 'content' => $content ) );
+            $this->render_front( 'members/single/classifieds/content-ad', array( 'post' => $post, 'content' => $content ) );
         } else {
             return $content;
         }
     }
     
-    /**
-     * Update or insert ad if no ID is passed.
-     *
-     * @param array $params Array of $_POST data
-     * @param array $file   Array of $_FILE data
-     * @return void 
-     **/
-    function update_ad( $params, $file = NULL ) {
-        $current_user = wp_get_current_user();
-        /* Construct args for the new post */
-        $args = array(
-            /* If empty ID insert Ad insetad of updating it */
-            'ID'             => $params['post_id'],
-            'post_title'     => $params['title'],
-            'post_content'   => $params['description'],
-            'post_status'    => $params['status'],
-            'post_author'    => $current_user->ID,
-            'post_type'      => $this->post_type,
-            'ping_status'    => 'closed',
-            'comment_status' => 'closed'
-        );
-        /* Insert page and get the ID */
-        $post_id = wp_insert_post( $args );
-        if ( $post_id ) {
-            /* Set object terms */
-            foreach ( $params['terms'] as $taxonomy => $terms  )
-                wp_set_object_terms( $post_id, $terms, $taxonomy );
-            /* Set custom fields data */
-            foreach ( $params['custom_fields'] as $key => $value )
-                update_post_meta( $post_id, $key, $value );
-            /* Require WordPress utility functions for handling media uploads */
-            require_once( ABSPATH . '/wp-admin/includes/media.php' );
-            require_once( ABSPATH . '/wp-admin/includes/image.php' );
-            require_once( ABSPATH . '/wp-admin/includes/file.php' );
-            /* Upload the image ( handles creation of thumbnails etc. ), set featured image  */
-            if ( empty( $file['image']['error'] )) {
-                $thumbnail_id = media_handle_upload( 'image', $post_id );
-                update_post_meta( $post_id, '_thumbnail_id', $thumbnail_id );
-            }
-       }
-    }
-
     /**
      * Print styles for BuddyPress pages
      *

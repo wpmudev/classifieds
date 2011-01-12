@@ -446,48 +446,49 @@
 
 <?php elseif ( $step == 'confirm_payment' ): ?>
         
-<form action="" method="post">
+    <form action="" method="post">
 
-    <strong><?php _e( 'Confirm Payment', $this->text_domain ); ?></strong>
-    <table>
-        <tr>
-            <td><label><?php _e( 'Email Adress', $this->text_domain ); ?>:</label></td>
-            <td><?php echo $transaction_details['EMAIL']; ?></td>
-        </tr>
-        <tr>
-            <td><label><?php _e( 'Name', $this->text_domain ); ?>:</label></td>
-            <td><?php echo $transaction_details['FIRSTNAME'] . ' ' . $transaction_details['LASTNAME']; ?></td>
-        </tr>
-        <tr>
-            <td><label><?php _e( 'Address', $this->text_domain ); ?>:</label></td>
-            <td><?php echo $transaction_details['SHIPTOSTREET']; ?>, <?php echo $transaction_details['SHIPTOCITY']; ?>, <?php echo $transaction_details['SHIPTOSTATE']; ?>, <?php echo $transaction_details['SHIPTOZIP']; ?>, <?php echo $transaction_details['SHIPTOCOUNTRYNAME']; ?></td>
-        </tr>
-        <tr>
-            <td><label><?php _e('Total Amount', 'directory'); ?>:</label></td>
-            <td>
-                <strong><?php echo $transaction_details['AMT'] . ' ' . $transaction_details['CURRENCYCODE'] ?></strong>
-                <input type="hidden" name="total_amount" value="<?php echo $transaction_details['AMT']; ?>" />
-            </td>
-        </tr>
-    </table>
+        <strong><?php _e( 'Confirm Payment', $this->text_domain ); ?></strong>
+        <table>
+            <tr>
+                <td><label><?php _e( 'Email Adress', $this->text_domain ); ?>:</label></td>
+                <td><?php echo $transaction_details['EMAIL']; ?></td>
+            </tr>
+            <tr>
+                <td><label><?php _e( 'Name', $this->text_domain ); ?>:</label></td>
+                <td><?php echo $transaction_details['FIRSTNAME'] . ' ' . $transaction_details['LASTNAME']; ?></td>
+            </tr>
+            <tr>
+                <td><label><?php _e( 'Address', $this->text_domain ); ?>:</label></td>
+                <td><?php echo $transaction_details['SHIPTOSTREET']; ?>, <?php echo $transaction_details['SHIPTOCITY']; ?>, <?php echo $transaction_details['SHIPTOSTATE']; ?>, <?php echo $transaction_details['SHIPTOZIP']; ?>, <?php echo $transaction_details['SHIPTOCOUNTRYNAME']; ?></td>
+            </tr>
+            <tr>
+                <td><label><?php _e('Total Amount', 'directory'); ?>:</label></td>
+                <td>
+                    <strong><?php echo $transaction_details['AMT'] . ' ' . $transaction_details['CURRENCYCODE'] ?></strong>
+                    <input type="hidden" name="total_amount" value="<?php echo $transaction_details['AMT']; ?>" />
+                </td>
+            </tr>
+        </table>
 
-    <?php //cf_debug($_SESSION); ?>
+        <?php //cf_debug($_SESSION); ?>
 
-    <div class="submit">
-        <input type="hidden" name="email" value="<?php echo $transaction_details['EMAIL']; ?>" />
-        <input type="hidden" name="first_name" value="<?php echo $transaction_details['FIRSTNAME']; ?>" />
-        <input type="hidden" name="last_name" value="<?php echo $transaction_details['LASTNAME']; ?>" />
-        <input type="hidden" name="billing" value="<?php echo $_SESSION['billing']; ?>" />
-        <input type="submit" name="confirm_payment_submit" value="Confirm Payment" />
-    </div>
-    
-</form>
+        <div class="submit">
+            <input type="hidden" name="email" value="<?php echo $transaction_details['EMAIL']; ?>" />
+            <input type="hidden" name="first_name" value="<?php echo $transaction_details['FIRSTNAME']; ?>" />
+            <input type="hidden" name="last_name" value="<?php echo $transaction_details['LASTNAME']; ?>" />
+            <input type="hidden" name="billing" value="<?php echo $_SESSION['billing']; ?>" />
+            <input type="submit" name="confirm_payment_submit" value="Confirm Payment" />
+        </div>
+
+    </form>
 
 <?php elseif ( $step == 'success' ): ?>
 
     <div class="dp-thank-you"><?php _e( 'Thank you for your business. Transaction processed successfully!', $this->text_domain ); ?></div>
     <span class="dp-submit-txt"><?php _e( 'You can go to your profile and review/change your personal information. You can also go straight to the directory listing submission page.', $this->text_domain ); ?></span>
     <br /><br />
+    
     <form action="" method="post">
         <input type="submit" name="redirect_admin_profile" value="Proceed To Your Profile" />
         <input type="submit" name="redirect_admin_listings" value="Proceed To Adding a Directory Listing" />

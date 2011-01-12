@@ -53,6 +53,7 @@ define ( 'CF_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . str_replace( basename(__FILE__),
  */
 include_once 'classifieds/classifieds.php';
 include_once 'core/core.php';
+include_once 'core/main.php';
 include_once 'core/admin.php';
 include_once 'core/buddypress.php';
 include_once 'core/paypal.php';

@@ -27,30 +27,8 @@ class Classifieds_Core {
     var $options_name  = 'classifieds_options';
     /** @var string User role */
     var $user_role = 'cf_member';
-
-    /**
-     * Constructor.
-     *
-     * @return void
-     **/
-    function Classifieds_Core() {
-        add_action( 'init', array( &$this, 'init' ) );
-        /* Start session */
-        if ( !session_id() )
-            add_action( 'init', 'session_start' );
-    }
-
-    /**
-     * Init plugin.
-     *
-     * @return void
-     **/
-    function init() {
-        $this->create_main_pages();
-        add_shortcode( 'classifieds_ads', array( &$this, 'ads_shortcode' ) );
-        add_shortcode( 'classifieds_checkout', array( &$this, 'checkout_shortcode' ) );
-        add_action( 'wp_head', array( &$this, 'print_main_styles' ) );
-    }
+    /** @var boolean True if submitted form is valid. */
+    var $form_valid = true;
 
     /**
      * Initiate variables.
@@ -64,162 +42,6 @@ class Classifieds_Core {
         foreach ( $custom_fields as $key => $value ) {
             if ( in_array( $this->post_type, $value['object_type'] ) );
                 $this->custom_fields[$key] = $value;
-        }
-    }
-
-    /**
-     * Template redirect.
-     *
-     * @global <type> $wp_query 
-     **/
-    function template_redirect() {
-        global $wp_query;
-        cf_debug( $wp_query );
-    }
-
-    /**
-     * Create the main Classifieds page.
-     *
-     * @return
-     **/
-    function create_main_pages() {
-        $page['classifieds'] = get_page_by_title('Classifieds');
-        if ( !isset( $page['classifieds'] ) ) {
-            $current_user = wp_get_current_user();
-            /* Construct args for the new post */
-            $args = array(
-                'post_title'     => 'Classifieds',
-                'post_content'   => '[classifieds_ads]',
-                'post_status'    => 'publish',
-                'post_author'    => $current_user->ID,
-                'post_type'      => 'page',
-                'ping_status'    => 'closed',
-                'comment_status' => 'closed'
-            );
-            /* Insert page and get the ID */
-            wp_insert_post( $args );
-        }
-        $page['checkout'] = get_page_by_title('Classifieds Checkout');
-        if ( !isset( $page['checkout'] ) ) {
-            $current_user = wp_get_current_user();
-            /* Construct args for the new post */
-            $args = array(
-                'post_title'     => 'Classifieds Checkout',
-                'post_content'   => '[classifieds_checkout]',
-                'post_status'    => 'publish',
-                'post_author'    => $current_user->ID,
-                'post_type'      => 'page',
-                'ping_status'    => 'closed',
-                'comment_status' => 'closed'
-            );
-            /* Insert page and get the ID */
-            wp_insert_post( $args );
-        }
-    }
-
-    /**
-     * Print styles for BuddyPress pages
-     *
-     * @global object $bp
-     * @return void
-     **/
-    function print_main_styles() { ?>
-        <style type="text/css">
-            .error { background: #FFEBE8; }
-            .submit { margin: 10px 0; }
-            .invalid-login { margin-top: 10px; }
-        </style> <?php
-    }
-
-    /**
-     * Ads shortcode.
-     *
-     **/
-    function ads_shortcode() {
-        /*
-        $tmp_search_query = $_POST['search'];
-
-        $tmp_search_query = urldecode( $tmp_search_query );
-        $tmp_base_url = get_option('siteurl') . '/classifieds/';
-
-        $tmp_current_cat  = $_GET['cat'];
-        $tmp_current_ad   = $_GET['ad'];
-        $tmp_current_page = $_GET['page'];
-
-        $tmp_base_url = get_option('siteurl') . '/classifieds/';
-
-        if ( $tmp_search_query != '' ) {
-            //search results
-            classifieds_frontend_search_results_paginated( $tmp_search_query,'10', $tmp_current_page, $tmp_base_url );
-        } else if ( $tmp_current_ad != '' ) {
-            //ad listing
-            classifieds_frontend_display_ad_information( $tmp_current_ad, $tmp_base_url );
-            classifieds_frontend_display_ad_contact_form( $tmp_current_ad, $tmp_base_url );
-        } else if ( $tmp_current_cat != '' ) {
-            //category listings
-            classifieds_frontend_display_ads_paginated( $tmp_current_cat, '10', $tmp_current_page, $tmp_base_url );
-        } else {
-            //frontpage listings
-            classifieds_frontend_display_ads( '', 20,'random',$tmp_base_url );
-        } */
-    }
-
-    /**
-     * Checkout shortcode.
-     *
-     * @return <type>
-     **/
-    function checkout_shortcode() {
-        /* Get site options */
-        $options = $this->get_options();
-        if ( is_user_logged_in() ) {
-            //$this->js_redirect( get_bloginfo('url') );
-        }
-        if ( empty( $options['paypal'] ) ) {
-            $this->render_front( 'general/checkout/checkout', array( 'step' => 'disabled' ) );
-            return;
-        }
-        if ( isset( $_POST['terms_submit'] ) ) {
-            if ( empty( $_POST['tos_agree'] ) || empty( $_POST['billing'] ) ) {
-                if ( empty( $_POST['tos_agree'] ))
-                    add_action( 'tos_invalid', create_function('', 'echo "class=\"error\"";') );
-                if ( empty( $_POST['billing'] ))
-                    add_action( 'billing_invalid', create_function('', 'echo "class=\"error\"";') );
-                $this->render_front( 'general/checkout/checkout', array( 'step' => 'terms' ) );
-            } else {
-                $this->render_front('general/checkout/checkout', array( 'step' => 'payment_method' ) );
-            }
-        } elseif ( isset( $_POST['login_submit'] ) ) {
-            $error = $this->login( $_POST['username'], $_POST['password'] );
-            if ( isset( $error )) {
-                add_action( 'login_invalid', create_function('', 'echo "class=\"error\"";') );
-                $this->render_front( 'general/checkout/checkout', array( 'step' => 'terms', 'error' => $error ) );
-            } else {
-                echo 'nada';
-            }
-        } elseif ( isset( $_POST['payment_method_submit'] )) {
-            if ( $_POST['payment_method'] == 'paypal' ) {
-                $checkout = new Classifieds_Core_PayPal();
-                $checkout->call_shortcut_express_checkout( $_POST['cost'] );
-            } elseif ( $_POST['payment_method'] == 'cc' ) {
-                $this->render_front( 'general/checkout/checkout', array( 'step' => 'cc_details' ) );
-            }
-        } elseif ( isset( $_POST['direct_payment_submit'] ) ) {
-            $checkout = new Classifieds_Core_PayPal();
-            $result = $checkout->direct_payment( $_POST['total_amount'], $_POST['cc_type'], $_POST['cc_number'], $_POST['exp_date'], $_POST['cvv2'], $_POST['first_name'], $_POST['last_name'], $_POST['street'], $_POST['city'], $_POST['state'], $_POST['zip'], $_POST['country_code'] );
-        } elseif ( isset( $_REQUEST['token'] ) && !isset( $_POST['confirm_payment_submit'] ) ) {
-            $checkout = new Classifieds_Core_PayPal();
-            $result = $checkout->get_shipping_details();
-            $this->render_front( 'general/checkout/checkout', array( 'step' => 'confirm_payment', 'transaction_details' => $result ) );
-        } elseif ( isset( $_POST['confirm_payment_submit'] ) ) {
-            $checkout = new Classifieds_Core_PayPal();
-            $result = $checkout->confirm_payment( $_POST['total_amount'] );
-            if ( strtoupper( $result['ACK'] ) == 'SUCCESS' || strtoupper( $result['ACK'] ) == 'SUCCESSWITHWARNING' ) {
-                //$this->insert_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'] );
-                $this->render_front( 'general/checkout/checkout', array( 'step' => 'success' ) );
-            }
-        } else {
-            $this->render_front( 'general/checkout/checkout', array( 'step' => 'terms' ) );
         }
     }
 
@@ -288,6 +110,61 @@ class Classifieds_Core {
         $credentials = array( 'remember'=>true, 'user_login' => $user_login, 'user_password' => $user_pass );
         wp_signon( $credentials );
     }
+
+    /**
+     * Update or insert ad if no ID is passed.
+     *
+     * @param array $params Array of $_POST data
+     * @param array $file   Array of $_FILE data
+     * @return void
+     **/
+    function update_ad( $params, $file = NULL ) {
+        $current_user = wp_get_current_user();
+        /* Construct args for the new post */
+        $args = array(
+            /* If empty ID insert Ad insetad of updating it */
+            'ID'             => $params['post_id'],
+            'post_title'     => $params['title'],
+            'post_content'   => $params['description'],
+            'post_status'    => $params['status'],
+            'post_author'    => $current_user->ID,
+            'post_type'      => $this->post_type,
+            'ping_status'    => 'closed',
+            'comment_status' => 'closed'
+        );
+        /* Insert page and get the ID */
+        $post_id = wp_insert_post( $args );
+        if ( $post_id ) {
+            /* Set object terms */
+            foreach ( $params['terms'] as $taxonomy => $terms  )
+                wp_set_object_terms( $post_id, $terms, $taxonomy );
+            /* Set custom fields data */
+            foreach ( $params['custom_fields'] as $key => $value )
+                update_post_meta( $post_id, $key, $value );
+            /* Require WordPress utility functions for handling media uploads */
+            require_once( ABSPATH . '/wp-admin/includes/media.php' );
+            require_once( ABSPATH . '/wp-admin/includes/image.php' );
+            require_once( ABSPATH . '/wp-admin/includes/file.php' );
+            /* Upload the image ( handles creation of thumbnails etc. ), set featured image  */
+            if ( empty( $file['image']['error'] )) {
+                $thumbnail_id = media_handle_upload( 'image', $post_id );
+                update_post_meta( $post_id, '_thumbnail_id', $thumbnail_id );
+            }
+       }
+    }
+
+    /**
+     *
+     */
+    function validate_fields( $params, $file = NULL ) {
+        if ( empty( $params['title'] ) || empty( $params['description'] ) || empty( $params['terms'] ) || empty( $params['status'] )) {
+            $this->form_valid = false;
+        }
+        if ( $file['image']['error'] !== 0 ) {
+            $this->form_valid = false;
+        }
+    }
+
 
     /**
      * Save plugin options.
@@ -366,14 +243,14 @@ class Classifieds_Core {
 		foreach ( $vars as $key => $val )
 			$$key = $val;
         /* Include templates */
-		if ( file_exists( get_template_directory() . "/$name.php" ) )
-			include get_template_directory() . "/$name.php";
-        elseif ( file_exists( get_template_directory() . "/members/single/$name.php" ) && $this->bp_active == true )
-			include get_template_directory() . "/members/single/$name.php";
-		elseif ( file_exists( "{$this->plugin_dir}/ui-front/$name.php" ) )
-			include "{$this->plugin_dir}/ui-front/$name.php";
-		else
-			echo "<p>Rendering of template $name.php failed</p>";
+        if ( file_exists( get_template_directory() . "/{$name}.php" ) )
+            include get_template_directory() . "/{$name}.php";
+        elseif ( file_exists( "{$this->plugin_dir}/ui-front/buddypress/{$name}.php" ) && $this->bp_active )
+            include "{$this->plugin_dir}/ui-front/buddypress/{$name}.php";
+        elseif ( file_exists( "{$this->plugin_dir}/ui-front/general/{$name}.php" ) )
+            include "{$this->plugin_dir}/ui-front/general/{$name}.php";
+        else
+            echo "<p>Rendering of template $name.php failed</p>";
 	}
 
     function js_redirect( $url ) { ?>
@@ -387,9 +264,4 @@ class Classifieds_Core {
     }
 }
 endif;
-
-/* Initiate Class */
-if ( class_exists('Classifieds_Core') )
-	$__classifieds_core = new Classifieds_Core();
-
 ?>
