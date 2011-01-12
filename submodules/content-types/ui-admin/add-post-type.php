@@ -2,7 +2,6 @@
 
 <h3><?php _e('Add Post Type', 'content_types'); ?></h3>
 <form action="" method="post" class="ct-post-type">
-    <?php wp_nonce_field( 'ct_submit_post_type_verify', 'ct_submit_post_type_secret' ); ?>
     <div class="ct-wrap-left">
         <div class="ct-table-wrap">
             <div class="ct-arrow"><br></div>
@@ -326,7 +325,7 @@
             <table class="form-table public-queryable">
                 <tr>
                     <th>
-                        <label for="publicly_queryable"><?php _e('Publicly Queryable', 'content_types') ?></label>
+                        <label for="publicly_queryable"><?php _e('Publicly Queryable', 'content_types' ) ?></label>
                     </th>
                     <td>
                         <span class="description"><?php _e('Whether post_type queries can be performed from the front end.', 'content_types'); ?></span>
@@ -472,7 +471,9 @@
             </table>
         </div>
     </div>
-    <br style="clear: left" />
-    <input type="submit" class="button-primary" name="ct_submit_add_post_type" value="Add Post Type">
+    <p class="submit">
+        <?php wp_nonce_field('submit_post_type'); ?>
+        <input type="submit" class="button-primary" name="submit" value="Add Post Type" />
+    </p>
     <br /><br /><br /><br />
 </form>

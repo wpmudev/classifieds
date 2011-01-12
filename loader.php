@@ -46,10 +46,4 @@ include_once 'core/buddypress.php';
 include_once 'core/paypal.php';
 include_once 'submodules/content-types/loader.php';
 
-/* Debug function */
-function cf_debug( $param ) {
-    echo '<pre>';
-    print_r( (array) $param );
-    echo '</pre>';
-}
 ?>

@@ -27,12 +27,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 
+error_reporting( E_ALL ^ E_NOTICE );
+ini_set( 'display_errors', 1 );
+
 /** Define the submodule root folder url. */
 define ( 'CT_SUBMODULE_URL', WP_PLUGIN_URL . '/' . str_replace( basename(__FILE__), '', plugin_basename(__FILE__) ));
 /** Define the submodule root folder dir. */
 define ( 'CT_SUBMODULE_DIR', WP_PLUGIN_DIR . '/' . str_replace( basename(__FILE__), '', plugin_basename(__FILE__) ));
 
-include_once 'ct-config.php';
+include_once 'config.php';
 include_once 'core/core.php';
 include_once 'core/admin.php';
-include_once 'ui-admin/ct-admin-ui-display-custom-fields.php';
