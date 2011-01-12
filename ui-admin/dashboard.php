@@ -21,10 +21,10 @@
                 <th><?php _e( 'Actions', $this->text_domain ); ?></th>
             </tr>
         </thead>
-        <?php $posts = get_posts( array( 'post_type' => $this->post_type, 'post_status' => 'publish' ) ); ?>
+        <tbody>
+        <?php $posts = get_posts( array( 'post_type' => $this->post_type, 'post_status' => 'publish', 'numberposts' => false ) ); ?>
         <?php foreach ( $posts as $post ): ?>
         <?php $terms = wp_get_object_terms( $post->ID, $taxonomies ); ?>
-        <tbody>
             <tr>
                 <td><?php echo $post->ID; ?></td>
                 <td><?php echo $post->post_title; ?></td>
@@ -39,12 +39,12 @@
                         <input type="hidden" name="action" value="" />
                         <input type="hidden" name="post_id" value="<?php echo $post->ID; ?>" />
                         <input type="submit" class="button confirm" value="<?php _e( 'Confirm', $this->text_domain ); ?>" name="confirm" />
-                        <input type="submit" class="button cancel"  value="<?php _e( 'Cancel', $this->text_domain ); ?>" onclick="javascript:classifieds.cancel('<?php echo $post->ID; ?>'); return false;" />
+                        <input type="submit" class="button cancel"  value="<?php _e( 'Cancel', $this->text_domain ); ?>" onClick="classifieds.cancel('<?php echo $post->ID; ?>'); return false;" />
                     </form>
                 </td>
             </tr>
-        </tbody>
         <?php endforeach; ?>
+        </tbody>
     </table>
 
     <h3><?php _e( 'Saved Ads', $this->text_domain ); ?></h3>
@@ -59,10 +59,10 @@
                 <th><?php _e( 'Actions', $this->text_domain ); ?></th>
             </tr>
         </thead>
-        <?php $posts = get_posts( array( 'post_type' => $this->post_type, 'post_status' => 'draft' ) ); ?>
+        <tbody>
+        <?php $posts = get_posts( array( 'post_type' => $this->post_type, 'post_status' => 'draft', 'numberposts' => false ) ); ?>
         <?php foreach ( $posts as $post ): ?>
         <?php $terms = wp_get_object_terms( $post->ID, $taxonomies ); ?>
-        <tbody>
             <tr>
                 <td><?php echo $post->ID; ?></td>
                 <td><?php echo $post->post_title; ?></td>
@@ -87,8 +87,8 @@
                     </form>
                 </td>
             </tr>
-        </tbody>
         <?php endforeach; ?>
+        </tbody>
     </table>
 
     <h3><?php _e( 'Ended Ads', $this->text_domain ); ?></h3>
@@ -103,10 +103,10 @@
                 <th><?php _e( 'Actions', $this->text_domain ); ?></th>
             </tr>
         </thead>
-        <?php $posts = get_posts( array( 'post_type' => $this->post_type, 'post_status' => 'private' ) ); ?>
+        <tbody>
+        <?php $posts = get_posts( array( 'post_type' => $this->post_type, 'post_status' => 'private', 'numberposts' => false ) ); ?>
         <?php foreach ( $posts as $post ): ?>
         <?php $terms = wp_get_object_terms( $post->ID, $taxonomies ); ?>
-        <tbody>
             <tr>
                 <td><?php echo $post->ID; ?></td>
                 <td><?php echo $post->post_title; ?></td>
@@ -131,7 +131,7 @@
                     </form>
                 </td>
             </tr>
-        </tbody>
         <?php endforeach; ?>
+        </tbody>
     </table>
 </div>

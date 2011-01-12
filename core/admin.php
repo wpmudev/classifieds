@@ -6,25 +6,35 @@
 if ( !class_exists('Classifieds_Core_Admin') ):
 class Classifieds_Core_Admin extends Classifieds_Core {
 
+    /** @var string $hook The hook for the current admin page */
     var $hook;
+    /** @var string $menu_slug The main menu slug */
     var $menu_slug        = 'classifieds';
+    /** @var string $sub_menu_slug Submenu slug @todo better way of hadnling this */
     var $sub_menu_slug    = 'classifieds_credits';
 
 
     /**
      * Constructor. Hooks the whole module to the "init" hook.
-     */
+     *
+     * @return void
+     **/
     function Classifieds_Core_Admin() {
-        /* Init plugin */
+        /* Attach plugin to the "init" hook */
         add_action( 'init', array( &$this, 'init' ) );
     }
 
     /**
-     * 
-     */
+     * Initiate the plugin.
+     *
+     * @return void
+     **/
     function init() {
-        /* Initiate admin menus and admin head */
+        /* Init if admin only */
         if ( is_admin() ) {
+            /* Initiate core plugin vars */
+            //$this->init_vars();
+            /* Initiate admin menus and admin head */
             add_action( 'admin_menu',  array( &$this, 'admin_menu' ) );
             add_action( 'admin_init',  array( &$this, 'admin_head' ) );
         }
@@ -32,17 +42,21 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 
     /**
      * Add plugin main menu
-     */
+     *
+     * @return void 
+     **/
     function admin_menu() {
-        add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'admin_flow' ) );
-        add_submenu_page( $this->menu_slug, __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'edit_users', $this->menu_slug, array( &$this, 'admin_flow' ) );
-        add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', $this->sub_menu_slug, array( &$this, 'admin_flow' ) );
+        add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'admin_output' ) );
+        add_submenu_page( $this->menu_slug, __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'edit_users', $this->menu_slug, array( &$this, 'admin_output' ) );
+        add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', $this->sub_menu_slug, array( &$this, 'admin_output' ) );
     }
 
     /**
      * Flow of a typical admin page request.
-     */
-    function admin_flow() {
+     *
+     * @return void
+     **/
+    function admin_output() {
         if ( $_GET['page'] == $this->menu_slug ) {
             if ( isset( $_POST['confirm'] ) ) {
                 /* Change post status */
@@ -87,27 +101,31 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 
     /**
      * Hook styles and scripts into plugin admin head
-     */
+     *
+     * @return void 
+     **/
     function admin_head() {
         /* Get plugin hook */
         $this->hook = get_plugin_page_hook( $_GET['page'], $this->menu_slug );
         /* Add actions for printing the styles and scripts of the document */
-        add_action( 'admin_print_scripts-' . $this->hook, array( &$this, 'enqueue_scripts' ) );
-        add_action( 'admin_head-' . $this->hook, array( &$this, 'print_admin_styles' ) );
-        add_action( 'admin_head-' . $this->hook, array( &$this, 'print_admin_scripts' ) );
+        add_action( 'admin_print_scripts-' . $this->hook, array( &$this, 'admin_enqueue_scripts' ) );
+        add_action( 'admin_head-' . $this->hook, array( &$this, 'admin_print_styles' ) );
+        add_action( 'admin_head-' . $this->hook, array( &$this, 'admin_print_scripts' ) );
     }
     
     /**
      * Enqueue scripts.
-     */
-    function enqueue_scripts() {
+     *
+     * @return void 
+     **/
+    function admin_enqueue_scripts() {
         wp_enqueue_script('jquery');
     }
 
     /**
      * Print document styles.
      */
-    function print_admin_styles() { ?>
+    function admin_print_styles() { ?>
         <style type="text/css">
             .wrap table    { text-align: left; }
             .wrap table th { width: 200px; }
@@ -118,7 +136,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
     /**
      * Print document scripts
      */
-    function print_admin_scripts() { ?>
+    function admin_print_scripts() { ?>
         <script type="text/javascript">
         //<![CDATA[
         jQuery(document).ready(function($) {

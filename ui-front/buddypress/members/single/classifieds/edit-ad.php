@@ -1,21 +1,27 @@
 <?php if (!defined('ABSPATH')) die('No direct access allowed!'); ?>
 
+<?php
+global $bp;
+$post = get_post( $post_id );
+$post_terms = wp_get_object_terms( $post->ID, $this->taxonomy_names );
+?>
+
 <div class="profile">
     
     <form class="standard-form base" method="post" action="" enctype="multipart/form-data">
         
         <div class="editfield">
             <label for="title"><?php _e( 'Title', $this->text_domain ); ?></label>
-            <input type="text" value="" id="title" name="title">
+            <input type="text" value="<?php echo $post->post_title; ?>" id="title" name="title">
             <p class="description"><?php _e( 'Enter title here.', $this->text_domain ); ?></p>
         </div>
 
         <div class="editfield alt">
             <label for="description"><?php _e( 'Description', $this->text_domain ); ?></label>
-            <textarea id="description" name="description" cols="40" rows="5"></textarea>
+            <textarea id="description" name="description" cols="40" rows="5"><?php echo $post->post_content; ?></textarea>
             <p class="description"><?php _e( 'The main description of your ad.', $this->text_domain ); ?></p>
         </div>
-
+        
         <div class="editfield">
             <label for="terms"><?php _e( 'Terms ( Categories / Tags )', $this->text_domain ); ?></label>
             <table class="cf-terms">
@@ -26,7 +32,7 @@
                         <select id="terms" name="terms[<?php echo $taxonomy_name; ?>][]" multiple="multiple">
                             <optgroup label="<?php echo $taxonomy_object->labels->name; ?>">
                                 <?php foreach ( $terms as $term ): ?>
-                                <option value="<?php echo $term->slug; ?>"><?php echo $term->name; ?></option>
+                                <option value="<?php echo $term->slug; ?>" <?php foreach ( $post_terms as $post_term ) { if ( $post_term->term_id == $term->term_id  ) echo 'selected="selected"'; } ?>><?php echo $term->name; ?></option>
                                 <?php endforeach; ?>
                             </optgroup>
                         </select>
@@ -38,7 +44,7 @@
         </div>
 
         <div class="editfield">
-            <label for="image"><?php _e( 'Select Featured Image', $this->text_domain ); ?></label>
+            <label for="image"><?php _e( 'Upload Featured Image', $this->text_domain ); ?></label>
             <p id="featured-image">
                 <input type="file" id="image" name="image">
                 <input type="hidden" value="featured-image" id="action" name="action">
@@ -49,19 +55,22 @@
             <div class="radio">
                 <span class="label"><?php _e( 'Ad Status' );  ?></span>
                 <div id="status-box">
-                    <label><input type="radio" value="publish" name="status"><?php _e( 'Published', $this->text_domain ); ?></label>
-                    <label><input type="radio" value="draft" name="status"><?php _e( 'Draft', $this->text_domain ); ?></label>
+                    <label><input type="radio" value="publish" name="status" <?php if ( $post->post_status == 'publish' ) echo 'checked="checked"'; ?>><?php _e( 'Published', $this->text_domain ); ?></label>
+                    <label><input type="radio" value="draft" name="status" <?php if ( $post->post_status == 'draft' ) echo 'checked="checked"'; ?>><?php _e( 'Draft', $this->text_domain ); ?></label>
                 </div>
             </div>
             <p class="description"><?php _e( 'Check a status for your Ad.', $this->text_domain ); ?></p>
         </div>
 
         <div class="editfield">
-            <?php $this->render_front('members/single/classifieds/custom-fields'); ?>
+            <?php $this->render_front('members/single/classifieds/custom-fields', array( 'post' => $post )); ?>
         </div>
 
         <div class="submit">
-            <input type="submit" value="Save Changes " name="save">
+            <input type="hidden" name="post_id" value="<?php echo $post->ID; ?>" />
+            <input type="hidden" name="post_title" value="<?php echo $post->post_title; ?>" />
+            <input type="hidden" name="url" value="<?php echo $post->guid; ?>" />
+            <input type="submit" value="Save Changes " name="update">
         </div>
         
     </form>
