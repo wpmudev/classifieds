@@ -1,10 +1,11 @@
 <?php
 /**
  * The template for displaying Author Archive pages.
+ * You can override this file in your active theme.
  *
- * @package WordPress
- * @subpackage Twenty_Ten
- * @since Twenty Ten 1.0
+ * @package Classifieds
+ * @subpackage UI Front
+ * @since Classifieds 2.0
  */
 
 get_header(); ?>

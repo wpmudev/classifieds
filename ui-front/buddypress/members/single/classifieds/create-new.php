@@ -1,6 +1,17 @@
 <?php if (!defined('ABSPATH')) die('No direct access allowed!'); ?>
 
 <?php
+/**
+ * The template for displaying BuddyPress Classifieds component - Create New page.
+ * You can override this file in your active theme.
+ *
+ * @package Classifieds
+ * @subpackage UI Front BuddyPress
+ * @since Classifieds 2.0
+ */
+?>
+
+<?php
 /* Build messages */
 if ( !$this->form_valid ) {
     $msg = __( 'Please make sure you fill in all required fields before saving.', $this->text_domain );

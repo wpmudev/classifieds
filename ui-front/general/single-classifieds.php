@@ -1,7 +1,8 @@
 <?php
 /**
  * The Template for displaying all single classifieds posts.
- *
+ * You can override this file in your active theme.
+ * 
  * @package Classifieds
  * @subpackage UI Front
  * @since Classifieds 2.0

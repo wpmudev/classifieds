@@ -1,6 +1,7 @@
 <?php
 /**
  * The loop that displays posts.
+ * You can override this file in your active theme.
  *
  * The loop displays the posts and the post content.  See
  * http://codex.wordpress.org/The_Loop to understand it and
@@ -75,9 +76,9 @@
                                 <td>
                                     <?php /* For BuddyPress compatibility */ ?>
                                     <?php global $bp; if ( isset( $bp ) ): ?>
-                                    <a href="<?php echo bp_core_get_user_domain( get_the_author_ID() ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" >
+                                    <a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" >
                                     <?php else: ?>
-                                    <a href="<?php echo get_author_posts_url( get_the_author_ID() ); ?>" alt="<?php the_author(); ?> Profile" >
+                                    <a href="<?php echo get_author_posts_url( get_the_author_meta('ID') ); ?>" alt="<?php the_author(); ?> Profile" >
                                     <?php endif; ?>
 
                                     <?php the_author(); ?></td>

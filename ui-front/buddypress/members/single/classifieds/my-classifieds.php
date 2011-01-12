@@ -1,6 +1,17 @@
 <?php if (!defined('ABSPATH')) die('No direct access allowed!'); ?>
 
 <?php
+/**
+ * The template for displaying BuddyPress Classifieds component - My Classifieds page.
+ * You can override this file in your active theme.
+ *
+ * @package Classifieds
+ * @subpackage UI Front BuddyPress
+ * @since Classifieds 2.0
+ */
+?>
+
+<?php
 global $bp;
 /* Get posts based on post_status */
 if ( in_array( 'active', $bp->action_variables ) || empty( $bp->action_variables ) ) {
@@ -30,8 +41,8 @@ elseif ( in_array( 'ended',  $bp->action_variables ) ) {
 
 
 
-    <?php $current_user = wp_get_current_user(); ?>
-    <?php query_posts( array( 'author' => $current_user->ID, 'post_type' => array( 'classifieds' ), 'post_status' => $status ) ); ?>
+    <?php $current_user = wp_get_current_user();  ?>
+    <?php query_posts( array( 'author' => bp_displayed_user_id(), 'post_type' => array( 'classifieds' ), 'post_status' => $status ) ); ?>
 
     <?php
     /* Build messages */

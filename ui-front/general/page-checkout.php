@@ -1,6 +1,7 @@
 <?php
 /**
  * The template for displaying the Checkout page.
+ * You can override this file in your active theme.
  *
  * @package Classifieds
  * @subpackage UI Front

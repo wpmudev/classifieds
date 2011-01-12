@@ -2,6 +2,7 @@
 
 /**
  * The template for displaying the custom fields.
+ * You can override this file in your active theme.
  *
  * @package Classifieds
  * @subpackage UI Front

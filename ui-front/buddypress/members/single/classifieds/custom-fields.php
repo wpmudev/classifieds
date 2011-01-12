@@ -1,5 +1,16 @@
 <?php if (!defined('ABSPATH')) die('No direct access allowed!'); ?>
 
+<?php
+/**
+ * The template for displaying BuddyPress Classifieds component include - custom fields.
+ * You can override this file in your active theme ( not very advisable if you don't know what you are doing ).
+ *
+ * @package Classifieds
+ * @subpackage UI Front BuddyPress
+ * @since Classifieds 2.0
+ */
+?>
+
 <?php $prefix = $this->custom_fields_prefix; ?>
 <?php foreach ( $this->custom_fields as $custom_field ): ?>
 

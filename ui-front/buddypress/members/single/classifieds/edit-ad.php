@@ -1,6 +1,17 @@
 <?php if (!defined('ABSPATH')) die('No direct access allowed!'); ?>
 
 <?php
+/**
+ * The template for displaying BuddyPress Classifieds component - Edit Ad page.
+ * You can override this file in your active theme.
+ *
+ * @package Classifieds
+ * @subpackage UI Front BuddyPress
+ * @since Classifieds 2.0
+ */
+?>
+
+<?php
 global $bp;
 $post = get_post( $post_id );
 $post_terms = wp_get_object_terms( $post->ID, $this->taxonomy_names );
