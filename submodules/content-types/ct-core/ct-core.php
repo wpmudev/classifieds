@@ -331,7 +331,7 @@ function ct_admin_process_add_update_taxonomy_requests() {
         'hierarchical'        => (bool) $_POST['hierarchical'],
         'rewrite'             => (bool) $_POST['rewrite'],
         'query_var'           => (bool) $_POST['query_var'],
-        'capabilities'        => array ( 'assign_terms' => 'edit_listings' )
+        'capabilities'        => array ( 'assign_terms' => 'assign_terms' )
     );
 
     // if custom rewrite slug is set use it

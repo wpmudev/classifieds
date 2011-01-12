@@ -1,6 +1,6 @@
 <?php
 /**
- * The template for displaying My Classifieds page.
+ * The template for displaying the Checkout page.
  *
  * @package Classifieds
  * @subpackage UI Front
@@ -12,13 +12,18 @@ get_header(); ?>
 		<div id="container">
 			<div id="content" role="main">
 
+            <?php /* For BuddyPress compatibility */ ?>
+            <?php global $bp; if ( isset( $bp ) ): ?>
+                <div class="padder">
+            <?php endif; ?>
+
             <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
-				<div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+                <div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
-					<h1 class="entry-title"><?php the_title(); ?></h1>
+                    <h1 class="entry-title"><?php the_title(); ?></h1>
 
-					<div class="entry-content">
+                    <div class="entry-content">
 
                         <?php $step = get_query_var('cf_step'); ?>
 
@@ -28,7 +33,7 @@ get_header(); ?>
 
                         <?php elseif ( $step == 'terms' ): ?>
 
-                            <?php $options = get_option('classifieds_options'); //cf_debug( $options ); ?>
+                            <?php $options = get_option('classifieds_options'); ?>
 
                             <form action="" method="post"  class="cf-checkout">
 
@@ -37,13 +42,12 @@ get_header(); ?>
                                     <tr>
                                         <td><label for="billing"><?php _e( 'Buy Credits', 'classifieds' ) ?></label></td>
                                         <td>
-                                            <input type="radio" name="billing" value="annual" <?php if ( $_POST['billing'] == 'annual' ) echo 'checked="checked"'; ?> />
-                                            <input type="hidden" name="annual_cost" value="<?php echo $options['checkout']['annual_cost']; ?>" />
+                                            <input type="radio" name="billing" value="credits" <?php if ( $_POST['billing'] == 'credits' ) echo 'checked="checked"'; ?> />
                                             <select name="credits_cost">
                                                 <?php for ( $i = 1; $i <= 10; $i++ ): ?>
                                                 <?php $credits = 10 * $i; ?>
                                                 <?php $amount = $credits * $options['credits']['cost_credit']; ?>
-                                                <option value="<?php echo $amount; ?>" ><?php echo $credits; ?> Credits for <?php echo $amount . ' ' . $options['paypal']['currency']; ?></option>
+                                                <option value="<?php echo $amount; ?>" <?php if ( $_POST['credits_cost'] == $amount ) echo 'selected="selected"'; ?> ><?php echo $credits; ?> Credits for <?php echo $amount . ' ' . $options['paypal']['currency']; ?></option>
                                                 <?php endfor; ?>
                                             </select>
                                         </td>
@@ -108,7 +112,7 @@ get_header(); ?>
                             </form>
 
                             <?php $error = get_query_var('cf_error'); ?>
-                        
+
                             <?php if ( $error ): ?>
                                 <div class="invalid-login"><?php echo $error; ?></div>
                             <?php endif; ?>
@@ -137,7 +141,13 @@ get_header(); ?>
 
                                 <div class="submit">
 
-                                    <?php if ( $_POST['billing'] == 'annual' ): ?>
+                                    <?php if ( $_POST['billing'] == 'credits' ): ?>
+                                        <input type="hidden" name="cost" value="<?php echo $_POST['credits_cost']; ?>" />
+                                        <input type="hidden" name="billing" value="credits" />
+                                        <?php $options = get_option('classifieds_options'); ?>
+                                        <?php $credits = $_POST['credits_cost'] / $options['credits']['cost_credit']; ?>
+                                        <input type="hidden" name="credits" value="<?php echo $credits; ?>" />
+                                    <?php elseif ( $_POST['billing'] == 'annual' ): ?>
                                         <input type="hidden" name="cost" value="<?php echo $_POST['annual_cost']; ?>" />
                                         <input type="hidden" name="billing" value="annual" />
                                     <?php elseif ( $_POST['billing'] == 'one_time' ): ?>
@@ -485,7 +495,7 @@ get_header(); ?>
                         <?php elseif ( $step == 'confirm_payment' ): ?>
 
                             <?php $transaction_details = get_query_var('cf_transaction_details'); ?>
-                                
+
                             <form action="" method="post" class="cf-checkout">
 
                                 <strong><?php _e( 'Confirm Payment', 'classifieds' ); ?></strong>
@@ -511,17 +521,28 @@ get_header(); ?>
                                     </tr>
                                 </table>
 
-                                <?php //cf_debug($_SESSION); ?>
-
                                 <div class="submit">
                                     <input type="hidden" name="email" value="<?php echo $transaction_details['EMAIL']; ?>" />
                                     <input type="hidden" name="first_name" value="<?php echo $transaction_details['FIRSTNAME']; ?>" />
                                     <input type="hidden" name="last_name" value="<?php echo $transaction_details['LASTNAME']; ?>" />
                                     <input type="hidden" name="billing" value="<?php echo $_SESSION['billing']; ?>" />
+                                    <input type="hidden" name="credits" value="<?php echo $_SESSION['credits']; ?>" />
                                     <input type="submit" name="confirm_payment_submit" value="Confirm Payment" />
                                 </div>
 
                             </form>
+
+                        <?php elseif ( $step == 'api_call_error' ): ?>
+
+                            <?php $error = get_query_var('cf_error'); ?>
+
+                            <ul>
+                                <li><?php echo $error['error_call'] . ' API call failed.'; ?></li>
+                                <li><?php echo 'Detailed Error Message: ' . $error['error_long_msg']; ?></li>
+                                <li><?php echo 'Short Error Message: '    . $error['error_short_msg']; ?></li>
+                                <li><?php echo 'Error Code: '             . $error['error_code']; ?></li>
+                                <li><?php echo 'Error Severity Code: '    . $error['error_severity_code']; ?></li>
+                            </ul>
 
                         <?php elseif ( $step == 'success' ): ?>
 
@@ -537,17 +558,32 @@ get_header(); ?>
 
                         <div class="clear"></div><br />
 
-						<?php wp_link_pages( array( 'before' => '<div class="page-link">' . __( 'Pages:', 'twentyten' ), 'after' => '</div>' ) ); ?>
-						<?php edit_post_link( __( 'Edit', 'twentyten' ), '<span class="edit-link">', '</span>' ); ?>
-					</div><!-- .entry-content -->
-				</div><!-- #post-## -->
+                        <?php wp_link_pages( array( 'before' => '<div class="page-link">' . __( 'Pages:', 'twentyten' ), 'after' => '</div>' ) ); ?>
+                        <?php edit_post_link( __( 'Edit', 'twentyten' ), '<span class="edit-link">', '</span>' ); ?>
+                    </div><!-- .entry-content -->
+                </div><!-- #post-## -->
 
-				<?php comments_template( '', true ); ?>
+                <?php comments_template( '', true ); ?>
 
             <?php endwhile; ?>
 
+            <?php /* For BuddyPress compatibility */ ?>
+            <?php if ( isset( $bp ) ): ?>
+                </div>
+            <?php endif; ?>
+                
 			</div><!-- #content -->
+
+            <?php /* For BuddyPress compatibility */ ?>
+            <?php if ( isset( $bp ) ): ?>
+                <?php locate_template( array( 'sidebar.php' ), true ); ?>
+            <?php endif; ?>
+            
 		</div><!-- #container -->
 
-<?php get_sidebar(); ?>
+<?php /* For BuddyPress compatibility */ ?>
+<?php if ( !isset( $bp ) ): ?>
+    <?php get_sidebar(); ?>
+<?php endif; ?>
+        
 <?php get_footer(); ?>

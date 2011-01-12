@@ -92,7 +92,6 @@ Description: You can override this file in your theme.
     float: left;
 }
 #content table.cf-ad-info {
-    float: left;
     width: inherit;
 }
 #content table.cf-ad-info th { 
@@ -103,7 +102,7 @@ ul.button-nav li {
     list-style: none;
     padding-right: 15px;
 }
-#content .classifieds ul { 
+#content .hentry ul {
     overflow: hidden;
     margin: 0;
     padding-bottom: 15px;
@@ -163,4 +162,14 @@ ul.button-nav li {
 }
 .action-form, .confirm-form { 
     margin-top: 10px;
+}
+.cf-contact-form {
+    width: 290px;
+    float: left;
+    margin-top: -25px;
+}
+.av-credits {
+    float: right;
+    margin-top: -30px;
+    color: green;
 }

@@ -49,7 +49,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
      **/
     function admin_menu() {
         add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'admin_output' ) );
-        add_submenu_page( $this->menu_slug, __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'edit_users', $this->menu_slug, array( &$this, 'admin_output' ) );
+        add_submenu_page( $this->menu_slug, __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'admin_output' ) );
         add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', 'classifieds_settings', array( &$this, 'admin_output' ) );
         add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Credits', $this->text_domain ), 'edit_users', 'classifieds_credits' , array( &$this, 'admin_output' ) );
     }

@@ -14,16 +14,20 @@
  * <code>get_template_part( 'loop', 'index' );</code>
  *
  * @package Classifieds
- * @subpackage Taxonomy
+ * @subpackage Author
  * @since Classifieds 2.0
  */
+
+global $query_string;
+query_posts( $query_string . "&post_type=classifieds&post_status=publish");
+
 ?>
 
 <?php /* Display navigation to next/previous pages when applicable */ ?>
 <?php if ( $wp_query->max_num_pages > 1 ) : ?>
 	<div id="nav-above" class="navigation">
-		<div class="nav-previous"><?php next_posts_link( __( '<span class="meta-nav">&larr;</span> Older posts', 'twentyten' ) ); ?></div>
-		<div class="nav-next"><?php previous_posts_link( __( 'Newer posts <span class="meta-nav">&rarr;</span>', 'twentyten' ) ); ?></div>
+		<div class="nav-previous"><?php next_posts_link( __( '<span class="meta-nav">&larr;</span> Older posts', 'classifieds' ) ); ?></div>
+		<div class="nav-next"><?php previous_posts_link( __( 'Newer posts <span class="meta-nav">&rarr;</span>', 'classifieds' ) ); ?></div>
 	</div><!-- #nav-above -->
 <?php endif; ?>
 
@@ -74,15 +78,12 @@
 
                                 <td>
                                     <?php /* For BuddyPress compatibility */ ?>
-                                    <?php global $bp; if ( isset( $bp ) ): ?>
-                                    <a href="<?php echo bp_core_get_user_domain( get_the_author_ID() ) . 'classifieds/';?>" alt="<?php echo get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name'). '\'s Profile';  ?>" >
-                                    <?php else: ?>
-                                    <a href="<?php echo get_author_posts_url( get_the_author_ID() ); ?>" alt="<?php echo get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name'). '\'s Profile';  ?>" >
-                                    <?php endif; ?>
+                                    <?php global $bp; if ( isset( $bp ) ): ?><a href="<?php echo bp_core_get_user_domain( get_the_author_ID() ) . 'classifieds/';?>" alt="<?php echo get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name'). '\'s Profile';  ?>" ><?php endif; ?>
 
                                     <?php echo get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name'); ?></td>
 
-                                    </a>
+                                    <?php /* For BuddyPress compatibility */ ?>
+                                    <?php if ( isset( $bp ) ): ?></a><?php endif; ?>
                             </tr>
                             <tr>
                                 <th><?php _e( 'Categories', 'classifieds' ); ?></th>

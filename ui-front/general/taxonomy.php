@@ -14,6 +14,11 @@ get_header(); ?>
 		<div id="container">
 			<div id="content" role="main">
 
+            <?php /* For BuddyPress compatibility */ ?>
+            <?php global $bp; if ( isset( $bp ) ): ?>
+                <div class="padder">
+            <?php endif; ?>
+
             <?php
             /* Queue the first post, that way we know
              * what date we're dealing with (if that is the case).
@@ -41,8 +46,23 @@ get_header(); ?>
             else
                 load_template( CF_PLUGIN_DIR . 'ui-front/general/loop-taxonomy.php' ); ?>
 
+            <?php /* For BuddyPress compatibility */ ?>
+            <?php if ( isset( $bp ) ): ?>
+                </div>
+            <?php endif; ?>
+                
 			</div><!-- #content -->
+
+            <?php /* For BuddyPress compatibility */ ?>
+            <?php if ( isset( $bp ) ): ?>
+                <?php locate_template( array( 'sidebar.php' ), true ); ?>
+            <?php endif; ?>
+            
 		</div><!-- #container -->
 
-<?php get_sidebar(); ?>
+<?php /* For BuddyPress compatibility */ ?>
+<?php if ( !isset( $bp ) ): ?>
+    <?php get_sidebar(); ?>
+<?php endif; ?>
+        
 <?php get_footer(); ?>

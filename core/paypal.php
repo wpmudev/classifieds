@@ -141,16 +141,21 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
             wp_redirect( $paypal_url );
         } else {
             /* Display a user friendly Error on the page using any of the following error information returned by PayPal */
+            $error_call          = 'SetExpressCheckout';
             $error_code          = urldecode( $result['L_ERRORCODE0'] );
             $error_short_msg     = urldecode( $result['L_SHORTMESSAGE0'] );
             $error_long_msg      = urldecode( $result['L_LONGMESSAGE0'] );
             $error_severity_code = urldecode( $result['L_SEVERITYCODE0'] );
-
-            echo 'SetExpressCheckout API call failed. ';
-            echo 'Detailed Error Message: ' . $error_long_msg;
-            echo 'Short Error Message: '    . $error_short_msg;
-            echo 'Error Code: '             . $error_code;
-            echo 'Error Severity Code: '    . $error_severity_code;
+            /* Build error messages array */
+            $result = array(
+                'error_call'          => $error_call,
+                'error_code'          => $error_code,
+                'error_short_msg'     => $error_short_msg,
+                'error_long_msg'      => $error_long_msg,
+                'error_severity_code' => $error_severity_code );
+            /* Set status and return error */
+            $result['status'] = 'error';
+            return $result;
         }
     }
 
@@ -203,22 +208,25 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
             $_SESSION['token'] = $token;
             /* Construct URL and redirect to PayPal */
             $paypal_url = $this->paypal_url . $result['TOKEN'];
-            $this->js_redirect( $paypal_url );
+            wp_redirect( $paypal_url );
         } else {
             /* Display a user friendly Error on the page using any of the following error information returned by PayPal */
+            $error_call          = 'SetExpressCheckout';
             $error_code          = urldecode( $result['L_ERRORCODE0'] );
             $error_short_msg     = urldecode( $result['L_SHORTMESSAGE0'] );
             $error_long_msg      = urldecode( $result['L_LONGMESSAGE0'] );
             $error_severity_code = urldecode( $result['L_SEVERITYCODE0'] );
-
-            echo 'SetExpressCheckout API call failed. ';
-            echo 'Detailed Error Message: ' . $error_long_msg;
-            echo 'Short Error Message: '    . $error_short_msg;
-            echo 'Error Code: '             . $error_code;
-            echo 'Error Severity Code: '    . $error_severity_code;
+            /* Build error messages array */
+            $result = array(
+                'error_call'          => $error_call,
+                'error_code'          => $error_code,
+                'error_short_msg'     => $error_short_msg,
+                'error_long_msg'      => $error_long_msg,
+                'error_severity_code' => $error_severity_code );
+            /* Set status and return error */
+            $result['status'] = 'error';
+            return $result;
         }
-
-        return $result;
     }
 
     /**
@@ -287,20 +295,26 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
                 $invoice_number       = $result["INVNUM"]; // ' Your own invoice or tracking number, as set by you in the element of the same name in SetExpressCheckout request .
                 $phone_number         = $result["PHONENUM"]; // ' Payer's contact telephone number. Note:  PayPal returns a contact telephone number only if your Merchant account profile settings require that the buyer enter one.
 
+                $result['status'] = 'success';
                 return $result;
                 
             } else {
                 /* Display a user friendly Error on the page using any of the following error information returned by PayPal */
+                $error_call          = 'GetExpressCheckoutDetails';
                 $error_code          = urldecode( $result['L_ERRORCODE0'] );
                 $error_short_msg     = urldecode( $result['L_SHORTMESSAGE0'] );
                 $error_long_msg      = urldecode( $result['L_LONGMESSAGE0'] );
                 $error_severity_code = urldecode( $result['L_SEVERITYCODE0'] );
-
-                echo "GetExpressCheckoutDetails API call failed. ";
-                echo 'Detailed Error Message: ' . $error_long_msg;
-                echo 'Short Error Message: '    . $error_short_msg;
-                echo 'Error Code: '             . $error_code;
-                echo 'Error Severity Code: '    . $error_severity_code;
+                /* Build error messages array */
+                $result = array(
+                    'error_call'          => $error_call,
+                    'error_code'          => $error_code,
+                    'error_short_msg'     => $error_short_msg,
+                    'error_long_msg'      => $error_long_msg,
+                    'error_severity_code' => $error_severity_code );
+                /* Set status and return error */
+                $result['status'] = 'error';
+                return $result;
             }
         }
     }
@@ -315,9 +329,9 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
         /*
          * Gather the information to make the final call to finalize the PayPal payment.
          * The variable nvpstr holds the name value pairs
+         *
+         * Format the other parameters that were stored in the session from the previous calls 
          */
-
-        /* Format the other parameters that were stored in the session from the previous calls */
         $token              = urlencode( $_SESSION['token'] );
         $payment_type       = urlencode( $_SESSION['payment_type'] );
         $currency_code_type = urlencode( $_SESSION['currency_code_type'] );
@@ -396,20 +410,27 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
              */
             $reason_code = $result["REASONCODE"];
 
+            /* Set status and return result */
+            $result['status'] = 'success';
             return $result;
             
         } else {
             /* Display a user friendly Error on the page using any of the following error information returned by PayPal */
+            $error_call          = 'DoExpressCheckoutPayment';
             $error_code          = urldecode( $result['L_ERRORCODE0'] );
             $error_short_msg     = urldecode( $result['L_SHORTMESSAGE0'] );
             $error_long_msg      = urldecode( $result['L_LONGMESSAGE0'] );
             $error_severity_code = urldecode( $result['L_SEVERITYCODE0'] );
-
-            echo "GetExpressCheckoutDetails API call failed. ";
-            echo 'Detailed Error Message: ' . $error_long_msg;
-            echo 'Short Error Message: '    . $error_short_msg;
-            echo 'Error Code: '             . $error_code;
-            echo 'Error Severity Code: '    . $error_severity_code;
+            /* Build error messages array */
+            $result = array(
+                'error_call'          => $error_call,
+                'error_code'          => $error_code,
+                'error_short_msg'     => $error_short_msg,
+                'error_long_msg'      => $error_long_msg,
+                'error_severity_code' => $error_severity_code );
+            /* Set status and return error */
+            $result['status'] = 'error';
+            return $result;
         }
     }
 
@@ -456,22 +477,28 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
         if ( $ack=='SUCCESS' || $ack=='SUCCESSWITHWARNING' ) {
             //Getting transaction ID from API responce.
             $transaction_id = urldecode( $result["TRANSACTIONID"] );
-            echo "Your payment has been successfully processed";
+            /* Set status and return result */
+            $result['status'] = 'success';
+            return $result;
+            
         } else {
             /* Display a user friendly Error on the page using any of the following error information returned by PayPal */
+            $error_call          = 'DoDirectPayment';
             $error_code          = urldecode( $result['L_ERRORCODE0'] );
             $error_short_msg     = urldecode( $result['L_SHORTMESSAGE0'] );
             $error_long_msg      = urldecode( $result['L_LONGMESSAGE0'] );
             $error_severity_code = urldecode( $result['L_SEVERITYCODE0'] );
-
-            echo "Direct credit card payment API call failed.<br /><br />";
-            echo 'Detailed Error Message: ' . $error_long_msg;
-            echo 'Short Error Message: '    . $error_short_msg;
-            echo 'Error Code: '             . $error_code;
-            echo 'Error Severity Code: '    . $error_severity_code;
+            /* Build error messages array */
+            $result = array(
+                'error_call'          => $error_call,
+                'error_code'          => $error_code,
+                'error_short_msg'     => $error_short_msg,
+                'error_long_msg'      => $error_long_msg,
+                'error_severity_code' => $error_severity_code );
+            /* Set status and return error */
+            $result['status'] = 'error';
+            return $result;
         }
-
-        return $result;
     }
 
     /**
@@ -522,7 +549,6 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
             /* Closing the curl */
             curl_close( $ch );
         }
-
         return $nvp_response;
     }
 
@@ -537,7 +563,7 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
         $intial = 0;
         $nvp_array = array();
 
-        while( strlen( $nvpstr )) {
+        while( strlen( $nvpstr ) ) {
             /* postion of Key */
             $keypos = strpos( $nvpstr, '=' );
 
@@ -551,8 +577,7 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
             /* decoding the respose */
             $nvp_array[urldecode( $keyval )] = urldecode( $valval );
             $nvpstr = substr( $nvpstr, $valuepos + 1, strlen( $nvpstr ));
-         }
-
+        }
         return $nvp_array;
     }
 }

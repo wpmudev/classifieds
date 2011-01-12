@@ -12,6 +12,9 @@ get_header(); ?>
 		<div id="container">
 			<div id="content" role="main">
 
+            <?php /* For BuddyPress compatibility */ ?>
+            <?php global $bp; if ( isset( $bp ) ): ?><div class="padder"><?php endif; ?>
+
              <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
 				<div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -22,9 +25,23 @@ get_header(); ?>
                         <div class="cf-image"><?php echo get_the_post_thumbnail( get_the_ID(), array( 300, 300 ) ); ?></div>
 
                         <table class="cf-ad-info">
+
                            <tr>
                                <th><?php _e( 'Posted By', 'classifieds' ); ?></th>
-                               <td><?php echo get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name'); ?></td>
+                               <td>
+
+                                   <?php /* For BuddyPress compatibility */ ?>
+                                   <?php if ( isset( $bp ) ): ?>
+                                   <a href="<?php echo bp_core_get_user_domain( get_the_author_ID() ) . 'classifieds/';?>" alt="<?php echo get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name'). '\'s Profile';  ?>" >
+                                   <?php else: ?>
+                                   <a href="<?php echo get_author_posts_url( get_the_author_ID() ); ?>" alt="<?php echo get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name'). '\'s Profile';  ?>" >
+                                   <?php endif; ?>
+
+                                   <?php echo get_the_author_meta('first_name') . ' ' . get_the_author_meta('last_name'); ?>
+
+                                   </a>
+                                   
+                               </td>
                            </tr>
                            <tr>
                                <th><?php _e( 'Categories', 'classifieds' ); ?></th>
@@ -45,12 +62,46 @@ get_header(); ?>
                            </tr>
                         </table>
 
-                        <form method="post" action="" class="contact-user-btn">
-                            <input type="submit" value="Contact User" name="contact_user">
+                        <form method="post" action="" class="contact-user-btn action-form" id="action-form">
+                            <input type="submit" name="contact_user" value="<?php _e('Contact User', 'classifieds' ); ?>" onClick="classifieds.toggle_contact_form(); return false;" />
                         </form>
+
+
+                        <form method="post" action="" class="standard-form base cf-contact-form" id="confirm-form">
+
+                            <div class="editfield">
+                                <label for="name"><?php _e( 'Name', 'classifieds' ); ?> (<?php _e( 'required', 'classifieds' ); ?>)</label>
+                                <input type="text" id="name" name ="name" value="" />
+                                <p class="description"><?php _e( 'Enter your full name here.', 'classifieds' ); ?></p>
+                            </div>
+                            <div class="editfield">
+                                <label for="email"><?php _e( 'Email', 'classifieds' ); ?> (<?php _e( 'required', 'classifieds' ); ?>)</label>
+                                <input type="text" id="email" name ="email" value="" />
+                                <p class="description"><?php _e( 'Enter a valid email address here.', 'classifieds' ); ?></p>
+                            </div>
+                            <div class="editfield">
+                                <label for="subject"><?php _e( 'Subject', 'classifieds' ); ?> (<?php _e( 'required', 'classifieds' ); ?>)</label>
+                                <input type="text" id="subject" name ="subject" value="" />
+                                <p class="description"><?php _e( 'Enter the subject of your inquire here.', 'classifieds' ); ?></p>
+                            </div>
+                            <div class="editfield">
+                                <label for="message"><?php _e( 'Message', 'classifieds' ); ?> (<?php _e( 'required', 'classifieds' ); ?>)</label>
+                                <textarea id="message" name="message"></textarea>
+                                <p class="description"><?php _e( 'Enter the content of your inquire here.', 'classifieds' ); ?></p>
+                            </div>
+
+                            <div class="submit">
+                                <p>
+                                    <input type="submit" class="button confirm" value="<?php _e( 'Send', 'classifieds' ); ?>" name="contact_form_send" />
+                                    <input type="submit" class="button cancel"  value="<?php _e( 'Cancel', 'classifieds' ); ?>" onClick="classifieds.cancel_contact_form(); return false;" />
+                                </p>
+                            </div>
+                            
+                        </form>
+
                         <div class="clear"></div>
 
-                        <table>
+                        <table class="cf-description">
                             <thead>
                                 <tr>
                                     <th><?php _e( 'Description', 'classifieds' ); ?></th>
@@ -91,8 +142,17 @@ get_header(); ?>
 
             <?php endwhile; // end of the loop. ?>
 
+            <?php /* For BuddyPress compatibility */ ?>
+            <?php if ( isset( $bp ) ): ?></div><?php endif; ?>
+
 			</div><!-- #content -->
+
+            <?php /* For BuddyPress compatibility */ ?>
+            <?php if ( isset( $bp ) ): ?><?php locate_template( array( 'sidebar.php' ), true ); ?><?php endif; ?>
+            
 		</div><!-- #container -->
 
-<?php get_sidebar(); ?>
+<?php /* For BuddyPress compatibility */ ?>
+<?php if ( !isset( $bp ) ): ?><?php get_sidebar(); ?><?php endif; ?>
+        
 <?php get_footer(); ?>

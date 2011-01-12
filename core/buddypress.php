@@ -24,11 +24,15 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
      * @return void 
      **/
     function init() {
+        /* Add navigation */
         add_action( 'wp', array( &$this, 'add_navigation' ), 2 );
+        /* Add navigation */
         add_action( 'admin_menu', array( &$this, 'add_navigation' ), 2 );
-        add_action( 'bp_head', array( &$this, 'print_styles' ) );
+        /* Enqueue styles */
+        add_action( 'wp_print_styles', array( &$this, 'enqueue_styles' ) );
         add_action( 'wp_head', array( &$this, 'print_scripts' ) );
         add_action( 'bp_template_content', array( &$this, 'template_content' ) );
+
         /* Set BuddyPress active state */
         $this->bp_active = true;
     }
@@ -130,8 +134,9 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
                 $this->validate_fields( $_POST, $_FILES );
                 if ( $this->form_valid ) {
                     global $bp;
-                    $this->update_ad( $_POST, $_FILES );
-                    $this->js_redirect( $bp->loggedin_user->userdata->user_url . 'classifieds/' );
+                    $post_id = $this->update_ad( $_POST, $_FILES );
+                    $this->save_expiration_date( $post_id );
+                    $this->js_redirect( $bp->loggedin_user->userdata->user_url );
                 } else {
                     $this->render_front('members/single/classifieds/create-new');
                 }
@@ -140,39 +145,17 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
             }
         }
     }
-    
+
     /**
-     * Print styles for BuddyPress pages
+     * Enqueue styles.
      *
-     * @global object $bp
-     * @return void 
+     * @return void
      **/
-    function print_styles() {
-        global $bp;
-        if ( $bp->current_component == 'classifieds' ) { ?>
-            <style type="text/css">
-                .cf-ad    { border: 1px solid #ddd; padding: 10px; display: block; overflow: hidden; float: left; margin: 0 15px 15px 0; width: 450px;  }
-                .cf-ad table { margin: 5px 5px 5px 15px ; width: 280px; border-width: 1px; border-style: solid; border-color: #ddd; border-collapse: collapse; }
-                .cf-ad table th { text-align: right; width: 50px; }
-                .cf-ad table th, .bp-cf-ad table td { border-width: 1px; border-style: inset; border-color: #ddd; }
-                .cf-ad form {  float: right; padding-right: 5px; overflow: hidden; }
-                .cf-ad form.confirm-form { float: right; padding-right: 5px; }
-                .cf-image { float: left;  }
-                .cf-info  { float: left; }
-                .cf-ad-info { float: left; width: 450px; margin-left: 15px; }
-                .cf-ad-info th { width: 100px; vertical-align: top; }
-                .single-classifieds div.post p { margin: 0; padding: 0 5px 10px 0; }
-                #cf-fimage { float: left; border: 1px solid #eee; padding: 15px 15px 0; margin-bottom: 15px; }
-                .cf-terms { width: inherit; }
-                .cf-terms td { vertical-align: top; }
-            </style> <?php
-        } elseif ( isset( $bp ) ) { ?>
-            <style type="text/css">
-                .cf-checkout { width: 48%; float: left; margin-right: 15px; }
-                .cf-checkout img { margin-bottom: 0 !important; }
-                .cf-login { width: 48%; float: left; }
-            </style> <?php
-        }
+    function enqueue_styles() {
+        if ( file_exists( get_template_directory() . '/style-bp-classifieds.css' ) )
+            wp_enqueue_style( 'style-classifieds', get_template_directory() . '/style-bp-classifieds.css' );
+        elseif ( file_exists( $this->plugin_dir . 'ui-front/buddypress/style-bp-classifieds.css' ) )
+            wp_enqueue_style( 'style-classifieds', $this->plugin_url . 'ui-front/buddypress/style-bp-classifieds.css' );
     }
 
     /**
@@ -188,6 +171,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
             //<![CDATA[
             jQuery(document).ready(function($) {
                 $('form.confirm-form').hide();
+                $('form.cf-contact-form').hide();
             });
             var classifieds = {
                 toggle_end: function(key) {
@@ -204,6 +188,16 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
                     jQuery('#confirm-form-'+key).show();
                     jQuery('#action-form-'+key).hide();
                     jQuery('input[name="action"]').val('delete');
+                },
+                toggle_contact_form: function() {
+                    jQuery('.cf-ad-info').hide();
+                    jQuery('#action-form').hide();
+                    jQuery('#confirm-form').show();
+                },
+                cancel_contact_form: function() {
+                    jQuery('#confirm-form').hide();
+                    jQuery('.cf-ad-info').show();
+                    jQuery('#action-form').show();
                 },
                 cancel: function(key) {
                     jQuery('#confirm-form-'+key).hide();
