@@ -128,8 +128,7 @@ class Classifieds_Core {
      * @return void
      **/
     function load_plugin_textdomain() {
-        $plugin_dir = $this->plugin_dir . 'languages';
-        load_plugin_textdomain( 'classifieds', null, $plugin_dir );
+		load_plugin_textdomain( $this->text_domain, null, 'classifieds/languages/' );
     }
 
     /**
@@ -239,7 +238,7 @@ class Classifieds_Core {
     }
 
     /**
-     * Add custom role for Classifieds members. Add new capabiloties for admin.
+     * Add custom role for Classifieds members. Add new capabilities for admin.
      *
      * @global $wp_roles
      * @return void
