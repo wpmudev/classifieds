@@ -57,7 +57,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
      * @return void
      **/
     function handle_admin_requests() {
-        if ( $_GET['page'] == $this->menu_slug ) {
+        if ( isset( $_GET['page'] ) && $_GET['page'] == $this->menu_slug ) {
             if ( isset( $_POST['confirm'] ) ) {
                 /* Change post status */
                 if ( $_POST['action'] == 'end' )
@@ -76,8 +76,8 @@ class Classifieds_Core_Admin extends Classifieds_Core {
                 /* Render admin template */
                 $this->render_admin( 'dashboard' );
             }
-        } elseif ( $_GET['page'] == 'classifieds_settings' ) {
-            if ( $_GET['tab'] == 'payments' ) {
+        } elseif ( isset( $_GET['page'] ) && $_GET['page'] == 'classifieds_settings' ) {
+            if ( isset( $_GET['tab'] ) && $_GET['tab'] == 'payments' ) {
                 if ( $_GET['sub'] == 'authorizenet' ) {
                     $this->render_admin( 'payments-authorizenet' );
                 } else {
