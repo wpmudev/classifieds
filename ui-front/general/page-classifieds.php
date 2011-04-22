@@ -14,7 +14,7 @@ get_header(); ?>
             <div id="content" class="cf-bp-wrap" role="main">
                 
             <?php /* For BuddyPress compatibility */ ?>
-            <?php global $bp; if ( isset( $bp ) ): ?><div class="padder"><?php endif; ?>
+            <?php global $bp; if ( isset( $bp ) ): ?><div class="cf-padder"><?php endif; ?>
 
                 <h1 class="entry-title"><?php the_title(); ?></h1>
 

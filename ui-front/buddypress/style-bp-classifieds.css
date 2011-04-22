@@ -49,7 +49,7 @@ ul.button-nav li {
 .action-form, .confirm-form { 
     margin-top: 10px;
 }
-.padder {
+.cf-padder {
     overflow: hidden;
 }
 

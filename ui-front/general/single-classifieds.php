@@ -14,7 +14,7 @@ get_header(); ?>
 			<div id="content" role="main">
 
             <?php /* For BuddyPress compatibility */ ?>
-            <?php global $bp; if ( isset( $bp ) ): ?><div class="padder"><?php endif; ?>
+            <?php global $bp; if ( isset( $bp ) ): ?><div class="cf-padder"><?php endif; ?>
 
              <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
