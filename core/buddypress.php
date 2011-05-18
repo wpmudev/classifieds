@@ -9,7 +9,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
     /**
      * Constructor. Hooks the whole module to the 'bp_init" hook.
      *
-     * @return void 
+     * @return void
      **/
     function Classifieds_Core_BuddyPress() {
         /* Init plugin BuddyPress integration when BP is ready */
@@ -21,7 +21,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
     /**
      * Initiate BuddyPress
      *
-     * @return void 
+     * @return void
      **/
     function init() {
         if ( !is_admin() ) {
@@ -41,7 +41,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
     /**
      * Add BuddyPress navigation.
      *
-     * @return void 
+     * @return void
      **/
     function add_navigation() {
         global $bp;
@@ -51,7 +51,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
         $user_domain = ( !empty( $bp->displayed_user->domain ) ) ? $bp->displayed_user->domain : $bp->loggedin_user->domain;
         $parent_url = $user_domain . $bp->classifieds->slug . '/';
         /* Add the settings navigation item */
-        bp_core_new_nav_item( array( 
+        bp_core_new_nav_item( array(
             'name'                    => __('Classifieds', $this->text_domain ),
             'slug'                    => $bp->classifieds->slug,
             'position'                => 100,
@@ -59,7 +59,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
             'screen_function'         => array( &$this, 'load_template' ),
             'default_subnav_slug'     => 'my-classifieds'
         ));
-        bp_core_new_subnav_item( array( 
+        bp_core_new_subnav_item( array(
             'name'            => __( 'My Classifieds', $this->text_domain ),
             'slug'            => 'my-classifieds',
             'parent_url'      => $parent_url,
@@ -84,7 +84,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
     /**
      * Load BuddyPress theme template file for plugin specific page.
      *
-     * @return void 
+     * @return void
      **/
     function load_template() {
         /* This is generic BuddyPress plugins file. All other functions hook
@@ -137,7 +137,11 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
                     global $bp;
                     $post_id = $this->update_ad( $_POST, $_FILES );
                     $this->save_expiration_date( $post_id );
-                    $this->js_redirect( $bp->loggedin_user->userdata->user_url . '/classifieds/my-classifieds/' );
+
+                    if ( "" != $bp->loggedin_user->userdata->user_url )
+                        $this->js_redirect( $bp->loggedin_user->userdata->user_url . '/classifieds/my-classifieds/' );
+                    else
+                        $this->js_redirect( $bp->loggedin_user->domain . '/classifieds/my-classifieds/' );
                 } else {
                     $this->render_front('members/single/classifieds/create-new');
                 }
