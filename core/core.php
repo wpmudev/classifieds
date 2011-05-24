@@ -103,7 +103,7 @@ class Classifieds_Core {
      **/
     function init_vars() {
         /* Set Taxonomy objects and names */
-        $this->taxonomy_objects = get_object_taxonomies( $this->post_type, 'objects' ); 
+        $this->taxonomy_objects = get_object_taxonomies( $this->post_type, 'objects' );
         $this->taxonomy_names   = get_object_taxonomies( $this->post_type, 'names' );
         /* Get all custom fields values with their ID's as keys */
         $custom_fields = get_site_option('ct_custom_fields');
@@ -163,14 +163,39 @@ class Classifieds_Core {
     }
 
     /**
+     * Get page by meta value
+     *
+     * @return int $page[0] /bool false
+     */
+    function get_page_by_meta( $value ) {
+        $post_statuses = array( 'publish', 'trash', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit' );
+        foreach ( $post_statuses as $post_status ) {
+            $args = array(
+                    'meta_key'      => 'classifieds_type',
+                    'meta_value'    => $value,
+                    'post_type'     => 'page',
+                    'post_status'   => $post_status
+                );
+
+            $page = get_posts( $args );
+            if ( 0 < $page[0]->ID )
+                return $page[0];
+        }
+
+        return false;
+    }
+
+    /**
      * Create the default Classifieds pages.
      *
      * @return void
      **/
     function create_default_pages() {
         /* Create neccasary pages */
-        $page['classifieds'] = get_page_by_title('Classifieds');
-        if ( !isset( $page['classifieds'] ) ) {
+
+        $classifieds_page = $this->get_page_by_meta( 'classifieds' );
+
+        if ( 0 >= $classifieds_page->ID ) {
             $current_user = wp_get_current_user();
             /* Construct args for the new post */
             $args = array(
@@ -182,9 +207,12 @@ class Classifieds_Core {
                 'comment_status' => 'closed'
             );
             $parent_id = wp_insert_post( $args );
+            add_post_meta( $parent_id, "classifieds_type", "classifieds" );
         }
-        $page['my_classifieds'] = get_page_by_title('My Classifieds');
-        if ( !isset( $page['my_classifieds'] ) ) {
+
+        $classifieds_page = $this->get_page_by_meta( 'my_classifieds' );
+
+        if ( 0 >= $classifieds_page->ID ) {
             $current_user = wp_get_current_user();
             /* Construct args for the new post */
             $args = array(
@@ -196,8 +224,10 @@ class Classifieds_Core {
                 'ping_status'    => 'closed',
                 'comment_status' => 'closed'
             );
-            wp_insert_post( $args );
+            $page_id = wp_insert_post( $args );
+            add_post_meta( $page_id, "classifieds_type", "my_classifieds" );
         }
+
         $page['checkout'] = get_page_by_title('Checkout');
         if ( !isset( $page['checkout'] ) ) {
             $current_user = wp_get_current_user();
@@ -210,16 +240,17 @@ class Classifieds_Core {
                 'ping_status'    => 'closed',
                 'comment_status' => 'closed'
             );
-            wp_insert_post( $args );
+            $page_id = wp_insert_post( $args );
+            add_post_meta( $page_id, "classifieds_type", "checkout" );
         }
     }
 
     /**
      * Process login request.
      *
-     * @param string $username 
+     * @param string $username
      * @param string $password
-     * @return object $result->errors 
+     * @return object $result->errors
      **/
     function login( $username, $password ) {
         /* Check whether the required information is submitted */
@@ -260,7 +291,7 @@ class Classifieds_Core {
                 'read_classified'           => true,
                 'upload_files'              => true,
                 'assign_terms'              => true,
-                'read'                      => true 
+                'read'                      => true
             ) );
             /* Set administrator roles */
             $wp_roles->add_cap( 'administrator', 'publish_classifieds' );
@@ -287,7 +318,7 @@ class Classifieds_Core {
      * @param <type> $cap
      * @param <type> $user_id
      * @param <type> $args
-     * @return array 
+     * @return array
      **/
     function map_meta_cap( $caps, $cap, $user_id, $args ) {
         /* If editing, deleting, or reading a classified, get the post and post type object. */
@@ -379,7 +410,7 @@ class Classifieds_Core {
      *
      * @param array $params Array of $_POST data
      * @param array|NULL $file Array of $_FILES data
-     * @return int $post_id 
+     * @return int $post_id
      **/
     function update_ad( $params, $file = NULL ) {
         $current_user = wp_get_current_user();
@@ -431,7 +462,7 @@ class Classifieds_Core {
 
     /**
      * Handle all checkout requests.
-     * 
+     *
      * @uses session_start() We need to keep track of some session variables for the checkout
      * @return NULL If the payment gateway options are not configured.
      **/
@@ -709,7 +740,7 @@ class Classifieds_Core {
      * Set user credits.
      *
      * @param string $credits Number of credits to add.
-     * @param int|string $user_id 
+     * @param int|string $user_id
      * @return void
      **/
     function update_user_credits( $credits, $user_id = NULL ) {
@@ -777,7 +808,7 @@ class Classifieds_Core {
     /**
      * Save plugin options.
      *
-     * @param  array $params The $_POST array 
+     * @param  array $params The $_POST array
      * @return die() if _wpnonce is not verified
      **/
     function save_options( $params ) {
@@ -790,7 +821,7 @@ class Classifieds_Core {
             update_option( $this->options_name, $options );
         } else {
             die( __( 'Security check failed!', $this->text_domain ) );
-        }           
+        }
     }
 
     /**
@@ -803,14 +834,14 @@ class Classifieds_Core {
         $options = get_option( $this->options_name );
         $options = is_array( $options ) ? $options : array();
         /* Check if specific plugin option is requested and return it */
-        if ( isset( $key ) && array_key_exists( $key, $options ) ) 
+        if ( isset( $key ) && array_key_exists( $key, $options ) )
             return $options[$key];
-        else 
+        else
             return $options;
     }
 
     /**
-     * Process post status. 
+     * Process post status.
      *
      * @global object $wpdb
      * @param  string $post_id
@@ -847,7 +878,7 @@ class Classifieds_Core {
             $this->form_valid = false;
         }
     }
-    
+
     /**
      * Filter the template path to single{}.php templates.
      * Load from theme directory primary if it doesn't exist load from plugin dir.

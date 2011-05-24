@@ -50,17 +50,34 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
         /* Construct URL to the BuddyPress profile URL */
         $user_domain = ( !empty( $bp->displayed_user->domain ) ) ? $bp->displayed_user->domain : $bp->loggedin_user->domain;
         $parent_url = $user_domain . $bp->classifieds->slug . '/';
+
         /* Add the settings navigation item */
+        $__classifieds_core = new Classifieds_Core();
+        $classifieds_page = $__classifieds_core->get_page_by_meta( 'classifieds' );
+
+        if ( 0 < $classifieds_page->ID )
+            $nav_title = $classifieds_page->post_title;
+        else
+            $nav_title = 'Classifieds';
+
         bp_core_new_nav_item( array(
-            'name'                    => __('Classifieds', $this->text_domain ),
+            'name'                    => __( $nav_title, $this->text_domain ),
             'slug'                    => $bp->classifieds->slug,
             'position'                => 100,
             'show_for_displayed_user' => true,
             'screen_function'         => array( &$this, 'load_template' ),
             'default_subnav_slug'     => 'my-classifieds'
         ));
+
+        $classifieds_page = $__classifieds_core->get_page_by_meta( 'my_classifieds' );
+
+        if ( 0 < $classifieds_page->ID )
+            $nav_title = $classifieds_page->post_title;
+        else
+            $nav_title = 'My Classifieds';
+
         bp_core_new_subnav_item( array(
-            'name'            => __( 'My Classifieds', $this->text_domain ),
+            'name'            => __( $nav_title, $this->text_domain ),
             'slug'            => 'my-classifieds',
             'parent_url'      => $parent_url,
             'parent_slug'     => $bp->classifieds->slug,
@@ -131,6 +148,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
                 $this->render_front('members/single/classifieds/my-classifieds');
             }
         } elseif ( $bp->current_component == 'classifieds' && $bp->current_action == 'create-new' ) {
+
             if ( isset( $_POST['save'] ) ) {
                 $this->validate_fields( $_POST, $_FILES );
                 if ( $this->form_valid ) {
