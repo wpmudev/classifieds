@@ -953,6 +953,10 @@ class Classifieds_Core {
     function get_taxonomy_template( $template ) {
         $taxonomy = get_query_var('taxonomy');
         $term = get_query_var('term');
+
+        if ( "classifieds_categories" != $taxonomy )
+            return;
+
         /* Check whether the files dosn't exist in the active theme directrory,
          * alos check for file to load in our general template directory */
         if ( ! file_exists( get_template_directory() . "/taxonomy-{$taxonomy}-{$term}.php" )
