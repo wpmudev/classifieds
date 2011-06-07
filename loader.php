@@ -8,6 +8,7 @@ Version: 2.0.5
 Author: Ivan Shaovchev, Andrey Shipilov (Incsub)
 Author URI: http://premium.wpmudev.org
 License: GNU General Public License (Version 2 - GPLv2)
+WDP ID: 158
 */
 
 /*
