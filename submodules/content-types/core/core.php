@@ -26,7 +26,7 @@ class Content_Types_Core {
     var $allow_redirect;
     /** @var boolean Flag whether to flush the rewrite rules or not */
     var $flush_rewrite_rules = false;
-    
+
     /**
      * Constructor
      *
@@ -195,7 +195,7 @@ class Content_Types_Core {
      **/
     function handle_taxonomy_requests() {
         /* If valid add/edit taxonomy request is made */
-        if ( $_POST['submit'] && wp_verify_nonce( $_POST['_wpnonce'], 'submit_taxonomy' ) ) {
+        if ( $_POST['submit'] && wp_verify_nonce( $_POST['ct_submit_taxonomy_secret'], 'ct_submit_taxonomy_verify' ) ) {
             /* Validate input fields */
             $valid_taxonomy = $this->validate_field( 'taxonomy', $_POST['taxonomy'] );
             $valid_object_type = $this->validate_field( 'object_type', $_POST['object_type'] );
@@ -309,7 +309,7 @@ class Content_Types_Core {
      **/
     function handle_custom_field_requests() {
         /* If valid add/edit custom field request is made */
-        if ( isset( $_POST['submit'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'submit_custom_field' ) ) {
+        if ( isset( $_POST['ct_submit_update_custom_field'] ) && wp_verify_nonce( $_POST['ct_submit_custom_field_secret'], 'ct_submit_custom_field_verify' ) ) {
             /* Validate input fields data */
             $field_title_valid       = $this->validate_field( 'field_title', $_POST['field_title'] );
             $field_object_type_valid = $this->validate_field( 'object_type', $_POST['object_type'] );
@@ -348,7 +348,7 @@ class Content_Types_Core {
             update_site_option( 'ct_custom_fields', $custom_fields );
             wp_redirect( admin_url( 'admin.php?page=ct_content_types&ct_content_type=custom_field&updated' ) );
         }
-        elseif ( isset( $_REQUEST['submit'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'delete_custom_field' )  ) {
+        elseif ( isset( $_REQUEST['ct_submit_update_custom_field'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'delete_custom_field' )  ) {
             /* Set available custom fields */
             $custom_fields = $this->custom_fields;
             /* Remove the deleted custom field */

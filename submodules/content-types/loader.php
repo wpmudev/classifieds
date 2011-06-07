@@ -5,12 +5,12 @@ Submodule Name: Content Types
 Description: Content Types - Custom Post, Taxonomy and Field Manager.
 Version: 1.0.8
 Author: Ivan Shaovchev (Incsub)
-Author URI: http://ivan.sh
+Author URI: http://premium.wpmudev.org
 License: GNU General Public License (Version 2 - GPLv2)
 */
 
 /*
-Copyright 2010 Incsub, (http://incsub.com)
+Copyright 2011 Incsub, (http://incsub.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by

@@ -1,7 +1,7 @@
 <?php if (!defined('ABSPATH')) die('No direct access allowed!'); ?>
 
 <?php
-$post_types = $this->registered_post_type_names;
+$post_types = get_post_types('','names');
 $args = $this->taxonomies[$_GET['ct_edit_taxonomy']];
 ?>
 

@@ -33,21 +33,21 @@ class Classifieds_Core_Data extends Classifieds_Core {
             update_site_option( 'ct_custom_post_types', $post_types );
             update_site_option( 'ct_flush_rewrite_rules', true );
             /* Create data loaded flag so we don't load the data twice */
-            $data_loaded = array( 'data' => array( 'post_types_loaded' => true ));
+            $data_loaded = array( 'cf-data' => array( 'post_types_loaded' => true ));
             $options = array_merge_recursive( $options, $data_loaded );
             update_site_option( $this->options_name , $options );
         }
         /* Check whether taxonomies data is loaded */
         if ( !isset( $options['cf-data']['taxonomies_loaded'] ) )  {
             /* Unserialize raw array data */
-            $taxonomies_tmp = unserialize( 'a:2:{s:16:"classifieds_tags";a:2:{s:11:"object_type";a:1:{i:0;s:11:"classifieds";}s:4:"args";a:6:{s:6:"labels";a:2:{s:4:"name";s:4:"Tags";s:13:"singular_name";s:3:"Tag";}s:6:"public";b:1;s:12:"hierarchical";b:0;s:7:"rewrite";a:1:{s:4:"slug";s:7:"cf-tags";}s:9:"query_var";b:1;s:12:"capabilities";a:1:{s:12:"assign_terms";s:12:"assign_terms";}}}s:22:"classifieds_categories";a:2:{s:11:"object_type";a:1:{i:0;s:11:"classifieds";}s:4:"args";a:6:{s:6:"labels";a:2:{s:4:"name";s:10:"Categories";s:13:"singular_name";s:8:"Category";}s:6:"public";b:1;s:12:"hierarchical";b:1;s:7:"rewrite";a:1:{s:4:"slug";s:13:"cf-categories";}s:9:"query_var";b:1;s:12:"capabilities";a:1:{s:12:"assign_terms";s:12:"assign_terms";}}}}' );
+            $taxonomies_tmp = unserialize( 'a:2:{s:16:"classifieds_tags";a:2:{s:11:"object_type";a:1:{i:0;s:11:"classifieds";}s:4:"args";a:6:{s:6:"labels";a:2:{s:4:"name";s:4:"Tags";s:13:"singular_name";s:3:"Tag";}s:6:"public";b:1;s:12:"hierarchical";b:0;s:7:"rewrite";a:1:{s:4:"slug";s:7:"cf-tags";}s:9:"query_var";b:1;s:12:"capabilities";a:1:{s:12:"assign_terms";s:12:"assign_terms";}}}s:22:"classifieds_categories";a:2:{s:11:"object_type";a:1:{i:0;s:11:"classifieds";}s:4:"args";a:6:{s:6:"labels";a:2:{s:4:"name";s:10:"Categories";s:13:"singular_name";s:8:"Categoru";}s:6:"public";b:1;s:12:"hierarchical";b:1;s:7:"rewrite";a:1:{s:4:"slug";s:13:"cf-categories";}s:9:"query_var";b:1;s:12:"capabilities";a:1:{s:12:"assign_terms";s:12:"assign_terms";}}}}' );
             /* Get available taxonomies */
             $taxonomies = ( get_site_option( 'ct_custom_taxonomies' ) ) ? array_merge( get_site_option( 'ct_custom_taxonomies' ), $taxonomies_tmp ) : $taxonomies_tmp;
             /* Update taxonomies and delete tmp options */
             update_site_option( 'ct_custom_taxonomies', $taxonomies );
             update_site_option( 'ct_flush_rewrite_rules', true );
             /* Create data loaded flag so we don't load the data twice */
-            $data_loaded = array( 'data' => array( 'taxonomies_loaded' => true ));
+            $data_loaded = array( 'cf-data' => array( 'taxonomies_loaded' => true ));
             $options = array_merge_recursive( $options, $data_loaded );
             update_site_option( $this->options_name, $options );
         }
@@ -60,7 +60,7 @@ class Classifieds_Core_Data extends Classifieds_Core {
             /* Update custom fields options */
             update_site_option( 'ct_custom_fields', $custom_fields );
             /* Create data loaded flag so we don't load the data twice */
-            $data_loaded = array( 'data' => array( 'custom_fields_loaded' => true ));
+            $data_loaded = array( 'cf-data' => array( 'custom_fields_loaded' => true ));
             $options = array_merge_recursive( $options, $data_loaded );
             update_site_option( $this->options_name, $options );
         }

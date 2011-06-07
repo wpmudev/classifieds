@@ -1,7 +1,7 @@
 <?php if (!defined('ABSPATH')) die('No direct access allowed!'); ?>
 
 <?php
-$post_types = $this->registered_post_type_names;
+$post_types = get_post_types('','names');
 $custom_field = $this->custom_fields[$_GET['ct_edit_custom_field']];
 ?>
 

@@ -4,6 +4,7 @@
 
 <h3><?php _e('Add Taxonomy', 'content_types'); ?></h3>
 <form action="" method="post" class="ct-taxonomy">
+    <?php wp_nonce_field( 'ct_submit_taxonomy_verify', 'ct_submit_taxonomy_secret' ); ?>
     <div class="ct-wrap-left">
         <div class="ct-table-wrap">
             <div class="ct-arrow"><br></div>
@@ -358,7 +359,6 @@
     </div>
     <div class="clear"></div>
     <p class="submit">
-        <?php wp_nonce_field('submit_taxonomy'); ?>
         <input type="submit" class="button-primary" name="submit" value="Add Taxonomy">
     </p>
     <br /><br /><br /><br />

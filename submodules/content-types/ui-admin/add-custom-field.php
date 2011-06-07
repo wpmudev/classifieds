@@ -1,6 +1,6 @@
 <?php if (!defined('ABSPATH')) die('No direct access allowed!'); ?>
 
-<?php $post_types = $this->registered_post_type_names; ?>
+<?php $post_types = get_post_types('','names'); ?>
 
 <h3><?php _e('Add Custom Field', 'content_types'); ?></h3>
 <form action="" method="post" class="ct-custom-fields">
@@ -131,8 +131,8 @@
     <br style="clear: left" />
 
     <p class="submit">
-        <?php wp_nonce_field( 'submit_custom_field' ); ?>
-        <input type="submit" class="button-primary" name="submit" value="Add Custom Field">
+        <?php wp_nonce_field( 'ct_submit_custom_field_verify', 'ct_submit_custom_field_secret' ); ?>
+        <input type="submit" class="button-primary" name="ct_submit_update_custom_field" value="Add Custom Field">
     </p>
     <br /><br /><br /><br />
 </form>
