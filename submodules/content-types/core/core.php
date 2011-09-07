@@ -184,7 +184,7 @@ class Content_Types_Core {
             foreach ( $post_types as $post_type => $args )
                 register_post_type( $post_type, $args );
             /* Flush the rewrite rules if necessary */
-            $this->flush_rewrite_rules();
+            flush_rewrite_rules();
         }
     }
 
