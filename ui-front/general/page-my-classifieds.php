@@ -12,11 +12,11 @@ get_header(); ?>
 
 		<div id="container">
             <div id="content" class="my-classifieds" role="main">
-                
+
             <?php if ( is_user_logged_in() ): ?>
 
                 <?php $action = get_query_var('cf_action'); ?>
-                
+
                 <?php if ( $action == 'my-classifieds' ): ?>
 
                     <h1 class="entry-title"><?php the_title(); ?></h1>
@@ -349,7 +349,7 @@ get_header(); ?>
                     <?php endwhile; ?>
 
                 <?php endif; ?>
-                        
+
             <?php else: ?>
 
                 <h1 class="entry-title"><?php the_title(); ?></h1>
@@ -357,9 +357,9 @@ get_header(); ?>
                 <div class="info" id="message">
                     <p><?php _e( 'You have to login to view the contents of this page.', 'classifieds' ); ?></p>
                 </div>
-                
+
             <?php endif; ?>
-                
+
 			</div><!-- #content -->
 		</div><!-- #container -->
 

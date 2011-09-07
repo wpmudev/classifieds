@@ -17,7 +17,7 @@ class Content_Types_Core_Admin extends Content_Types_Core {
     }
 
     /**
-     * 
+     *
      */
     function init() {
         add_action( 'admin_menu', array( &$this, 'admin_menu' ), 20 );
@@ -82,7 +82,7 @@ class Content_Types_Core_Admin extends Content_Types_Core {
 
         if ( $_GET['page'] == 'ct_content_types' ) {
             $this->render_admin('content-types');
-            
+
             if ( $_GET['ct_content_type'] == 'post_type' || !isset( $_GET['ct_content_type'] )) {
                 if ( isset( $_GET['ct_add_post_type'] ) )
                     $this->render_admin('add-post-type');
@@ -90,7 +90,7 @@ class Content_Types_Core_Admin extends Content_Types_Core {
                     $this->render_admin('edit-post-type');
                 elseif ( isset( $_GET['ct_delete_post_type'] ) )
                     $this->render_admin('delete-post-type');
-                else 
+                else
                     $this->render_admin('post-types');
             }
             elseif ( $_GET['ct_content_type'] == 'taxonomy' ) {

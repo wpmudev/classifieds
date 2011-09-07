@@ -2,7 +2,7 @@
 /**
  * The Template for displaying all single classifieds posts.
  * You can override this file in your active theme.
- * 
+ *
  * @package Classifieds
  * @subpackage UI Front
  * @since Classifieds 2.0
@@ -41,7 +41,7 @@ get_header(); ?>
                                    <?php the_author(); ?>
 
                                    </a>
-                                   
+
                                </td>
                            </tr>
                            <tr>
@@ -97,7 +97,7 @@ get_header(); ?>
                                     <input type="submit" class="button cancel"  value="<?php _e( 'Cancel', 'classifieds' ); ?>" onClick="classifieds.cancel_contact_form(); return false;" />
                                 </p>
                             </div>
-                            
+
                         </form>
 
                         <div class="clear"></div>
@@ -150,10 +150,10 @@ get_header(); ?>
 
             <?php /* For BuddyPress compatibility */ ?>
             <?php if ( isset( $bp ) ): ?><?php locate_template( array( 'sidebar.php' ), true ); ?><?php endif; ?>
-            
+
 		</div><!-- #container -->
 
 <?php /* For BuddyPress compatibility */ ?>
 <?php if ( !isset( $bp ) ): ?><?php get_sidebar(); ?><?php endif; ?>
-        
+
 <?php get_footer(); ?>

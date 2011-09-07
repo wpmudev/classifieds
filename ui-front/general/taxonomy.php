@@ -1,7 +1,7 @@
 <?php
 /**
  * The template for displaying Taxonomy pages.
- * 
+ *
  * Learn more: http://codex.wordpress.org/Template_Hierarchy
  *
  * @package Classifieds
@@ -50,19 +50,19 @@ get_header(); ?>
             <?php if ( isset( $bp ) ): ?>
                 </div>
             <?php endif; ?>
-                
+
 			</div><!-- #content -->
 
             <?php /* For BuddyPress compatibility */ ?>
             <?php if ( isset( $bp ) ): ?>
                 <?php locate_template( array( 'sidebar.php' ), true ); ?>
             <?php endif; ?>
-            
+
 		</div><!-- #container -->
 
 <?php /* For BuddyPress compatibility */ ?>
 <?php if ( !isset( $bp ) ): ?>
     <?php get_sidebar(); ?>
 <?php endif; ?>
-        
+
 <?php get_footer(); ?>

@@ -103,7 +103,7 @@
 
                 </div>
             </div><!-- .entry-content -->
-            
+
     </div><!-- #post-## -->
 
 <?php endwhile; // End the loop. Whew. ?>

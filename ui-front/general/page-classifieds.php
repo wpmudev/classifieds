@@ -12,7 +12,7 @@ get_header(); ?>
 
 		<div id="container">
             <div id="content" class="cf-bp-wrap" role="main">
-                
+
             <?php /* For BuddyPress compatibility */ ?>
             <?php global $bp; if ( isset( $bp ) ): ?><div class="cf-padder"><?php endif; ?>
 
@@ -26,7 +26,7 @@ get_header(); ?>
                             <p><?php _e( 'No Classifieds found.', 'classifieds' ); ?></p>
                         </div>
                     <?php endif; ?>
-                        
+
                 <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
                     <div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -87,14 +87,14 @@ get_header(); ?>
             <?php if ( isset( $bp ) ): ?>
                 </div>
             <?php endif; ?>
-                
+
 			</div><!-- #content -->
 
             <?php /* For BuddyPress compatibility */ ?>
             <?php if ( isset( $bp ) ): ?>
                 <?php locate_template( array( 'sidebar.php' ), true ); ?>
             <?php endif; ?>
-            
+
 		</div><!-- #container -->
 
 <?php /* For BuddyPress compatibility */ ?>

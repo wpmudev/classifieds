@@ -104,7 +104,7 @@ query_posts( $query_string . "&post_type=classifieds&post_status=publish");
 
                 </div>
             </div><!-- .entry-content -->
-            
+
     </div><!-- #post-## -->
 
 <?php endwhile; // End the loop. Whew. ?>
