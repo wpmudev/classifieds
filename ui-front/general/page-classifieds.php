@@ -47,16 +47,20 @@ get_header(); ?>
                                         <tr>
                                             <th><?php _e( 'Posted By', 'classifieds' ); ?></th>
                                             <td>
-                                                <?php /* For BuddyPress compatibility */ ?>
-                                                <?php if ( isset( $bp ) ): ?>
-                                                <a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" >
-                                                <?php else: ?>
-                                                    <a href="<?php echo get_author_posts_url( get_the_author_meta('ID') ); ?>" alt="<?php the_author(); ?> Profile" >
+                                                <?php
+                                                $user = get_userdata( get_the_author_meta('ID') );
+
+                                                /* For BuddyPress compatibility */
+                                                if ( isset( $bp ) ): ?>
+                                                    <a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" >
+                                                <?php else:
+                                                ?>
+                                                    <a href="<?php echo get_option( 'siteurl' ) . '/cf-author/'. $user->user_login .'/'; ?>" alt="<?php echo $user->display_name; ?> Profile" >
                                                 <?php endif; ?>
 
-                                                <?php the_author(); ?></td>
-
-                                                </a>
+                                                    <?php echo $user->display_name; ?>
+                                                    </a>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th><?php _e( 'Categories', 'classifieds' ); ?></th>

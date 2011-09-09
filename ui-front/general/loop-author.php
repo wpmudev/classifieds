@@ -21,9 +21,7 @@
 
 global $query_string;
 query_posts( $query_string . "&post_type=classifieds&post_status=publish");
-
 ?>
-
 <?php /* Display navigation to next/previous pages when applicable */ ?>
 <?php if ( $wp_query->max_num_pages > 1 ) : ?>
 	<div id="nav-above" class="navigation">
@@ -81,10 +79,11 @@ query_posts( $query_string . "&post_type=classifieds&post_status=publish");
                                     <?php /* For BuddyPress compatibility */ ?>
                                     <?php global $bp; if ( isset( $bp ) ): ?><a href="<?php echo bp_core_get_user_domain( get_the_author_ID() ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" ><?php endif; ?>
 
-                                    <?php the_author(); ?></td>
+                                    <?php the_author(); ?>
 
                                     <?php /* For BuddyPress compatibility */ ?>
                                     <?php if ( isset( $bp ) ): ?></a><?php endif; ?>
+                                </td>
                             </tr>
                             <tr>
                                 <th><?php _e( 'Categories', 'classifieds' ); ?></th>

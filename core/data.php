@@ -64,6 +64,18 @@ class Classifieds_Core_Data extends Classifieds_Core {
             $options = array_merge_recursive( $options, $data_loaded );
             update_site_option( $this->options_name, $options );
         }
+
+        //add rule for show cf-author page
+        global $wp, $wp_rewrite;
+        $wp->add_query_var( 'cf_author_name' );
+        $result = add_query_arg(  array(
+            'cf_author_name' => '$matches[1]',
+        ), 'index.php' );
+        add_rewrite_rule( 'cf-author/(.+?)/?$', $result, 'top' );
+        $rules = get_option( 'rewrite_rules' );
+        if ( ! isset( $rules['cf-author/(.+?)/?$'] ) )
+            $wp_rewrite->flush_rules();
+
     }
 }
 endif;

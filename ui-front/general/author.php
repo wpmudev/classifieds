@@ -7,6 +7,11 @@
  * @subpackage UI Front
  * @since Classifieds 2.0
  */
+global $query_string;
+$cf_author_name = get_query_var( 'cf_author_name' );
+$query_string = 'author_name=' . $cf_author_name;
+
+$user_data = get_userdatabylogin( $cf_author_name );
 
 get_header(); ?>
 
@@ -22,9 +27,8 @@ get_header(); ?>
              * properly with a call to rewind_posts().
              */
             if ( have_posts() ) the_post();
-            ?>
-
-				<h1 class="page-title author"><?php printf( __( 'Classifieds By: %s', 'classifieds' ), "<span class='vcard'><a class='url fn n' href='" . get_author_posts_url( get_the_author_meta( 'ID' ) ) . "' title='" . esc_attr( get_the_author() ) . "' rel='me'>" . get_the_author() . "</a></span>" ); ?></h1>
+      ?>
+				<h1 class="page-title author"><?php printf( __( 'Classifieds By: %s', 'classifieds' ), "<span class='vcard'><a class='url fn n' href='" . get_option( 'siteurl' ) . "/cf-author/". $user_data->user_login ."/' title='" . esc_attr( $user_data->display_name ) . "' rel='me'>" . $user_data->display_name . "</a></span>" ); ?></h1>
 
                 <?php
                 /* Since we called the_post() above, we need to
@@ -42,7 +46,7 @@ get_header(); ?>
                  else
                     load_template( CF_PLUGIN_DIR . 'ui-front/general/loop-author.php' );
                 ?>
-                    
+
 			</div><!-- #content -->
 		</div><!-- #container -->
 

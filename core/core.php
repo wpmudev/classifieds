@@ -79,9 +79,9 @@ class Classifieds_Core {
         /* Add template filter */
         add_filter( 'page_template', array( &$this, 'get_page_template' ) ) ;
         /* Add template filter */
-        add_filter( 'author_template', array( &$this, 'get_author_template' ) ) ;
-        /* Add template filter */
         add_filter( 'taxonomy_template', array( &$this, 'get_taxonomy_template' ) ) ;
+        /* template for cf-author page */
+        add_action( 'template_redirect', array( &$this, 'get_cf_author_template' ) );
         /* Handle login requests */
         add_action( 'template_redirect', array( &$this, 'handle_login_requests' ) );
         /* Handle all requests for checkout */
@@ -921,22 +921,14 @@ class Classifieds_Core {
     }
 
     /**
-     * Filter the template path to author{}.php templates.
-     * Load from theme directory primary if it doesn't exist load from plugin dir.
-     *
-     * Learn more: http://codex.wordpress.org/Template_Hierarchy
-     * Learn more: http://codex.wordpress.org/Plugin_API/Filter_Reference#Template_Filters
-     *
-     * @global <type> $post Post object
-     * @param string Templatepath to filter
-     * @return string Templatepath
+     *Get Template for classifieds author page
      **/
-    function get_author_template( $template ) {
-        if ( ! file_exists( get_template_directory() . "/author.php" )
-            && file_exists( "{$this->plugin_dir}/ui-front/general/author.php" ) )
-            return "{$this->plugin_dir}/ui-front/general/author.php";
-        else
-            return $template;
+    function get_cf_author_template() {
+        global $wp_query;
+        if ( '' != get_query_var( 'cf_author_name' ) )  {
+            load_template( "{$this->plugin_dir}/ui-front/general/author.php" );
+            exit();
+        }
     }
 
     /**
@@ -954,7 +946,7 @@ class Classifieds_Core {
         $taxonomy = get_query_var('taxonomy');
         $term = get_query_var('term');
 
-        if ( "classifieds_categories" != $taxonomy )
+        if ( "classifieds_categories" != $taxonomy && "classifieds_tags" != $taxonomy )
             return;
 
         /* Check whether the files dosn't exist in the active theme directrory,
