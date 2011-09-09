@@ -925,7 +925,7 @@ class Classifieds_Core {
      **/
     function get_cf_author_template() {
         global $wp_query;
-        if ( '' != get_query_var( 'cf_author_name' ) )  {
+        if ( '' != get_query_var( 'cf_author_name' ) || '' != $_REQUEST['cf_author'] )  {
             load_template( "{$this->plugin_dir}/ui-front/general/author.php" );
             exit();
         }

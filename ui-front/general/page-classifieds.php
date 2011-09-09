@@ -50,12 +50,17 @@ get_header(); ?>
                                                 <?php
                                                 $user = get_userdata( get_the_author_meta('ID') );
 
+                                                if ( '' == get_option( 'permalink_structure' ) )
+                                                    $cf_author_url = '?cf_author=' . $user->user_login;
+                                                else
+                                                    $cf_author_url = '/cf-author/'. $user->user_login .'/';
+
                                                 /* For BuddyPress compatibility */
                                                 if ( isset( $bp ) ): ?>
                                                     <a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" >
                                                 <?php else:
                                                 ?>
-                                                    <a href="<?php echo get_option( 'siteurl' ) . '/cf-author/'. $user->user_login .'/'; ?>" alt="<?php echo $user->display_name; ?> Profile" >
+                                                    <a href="<?php echo get_option( 'siteurl' ) . $cf_author_url; ?>" alt="<?php echo $user->display_name; ?> Profile" >
                                                 <?php endif; ?>
 
                                                     <?php echo $user->display_name; ?>
