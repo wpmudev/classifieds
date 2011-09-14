@@ -1,0 +1,66 @@
+=== Classifieds ===
+Authors: Author: Ivan Shaovchev, Andrey Shipilov (Incsub)   
+Plugin Page: http://premium.wpmudev.org/project/classifieds     
+
+== Changelog ==
+
+=
+ 2.0.6.1 =
+* fixed display menu credits for all user
+* fixed display page of edit classifieds 
+* fixed problem with deduction credits when create new ad
+* some template changes of checkout page
+* fixed problem with adding credits of checkout (when we logged)
+* some text changes
+
+=
+ 2.0.6 =
+* fixed problem with permalink structure
+* fixed header error
+* fixed page of classified tags
+* fixed link on page of classified author 
+
+=
+ 2.0.5 =
+* Fixed problem of adding/editing "Post Types", "Taxonomies", "Custom Fields".
+
+=
+ 2.0.4 =
+* Fixed problem with template of the categories page for not "classifieds" categories.
+
+=
+ 2.0.3 =
+* Added feature to change title of pages as "Classifieds" and "My Classifieds".
+
+=
+ 2.0.2 =
+* fixed problem of redirect when creating new Ad
+
+=
+ 2.0.1 =
+* Add .pot file.
+* Fix bug with load_plugin_textdomain() not properly loading the .pot file.
+* Fix bug with BP admin bar drop-down ( .padder issue ).
+
+=
+ 2.0.0 =
+
+* Front-end classifieds management added.
+
+* Front-end classifieds management added for BuddyPress ( integrated with BP user profiles )
+
+* Improved Admin UI.
+
+* Internal code architecture entirely rewritten for version 2.0 all legacy code removed.
+
+* Custom database tables eliminated. Replaced by core "wp" tables.
+
+* Content Types submodule added.
+
+* Localization available ( You need to generate a PO/MO file )
+
+
+
+= 1.1.1 =
+
+* Initial release. 

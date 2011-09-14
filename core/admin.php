@@ -42,13 +42,13 @@ class Classifieds_Core_Admin extends Classifieds_Core {
     /**
      * Add plugin main menu
      *
-     * @return void 
+     * @return void
      **/
     function admin_menu() {
         add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
         add_submenu_page( $this->menu_slug, __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
         add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', 'classifieds_settings', array( &$this, 'handle_admin_requests' ) );
-        add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Credits', $this->text_domain ), 'edit_users', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
+        add_submenu_page( $this->menu_slug, __( 'Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
     }
 
     /**
@@ -103,7 +103,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
             }
         } elseif ( $_GET['page'] == 'classifieds_credits' ) {
             if ( $_GET['tab'] == 'send_credits' ) {
-                
+
             } else {
                 if ( isset( $_POST['purchase'] ) ) {
                     $this->js_redirect( get_bloginfo('url') . '/checkout/' );
@@ -117,7 +117,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
     /**
      * Hook styles and scripts into plugin admin head
      *
-     * @return void 
+     * @return void
      **/
     function admin_head() {
         /* Get plugin hook */
@@ -127,11 +127,11 @@ class Classifieds_Core_Admin extends Classifieds_Core {
         add_action( 'admin_head-' . $this->hook, array( &$this, 'admin_print_styles' ) );
         add_action( 'admin_head-' . $this->hook, array( &$this, 'admin_print_scripts' ) );
     }
-    
+
     /**
      * Enqueue scripts.
      *
-     * @return void 
+     * @return void
      **/
     function admin_enqueue_scripts() {
         wp_enqueue_script('jquery');

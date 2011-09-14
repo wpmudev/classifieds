@@ -368,6 +368,31 @@ class Classifieds_Core {
     function update_user( $email, $first_name, $last_name, $billing, $credits ) {
         /* Include registration helper functions */
         require_once( ABSPATH . WPINC . '/registration.php' );
+
+        /* If user logged update it */
+        if ( is_user_logged_in() ) {
+
+            wp_update_user( array( 'ID' => get_current_user_id(), 'role' => $this->user_role ) );
+            update_user_meta( get_current_user_id(), 'cf_billing', $billing );
+            $this->update_user_credits( $credits, get_current_user_id() );
+            return;
+        }
+
+
+        /* If user exists update it */
+        if ( email_exists( $user_email ) || is_user_logged_in() ) {
+            $user = get_user_by( 'email', $user_email );
+            if ( $user ) {
+                wp_update_user( array( 'ID' => $user->ID, 'role' => $this->user_role ) );
+                update_user_meta( $user->ID, 'cf_billing', $billing );
+                $this->update_user_credits( $credits, $user->ID );
+                $credentials = array( 'remember'=>true, 'user_login' => $user->user_login, 'user_password' => $user->user_pass );
+                wp_signon( $credentials );
+                return;
+            }
+        }
+
+        /* if user not exist create new */
         /* Variables */
         $user_login     = sanitize_user( strtolower( $first_name ));
         $user_email     = $email;
@@ -376,17 +401,7 @@ class Classifieds_Core {
             $user_login .= '-' . sanitize_user( strtolower( $last_name ));
         if ( username_exists( $user_login ) )
             $user_login .= rand(1,9);
-        if ( email_exists( $user_email )) {
-            $user = get_user_by( 'email', $user_email );
-            /* If user exists update it */
-            if ( $user ) {
-                wp_update_user( array( 'ID' => $user->ID, 'role' => $this->user_role ) );
-                update_user_meta( $user->ID, 'cf_billing', $billing );
-                $credentials = array( 'remember'=>true, 'user_login' => $user->user_login, 'user_password' => $user->user_pass );
-                wp_signon( $credentials );
-                return;
-            }
-        }
+
         $user_id = wp_insert_user( array(
             'user_login'   => $user_login,
             'user_pass'    => $user_pass,
@@ -505,11 +520,11 @@ class Classifieds_Core {
                 if ( isset( $this->login_error )) {
                     add_action( 'login_invalid', create_function('', 'echo "class=\"error\"";') );
                     /* Set the proper step which will be loaded by "page-checkout.php" */
-                    set_query_var( 'cf_step', 'terms' );
+                    set_query_var( 'cf_step', 'pre_login' );
                     /* Pass error params to "page-checkout.php" */
                     set_query_var( 'cf_error', $this->login_error );
                 } else {
-                    wp_redirect( get_bloginfo('url') . '/classifieds/my-classifieds/' );
+                    set_query_var( 'cf_step', 'terms' );
                 }
             }
             /* If payment method is selected and submitted */
@@ -596,8 +611,13 @@ class Classifieds_Core {
             }
             /* If no requests are made load default step */
             else {
-                /* Set the proper step which will be loaded by "page-checkout.php" */
-                set_query_var( 'cf_step', 'terms' );
+                if ( is_user_logged_in() || $_POST['new_account'] ) {
+                    /* Set the proper step which will be loaded by "page-checkout.php" */
+                    set_query_var( 'cf_step', 'terms' );
+                } else {
+                    /* Set the proper step which will be loaded by "page-checkout.php" */
+                    set_query_var( 'cf_step', 'pre_login' );
+                }
             }
         }
     }

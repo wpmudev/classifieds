@@ -32,6 +32,43 @@ get_header(); ?>
 
                             <?php _e( 'This feature is currently disabled by the system administrator.', 'classifieds' ); ?>
 
+                        <?php elseif ( $step == 'pre_login' ): ?>
+
+
+                            <form action="" method="post" class="cf-login">
+                                <strong><?php _e( 'Create new account', 'classifieds' ); ?></strong>
+                                <div class="submit">
+                                    <input type="submit" name="new_account" value="<?php _e( 'New account', 'classifieds' ); ?>" />
+                                </div>
+                            </form>
+                            <br />
+
+                            <form action="" method="post" class="cf-login">
+                                <strong><?php _e( 'Existing client', 'classifieds' ); ?></strong>
+                                <table  <?php do_action( 'login_invalid' ); ?>>
+                                    <tr>
+                                        <td><label for="username"><?php _e( 'Username', 'classifieds' ); ?>:</label></td>
+                                        <td><input type="text" id="username" name="username" value="<?php echo $_POST['username'] ?>" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for="password"><?php _e( 'Password', 'classifieds' ); ?>:</label></td>
+                                        <td><input type="password" id="password" name="password" /></td>
+                                    </tr>
+                                </table>
+
+                                <div class="clear"></div>
+
+                                <div class="submit">
+                                    <input type="submit" name="login_submit" value="<?php _e( 'Continue', 'classifieds' ); ?>" />
+                                </div>
+                            </form>
+
+                            <?php $error = get_query_var('cf_error'); ?>
+
+                            <?php if ( $error ): ?>
+                                <div class="invalid-login"><?php echo $error; ?></div>
+                            <?php endif; ?>
+
                         <?php elseif ( $step == 'terms' ): ?>
 
                             <?php $options = get_option('classifieds_options'); ?>
@@ -43,7 +80,7 @@ get_header(); ?>
                                     <tr>
                                         <td><label for="billing"><?php _e( 'Buy Credits', 'classifieds' ) ?></label></td>
                                         <td>
-                                            <input type="radio" name="billing" value="credits" <?php if ( $_POST['billing'] == 'credits' ) echo 'checked="checked"'; ?> />
+                                            <input type="radio" name="billing" value="credits" checked />
                                             <select name="credits_cost">
                                                 <?php for ( $i = 1; $i <= 10; $i++ ): ?>
                                                 <?php $credits = 10 * $i; ?>
@@ -53,6 +90,8 @@ get_header(); ?>
                                             </select>
                                         </td>
                                     </tr>
+
+                                    <?php if ( 0 < strlen( $options['checkout']['annual_txt'] ) && 0 <= $options['checkout']['annual_cost'] && '' != $options['checkout']['annual_cost'] ): ?>
                                     <tr>
                                         <td><label for="billing"><?php echo $options['checkout']['annual_txt']; ?></label></td>
                                         <td>
@@ -60,6 +99,9 @@ get_header(); ?>
                                             <input type="hidden" name="annual_cost" value="<?php echo $options['checkout']['annual_cost']; ?>" />
                                         </td>
                                     </tr>
+                                    <?php endif;?>
+
+                                    <?php if ( 0 < strlen( $options['checkout']['one_time_txt'] ) && 0 <= $options['checkout']['one_time_cost'] && '' != $options['checkout']['one_time_cost'] ): ?>
                                     <tr>
                                         <td><label for="billing"><?php echo $options['checkout']['one_time_txt']; ?></label></td>
                                         <td>
@@ -67,6 +109,7 @@ get_header(); ?>
                                             <input type="hidden" name="one_time_cost" value="<?php echo $options['checkout']['one_time_cost']; ?>" />
                                         </td>
                                     </tr>
+                                    <?php endif;?>
                                 </table>
                                 <br />
 
@@ -88,28 +131,6 @@ get_header(); ?>
                                 <div class="submit">
                                     <input type="submit" name="terms_submit" value="<?php _e( 'Continue', 'classifieds' ); ?>" />
                                 </div>
-                            </form>
-
-                            <form action="" method="post" class="cf-login">
-
-                                <strong><?php _e( 'Existing client', 'classifieds' ); ?></strong>
-                                <table  <?php do_action( 'login_invalid' ); ?>>
-                                    <tr>
-                                        <td><label for="username"><?php _e( 'Username', 'classifieds' ); ?>:</label></td>
-                                        <td><input type="text" id="username" name="username" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td><label for="password"><?php _e( 'Password', 'classifieds' ); ?>:</label></td>
-                                        <td><input type="password" id="password" name="password" /></td>
-                                    </tr>
-                                </table>
-
-                                <div class="clear"></div>
-
-                                <div class="submit">
-                                    <input type="submit" name="login_submit" value="<?php _e( 'Continue', 'classifieds' ); ?>" />
-                                </div>
-
                             </form>
 
                             <?php $error = get_query_var('cf_error'); ?>
@@ -548,7 +569,7 @@ get_header(); ?>
                         <?php elseif ( $step == 'success' ): ?>
 
                             <div class="dp-thank-you"><?php _e( 'Thank you for your business. Transaction processed successfully!', 'classifieds' ); ?></div>
-                            <span class="dp-submit-txt"><?php _e( 'You can go to your profile and review/change your personal information. You can also go straight to the directory listing submission page.', 'classifieds' ); ?></span>
+                            <span class="dp-submit-txt"><?php _e( 'You can go to your profile and review/change your personal information. You can also go straight to classifieds submission page.', 'classifieds' ); ?></span>
                             <br /><br />
 
                             <form action="" method="post">

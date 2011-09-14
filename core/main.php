@@ -137,9 +137,20 @@ class Classifieds_Core_Main extends Classifieds_Core {
                 /* Validate form fields */
                 $this->validate_fields( $_POST, $_FILES );
                 if ( $this->form_valid ) {
+                    /* The credits required to create the classified for the selected period */
+                    $credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
+                    /* If user have more credits of the required credits proceed with create the ad */
+                    if ( $this->user_credits >= $credits_required ) {
+                    /* Create ad */
                     $post_id = $this->update_ad( $_POST, $_FILES );
+                    /* Save the expiration date */
                     $this->save_expiration_date( $post_id );
-                    wp_redirect( get_bloginfo('url') . '/classifieds/my-classifieds/' );
+                    /* Update new credits amount */
+                    $credits = $this->user_credits - $credits_required;
+                    update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+                    /* Set the proper step which will be loaded by "page-my-classifieds.php" */
+                    set_query_var( 'cf_action', 'my-classifieds' );
+                    }
                 } else {
                     set_query_var( 'cf_action', 'create-new' );
                     $error = __( 'Please make sure you fill all fields marked with (required)', $this->text_domain );
@@ -164,7 +175,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
             set_query_var( 'cf_action', 'my-classifieds' );
         }
     }
-    
+
     /**
      * Enqueue styles.
      *

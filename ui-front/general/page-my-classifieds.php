@@ -135,7 +135,7 @@ get_header(); ?>
 
                 <?php elseif ( $action == 'edit' ): ?>
 
-                    <?php query_posts( array( 'p' => get_query_var('cf_post_id'), 'author' => 1, 'post_type' => array( 'classifieds' ) ) ); ?>
+                    <?php query_posts( array( 'p' => get_query_var('cf_post_id'), 'author' => get_current_user_id(), 'post_type' => array( 'classifieds' ) ) ); ?>
                     <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
                     <h1 class="entry-title">My Classifieds / Editing: <?php echo $post->post_title; ?></h1>
