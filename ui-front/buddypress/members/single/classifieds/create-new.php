@@ -13,6 +13,11 @@
 
 <?php
 /* Build messages */
+if ( '1' == $cl_credits_error ) {
+    $msg = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.', $this->text_domain );
+    $class = 'error';
+}
+
 if ( !$this->form_valid ) {
     $msg = __( 'Please make sure you fill in all required fields before saving.', $this->text_domain );
     $class = 'error';
@@ -20,7 +25,7 @@ if ( !$this->form_valid ) {
 ?>
 
 <div class="profile">
-    
+
     <?php if ( $msg ): ?>
     <div class="<?php echo $class; ?>" id="message">
 		<p><?php echo $msg; ?></p>
@@ -28,7 +33,7 @@ if ( !$this->form_valid ) {
     <?php endif; ?>
 
     <form class="standard-form base" method="post" action="" enctype="multipart/form-data">
-        
+
         <div class="editfield">
             <label for="title"><?php _e( 'Title', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
             <input type="text" value="<?php echo $_POST['title']; ?>" id="title" name="title">
@@ -88,7 +93,7 @@ if ( !$this->form_valid ) {
         <div class="submit">
             <input type="submit" value="Save Changes " name="save">
         </div>
-        
+
     </form>
-    
+
 </div>

@@ -125,18 +125,45 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
                 else
                     die( __( 'Security check failed!', $this->text_domain ) );
             } elseif ( isset( $_POST['update'] ) ) {
-                $this->update_ad( $_POST, $_FILES );
-                $this->save_expiration_date( $_POST['post_id'] );
-                $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'edit', 'post_title' => $_POST['post_title'] ));
+                /* The credits required to renew the classified for the selected period */
+                $credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
+                /* If user have more credits of the required credits proceed with renewing the ad */
+                if ( $this->user_credits >= $credits_required ) {
+                    /* Update ad */
+                    $this->update_ad( $_POST, $_FILES );
+                    /* Save the expiration date */
+                    $this->save_expiration_date( $_POST['post_id'] );
+                    /* Update new credits amount */
+                    $credits = $this->user_credits - $credits_required;
+                    update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+
+                    $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'edit', 'post_title' => $_POST['post_title'] ));
+                } else {
+                    $this->render_front('members/single/classifieds/edit-ad', array( 'post_id' => (int) $_POST['post_id'], 'cl_credits_error' => '1' ));
+                }
             } elseif ( isset( $_POST['confirm'] ) ) {
                 if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) ) {
                     if ( $_POST['action'] == 'end' ) {
                         $this->process_status( (int) $_POST['post_id'], 'private' );
                         $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'end', 'post_title' => $_POST['post_title'] ));
                     } elseif ( $_POST['action'] == 'renew' ) {
-                        $this->process_status( (int) $_POST['post_id'], 'publish' );
-                        $this->save_expiration_date( $_POST['post_id'] );
-                        $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'renew', 'post_title' => $_POST['post_title'] ));
+                        /* The credits required to renew the classified for the selected period */
+                        $credits_required = $this->get_credits_from_duration( $_POST['duration'] );
+                        /* If user have more credits of the required credits proceed with renewing the ad */
+                        if ( $this->user_credits >= $credits_required ) {
+                            /* Process the status of the post */
+                            $this->process_status( (int) $_POST['post_id'], 'publish' );
+                            /* Save the expiration date */
+                            $this->save_expiration_date( $_POST['post_id'] );
+                            /* Update new credits amount */
+                            $credits = $this->user_credits - $credits_required;
+                            update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+                            /* Set the proper step which will be loaded by "page-my-classifieds.php" */
+
+                            $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'renew', 'post_title' => $_POST['post_title'] ));
+                        } else {
+                            $this->render_front('members/single/classifieds/my-classifieds', array( 'cl_credits_error' => '1' ));
+                        }
                     } elseif ( $_POST['action'] == 'delete' ) {
                         wp_delete_post( $_POST['post_id'] );
                         $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'delete', 'post_title' => $_POST['post_title'] ));
@@ -152,14 +179,26 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
             if ( isset( $_POST['save'] ) ) {
                 $this->validate_fields( $_POST, $_FILES );
                 if ( $this->form_valid ) {
-                    global $bp;
-                    $post_id = $this->update_ad( $_POST, $_FILES );
-                    $this->save_expiration_date( $post_id );
+                    /* The credits required to create the classified for the selected period */
+                    $credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
+                    /* If user have more credits of the required credits proceed with create the ad */
+                    if ( $this->user_credits >= $credits_required ) {
+                        global $bp;
+                        /* Create ad */
+                        $post_id = $this->update_ad( $_POST, $_FILES );
+                        /* Save the expiration date */
+                        $this->save_expiration_date( $post_id );
+                        /* Update new credits amount */
+                        $credits = $this->user_credits - $credits_required;
+                        update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
 
-                    if ( "" != $bp->loggedin_user->userdata->user_url )
-                        $this->js_redirect( $bp->loggedin_user->userdata->user_url . '/classifieds/my-classifieds/' );
-                    else
-                        $this->js_redirect( $bp->loggedin_user->domain . '/classifieds/my-classifieds/' );
+                        if ( "" != $bp->loggedin_user->userdata->user_url )
+                            $this->js_redirect( $bp->loggedin_user->userdata->user_url . '/classifieds/my-classifieds/' );
+                        else
+                            $this->js_redirect( $bp->loggedin_user->domain . '/classifieds/my-classifieds/' );
+                    } else {
+                        $this->render_front('members/single/classifieds/create-new', array( 'cl_credits_error' => '1' ));
+                    }
                 } else {
                     $this->render_front('members/single/classifieds/create-new');
                 }

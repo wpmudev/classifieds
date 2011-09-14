@@ -5,13 +5,15 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 == Changelog ==
 
 =
- 2.0.6.1 =
+ 2.0.7 =
 * fixed display menu credits for all user
 * fixed display page of edit classifieds 
 * fixed problem with deduction credits when create new ad
 * some template changes of checkout page
 * fixed problem with adding credits of checkout (when we logged)
 * some text changes
+* fixed problem with deduction credits when create new/edit/renew ad for BP
+* fixed display count of available credits for BP 
 
 =
  2.0.6 =

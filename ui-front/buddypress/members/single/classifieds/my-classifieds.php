@@ -26,8 +26,13 @@ elseif ( in_array( 'ended',  $bp->action_variables ) ) {
     $sub = 'ended';
     $status = 'private';
 }
-?>
 
+/* Build messages */
+if ( '1' == $cl_credits_error ) {
+    $msg = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.', $this->text_domain );
+    $class = 'error';
+}
+?>
 <div class="profile">
 
     <?php if ( bp_is_my_profile() ): ?>
@@ -37,9 +42,9 @@ elseif ( in_array( 'ended',  $bp->action_variables ) ) {
             <li class="<?php if ( in_array( 'ended',  $bp->action_variables ) ) echo 'current'; ?>"><a href="<?php echo $bp->displayed_user->domain . 'classifieds/my-classifieds/ended/'; ?>"><?php _e( 'Ended Ads', $this->text_domain ); ?></a></li>
         </ul>
     <?php endif; ?>
+    <div class="av-credits"><?php _e( 'Available Credits:', 'classifieds' ); ?> <?php $user_credits = ( get_user_meta( get_current_user_id(), 'cf_credits', true ) ) ? get_user_meta( get_current_user_id(), 'cf_credits', true ) : 0; echo $user_credits; ?></div>
+
     <div class="clear"></div>
-
-
 
     <?php $current_user = wp_get_current_user();  ?>
     <?php query_posts( array( 'author' => bp_displayed_user_id(), 'post_type' => array( 'classifieds' ), 'post_status' => $status ) ); ?>
@@ -71,9 +76,9 @@ elseif ( in_array( 'ended',  $bp->action_variables ) ) {
     <?php endif; ?>
 
     <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
-    
+
         <div class="cf-ad">
-            
+
             <div class="cf-image"><?php echo get_the_post_thumbnail( get_the_ID(), array( 200, 150 ) ); ?></div>
             <div class="cf-info">
                 <table>
@@ -98,7 +103,7 @@ elseif ( in_array( 'ended',  $bp->action_variables ) ) {
                     </tr>
                 </table>
             </div>
-            
+
             <form action="" method="post" id="action-form-<?php the_ID(); ?>" class="action-form">
                 <?php wp_nonce_field('verify'); ?>
                 <input type="hidden" name="post_id" value="<?php the_ID(); ?>" />
@@ -113,9 +118,9 @@ elseif ( in_array( 'ended',  $bp->action_variables ) ) {
                     <input type="submit" name="delete" value="<?php _e( 'Delete Ad', $this->text_domain ); ?>" onClick="classifieds.toggle_delete('<?php the_ID(); ?>'); return false;" />
                 <?php endif; ?>
             </form>
-            
+
             <?php if ( bp_is_my_profile() ): ?>
-            
+
             <form action="" method="post" id="confirm-form-<?php the_ID(); ?>" class="confirm-form">
                 <?php wp_nonce_field('verify'); ?>
                 <input type="hidden" name="action" />
@@ -136,8 +141,8 @@ elseif ( in_array( 'ended',  $bp->action_variables ) ) {
             <?php endif; ?>
 
         </div>
-    
+
     <?php endwhile; ?>
     <?php wp_reset_query(); ?>
-    
+
 </div>

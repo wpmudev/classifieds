@@ -15,12 +15,24 @@
 global $bp;
 $post = get_post( $post_id );
 $post_terms = wp_get_object_terms( $post->ID, $this->taxonomy_names );
+
+/* Build messages */
+if ( '1' == $cl_credits_error ) {
+    $msg = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.', $this->text_domain );
+    $class = 'error';
+}
 ?>
 
 <div class="profile">
-    
+
+    <?php if ( $msg ): ?>
+    <div class="<?php echo $class; ?>" id="message">
+        <p><?php echo $msg; ?></p>
+    </div>
+    <?php endif; ?>
+
     <form class="standard-form base" method="post" action="" enctype="multipart/form-data">
-        
+
         <div class="editfield">
             <label for="title"><?php _e( 'Title', $this->text_domain ); ?></label>
             <input type="text" value="<?php echo $post->post_title; ?>" id="title" name="title">
@@ -32,7 +44,7 @@ $post_terms = wp_get_object_terms( $post->ID, $this->taxonomy_names );
             <textarea id="description" name="description" cols="40" rows="5"><?php echo $post->post_content; ?></textarea>
             <p class="description"><?php _e( 'The main description of your ad.', $this->text_domain ); ?></p>
         </div>
-        
+
         <div class="editfield">
             <label for="terms"><?php _e( 'Terms ( Categories / Tags )', $this->text_domain ); ?></label>
             <table class="cf-terms">
@@ -84,7 +96,7 @@ $post_terms = wp_get_object_terms( $post->ID, $this->taxonomy_names );
             <input type="hidden" name="url" value="<?php echo $post->guid; ?>" />
             <input type="submit" value="Save Changes " name="update">
         </div>
-        
+
     </form>
-    
+
 </div>

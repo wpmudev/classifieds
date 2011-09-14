@@ -336,7 +336,7 @@ get_header(); ?>
                             <h1 class="entry-title"><?php the_title(); ?> / <?php _e( 'Not Enough Credits', 'classifieds' ); ?></h1>
 
                             <div class="entry-content">
-                                <?php _e( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.' ); ?>
+                                <?php _e( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.', 'classifieds' ); ?>
                             </div><!-- .entry-content -->
                             <br />
                             <form method="post" action="">
