@@ -197,7 +197,17 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
                         else
                             $this->js_redirect( $bp->loggedin_user->domain . '/classifieds/my-classifieds/' );
                     } else {
-                        $this->render_front('members/single/classifieds/create-new', array( 'cl_credits_error' => '1' ));
+                        //save ad if have not credits but select draft
+                        if ( isset( $_POST['status'] ) && 'draft' == $_POST['status'] ) {
+                            /* Create ad */
+                            $post_id = $this->update_ad( $_POST, $_FILES );
+                            if ( "" != $bp->loggedin_user->userdata->user_url )
+                                $this->js_redirect( $bp->loggedin_user->userdata->user_url . '/classifieds/my-classifieds/' );
+                            else
+                                $this->js_redirect( $bp->loggedin_user->domain . '/classifieds/my-classifieds/' );
+                        } else {
+                            $this->render_front('members/single/classifieds/create-new', array( 'cl_credits_error' => '1' ));
+                        }
                     }
                 } else {
                     $this->render_front('members/single/classifieds/create-new');

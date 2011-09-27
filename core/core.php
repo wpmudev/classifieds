@@ -94,6 +94,10 @@ class Classifieds_Core {
         add_action( 'user_register', array( &$this, 'set_signup_user_credits' ) );
         /** Map meta capabilities @todo */
         //add_filter( 'map_meta_cap', array( &$this, 'map_meta_cap' ), 10, 4 );
+
+        /* filter for $wp_query on classifieds page - it is necessary that the other plug-ins have not changed it in these pages */
+        add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts_for_classifieds' ), 101 );
+
     }
 
     /**
@@ -128,7 +132,21 @@ class Classifieds_Core {
      * @return void
      **/
     function load_plugin_textdomain() {
-		load_plugin_textdomain( $this->text_domain, null, 'classifieds/languages/' );
+        load_plugin_textdomain( $this->text_domain, null, 'classifieds/languages/' );
+    }
+
+    /**
+     * filter for $wp_query on classifieds page - it is necessary that the other plug-ins have not changed it in these pages
+     *
+     * @return void
+     **/
+    function pre_get_posts_for_classifieds() {
+		global $wp_query;
+        if ( isset( $wp_query->query_vars['post_type'][0] ) && 'classifieds' == $wp_query->query_vars['post_type'][0] ) {
+            $wp_query->query_vars['cat']            = '';
+            $wp_query->query_vars['category__in']   = array();
+            $wp_query->query_vars['showposts']      = '';
+        }
     }
 
     /**

@@ -14,7 +14,7 @@
 <?php
 /* Build messages */
 if ( '1' == $cl_credits_error ) {
-    $msg = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.', $this->text_domain );
+    $msg = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or save this ad with status as "draft" and after purchase more credits you will can edit this ad.', $this->text_domain );
     $class = 'error';
 }
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Classifieds\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-14 23:54+0200\n"
+"POT-Creation-Date: 2011-09-27 23:14+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Andrey Shipilov\n"
 "Language-Team: \n"
@@ -35,30 +35,39 @@ msgstr ""
 
 #: /classifieds/core/buddypress.php:126
 #: /classifieds/core/buddypress.php:172
-#: /classifieds/core/core.php:843
+#: /classifieds/core/core.php:861
 #: /classifieds/core/main.php:70
-#: /classifieds/core/main.php:127
+#: /classifieds/core/main.php:135
 msgid "Security check failed!"
 msgstr ""
 
-#: /classifieds/core/core.php:258
+#: /classifieds/core/core.php:276
 msgid "Please fill in the required fields."
 msgstr ""
 
-#: /classifieds/core/core.php:678
+#: /classifieds/core/core.php:696
 msgid "No expiration date set."
 msgstr ""
 
-#: /classifieds/core/core.php:790
+#: /classifieds/core/core.php:808
 msgid "No History"
 msgstr ""
 
-#: /classifieds/core/core.php:1032
-#: /classifieds/core/core.php:1033
+#: /classifieds/core/core.php:1050
+#: /classifieds/core/core.php:1051
 msgid "You are being redirected. Please wait."
 msgstr ""
 
-#: /classifieds/core/main.php:156
+#: /classifieds/core/main.php:92
+#: /classifieds/core/main.php:123
+msgid "You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits."
+msgstr ""
+
+#: /classifieds/core/main.php:169
+msgid "You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or save this ad with status as \"draft\" and after purchase more credits you will can edit this ad."
+msgstr ""
+
+#: /classifieds/core/main.php:175
 msgid "Please make sure you fill all fields marked with (required)"
 msgstr ""
 
@@ -1182,80 +1191,73 @@ msgstr ""
 msgid "Description of the costs and durations associated with publishing an ad. Will be displayed in the admin area."
 msgstr ""
 
-#: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:17
-#: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:21
-#: /classifieds/ui-front/buddypress/members/single/classifieds/my-classifieds.php:32
-#: /classifieds/ui-front/general/page-my-classifieds.php:339
-msgid "You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits."
-msgstr ""
-
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:22
 msgid "Please make sure you fill in all required fields before saving."
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:40
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:39
-#: /classifieds/ui-front/general/page-my-classifieds.php:154
-#: /classifieds/ui-front/general/page-my-classifieds.php:260
+#: /classifieds/ui-front/general/page-my-classifieds.php:168
+#: /classifieds/ui-front/general/page-my-classifieds.php:274
 msgid "Enter title here."
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:46
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:45
-#: /classifieds/ui-front/general/page-my-classifieds.php:160
-#: /classifieds/ui-front/general/page-my-classifieds.php:266
+#: /classifieds/ui-front/general/page-my-classifieds.php:174
+#: /classifieds/ui-front/general/page-my-classifieds.php:280
 msgid "The main description of your ad."
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:50
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:49
-#: /classifieds/ui-front/general/page-my-classifieds.php:164
-#: /classifieds/ui-front/general/page-my-classifieds.php:270
+#: /classifieds/ui-front/general/page-my-classifieds.php:178
+#: /classifieds/ui-front/general/page-my-classifieds.php:284
 msgid "Terms ( Categories / Tags )"
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:67
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:66
-#: /classifieds/ui-front/general/page-my-classifieds.php:185
-#: /classifieds/ui-front/general/page-my-classifieds.php:288
+#: /classifieds/ui-front/general/page-my-classifieds.php:199
+#: /classifieds/ui-front/general/page-my-classifieds.php:302
 msgid "Select category for your ad."
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:71
-#: /classifieds/ui-front/general/page-my-classifieds.php:292
+#: /classifieds/ui-front/general/page-my-classifieds.php:306
 msgid "Select Featured Image"
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:80
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:80
-#: /classifieds/ui-front/general/page-my-classifieds.php:199
-#: /classifieds/ui-front/general/page-my-classifieds.php:301
+#: /classifieds/ui-front/general/page-my-classifieds.php:213
+#: /classifieds/ui-front/general/page-my-classifieds.php:315
 msgid "Ad Status"
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:82
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:82
-#: /classifieds/ui-front/general/page-my-classifieds.php:201
-#: /classifieds/ui-front/general/page-my-classifieds.php:303
+#: /classifieds/ui-front/general/page-my-classifieds.php:215
+#: /classifieds/ui-front/general/page-my-classifieds.php:317
 msgid "Published"
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:83
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:83
-#: /classifieds/ui-front/general/page-my-classifieds.php:202
-#: /classifieds/ui-front/general/page-my-classifieds.php:304
+#: /classifieds/ui-front/general/page-my-classifieds.php:216
+#: /classifieds/ui-front/general/page-my-classifieds.php:318
 msgid "Draft"
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:86
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:86
-#: /classifieds/ui-front/general/page-my-classifieds.php:205
-#: /classifieds/ui-front/general/page-my-classifieds.php:307
+#: /classifieds/ui-front/general/page-my-classifieds.php:219
+#: /classifieds/ui-front/general/page-my-classifieds.php:321
 msgid "Check a status for your Ad."
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:71
-#: /classifieds/ui-front/general/page-my-classifieds.php:190
+#: /classifieds/ui-front/general/page-my-classifieds.php:204
 msgid "Change Featured Image"
 msgstr ""
 
@@ -1292,7 +1294,7 @@ msgstr ""
 #: /classifieds/ui-front/general/loop-author.php:98
 #: /classifieds/ui-front/general/loop-taxonomy.php:108
 #: /classifieds/ui-front/general/page-classifieds.php:80
-#: /classifieds/ui-front/general/page-my-classifieds.php:89
+#: /classifieds/ui-front/general/page-my-classifieds.php:97
 msgid "Expires"
 msgstr ""
 
@@ -1476,42 +1478,38 @@ msgid "Pages:"
 msgstr ""
 
 #: /classifieds/ui-front/general/page-classifieds.php:26
-#: /classifieds/ui-front/general/page-my-classifieds.php:54
+#: /classifieds/ui-front/general/page-my-classifieds.php:57
 msgid "No Classifieds found."
 msgstr ""
 
-#: /classifieds/ui-front/general/page-my-classifieds.php:116
+#: /classifieds/ui-front/general/page-my-classifieds.php:124
 msgid "1 Week for "
 msgstr ""
 
-#: /classifieds/ui-front/general/page-my-classifieds.php:116
-#: /classifieds/ui-front/general/page-my-classifieds.php:117
-#: /classifieds/ui-front/general/page-my-classifieds.php:118
-#: /classifieds/ui-front/general/page-my-classifieds.php:119
+#: /classifieds/ui-front/general/page-my-classifieds.php:124
+#: /classifieds/ui-front/general/page-my-classifieds.php:125
+#: /classifieds/ui-front/general/page-my-classifieds.php:126
+#: /classifieds/ui-front/general/page-my-classifieds.php:127
 msgid " Credits"
 msgstr ""
 
-#: /classifieds/ui-front/general/page-my-classifieds.php:117
+#: /classifieds/ui-front/general/page-my-classifieds.php:125
 msgid "2 Weeks for"
 msgstr ""
 
-#: /classifieds/ui-front/general/page-my-classifieds.php:118
+#: /classifieds/ui-front/general/page-my-classifieds.php:126
 msgid "3 Weeks for"
 msgstr ""
 
-#: /classifieds/ui-front/general/page-my-classifieds.php:119
+#: /classifieds/ui-front/general/page-my-classifieds.php:127
 msgid "4 Weeks for"
 msgstr ""
 
-#: /classifieds/ui-front/general/page-my-classifieds.php:234
+#: /classifieds/ui-front/general/page-my-classifieds.php:248
 msgid "Create New"
 msgstr ""
 
-#: /classifieds/ui-front/general/page-my-classifieds.php:336
-msgid "Not Enough Credits"
-msgstr ""
-
-#: /classifieds/ui-front/general/page-my-classifieds.php:358
+#: /classifieds/ui-front/general/page-my-classifieds.php:352
 msgid "You have to login to view the contents of this page."
 msgstr ""
 

@@ -33,6 +33,9 @@ get_header(); ?>
                     </ul>
                     <div class="clear"></div>
 
+
+                    <?php $error = get_query_var('cf_error'); ?>
+
                     <?php
                     /* Get current user so we can filter posts */
                     $current_user = wp_get_current_user();
@@ -55,11 +58,16 @@ get_header(); ?>
                         </div>
                     <?php endif; ?>
 
+
+                    <?php if ( !empty( $error ) ): ?>
+                        <br /><div class="error"><?php echo $error . '<br />'; ?></div>
+                    <?php endif; ?>
+
                     <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
                         <?php// cf_debug( $wp_query ); ?>
 
-                        <div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+                        <div id="post-<?php the_ID(); ?>" <?php post_class(); ?> style="position: static;">
 
                             <div class="entry-content">
 
@@ -135,10 +143,16 @@ get_header(); ?>
 
                 <?php elseif ( $action == 'edit' ): ?>
 
+                    <?php $error = get_query_var('cf_error'); ?>
+
                     <?php query_posts( array( 'p' => get_query_var('cf_post_id'), 'author' => get_current_user_id(), 'post_type' => array( 'classifieds' ) ) ); ?>
                     <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
                     <h1 class="entry-title">My Classifieds / Editing: <?php echo $post->post_title; ?></h1>
+
+                    <?php if ( !empty( $error ) ): ?>
+                        <br /><div class="error"><?php echo $error . '<br />'; ?></div>
+                    <?php endif; ?>
 
                     <div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
@@ -324,26 +338,6 @@ get_header(); ?>
 
                                 </div>
                             </div><!-- .entry-content -->
-                        </div><!-- #post-## -->
-
-                    <?php endwhile; ?>
-
-                <?php elseif ( $action == 'insufficient-credits' ): ?>
-
-                    <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
-
-                        <div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-                            <h1 class="entry-title"><?php the_title(); ?> / <?php _e( 'Not Enough Credits', 'classifieds' ); ?></h1>
-
-                            <div class="entry-content">
-                                <?php _e( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.', 'classifieds' ); ?>
-                            </div><!-- .entry-content -->
-                            <br />
-                            <form method="post" action="">
-                                <input type="submit" name="go_my_classifieds" value="Back To My Classifids" />
-                                <input type="submit" name="go_purchase" value="Purchase Additional Credits / Get A Membership" />
-                            </form>
-
                         </div><!-- #post-## -->
 
                     <?php endwhile; ?>

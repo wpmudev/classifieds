@@ -5,6 +5,11 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 == Changelog ==
 
 =
+ 2.0.7.1 =
+* fixed problem display classifieds (under the influence of other plugins).
+* added feature for create new ad with status as "draft" without any credits
+
+=
  2.0.7 =
 * fixed display menu credits for all user
 * fixed display page of edit classifieds 

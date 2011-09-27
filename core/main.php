@@ -85,6 +85,12 @@ class Classifieds_Core_Main extends Classifieds_Core {
                     /* Update new credits amount */
                     $credits = $this->user_credits - $credits_required;
                     update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+                } else {
+                    set_query_var( 'cf_post_id', $_POST['post_id'] );
+                    /* Set the proper step which will be loaded by "page-my-classifieds.php" */
+                    set_query_var( 'cf_action', 'edit' );
+                    $error = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.', $this->text_domain );
+                    set_query_var( 'cf_error', $error );
                 }
             }
             /* If confirm button is pressed */
@@ -113,7 +119,9 @@ class Classifieds_Core_Main extends Classifieds_Core {
                             /* Set the proper step which will be loaded by "page-my-classifieds.php" */
                             set_query_var( 'cf_action', 'my-classifieds' );
                         } else {
-                            set_query_var( 'cf_action', 'insufficient-credits' );
+                            set_query_var( 'cf_action', 'my-classifieds' );
+                            $error = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.', $this->text_domain );
+                            set_query_var( 'cf_error', $error );
                         }
                         //$this->process_credits()
                     }
@@ -150,6 +158,17 @@ class Classifieds_Core_Main extends Classifieds_Core {
                         update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
                         /* Set the proper step which will be loaded by "page-my-classifieds.php" */
                         set_query_var( 'cf_action', 'my-classifieds' );
+                    } else {
+                        //save ad if have not credits but select draft
+                        if ( isset( $_POST['status'] ) && 'draft' == $_POST['status'] ) {
+                            /* Create ad */
+                            $post_id = $this->update_ad( $_POST, $_FILES );
+                            set_query_var( 'cf_action', 'my-classifieds' );
+                        } else {
+                            set_query_var( 'cf_action', 'create-new' );
+                            $error = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or save this ad with status as "draft" and after purchase more credits you will can edit this ad.', $this->text_domain );
+                            set_query_var( 'cf_error', $error );
+                        }
                     }
                 } else {
                     set_query_var( 'cf_action', 'create-new' );
