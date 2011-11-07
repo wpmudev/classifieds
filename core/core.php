@@ -649,12 +649,15 @@ class Classifieds_Core {
             if ( isset( $_POST['contact_form_send'] ) ) {
                 global $post;
                 /** @todo validate fields */
-                $user_info = get_userdata( $post->post_author );
-                $to      = $user_info->user_email;
-                $subject = $_POST['subject'];
-                $message = $_POST['message'];
-                $headers = 'From: ' . $_POST['name'] . ' <' . $_POST['email'] . '>' . "\r\n";
+                $bottom_text = "\r\n\r\nClassifieds link:\r\n" . get_permalink( $post->ID ) ;
+
+                $user_info  = get_userdata( $post->post_author );
+                $to         = $user_info->user_email;
+                $subject    = $_POST['subject'] . ' [ ' . $post->post_title . ' ]';
+                $message    = $_POST['message'] . $bottom_text;
+                $headers    = 'From: ' . $_POST['name'] . ' <' . $_POST['email'] . '>' . "\r\n";
                 wp_mail( $to, $subject, $message, $headers );
+                wp_redirect( get_permalink( $post->ID ) . '?sent=1' );
             }
         }
     }

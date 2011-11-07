@@ -5,13 +5,13 @@ Description: You can override this file in your active theme.
 
 /* =Styles for Classifieds Main component.
 -------------------------------------------------------------- */
-.error { 
+.error {
     background: #FFEBE8;
 }
-.submit { 
+.submit {
     margin: 10px 0;
 }
-.invalid-login { 
+.invalid-login {
     margin-top: 10px;
 }
 .description {
@@ -35,26 +35,26 @@ Description: You can override this file in your active theme.
 .entry-content .editfield select, .entry-content .confirm-form select, .entry-content .cf-checkout select {
     margin: 0;
 }
-.entry-content .cf-ad input { 
+.entry-content .cf-ad input {
     margin: 0;
 }
-.entry-content .cf-checkout input { 
+.entry-content .cf-checkout input {
     margin: 0;
 }
-.entry-content .cf-login input { 
+.entry-content .cf-login input {
     margin: 0;
 }
-#content .editfield table { 
+#content .editfield table {
     border:0;
     width:inherit;
     margin: 0;
 }
-#content .editfield tr td { 
+#content .editfield tr td {
     border-top:0;
     padding:0 15px 0 0;
     vertical-align: top;
 }
-#content .cf-ad table { 
+#content .cf-ad table {
     margin: 0 0 0 15px;
     width: 453px;
     border: 1px solid #ddd;
@@ -72,29 +72,29 @@ Description: You can override this file in your active theme.
     text-align: right;
     width: 50px;
 }
-.cf-ad table th, .bp-cf-ad table td { 
+.cf-ad table th, .bp-cf-ad table td {
     border-width: 1px;
     border-style: inset;
     border-color: #ddd;
 }
-.cf-ad form { 
+.cf-ad form {
     padding-right: 7px;
     overflow: hidden;
     float: right;
 }
-.cf-ad form.del-form { 
+.cf-ad form.del-form {
     padding-right: 7px;
 }
-.cf-image { 
+.cf-image {
     float: left;
 }
-.cf-info { 
+.cf-info {
     float: left;
 }
 #content table.cf-ad-info {
     width: inherit;
 }
-#content table.cf-ad-info th { 
+#content table.cf-ad-info th {
     text-align: right;
 }
 ul.button-nav li {
@@ -107,19 +107,19 @@ ul.button-nav li {
     margin: 0;
     padding-bottom: 15px;
 }
-.cf-checkout { 
+.cf-checkout {
     margin-right: 15px;
 }
 #content .cf-checkout table {
     margin:0;
 }
-#content .cf-checkout table tr td { 
+#content .cf-checkout table tr td {
     padding:6px 0 6px 24px;
 }
-#content .cf-login table { 
+#content .cf-login table {
     margin:0;
 }
-.terms { 
+.terms {
     height:100px;
     overflow-x: hidden;
     color:#888888;
@@ -130,12 +130,12 @@ ul.button-nav li {
     border: 1px solid #ddd;
     padding: 15px;
 }
-.single-classifieds #content img.wp-post-image { 
+.single-classifieds #content img.wp-post-image {
     border: 1px solid #ddd;
     padding: 15px;
     margin: 0 15px 10px 0;
 }
-.button-nav { 
+.button-nav {
     margin: 12px 0 0 0;
 }
 .button-nav li a {
@@ -148,19 +148,19 @@ ul.button-nav li {
     font-weight:normal;
     padding:3px 10px;
 }
-.button-nav li.current a { 
+.button-nav li.current a {
     color: #000;
 }
-.create-new-btn { 
+.create-new-btn {
     float: right;
 }
-.cf-custom-fields .alt { 
+.cf-custom-fields .alt {
     background: #F3F3F3;
 }
-#content .cf-custom-fields tr th { 
+#content .cf-custom-fields tr th {
     border-top:1px solid #E7E7E7;
 }
-.action-form, .confirm-form { 
+.action-form, .confirm-form {
     margin-top: 10px;
 }
 .cf-contact-form {
@@ -172,4 +172,18 @@ ul.button-nav li {
     float: right;
     margin-top: -30px;
     color: green;
+}
+
+#cf-message {
+    background-color: #8FF57A;
+    color: #1A6A00;
+    -moz-border-radius: 3px 3px 3px 3px;
+    border: 1px solid #80CF70;
+    font-weight: normal;
+    margin: 3px 0px 10px 0px;
+    text-decoration: none;
+    display: block;
+    font-size: 12px;
+    padding: 5px 50px;
+    float: left;
 }

@@ -13,6 +13,14 @@ get_header(); ?>
 		<div id="container">
 			<div id="content" role="main">
 
+            <?php if ( 1 == $_GET['sent'] ): ?>
+                <br clear="all" />
+                <div id="cf-message">
+                   <?php _e( 'Message is sent!', 'classifieds' ); ?>
+                </div>
+                <br clear="all" />
+            <?php endif; ?>
+
             <?php /* For BuddyPress compatibility */ ?>
             <?php global $bp; if ( isset( $bp ) ): ?><div class="cf-padder"><?php endif; ?>
 
@@ -75,17 +83,21 @@ get_header(); ?>
                             <input type="submit" name="contact_user" value="<?php _e('Contact User', 'classifieds' ); ?>" onClick="classifieds.toggle_contact_form(); return false;" />
                         </form>
 
-
                         <form method="post" action="" class="standard-form base cf-contact-form" id="confirm-form">
+                            <?
+                            global $current_user;
 
+                            $name   = ( isset( $current_user->first_name ) && '' != $current_user->first_name ) ? $current_user->first_name : ( isset( $current_user->display_name ) && '' != $current_user->display_name ) ? $current_user->display_name : '';
+                            $email  = ( isset( $current_user->user_email ) && '' != $current_user->user_email ) ? $current_user->user_email : '';
+                            ?>
                             <div class="editfield">
                                 <label for="name"><?php _e( 'Name', 'classifieds' ); ?> (<?php _e( 'required', 'classifieds' ); ?>)</label>
-                                <input type="text" id="name" name ="name" value="" />
+                                <input type="text" id="name" name ="name" value="<?php echo $name; ?>" />
                                 <p class="description"><?php _e( 'Enter your full name here.', 'classifieds' ); ?></p>
                             </div>
                             <div class="editfield">
                                 <label for="email"><?php _e( 'Email', 'classifieds' ); ?> (<?php _e( 'required', 'classifieds' ); ?>)</label>
-                                <input type="text" id="email" name ="email" value="" />
+                                <input type="text" id="email" name ="email" value="<?php echo $email; ?>" />
                                 <p class="description"><?php _e( 'Enter a valid email address here.', 'classifieds' ); ?></p>
                             </div>
                             <div class="editfield">

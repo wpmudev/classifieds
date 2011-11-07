@@ -5,8 +5,15 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 == Changelog ==
 
 =
+ 2.0.8.1 =
+* Display status text after sent message to author of ad;
+* Added title of the ad in the subject of the message;
+* Added link on ad in bottom of message;
+* Added auto filling of some fields of the contact author form for logged users;
+
+=
  2.0.8 =
-* fixed problem display classifieds (under the influence of other plugins).
+* fixed problem of display classifieds (under the influence of other plugins).
 * added feature for create new ad with status as "draft" without any credits
 
 =

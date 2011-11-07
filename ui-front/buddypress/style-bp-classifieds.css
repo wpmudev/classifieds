@@ -5,13 +5,13 @@ Description: You can override this file in your active theme.
 
 /* =Styles for Classifieds Main component.
 -------------------------------------------------------------- */
-.error { 
+.error {
     background: #FFEBE8;
 }
-.submit { 
+.submit {
     margin: 10px 0;
 }
-.invalid-login { 
+.invalid-login {
     margin-top: 10px;
 }
 .description {
@@ -24,7 +24,7 @@ ul.button-nav li {
     list-style: none;
     padding-right: 15px;
 }
-#content .classifieds ul { 
+#content .classifieds ul {
     overflow: hidden;
     margin: 0;
     padding-bottom: 15px;
@@ -35,18 +35,18 @@ ul.button-nav li {
     border: 1px solid #ddd;
     padding: 15px;
 }
-.single-classifieds #content img.wp-post-image { 
+.single-classifieds #content img.wp-post-image {
     border: 1px solid #ddd;
     padding: 15px;
     margin: 0 15px 10px 0;
 }
-.cf-custom-fields .alt { 
+.cf-custom-fields .alt {
     background: #F6F6F6;
 }
-#content .cf-custom-fields tr th { 
+#content .cf-custom-fields tr th {
     border-top:1px solid #E7E7E7;
 }
-.action-form, .confirm-form { 
+.action-form, .confirm-form {
     margin-top: 10px;
 }
 .cf-padder {
@@ -160,5 +160,19 @@ ul.button-nav li {
 }
 .cf-login {
     width: 48%;
+    float: left;
+}
+
+#cf-message {
+    background-color: #8FF57A;
+    color: #1A6A00;
+    -moz-border-radius: 3px 3px 3px 3px;
+    border: 1px solid #80CF70;
+    font-weight: normal;
+    margin: 3px 0px 10px 0px;
+    text-decoration: none;
+    display: block;
+    font-size: 12px;
+    padding: 5px 50px;
     float: left;
 }
