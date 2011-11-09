@@ -13,7 +13,7 @@
 
 <?php
 /* Build messages */
-if ( '1' == $cl_credits_error ) {
+if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
     $msg = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or save this ad with status as "draft" and after purchase more credits you will can edit this ad.', $this->text_domain );
     $class = 'error';
 }
@@ -26,7 +26,7 @@ if ( !$this->form_valid ) {
 
 <div class="profile">
 
-    <?php if ( $msg ): ?>
+    <?php if ( isset( $msg) ): ?>
     <div class="<?php echo $class; ?>" id="message">
 		<p><?php echo $msg; ?></p>
 	</div>
@@ -36,13 +36,13 @@ if ( !$this->form_valid ) {
 
         <div class="editfield">
             <label for="title"><?php _e( 'Title', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
-            <input type="text" value="<?php echo $_POST['title']; ?>" id="title" name="title">
+            <input type="text" value="<?php if ( isset( $_POST['title'] ) ) echo $_POST['title']; ?>" id="title" name="title">
             <p class="description"><?php _e( 'Enter title here.', $this->text_domain ); ?></p>
         </div>
 
         <div class="editfield alt">
             <label for="description"><?php _e( 'Description', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
-            <textarea id="description" name="description" cols="40" rows="5"><?php echo $_POST['description']; ?></textarea>
+            <textarea id="description" name="description" cols="40" rows="5"><?php if ( isset( $_POST['description'] ) ) echo $_POST['description']; ?></textarea>
             <p class="description"><?php _e( 'The main description of your ad.', $this->text_domain ); ?></p>
         </div>
 
@@ -56,7 +56,7 @@ if ( !$this->form_valid ) {
                         <select id="terms" name="terms[<?php echo $taxonomy_name; ?>][]" multiple="multiple">
                             <optgroup label="<?php echo $taxonomy_object->labels->name; ?>">
                                 <?php foreach ( $terms as $term ): ?>
-                                <option value="<?php echo $term->slug; ?>" <?php if ( is_array( $_POST['terms'][$taxonomy_name] ) && in_array( $term->slug, $_POST['terms'][$taxonomy_name] ) ) echo 'selected="selected"' ?>><?php echo $term->name; ?></option>
+                                <option value="<?php echo $term->slug; ?>" <?php if ( isset( $_POST['terms'][$taxonomy_name] ) && is_array( $_POST['terms'][$taxonomy_name] ) && in_array( $term->slug, $_POST['terms'][$taxonomy_name] ) ) echo 'selected="selected"' ?>><?php echo $term->name; ?></option>
                                 <?php endforeach; ?>
                             </optgroup>
                         </select>
@@ -79,8 +79,8 @@ if ( !$this->form_valid ) {
             <div class="radio">
                 <span class="label"><?php _e( 'Ad Status' );  ?> (<?php _e( 'required', $this->text_domain ); ?>)</span>
                 <div id="status-box">
-                    <label><input type="radio" value="publish" name="status" <?php if ( $_POST['status'] == 'publish' ) echo 'checked="checked"'; ?>><?php _e( 'Published', $this->text_domain ); ?></label>
-                    <label><input type="radio" value="draft" name="status" <?php if ( $_POST['status'] == 'draft' ) echo 'checked="checked"'; ?>><?php _e( 'Draft', $this->text_domain ); ?></label>
+                    <label><input type="radio" value="publish" name="status" <?php if ( isset( $_POST['status'] ) && $_POST['status'] == 'publish' ) echo 'checked="checked"'; ?>><?php _e( 'Published', $this->text_domain ); ?></label>
+                    <label><input type="radio" value="draft" name="status" <?php if ( isset( $_POST['status'] ) && $_POST['status'] == 'draft' ) echo 'checked="checked"'; ?>><?php _e( 'Draft', $this->text_domain ); ?></label>
                 </div>
             </div>
             <p class="description"><?php _e( 'Check a status for your Ad.', $this->text_domain ); ?></p>

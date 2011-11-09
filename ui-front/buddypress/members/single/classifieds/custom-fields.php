@@ -12,6 +12,12 @@
 ?>
 
 <?php $prefix = $this->custom_fields_prefix; ?>
+
+<?php
+if ( !isset( $post->ID ) )
+    $post->ID = 0
+?>
+
 <?php foreach ( $this->custom_fields as $custom_field ): ?>
 
     <?php if ( $custom_field['field_type'] == 'text' ): ?>

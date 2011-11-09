@@ -28,7 +28,7 @@ elseif ( in_array( 'ended',  $bp->action_variables ) ) {
 }
 
 /* Build messages */
-if ( '1' == $cl_credits_error ) {
+if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
     $msg = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.', $this->text_domain );
     $class = 'error';
 }
@@ -54,22 +54,22 @@ if ( '1' == $cl_credits_error ) {
     if ( !have_posts() ) {
         $msg   = __( 'There were no ads found.', $this->text_domain );
         $class = 'info';
-    } elseif ( $action == 'end' ) {
+    } elseif ( isset( $action ) && $action == 'end' ) {
         $msg = sprintf( __( 'Ad "%s" ended.', $this->text_domain ), $post_title );
         $class = 'updated';
-    } elseif ( $action == 'renew' ) {
+    } elseif ( isset( $action ) && $action == 'renew' ) {
         $msg = sprintf( __( 'Ad "%s" renewed.', $this->text_domain ), $post_title );
         $class = 'updated';
-    } elseif ( $action == 'edit' ) {
+    } elseif ( isset( $action ) && $action == 'edit' ) {
         $msg = sprintf( __( 'Ad "%s" updated successfully.', $this->text_domain ), $post_title );
         $class = 'updated';
-    } elseif ( $action == 'delete' ) {
+    } elseif ( isset( $action ) && $action == 'delete' ) {
         $msg = sprintf( __( 'Ad "%s" deleted successfully.', $this->text_domain ), $post_title );
         $class = 'updated';
     }
     ?>
 
-    <?php if ( $msg ): ?>
+    <?php if ( isset( $msg ) ): ?>
         <div class="<?php echo $class; ?>" id="message">
             <p><?php echo $msg; ?></p>
         </div>

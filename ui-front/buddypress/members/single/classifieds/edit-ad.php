@@ -17,7 +17,7 @@ $post = get_post( $post_id );
 $post_terms = wp_get_object_terms( $post->ID, $this->taxonomy_names );
 
 /* Build messages */
-if ( '1' == $cl_credits_error ) {
+if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
     $msg = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.', $this->text_domain );
     $class = 'error';
 }
@@ -25,7 +25,7 @@ if ( '1' == $cl_credits_error ) {
 
 <div class="profile">
 
-    <?php if ( $msg ): ?>
+    <?php if ( isset( $msg ) ): ?>
     <div class="<?php echo $class; ?>" id="message">
         <p><?php echo $msg; ?></p>
     </div>

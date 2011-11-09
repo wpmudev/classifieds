@@ -12,7 +12,13 @@
 $prefix = '_ct_';
 $custom_fields = get_site_option('ct_custom_fields'); ?>
 
+<?php
+if ( !isset( $post->ID ) )
+    $post->ID = 0
+?>
+
 <?php foreach ( $custom_fields as $custom_field ): ?>
+
 
     <?php if ( $custom_field['field_type'] == 'text' ): ?>
         <label for="<?php echo ( $prefix . $custom_field['field_id'] ); ?>"><?php echo ( $custom_field['field_title'] ); ?></label>

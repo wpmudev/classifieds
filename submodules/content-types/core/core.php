@@ -195,7 +195,7 @@ class Content_Types_Core {
      **/
     function handle_taxonomy_requests() {
         /* If valid add/edit taxonomy request is made */
-        if ( isset( $_POST['submit'] ) && wp_verify_nonce( $_POST['ct_submit_taxonomy_secret'], 'ct_submit_taxonomy_verify' ) ) {
+        if ( isset( $_POST['submit'] ) && isset( $_POST['ct_submit_taxonomy_secret'] ) && wp_verify_nonce( $_POST['ct_submit_taxonomy_secret'], 'ct_submit_taxonomy_verify' ) ) {
             /* Validate input fields */
             $valid_taxonomy = $this->validate_field( 'taxonomy', $_POST['taxonomy'] );
             $valid_object_type = $this->validate_field( 'object_type', $_POST['object_type'] );

@@ -40,15 +40,15 @@ get_header(); ?>
                     /* Get current user so we can filter posts */
                     $current_user = wp_get_current_user();
                     /* Get posts based on post_status */
-                    if ( isset( $_GET['active'] ) || empty( $_GET ) ) {
-                        query_posts( array( 'author' => $current_user->ID, 'post_type' => array( 'classifieds' ), 'post_status' => 'publish' ) );
-                        $sub = 'active';
-                    } elseif ( isset( $_GET['saved'] ) ) {
+                    if ( isset( $_GET['saved'] ) ) {
                         query_posts( array( 'author' => $current_user->ID, 'post_type' => array( 'classifieds' ), 'post_status' => 'draft' ) );
                         $sub = 'saved';
                     } elseif ( isset( $_GET['ended'] ) ) {
                         query_posts( array( 'author' => $current_user->ID, 'post_type' => array( 'classifieds' ), 'post_status' => 'private' ) );
                         $sub = 'ended';
+                    } else {
+                        query_posts( array( 'author' => $current_user->ID, 'post_type' => array( 'classifieds' ), 'post_status' => 'publish' ) );
+                        $sub = 'active';
                     } ?>
 
                     <?php if ( !have_posts() ): ?>
@@ -65,7 +65,7 @@ get_header(); ?>
 
                     <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
-                        <?php// cf_debug( $wp_query ); ?>
+                        <?php // cf_debug( $wp_query ); ?>
 
                         <div id="post-<?php the_ID(); ?>" <?php post_class(); ?> style="position: static;">
 
@@ -105,9 +105,9 @@ get_header(); ?>
                                             <input type="hidden" name="post_id" value="<?php the_ID(); ?>" />
                                             <input type="hidden" name="url" value="<?php the_permalink(); ?>" />
                                             <input type="submit" name="edit" value="<?php _e('Edit Ad', 'classifieds' ); ?>" />
-                                            <?php if ( $sub == 'active' ): ?>
+                                            <?php if ( isset( $sub ) && $sub == 'active' ): ?>
                                                 <input type="submit" name="end" value="<?php _e('End Ad', 'classifieds' ); ?>" onClick="classifieds.toggle_end('<?php echo $post->ID; ?>'); return false;" />
-                                            <?php elseif ( $sub == 'saved' || $sub == 'ended' ): ?>
+                                            <?php elseif ( isset( $sub ) && ( $sub == 'saved' || $sub == 'ended' ) ): ?>
                                                 <input type="submit" name="renew" value="<?php _e('Renew Ad', 'classifieds' ); ?>" onClick="classifieds.toggle_renew('<?php echo $post->ID; ?>'); return false;" />
                                             <?php endif; ?>
                                             <input type="submit" name="delete" value="<?php _e('Delete Ad', 'classifieds' ); ?>" onClick="classifieds.toggle_delete('<?php echo $post->ID; ?>'); return false;" />
@@ -118,7 +118,7 @@ get_header(); ?>
                                             <input type="hidden" name="action" />
                                             <input type="hidden" name="post_id" value="<?php the_ID(); ?>" />
                                             <input type="hidden" name="post_title" value="<?php the_title(); ?>" />
-                                            <?php if ( $sub == 'saved' || $sub == 'ended' ): ?>
+                                            <?php if ( isset( $sub ) && ( $sub == 'saved' || $sub == 'ended' ) ): ?>
                                                 <select name="duration">
                                                     <?php $options = get_option('classifieds_options'); ?>
                                                     <option value="1 Week"><?php _e( '1 Week for ',  'classifieds' ); ?> <?php echo 1 * $options['credits']['credits_per_week']; ?><?php _e( ' Credits',  'classifieds' ); ?></option>
@@ -260,7 +260,7 @@ get_header(); ?>
 
                                 <div class="profile">
 
-                                    <?php if ( $msg ): ?>
+                                    <?php if ( isset( $msg ) ): ?>
                                     <div class="<?php echo $class; ?>" id="message">
                                         <p><?php echo $msg; ?></p>
                                     </div>
@@ -270,13 +270,13 @@ get_header(); ?>
 
                                         <div class="editfield">
                                             <label for="title"><?php _e( 'Title', 'classifieds' ); ?> (<?php _e( 'required', 'classifieds' ); ?>)</label>
-                                            <input type="text" value="<?php echo $_POST['title']; ?>" id="title" name="title">
+                                            <input type="text" value="<?php if ( isset( $_POST['title'] ) ) echo $_POST['title']; ?>" id="title" name="title">
                                             <p class="description"><?php _e( 'Enter title here.', 'classifieds' ); ?></p>
                                         </div>
 
                                         <div class="editfield">
                                             <label for="description"><?php _e( 'Description', 'classifieds' ); ?> (<?php _e( 'required', 'classifieds' ); ?>)</label>
-                                            <textarea id="description" name="description" cols="40" rows="5"><?php echo $_POST['description']; ?></textarea>
+                                            <textarea id="description" name="description" cols="40" rows="5"><?php if ( isset( $_POST['description'] ) ) echo $_POST['description']; ?></textarea>
                                             <p class="description"><?php _e( 'The main description of your ad.', 'classifieds' ); ?></p>
                                         </div>
 
@@ -291,7 +291,7 @@ get_header(); ?>
                                                             <select id="terms" name="terms[<?php echo $taxonomy_name; ?>][]" multiple="multiple">
                                                                 <optgroup label="<?php echo $taxonomy_object->labels->name; ?>">
                                                                     <?php foreach ( $terms as $term ): ?>
-                                                                        <option value="<?php echo $term->slug; ?>" <?php if ( is_array( $_POST['terms'][$taxonomy_name] ) && in_array( $term->slug, $_POST['terms'][$taxonomy_name] ) ) echo 'selected="selected"' ?>><?php echo $term->name; ?></option>
+                                                                        <option value="<?php echo $term->slug; ?>" <?php if ( isset( $_POST['terms'][$taxonomy_name] ) && is_array( $_POST['terms'][$taxonomy_name] ) && in_array( $term->slug, $_POST['terms'][$taxonomy_name] ) ) echo 'selected="selected"' ?>><?php echo $term->name; ?></option>
                                                                     <?php endforeach; ?>
                                                                 </optgroup>
                                                             </select>
@@ -314,8 +314,8 @@ get_header(); ?>
                                             <div class="radio">
                                                 <span class="label"><?php _e( 'Ad Status' );  ?> (<?php _e( 'required', 'classifieds' ); ?>)</span>
                                                 <div id="status-box">
-                                                    <label><input type="radio" value="publish" name="status" <?php if ( $_POST['status'] == 'publish' ) echo 'checked="checked"'; ?>> <?php _e( 'Published', 'classifieds' ); ?></label>
-                                                    <label><input type="radio" value="draft" name="status" <?php if ( $_POST['status'] == 'draft' ) echo 'checked="checked"'; ?>> <?php _e( 'Draft', 'classifieds' ); ?></label>
+                                                    <label><input type="radio" value="publish" name="status" <?php if ( isset( $_POST['status'] ) && $_POST['status'] == 'publish' ) echo 'checked="checked"'; ?>> <?php _e( 'Published', 'classifieds' ); ?></label>
+                                                    <label><input type="radio" value="draft" name="status" <?php if ( isset( $_POST['status'] ) && $_POST['status'] == 'draft' ) echo 'checked="checked"'; ?>> <?php _e( 'Draft', 'classifieds' ); ?></label>
                                                 </div>
                                             </div>
                                             <p class="description"><?php _e( 'Check a status for your Ad.', 'classifieds' ); ?></p>

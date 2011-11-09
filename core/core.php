@@ -213,7 +213,7 @@ class Classifieds_Core {
 
         $classifieds_page = $this->get_page_by_meta( 'classifieds' );
 
-        if ( $classifieds_page && 0 >= $classifieds_page->ID ) {
+        if ( !$classifieds_page || 0 >= $classifieds_page->ID ) {
             $current_user = wp_get_current_user();
             /* Construct args for the new post */
             $args = array(
@@ -230,7 +230,7 @@ class Classifieds_Core {
 
         $classifieds_page = $this->get_page_by_meta( 'my_classifieds' );
 
-        if ( $classifieds_page && 0 >= $classifieds_page->ID ) {
+        if ( !$classifieds_page || 0 >= $classifieds_page->ID ) {
             $current_user = wp_get_current_user();
             /* Construct args for the new post */
             $args = array(
@@ -450,7 +450,7 @@ class Classifieds_Core {
         /* Construct args for the new post */
         $args = array(
             /* If empty ID insert Ad insetad of updating it */
-            'ID'             => $params['post_id'],
+            'ID'             => ( isset( $params['post_id'] ) ) ? $params['post_id'] : '',
             'post_title'     => $params['title'],
             'post_content'   => $params['description'],
             'post_status'    => $params['status'],
@@ -834,6 +834,10 @@ class Classifieds_Core {
      **/
     function get_credits_from_duration( $duration ) {
         $options = $this->get_options('credits');
+
+        if ( !isset( $options['credits_per_week'] ) )
+            $options['credits_per_week'] = 0;
+
         switch ( $duration ) {
             case '1 Week':
                 return 1 * $options['credits_per_week'];
@@ -966,7 +970,7 @@ class Classifieds_Core {
      **/
     function get_cf_author_template() {
         global $wp_query;
-        if ( '' != get_query_var( 'cf_author_name' ) || '' != $_REQUEST['cf_author'] )  {
+        if ( '' != get_query_var( 'cf_author_name' ) || isset( $_REQUEST['cf_author'] ) && '' != $_REQUEST['cf_author'] )  {
             load_template( "{$this->plugin_dir}/ui-front/general/author.php" );
             exit();
         }
