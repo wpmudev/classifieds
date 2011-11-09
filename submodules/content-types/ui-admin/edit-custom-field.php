@@ -18,7 +18,7 @@ $custom_field = $this->custom_fields[$_GET['ct_edit_custom_field']];
                         <label for="field_title"><?php _e('Field Title', 'content_types') ?> <span class="ct-required">( <?php _e('required', 'content_types'); ?> )</span></label>
                     </th>
                     <td>
-                        <input type="text" name="field_title" value="<?php echo ( $custom_field['field_title'] ); ?>">
+                        <input type="text" name="field_title" value="<?php if ( isset( $custom_field['field_title'] ) )echo ( $custom_field['field_title'] ); ?>">
                         <span class="description"><?php _e('The title of the custom field.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -34,12 +34,12 @@ $custom_field = $this->custom_fields[$_GET['ct_edit_custom_field']];
                     </th>
                     <td>
                         <select name="field_type">
-                            <option value="text" <?php if ( $custom_field['field_type'] == 'text' ) echo ( 'selected="selected"' ); ?>>Text Box</option>
-                            <option value="textarea" <?php if ( $custom_field['field_type'] == 'textarea' ) echo ( 'selected="selected"' ); ?>>Multi-line Text Box</option>
-                            <option value="radio" <?php if ( $custom_field['field_type'] == 'radio' ) echo ( 'selected="selected"' ); ?>>Radio Buttons</option>
-                            <option value="checkbox" <?php if ( $custom_field['field_type'] == 'checkbox' ) echo ( 'selected="selected"' ); ?>>Checkboxes</option>
-                            <option value="selectbox" <?php if ( $custom_field['field_type'] == 'selectbox' ) echo ( 'selected="selected"' ); ?>>Drop Down Select Box</option>
-                            <option value="multiselectbox" <?php if ( $custom_field['field_type'] == 'multiselectbox' ) echo ( 'selected="selected"' ); ?>>Multi Select Box</option>
+                            <option value="text" <?php if ( isset( $custom_field['field_type'] ) && $custom_field['field_type'] == 'text' ) echo ( 'selected="selected"' ); ?>>Text Box</option>
+                            <option value="textarea" <?php if ( isset( $custom_field['field_type'] ) && $custom_field['field_type'] == 'textarea' ) echo ( 'selected="selected"' ); ?>>Multi-line Text Box</option>
+                            <option value="radio" <?php if ( isset( $custom_field['field_type'] ) && $custom_field['field_type'] == 'radio' ) echo ( 'selected="selected"' ); ?>>Radio Buttons</option>
+                            <option value="checkbox" <?php if ( isset( $custom_field['field_type'] ) && $custom_field['field_type'] == 'checkbox' ) echo ( 'selected="selected"' ); ?>>Checkboxes</option>
+                            <option value="selectbox" <?php if ( isset( $custom_field['field_type'] ) && $custom_field['field_type'] == 'selectbox' ) echo ( 'selected="selected"' ); ?>>Drop Down Select Box</option>
+                            <option value="multiselectbox" <?php if ( isset( $custom_field['field_type'] ) && $custom_field['field_type'] == 'multiselectbox' ) echo ( 'selected="selected"' ); ?>>Multi Select Box</option>
                         </select>
                         <span class="description"><?php _e('Select one or more post types to add this custom field to.', 'content_types'); ?></span>
                         <div class="ct-field-type-options">
@@ -48,19 +48,20 @@ $custom_field = $this->custom_fields[$_GET['ct_edit_custom_field']];
                                 <?php _e('Order By', 'content_types'); ?> :
                                 <select name="field_sort_order">
                                     <option value="default"><?php _e('Order Entered', 'content_types'); ?></option>
-                                    <?php /** @todo introduce the additional order options
+                                    <?php
+                                    /** @todo introduce the additional order options
                                     <option value="asc"><?php _e('Name - Ascending', 'content_types'); ?></option>
                                     <option value="desc"><?php _e('Name - Descending', 'content_types'); ?></option>
                                     */ ?>
-                                </select
+                                </select>
                             </p>
 
-                            <?php if ( is_array( $custom_field['field_options'] )): ?>
+                            <?php if ( isset( $custom_field['field_options'] ) && is_array( $custom_field['field_options'] ) ): ?>
                                 <?php foreach ( $custom_field['field_options'] as $key => $field_option ): ?>
                                     <p>
                                         <?php _e('Option', 'content_types'); ?> <?php echo( $key ); ?>:
                                         <input type="text" name="field_options[<?php echo( $key ); ?>]" value="<?php echo( $field_option ); ?>" />
-                                        <input type="radio" value="<?php echo( $key ); ?>" name="field_default_option" <?php if ( $custom_field['field_default_option'] == $key ) echo ( 'checked="checked"' ); ?> />
+                                        <input type="radio" value="<?php echo( $key ); ?>" name="field_default_option" <?php if ( isset( $custom_field['field_default_option'] ) && $custom_field['field_default_option'] == $key ) echo ( 'checked="checked"' ); ?> />
                                         <?php _e('Default Value', 'content_types'); ?>
                                         <?php if ( $key != 1 ): ?>
                                             <a href="#" class="ct-field-delete-option">[x]</a>
@@ -70,7 +71,7 @@ $custom_field = $this->custom_fields[$_GET['ct_edit_custom_field']];
                             <?php endif; ?>
 
                             <div class="ct-field-additional-options"></div>
-                            <input type="hidden" value="<?php echo( count( $custom_field['field_options'] )); ?>" name="track_number">
+                            <input type="hidden" value="<?php if ( isset( $custom_field['field_options'] ) && is_array( $custom_field['field_options'] ) ) echo( count( $custom_field['field_options'] ) ); ?>" name="track_number">
                             <p><a href="#" class="ct-field-add-option"><?php _e('Add another option', 'content_types'); ?></a></p>
                         </div>
                     </td>
@@ -86,7 +87,7 @@ $custom_field = $this->custom_fields[$_GET['ct_edit_custom_field']];
                         <label for="field_description"><?php _e('Field Description', 'content_types') ?></label>
                     </th>
                     <td>
-                        <textarea name="field_description" cols="52" rows="3" ><?php echo( $custom_field['field_description'] ); ?></textarea>
+                        <textarea name="field_description" cols="52" rows="3" ><?php if ( isset( $custom_field['field_description'] ) ) echo( $custom_field['field_description'] ); ?></textarea>
                         <span class="description"><?php _e('Description for the custom field.', 'content_types'); ?></span>
                     </td>
                 </tr>

@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 
-error_reporting( E_ALL ^ E_NOTICE );
+//error_reporting( E_ALL ^ E_NOTICE );
 ini_set( 'display_errors', 1 );
 
 /** Define the submodule root folder url. */

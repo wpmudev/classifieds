@@ -89,7 +89,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
                     $this->render_admin( 'payments-paypal' );
                 }
             } else {
-                if ( $_GET['sub'] == 'checkout' ) {
+                if ( isset( $_GET['sub'] ) && $_GET['sub'] == 'checkout' ) {
                     if ( isset( $_POST['save'] ) ) {
                         $this->save_options( $_POST );
                     }
@@ -102,7 +102,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
                 }
             }
         } elseif ( $_GET['page'] == 'classifieds_credits' ) {
-            if ( $_GET['tab'] == 'send_credits' ) {
+            if ( isset( $_GET['tab'] ) && $_GET['tab'] == 'send_credits' ) {
 
             } else {
                 if ( isset( $_POST['purchase'] ) ) {
@@ -121,7 +121,9 @@ class Classifieds_Core_Admin extends Classifieds_Core {
      **/
     function admin_head() {
         /* Get plugin hook */
-        $this->hook = get_plugin_page_hook( $_GET['page'], $this->menu_slug );
+        $this->hook = '';
+        if ( isset( $_GET['page'] ) )
+            $this->hook = get_plugin_page_hook( $_GET['page'], $this->menu_slug );
         /* Add actions for printing the styles and scripts of the document */
         add_action( 'admin_print_scripts-' . $this->hook, array( &$this, 'admin_enqueue_scripts' ) );
         add_action( 'admin_head-' . $this->hook, array( &$this, 'admin_print_styles' ) );

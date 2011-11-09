@@ -12,7 +12,7 @@
                         <label for="post_type"><?php _e('Post Type', 'content_types') ?> <span class="ct-required">( <?php _e('required', 'content_types'); ?> )</span></label>
                     </th>
                     <td>
-                        <input type="text" name="post_type" value="<?php echo( $_POST['post_type'] ); ?>">
+                        <input type="text" name="post_type" value="<?php echo( isset( $_POST['post_type'] ) ); ?>">
                         <span class="description"><?php _e('The new post type system name ( max. 20 characters ). Alphanumeric characters and underscores only. Min 2 letters. Once added the post type system name cannot be changed.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -33,34 +33,34 @@
                <tr>
                     <th></th>
                     <td>
-                        <input type="checkbox" name="supports[title]" value="title" <?php if ( $_POST['supports']['title'] == 'title') { echo( 'checked="checked"' ); } elseif ( $_POST['supports']['title'] === null && !isset( $_POST['ct_submit_add_post_type'] )) { echo( 'checked="checked"' ); } ?>>
+                        <input type="checkbox" name="supports[title]" value="title" <?php if ( isset( $_POST['supports']['title'] ) && $_POST['supports']['title'] == 'title' ) { echo( 'checked="checked"' ); } elseif ( !isset( $_POST['supports']['title'] ) && !isset( $_POST['ct_submit_add_post_type'] )) { echo( 'checked="checked"' ); } ?>>
                         <span class="description"><strong><?php _e('Title', 'content_types') ?></strong></span>
                         <br />
-                        <input type="checkbox" name="supports[editor]" value="editor" <?php if ( $_POST['supports']['editor'] == 'editor') echo( 'checked="checked"' ); elseif ( $_POST['supports']['editor'] === null && !isset( $_POST['ct_submit_add_post_type'] )) echo( 'checked="checked"' ); ?>>
+                        <input type="checkbox" name="supports[editor]" value="editor" <?php if ( isset( $_POST['supports']['editor'] ) && $_POST['supports']['editor'] == 'editor' ) echo( 'checked="checked"' ); elseif ( !isset( $_POST['supports']['editor'] ) && !isset( $_POST['ct_submit_add_post_type'] )) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('Editor', 'content_types') ?></strong> - <?php _e('Content', 'content_types') ?></span>
                         <br />
-                        <input type="checkbox" name="supports[author]" value="author" <?php if ( $_POST['supports']['author'] == 'author') echo( 'checked="checked"' ); ?>>
+                        <input type="checkbox" name="supports[author]" value="author" <?php if ( isset( $_POST['supports']['author'] ) && $_POST['supports']['author'] == 'author' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('Author', 'content_types') ?></strong></span>
                         <br />
-                        <input type="checkbox" name="supports[thumbnail]" value="thumbnail" <?php if ( $_POST['supports']['thumbnail'] == 'thumbnail') echo( 'checked="checked"' ); ?>>
+                        <input type="checkbox" name="supports[thumbnail]" value="thumbnail" <?php if ( isset( $_POST['supports']['thumbnail'] ) && $_POST['supports']['thumbnail'] == 'thumbnail' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('Thumbnail', 'content_types') ?></strong> - <?php _e('Featured Image - current theme must also support post-thumbnails.', 'content_types') ?></span>
                         <br />
-                        <input type="checkbox" name="supports[excerpt]" value="excerpt" <?php if ( $_POST['supports']['excerpt'] == 'excerpt') echo( 'checked="checked"' ); ?>>
+                        <input type="checkbox" name="supports[excerpt]" value="excerpt" <?php if ( isset( $_POST['supports']['excerpt'] ) && $_POST['supports']['excerpt'] == 'excerpt' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('Excerpt', 'content_types') ?></strong></span>
                         <br />
-                        <input type="checkbox" name="supports[trackbacks]" value="trackbacks" <?php if ( $_POST['supports']['trackbacks'] == 'trackbacks') echo( 'checked="checked"' ); ?>>
+                        <input type="checkbox" name="supports[trackbacks]" value="trackbacks" <?php if ( isset( $_POST['supports']['trackbacks'] ) && $_POST['supports']['trackbacks'] == 'trackbacks' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('Trackbacks', 'content_types') ?></strong></span>
                         <br />
-                        <input type="checkbox" name="supports[custom_fields]" value="custom_fields" <?php if ( $_POST['supports']['custom_fields'] == 'custom_fields') echo( 'checked="checked"' ); ?>>
+                        <input type="checkbox" name="supports[custom_fields]" value="custom_fields" <?php if ( isset( $_POST['supports']['custom_fields'] ) && $_POST['supports']['custom_fields'] == 'custom_fields' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('Custom Fields', 'content_types') ?></strong></span>
                         <br />
-                        <input type="checkbox" name="supports[comments]" value="comments" <?php if ( $_POST['supports']['comments'] == 'comments') echo( 'checked="checked"' ); ?>>
+                        <input type="checkbox" name="supports[comments]" value="comments" <?php if ( isset( $_POST['supports']['comments'] ) && $_POST['supports']['comments'] == 'comments' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('Comments', 'content_types') ?></strong> - <?php _e('Also will see comment count balloon on edit screen.', 'content_types') ?></span>
                         <br />
-                        <input type="checkbox" name="supports[revisions]" value="revisions" <?php if ( $_POST['supports']['revisions'] == 'revisions') echo( 'checked="checked"' ); ?>>
+                        <input type="checkbox" name="supports[revisions]" value="revisions" <?php if ( isset( $_POST['supports']['revisions'] ) && $_POST['supports']['revisions'] == 'revisions' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('Revisions', 'content_types') ?></strong> - <?php _e('Will store revisions.', 'content_types') ?></span>
                         <br />
-                        <input type="checkbox" name="supports[page_attributes]" value="page-attributes" <?php if ( $_POST['supports']['page_attributes'] == 'page_attributes') echo( 'checked="checked"' ); ?>>
+                        <input type="checkbox" name="supports[page_attributes]" value="page-attributes" <?php if ( isset( $_POST['supports']['page_attributes'] ) && $_POST['supports']['page_attributes'] == 'page_attributes' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('Page Attributes', 'content_types') ?></strong> - <?php _e('Template and menu order - Hierarchical must be true!', 'content_types') ?></span>
                     </td>
                 </tr>
@@ -93,7 +93,7 @@
                         <label for="name"><?php _e('Name', 'content_types') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="labels[name]" value="<?php echo( $_POST['labels']['name'] ); ?>">
+                        <input type="text" name="labels[name]" value="<?php echo( isset( $_POST['labels']['name'] ) ); ?>">
                         <span class="description"><?php _e('General name for the post type, usually plural.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -102,7 +102,7 @@
                         <label for="singular_name"><?php _e('Singular Name', 'content_types') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="labels[singular_name]" value="<?php echo( $_POST['labels']['singular_name'] ); ?>">
+                        <input type="text" name="labels[singular_name]" value="<?php echo( isset( $_POST['labels']['singular_name'] ) ); ?>">
                         <span class="description"><?php _e('Name for one object of this post type. Defaults to value of name.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -111,7 +111,7 @@
                         <label for="add_new"><?php _e('Add New', 'content_types') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="labels[add_new]" value="<?php echo( $_POST['labels']['add_new'] ); ?>">
+                        <input type="text" name="labels[add_new]" value="<?php echo( isset( $_POST['labels']['add_new'] ) ); ?>">
                         <span class="description"><?php _e('The add new text. The default is Add New for both hierarchical and non-hierarchical types.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -120,7 +120,7 @@
                         <label for="add_new_item"><?php _e('Add New Item', 'content_types') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="labels[add_new_item]" value="<?php echo( $_POST['labels']['add_new_item'] ); ?>">
+                        <input type="text" name="labels[add_new_item]" value="<?php echo( isset( $_POST['labels']['add_new_item'] ) ); ?>">
                         <span class="description"><?php _e('The add new item text. Default is Add New Post/Add New Page.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -129,7 +129,7 @@
                         <label for="edit_item"><?php _e('Edit Item', 'content_types') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="labels[edit_item]" value="<?php echo( $_POST['labels']['edit_item'] ); ?>">
+                        <input type="text" name="labels[edit_item]" value="<?php echo( isset( $_POST['labels']['edit_item'] ) ); ?>">
                         <span class="description"><?php _e('The edit item text. Default is Edit Post/Edit Page.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -138,7 +138,7 @@
                         <label for="new_item"><?php _e('New Item', 'content_types') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="labels[new_item]" value="<?php echo( $_POST['labels']['new_item'] ); ?>">
+                        <input type="text" name="labels[new_item]" value="<?php echo( isset( $_POST['labels']['new_item'] ) ); ?>">
                         <span class="description"><?php _e('The new item text. Default is New Post/New Page.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -147,7 +147,7 @@
                         <label for="view_item"><?php _e('View Item', 'content_types') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="labels[view_item]" value="<?php echo( $_POST['labels']['view_item'] ); ?>">
+                        <input type="text" name="labels[view_item]" value="<?php echo( isset( $_POST['labels']['view_item'] ) ); ?>">
                         <span class="description"><?php _e('The view item text. Default is View Post/View Page.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -156,7 +156,7 @@
                         <label for="search_items"><?php _e('Search Items', 'content_types') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="labels[search_items]" value="<?php echo( $_POST['labels']['search_items'] ); ?>">
+                        <input type="text" name="labels[search_items]" value="<?php echo( isset( $_POST['labels']['search_items'] ) ); ?>">
                         <span class="description"><?php _e('The search items text. Default is Search Posts/Search Pages.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -165,7 +165,7 @@
                         <label for="not_found"><?php _e('Not Found', 'content_types') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="labels[not_found]" value="<?php echo( $_POST['labels']['not_found'] ); ?>">
+                        <input type="text" name="labels[not_found]" value="<?php echo( isset( $_POST['labels']['not_found'] ) ); ?>">
                         <span class="description"><?php _e('The not found text. Default is No posts found/No pages found.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -174,7 +174,7 @@
                         <label for="not_found_in_trash"><?php _e('Not Found In Trash', 'content_types') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="labels[not_found_in_trash]" value="<?php echo( $_POST['labels']['not_found_in_trash'] ); ?>">
+                        <input type="text" name="labels[not_found_in_trash]" value="<?php echo( isset( $_POST['labels']['not_found_in_trash'] ) ); ?>">
                         <span class="description"><?php _e('The not found in trash text. Default is No posts found in Trash/No pages found in Trash.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -183,7 +183,7 @@
                         <label for="parent_item_colon"><?php _e('Parent Item Colon', 'content_types') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="labels[parent_item_colon]" value="<?php echo( $_POST['labels']['parent_item_colon'] ); ?>">
+                        <input type="text" name="labels[parent_item_colon]" value="<?php echo( isset( $_POST['labels']['parent_item_colon'] ) ); ?>">
                         <span class="description"><?php _e('The parent text. This string isn\'t used on non-hierarchical types. In hierarchical ones the default is Parent Page', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -198,7 +198,7 @@
                         <label for="description"><?php _e('Description', 'content_types') ?></label>
                     </th>
                     <td>
-                        <textarea class="ct-field-description" name="description" rows="3"><?php echo( $_POST['description'] ); ?></textarea>
+                        <textarea class="ct-field-description" name="description" rows="3"><?php echo( isset( $_POST['description'] ) ); ?></textarea>
                         <span class="description"><?php _e('A short descriptive summary of what the post type is.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -213,7 +213,7 @@
                         <label for="menu_position"><?php _e('Menu Position', 'content_types') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="menu_position" value="<?php if ( $_POST['menu_position'] ) echo( $_POST['menu_position'] ); elseif ( $_POST['menu_position'] === null ) echo( '50' ); ?>">
+                        <input type="text" name="menu_position" value="<?php if ( isset( $_POST['menu_position'] ) ) echo( $_POST['menu_position'] ); else echo( '50' ); ?>">
                         <span class="description"><?php _e('5 - below Posts; 10 - below Media; 20 - below Pages; 60 - below first separator; 100 - below second separator', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -228,7 +228,7 @@
                         <label for="menu_icon"><?php _e('Menu Icon', 'content_types') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="menu_icon" value="<?php echo( $_POST['menu_icon'] ); ?>">
+                        <input type="text" name="menu_icon" value="<?php echo( isset( $_POST['menu_icon'] ) ); ?>">
                         <span class="description"><?php _e('The url to the icon to be used for this menu.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -251,21 +251,21 @@
                 <tr>
                     <th></th>
                     <td>
-                        <input type="radio" name="public" value="1"  <?php if ( $_POST['public'] === '1' ) echo( 'checked="checked"' ); elseif ( $_POST['public'] === null ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="public" value="1"  <?php if ( isset( $_POST['public'] ) && $_POST['public'] === '1' ) echo( 'checked="checked"' ); elseif ( !isset( $_POST['public'] ) ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('TRUE', 'content_types'); ?></strong><br />
                         <?php _e('Display a user-interface for this "post_type"', 'content_types');?><br /><code>( show_ui = TRUE )</code><br /><br />
                         <?php _e('Show "post_type" for selection in navigation menus', 'content_types'); ?><br /><code>( show_in_nav_menus = TRUE )</code><br /><br />
                         <?php _e('"post_type" queries can be performed from the front-end', 'content_types'); ?><br /><code>( publicly_queryable = TRUE )</code><br /><br />
                         <?php _e('Exclude posts with this post type from search results', 'content_types'); ?><br /> <code>( exclude_from_search = FALSE )</code></span>
                         <br /><br />
-                        <input type="radio" name="public" value="0" <?php if ( $_POST['public'] === '0' ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="public" value="0" <?php if ( isset( $_POST['public'] ) && $_POST['public'] === '0' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('FALSE', 'content_types'); ?></strong><br />
                         <?php _e('Don not display a user-interface for this "post_type"', 'content_types');?><br /><code>( show_ui = FALSE )</code><br /><br />
                         <?php _e('Hide "post_type" for selection in navigation menus', 'content_types'); ?><br /><code>( show_in_nav_menus = FALSE )</code><br /><br />
                         <?php _e('"post_type" queries cannot be performed from the front-end', 'content_types'); ?><br /><code>( publicly_queryable = FALSE )</code><br /><br />
                         <?php _e('Exclude posts with this post type from search results', 'content_types'); ?><br /> <code>( exclude_from_search = TRUE )</code></span>
                         <br /><br />
-                        <input type="radio" name="public" value="advanced" <?php if ( $_POST['public'] == 'advanced' ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="public" value="advanced" <?php if ( isset( $_POST['public'] ) && $_POST['public'] == 'advanced' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('ADVANCED', 'content_types'); ?></strong> - <?php _e('You can set each component manualy.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -286,10 +286,10 @@
                <tr>
                     <th></th>
                     <td>
-                        <input type="radio" name="show_ui" value="1" <?php if ( $_POST['public'] == 'advanced' && $_POST['show_ui'] === '1' ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="show_ui" value="1" <?php if ( isset( $_POST['public'] ) && $_POST['public'] == 'advanced' && isset( $_POST['show_ui'] ) && $_POST['show_ui'] === '1' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('TRUE', 'content_types'); ?></strong> - <?php _e('Display a user-interface (admin panel) for this post type.', 'content_types'); ?></span>
                         <br />
-                        <input type="radio" name="show_ui" value="0" <?php if ( $_POST['public'] == 'advanced' && $_POST['show_ui'] === '0' ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="show_ui" value="0" <?php if ( isset( $_POST['public'] ) && $_POST['public'] == 'advanced' && isset( $_POST['show_ui'] ) && $_POST['show_ui'] === '0' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('FALSE', 'content_types'); ?></strong> - <?php _e('Do not display a user-interface for this post type.', 'content_types'); ?></span>
                     </td>
                 </tr>
@@ -310,10 +310,10 @@
                <tr>
                     <th></th>
                     <td>
-                        <input type="radio" name="show_in_nav_menus" value="1" <?php if ( $_POST['public'] == 'advanced' && $_POST['show_in_nav_menus'] === '1' ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="show_in_nav_menus" value="1" <?php if ( isset( $_POST['public'] ) && $_POST['public'] == 'advanced' && isset( $_POST['show_in_nav_menus'] ) && $_POST['show_in_nav_menus'] === '1' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('TRUE', 'content_types'); ?></strong></span>
                         <br />
-                        <input type="radio" name="show_in_nav_menus" value="0" <?php if ( $_POST['public'] == 'advanced' && $_POST['show_in_nav_menus'] === '0' ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="show_in_nav_menus" value="0" <?php if ( isset( $_POST['public'] ) && $_POST['public'] == 'advanced' && isset( $_POST['show_in_nav_menus'] ) && $_POST['show_in_nav_menus'] === '0' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('FALSE', 'content_types'); ?></strong></span>
                     </td>
                 </tr>
@@ -334,10 +334,10 @@
                <tr>
                     <th></th>
                     <td>
-                        <input type="radio" name="publicly_queryable" value="1" <?php if ( $_POST['public'] == 'advanced' && $_POST['publicly_queryable'] === '1' ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="publicly_queryable" value="1" <?php if ( isset( $_POST['public'] ) && $_POST['public'] == 'advanced' && isset( $_POST['publicly_queryable'] ) && $_POST['publicly_queryable'] === '1' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('TRUE', 'content_types'); ?></strong></span>
                         <br />
-                        <input type="radio" name="publicly_queryable" value="0" <?php if ( $_POST['public'] == 'advanced' && $_POST['publicly_queryable'] === '0' ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="publicly_queryable" value="0" <?php if ( isset( $_POST['public'] ) && $_POST['public'] == 'advanced' && isset( $_POST['publicly_queryable'] ) && $_POST['publicly_queryable'] === '0' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('FALSE', 'content_types'); ?></strong></span>
                     </td>
                 </tr>
@@ -358,10 +358,10 @@
                <tr>
                     <th></th>
                     <td>
-                        <input type="radio" name="exclude_from_search" value="1" <?php if ( $_POST['public'] == 'advanced' && $_POST['exclude_from_search'] === '1' ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="exclude_from_search" value="1" <?php if ( isset( $_POST['public'] ) && $_POST['public'] == 'advanced' && isset( $_POST['exclude_from_search'] ) && $_POST['exclude_from_search'] === '1' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('TRUE', 'content_types'); ?></strong></span>
                         <br />
-                        <input type="radio" name="exclude_from_search" value="0" <?php if ( $_POST['public'] == 'advanced' && $_POST['exclude_from_search'] === '0' ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="exclude_from_search" value="0" <?php if ( isset( $_POST['public'] ) && $_POST['public'] == 'advanced' && isset( $_POST['exclude_from_search'] ) && $_POST['exclude_from_search'] === '0' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('FALSE', 'content_types'); ?></strong></span>
                     </td>
                 </tr>
@@ -382,10 +382,10 @@
                <tr>
                     <th></th>
                     <td>
-                        <input type="radio" name="hierarchical" value="1" <?php if ( $_POST['hierarchical'] === '1' ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="hierarchical" value="1" <?php if ( isset( $_POST['hierarchical'] ) && $_POST['hierarchical'] === '1' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('TRUE', 'content_types'); ?></strong></span>
                         <br />
-                        <input type="radio" name="hierarchical" value="0" checked="checked" <?php if ( $_POST['hierarchical'] === '0' ) echo( 'checked="checked"' ); elseif ( $_POST['hierarchical'] === null ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="hierarchical" value="0" checked="checked" <?php if ( isset( $_POST['hierarchical'] ) && $_POST['hierarchical'] === '0' ) echo( 'checked="checked"' ); elseif ( !isset( $_POST['hierarchical'] ) ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('FALSE', 'content_types'); ?></strong></span>
                     </td>
                 </tr>
@@ -406,13 +406,13 @@
                <tr>
                     <th></th>
                     <td>
-                        <input type="radio" name="rewrite" value="1" <?php if ( $_POST['rewrite'] === '1' ) echo( 'checked="checked"' ); elseif ( $_POST['rewrite'] === null ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="rewrite" value="1" <?php if ( isset( $_POST['rewrite'] ) && $_POST['rewrite'] === '1' ) echo( 'checked="checked"' ); elseif ( !isset( $_POST['rewrite'] ) ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('TRUE', 'content_types'); ?></strong></span>
                         <br />
-                        <input type="radio" name="rewrite" value="0" <?php if ( $_POST['rewrite'] === '0' ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="rewrite" value="0" <?php if ( isset( $_POST['rewrite'] ) && $_POST['rewrite'] === '0' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('FALSE', 'content_types'); ?></strong></span>
                         <br />
-                        <input type="radio" name="rewrite" value="advanced" <?php if ( $_POST['rewrite'] === 'advanced' ) echo( 'checked="checked"' ); ?>>
+                        <input type="radio" name="rewrite" value="advanced" <?php if ( isset( $_POST['rewrite'] ) && $_POST['rewrite'] === 'advanced' ) echo( 'checked="checked"' ); ?>>
                         <span class="description"><strong><?php _e('CUSTOM SLUG', 'content_types'); ?></strong></span>
                         <br />
                         <input type="text" name="rewrite_slug" value="<?php echo( $_POST['rewrite_slug'] ); ?>" />

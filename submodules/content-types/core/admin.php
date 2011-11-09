@@ -41,7 +41,10 @@ class Content_Types_Core_Admin extends Content_Types_Core {
      * @return void
      **/
     function get_hook() {
-        $this->hook = get_plugin_page_hook( $_GET['page'], $this->parent_menu_slug );
+        $this->hook = '';
+        if ( isset( $_GET['page'] ) )
+            $this->hook = get_plugin_page_hook( $_GET['page'], $this->parent_menu_slug );
+       
         add_action( 'admin_print_styles-' .  $this->hook, array( &$this, 'enqueue_styles' ) );
         add_action( 'admin_print_scripts-' . $this->hook, array( &$this, 'enqueue_scripts' ) );
     }
@@ -83,7 +86,7 @@ class Content_Types_Core_Admin extends Content_Types_Core {
         if ( $_GET['page'] == 'ct_content_types' ) {
             $this->render_admin('content-types');
 
-            if ( $_GET['ct_content_type'] == 'post_type' || !isset( $_GET['ct_content_type'] )) {
+            if ( ! isset( $_GET['ct_content_type'] ) || $_GET['ct_content_type'] == 'post_type' ) {
                 if ( isset( $_GET['ct_add_post_type'] ) )
                     $this->render_admin('add-post-type');
                 elseif ( isset( $_GET['ct_edit_post_type'] ) )

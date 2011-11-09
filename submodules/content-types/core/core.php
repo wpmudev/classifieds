@@ -83,7 +83,7 @@ class Content_Types_Core {
      **/
     function handle_post_type_requests() {
         /* If add/update request is made */
-        if ( $_POST['submit'] && wp_verify_nonce( $_POST['_wpnonce'], 'submit_post_type' ) ) {
+        if ( isset( $_POST['submit'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'submit_post_type' ) ) {
             /* Validate input fields */
             if ( $this->validate_field( 'post_type', $_POST['post_type'] ) ) {
                 /* Post type labels */
@@ -164,7 +164,7 @@ class Content_Types_Core {
             /* Redirect to post types page */
             wp_redirect( admin_url( 'admin.php?page=ct_content_types&ct_content_type=post_type&updated' ));
         }
-        elseif ( $_POST['redirect_add_post_type'] ) {
+        elseif ( isset( $_POST['redirect_add_post_type'] ) ) {
             wp_redirect( admin_url( 'admin.php?page=ct_content_types&ct_content_type=post_type&ct_add_post_type=true' ) );
         }
     }
@@ -195,7 +195,7 @@ class Content_Types_Core {
      **/
     function handle_taxonomy_requests() {
         /* If valid add/edit taxonomy request is made */
-        if ( $_POST['submit'] && wp_verify_nonce( $_POST['ct_submit_taxonomy_secret'], 'ct_submit_taxonomy_verify' ) ) {
+        if ( isset( $_POST['submit'] ) && wp_verify_nonce( $_POST['ct_submit_taxonomy_secret'], 'ct_submit_taxonomy_verify' ) ) {
             /* Validate input fields */
             $valid_taxonomy = $this->validate_field( 'taxonomy', $_POST['taxonomy'] );
             $valid_object_type = $this->validate_field( 'object_type', $_POST['object_type'] );
@@ -275,7 +275,7 @@ class Content_Types_Core {
             /* Redirect back to the taxonomies page */
             wp_redirect( admin_url( 'admin.php?page=ct_content_types&ct_content_type=taxonomy&updated' ) );
         }
-        elseif ( $_POST['redirect_add_taxonomy'] ) {
+        elseif (  isset( $_POST['redirect_add_taxonomy'] ) )  {
             wp_redirect( admin_url( 'admin.php?page=ct_content_types&ct_content_type=taxonomy&ct_add_taxonomy=true' ));
         }
     }
@@ -292,7 +292,9 @@ class Content_Types_Core {
     function register_taxonomies() {
         $taxonomies = $this->taxonomies;
         /* Plugins can filter this value and sort taxonomies */
+        $sort = '';
         $sort = apply_filters( 'sort_custom_taxonomies', $sort );
+
         /* If custom taxonomies are present, register them */
         if ( is_array( $taxonomies ) ) {
             /* Sort taxonomies */

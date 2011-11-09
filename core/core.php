@@ -196,7 +196,7 @@ class Classifieds_Core {
                 );
 
             $page = get_posts( $args );
-            if ( 0 < $page[0]->ID )
+            if ( isset( $page[0] ) && 0 < $page[0]->ID )
                 return $page[0];
         }
 
@@ -213,7 +213,7 @@ class Classifieds_Core {
 
         $classifieds_page = $this->get_page_by_meta( 'classifieds' );
 
-        if ( 0 >= $classifieds_page->ID ) {
+        if ( $classifieds_page && 0 >= $classifieds_page->ID ) {
             $current_user = wp_get_current_user();
             /* Construct args for the new post */
             $args = array(
@@ -230,7 +230,7 @@ class Classifieds_Core {
 
         $classifieds_page = $this->get_page_by_meta( 'my_classifieds' );
 
-        if ( 0 >= $classifieds_page->ID ) {
+        if ( $classifieds_page && 0 >= $classifieds_page->ID ) {
             $current_user = wp_get_current_user();
             /* Construct args for the new post */
             $args = array(
