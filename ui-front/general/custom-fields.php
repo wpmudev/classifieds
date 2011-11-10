@@ -19,7 +19,6 @@ if ( !isset( $post->ID ) )
 
 <?php foreach ( $custom_fields as $custom_field ): ?>
 
-
     <?php if ( $custom_field['field_type'] == 'text' ): ?>
         <label for="<?php echo ( $prefix . $custom_field['field_id'] ); ?>"><?php echo ( $custom_field['field_title'] ); ?></label>
         <input type="text" name="custom_fields[<?php echo ( $prefix . $custom_field['field_id'] ); ?>]" id="<?php echo ( $prefix . $custom_field['field_id'] ); ?>" value="<?php echo ( get_post_meta( $post->ID, $prefix . $custom_field['field_id'], true )); ?>" />

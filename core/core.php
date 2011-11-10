@@ -383,15 +383,20 @@ class Classifieds_Core {
      * @param string $billing The billing type for the user
      * @return NULL|void
      **/
-    function update_user( $email, $first_name, $last_name, $billing, $credits ) {
-        /* Include registration helper functions */
-        require_once( ABSPATH . WPINC . '/registration.php' );
+    function update_user( $email, $first_name, $last_name, $billing, $credits, $order_info = '' ) {
 
         /* If user logged update it */
         if ( is_user_logged_in() ) {
 
             wp_update_user( array( 'ID' => get_current_user_id(), 'role' => $this->user_role ) );
-            update_user_meta( get_current_user_id(), 'cf_billing', $billing );
+
+            //saving information of transaction
+            $cf_order = array(
+                'billing'    => $billing,
+                'order_info' => $order_info
+            );
+            update_user_meta( get_current_user_id(), 'cf_order', $cf_order );
+
             $this->update_user_credits( $credits, get_current_user_id() );
             return;
         }
@@ -402,7 +407,14 @@ class Classifieds_Core {
             $user = get_user_by( 'email', $user_email );
             if ( $user ) {
                 wp_update_user( array( 'ID' => $user->ID, 'role' => $this->user_role ) );
-                update_user_meta( $user->ID, 'cf_billing', $billing );
+
+                //saving information of transaction
+                $cf_order = array(
+                    'billing'    => $billing,
+                    'order_info' => $order_info
+                );
+                update_user_meta( $user->ID, 'cf_order', $cf_order );
+
                 $this->update_user_credits( $credits, $user->ID );
                 $credentials = array( 'remember'=>true, 'user_login' => $user->user_login, 'user_password' => $user->user_pass );
                 wp_signon( $credentials );
@@ -430,7 +442,14 @@ class Classifieds_Core {
             'role'         => $this->user_role
         ) ) ;
         if ( $user_id ) {
-            update_user_meta( $user_id, 'cf_billing', $billing );
+
+            //saving information of transaction
+            $cf_order = array(
+                'billing'    => $billing,
+                'order_info' => $order_info
+            );
+            update_user_meta( $user_id, 'cf_order', $cf_order );
+
             $this->update_user_credits( $credits, $user_id );
             wp_new_user_notification( $user_id, $user_pass );
             $credentials = array( 'remember'=> true, 'user_login' => $user_login, 'user_password' => $user_pass );
@@ -613,7 +632,7 @@ class Classifieds_Core {
                 /* Handle Success and Error scenarios */
                 if ( $result['status'] == 'success' ) {
                     /* Insert/Update User */
-                    $this->update_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'], $_POST['credits'] );
+                    $this->update_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'], $_POST['credits'], $result );
                     /* Set the proper step which will be loaded by "page-checkout.php" */
                     set_query_var( 'cf_step', 'success' );
                 } else {
@@ -789,12 +808,12 @@ class Classifieds_Core {
             $available_credits = get_user_meta( $user_id , 'cf_credits', true );
             $total_credits = ( get_user_meta( $user_id , 'cf_credits', true ) ) ? ( $available_credits + $credits ) : $credits;
             update_user_meta( $user_id, 'cf_credits', $total_credits );
-            $this->update_user_credits_log( $credits );
+            $this->update_user_credits_log( $credits, $user_id );
         } else {
             $available_credits = get_user_meta( $this->current_user->ID , 'cf_credits', true );
             $total_credits = ( get_user_meta( $this->current_user->ID , 'cf_credits', true ) ) ? ( $available_credits + $credits ) : $credits;
             update_user_meta( $this->current_user->ID, 'cf_credits', $total_credits );
-            $this->update_user_credits_log( $credits );
+            $this->update_user_credits_log( $credits, $user_id );
         }
     }
 
@@ -804,7 +823,7 @@ class Classifieds_Core {
      * @return string|array Log of credit events
      **/
     function get_user_credits_log() {
-        $credits_log =  get_user_meta( $this->current_user->ID , 'cf_credits_log', true );
+        $credits_log = get_user_meta( $this->current_user->ID , 'cf_credits_log', true );
         if ( !empty( $credits_log ) )
             return $credits_log;
         else
@@ -816,15 +835,15 @@ class Classifieds_Core {
      *
      * @param string $credits How many credits to log
      **/
-    function update_user_credits_log( $credits ) {
+    function update_user_credits_log( $credits, $user_id ) {
         $date = time();
         $credits_log = array( array(
-            'credits' => $credits,
-            'date' => $date
+            'credits'   => $credits,
+            'date'      => $date
         ));
-        $user_meta = get_user_meta( $this->current_user->ID , 'cf_credits_log', true );
-        $user_meta = ( get_user_meta( $this->current_user->ID , 'cf_credits_log', true ) ) ? array_merge( $user_meta, $credits_log ) : $credits_log;
-        update_user_meta( $this->current_user->ID, 'cf_credits_log', $user_meta );
+        $user_meta = get_user_meta( $user_id, 'cf_credits_log', true );
+        $user_meta = ( get_user_meta( $user_id, 'cf_credits_log', true ) ) ? array_merge( $user_meta, $credits_log ) : $credits_log;
+        update_user_meta( $user_id, 'cf_credits_log', $user_meta );
     }
 
     /**

@@ -85,27 +85,27 @@ get_header(); ?>
                                                 <?php for ( $i = 1; $i <= 10; $i++ ): ?>
                                                 <?php $credits = 10 * $i; ?>
                                                 <?php $amount = $credits * $options['credits']['cost_credit']; ?>
-                                                <option value="<?php echo $amount; ?>" <?php if ( $_POST['credits_cost'] == $amount ) echo 'selected="selected"'; ?> ><?php echo $credits; ?> Credits for <?php echo $amount . ' ' . $options['paypal']['currency']; ?></option>
+                                                <option value="<?php echo $amount; ?>" <?php if ( isset( $_POST['credits_cost'] ) && $_POST['credits_cost'] == $amount ) echo 'selected="selected"'; ?> ><?php echo $credits; ?> Credits for <?php echo $amount . ' ' . $options['paypal']['currency']; ?></option>
                                                 <?php endfor; ?>
                                             </select>
                                         </td>
                                     </tr>
 
-                                    <?php if ( 0 < strlen( $options['checkout']['annual_txt'] ) && 0 <= $options['checkout']['annual_cost'] && '' != $options['checkout']['annual_cost'] ): ?>
+                                    <?php if ( isset( $options['checkout']['annual_txt'] ) && 0 < strlen( $options['checkout']['annual_txt'] ) && isset( $options['checkout']['annual_cost'] ) &&  0 <= $options['checkout']['annual_cost'] && '' != $options['checkout']['annual_cost'] ): ?>
                                     <tr>
                                         <td><label for="billing"><?php echo $options['checkout']['annual_txt']; ?></label></td>
                                         <td>
-                                            <input type="radio" name="billing" value="annual" <?php if ( $_POST['billing'] == 'annual' ) echo 'checked="checked"'; ?> />  <?php echo $options['checkout']['annual_cost']; ?> <?php echo $options['paypal']['currency']; ?>
+                                            <input type="radio" name="billing" value="annual" <?php if ( isset( $_POST['billing'] ) && $_POST['billing'] == 'annual' ) echo 'checked="checked"'; ?> />  <?php echo $options['checkout']['annual_cost']; ?> <?php echo $options['paypal']['currency']; ?>
                                             <input type="hidden" name="annual_cost" value="<?php echo $options['checkout']['annual_cost']; ?>" />
                                         </td>
                                     </tr>
                                     <?php endif;?>
 
-                                    <?php if ( 0 < strlen( $options['checkout']['one_time_txt'] ) && 0 <= $options['checkout']['one_time_cost'] && '' != $options['checkout']['one_time_cost'] ): ?>
+                                    <?php if ( isset( $options['checkout']['one_time_txt'] ) && 0 < strlen( $options['checkout']['one_time_txt'] ) && isset( $options['checkout']['one_time_cost'] ) && 0 <= $options['checkout']['one_time_cost'] && '' != $options['checkout']['one_time_cost'] ): ?>
                                     <tr>
                                         <td><label for="billing"><?php echo $options['checkout']['one_time_txt']; ?></label></td>
                                         <td>
-                                            <input type="radio" name="billing" value="one_time" <?php if ( $_POST['billing'] == 'one_time' ) echo 'checked="checked"'; ?> /> <?php echo $options['checkout']['one_time_cost']; ?> <?php echo $options['paypal']['currency']; ?>
+                                            <input type="radio" name="billing" value="one_time" <?php if ( isset( $_POST['billing'] ) && $_POST['billing'] == 'one_time' ) echo 'checked="checked"'; ?> /> <?php echo $options['checkout']['one_time_cost']; ?> <?php echo $options['paypal']['currency']; ?>
                                             <input type="hidden" name="one_time_cost" value="<?php echo $options['checkout']['one_time_cost']; ?>" />
                                         </td>
                                     </tr>
@@ -116,7 +116,7 @@ get_header(); ?>
                                 <strong><?php _e( 'Terms of Service', 'classifieds' ); ?></strong>
                                 <table>
                                     <tr>
-                                        <td><div class="terms"><?php echo nl2br( $options['checkout']['tos_txt'] ); ?></div></td>
+                                        <td><div class="terms"><?php if ( isset( $options['checkout']['tos_txt'] ) ) echo nl2br( $options['checkout']['tos_txt'] ); ?></div></td>
                                     </tr>
                                 </table>
                                 <br />
@@ -124,7 +124,7 @@ get_header(); ?>
                                 <table  <?php do_action( 'tos_invalid' ); ?> >
                                     <tr>
                                         <td><label for="tos_agree"><?php _e( 'I agree with the Terms of Service', 'classifieds' ); ?></label></td>
-                                        <td><input type="checkbox" id="tos_agree" name="tos_agree" value="1" <?php if ( $_POST['tos_agree'] ) echo 'checked="checked"'; ?> /></td>
+                                        <td><input type="checkbox" id="tos_agree" name="tos_agree" value="1" <?php if ( isset( $_POST['tos_agree'] ) ) echo 'checked="checked"'; ?> /></td>
                                     </tr>
                                 </table>
 
@@ -167,7 +167,7 @@ get_header(); ?>
                                         <input type="hidden" name="cost" value="<?php echo $_POST['credits_cost']; ?>" />
                                         <input type="hidden" name="billing" value="credits" />
                                         <?php $options = get_option('classifieds_options'); ?>
-                                        <?php $credits = $_POST['credits_cost'] / $options['credits']['cost_credit']; ?>
+                                        <?php $credits = ( isset( $_POST['credits_cost'] ) && 0 < $_POST['credits_cost'] ) ? $_POST['credits_cost'] / $options['credits']['cost_credit'] : 0; ?>
                                         <input type="hidden" name="credits" value="<?php echo $credits; ?>" />
                                     <?php elseif ( $_POST['billing'] == 'annual' ): ?>
                                         <input type="hidden" name="cost" value="<?php echo $_POST['annual_cost']; ?>" />
