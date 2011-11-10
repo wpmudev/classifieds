@@ -77,7 +77,7 @@ query_posts( $query_string . "&post_type=classifieds&post_status=publish");
 
                                 <td>
                                     <?php /* For BuddyPress compatibility */ ?>
-                                    <?php global $bp; if ( isset( $bp ) ): ?><a href="<?php echo bp_core_get_user_domain( get_the_author_ID() ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" ><?php endif; ?>
+                                    <?php global $bp; if ( isset( $bp ) ): ?><a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" ><?php endif; ?>
 
                                     <?php the_author(); ?>
 
@@ -93,7 +93,7 @@ query_posts( $query_string . "&post_type=classifieds&post_status=publish");
                                        <?php echo get_the_term_list( get_the_ID(), $taxonomy, '', ', ', '' ) . ' '; ?>
                                    <?php endforeach; ?>
                                 </td>
-                            <tr>
+                            </tr>
                             <tr>
                                 <th><?php _e( 'Expires', 'classifieds' ); ?></th>
                                 <td><?php echo Classifieds_Core::get_expiration_date( get_the_ID() ); ?></td>

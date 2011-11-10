@@ -397,7 +397,10 @@ class Classifieds_Core {
             );
             update_user_meta( get_current_user_id(), 'cf_order', $cf_order );
 
-            $this->update_user_credits( $credits, get_current_user_id() );
+            //Update credits only for none 'annual' or  'one_time' users
+            if ( isset( $billing ) && 'credits' == $billing )
+                $this->update_user_credits( $credits, get_current_user_id() );
+
             return;
         }
 
@@ -415,7 +418,10 @@ class Classifieds_Core {
                 );
                 update_user_meta( $user->ID, 'cf_order', $cf_order );
 
-                $this->update_user_credits( $credits, $user->ID );
+                //Update credits only for none 'annual' or  'one_time' users
+                if ( isset( $billing ) && 'credits' == $billing )
+                    $this->update_user_credits( $credits, $user->ID );
+
                 $credentials = array( 'remember'=>true, 'user_login' => $user->user_login, 'user_password' => $user->user_pass );
                 wp_signon( $credentials );
                 return;
@@ -450,7 +456,10 @@ class Classifieds_Core {
             );
             update_user_meta( $user_id, 'cf_order', $cf_order );
 
-            $this->update_user_credits( $credits, $user_id );
+            //Update credits only for none 'annual' or  'one_time' users
+            if ( isset( $billing ) && 'credits' == $billing )
+                $this->update_user_credits( $credits, $user_id );
+
             wp_new_user_notification( $user_id, $user_pass );
             $credentials = array( 'remember'=> true, 'user_login' => $user_login, 'user_password' => $user_pass );
             wp_signon( $credentials );
@@ -500,6 +509,33 @@ class Classifieds_Core {
             }
             return $post_id;
        }
+    }
+
+    /**
+     * Checking that curent user has full access for add ads without credits.
+     *
+     * @return boolean
+     **/
+    function is_full_access() {
+        //todo: add checking of annual users - if canceled or time < now()
+
+        //for admin
+        if ( current_user_can('manage_options') )
+            return true;
+
+        if ( isset( $this->current_user->ID ) && 0 < $this->current_user->ID )
+            $user_id = $this->current_user->ID;
+        elseif ( function_exists( 'get_current_user_id' ) && 0 < get_current_user_id() )
+            $user_id = get_current_user_id();
+        else
+            $user_id = 0;
+
+        //for paid users
+        $cf_order = get_user_meta( $user_id, 'cf_order', true );
+        if ( isset( $cf_order['billing'] ) && ( 'one_time' == $cf_order['billing'] || 'annual' == $cf_order['billing'] ) )
+            return true;
+
+        return false;
     }
 
     /**
@@ -788,8 +824,8 @@ class Classifieds_Core {
      * @return string User credits.
      **/
     function get_user_credits() {
-        $credits = get_user_meta( $this->current_user->ID, 'cf_credits', true );
-        $credits_log = get_user_meta( $this->current_user->ID, 'cf_credits_log', true );
+        $credits = get_user_meta( get_current_user_id(), 'cf_credits', true );
+        $credits_log = get_user_meta( get_current_user_id(), 'cf_credits_log', true );
         if ( empty( $credits ) )
             return 0;
         else
@@ -823,7 +859,7 @@ class Classifieds_Core {
      * @return string|array Log of credit events
      **/
     function get_user_credits_log() {
-        $credits_log = get_user_meta( $this->current_user->ID , 'cf_credits_log', true );
+        $credits_log = get_user_meta( get_current_user_id(), 'cf_credits_log', true );
         if ( !empty( $credits_log ) )
             return $credits_log;
         else

@@ -41,8 +41,12 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
             <li class="<?php if ( in_array( 'saved',  $bp->action_variables ) ) echo 'current'; ?>"><a href="<?php echo $bp->displayed_user->domain . 'classifieds/my-classifieds/saved/'; ?>"><?php _e( 'Saved Ads', $this->text_domain ); ?></a></li>
             <li class="<?php if ( in_array( 'ended',  $bp->action_variables ) ) echo 'current'; ?>"><a href="<?php echo $bp->displayed_user->domain . 'classifieds/my-classifieds/ended/'; ?>"><?php _e( 'Ended Ads', $this->text_domain ); ?></a></li>
         </ul>
+
+        <?php if ( ! $this->is_full_access() ): ?>
+            <div class="av-credits"><?php _e( 'Available Credits:', 'classifieds' ); ?> <?php $user_credits = ( get_user_meta( get_current_user_id(), 'cf_credits', true ) ) ? get_user_meta( get_current_user_id(), 'cf_credits', true ) : 0; echo $user_credits; ?></div>
+        <?php endif; ?>
+        
     <?php endif; ?>
-    <div class="av-credits"><?php _e( 'Available Credits:', 'classifieds' ); ?> <?php $user_credits = ( get_user_meta( get_current_user_id(), 'cf_credits', true ) ) ? get_user_meta( get_current_user_id(), 'cf_credits', true ) : 0; echo $user_credits; ?></div>
 
     <div class="clear"></div>
 
@@ -96,7 +100,7 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
                                <?php echo get_the_term_list( get_the_ID(), $taxonomy, '', ', ', '' ) . ' '; ?>
                            <?php endforeach; ?>
                         </td>
-                    <tr>
+                    </tr>
                     <tr>
                         <th><?php _e( 'Expires', $this->text_domain ); ?></th>
                         <td><?php if ( class_exists('Classifieds_Core') ) echo Classifieds_Core::get_expiration_date( get_the_ID() ); ?></td>

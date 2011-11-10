@@ -20,10 +20,16 @@ get_header(); ?>
                 <?php if ( $action == 'my-classifieds' ): ?>
 
                     <h1 class="entry-title"><?php the_title(); ?></h1>
-                    <div class="av-credits"><?php _e( 'Available Credits:', 'classifieds' ); ?> <?php $user_credits = ( get_user_meta( get_current_user_id(), 'cf_credits', true ) ) ? get_user_meta( get_current_user_id(), 'cf_credits', true ) : 0; echo $user_credits; ?></div>
 
-                    <form method="post" action="" class="create-new-btn">
-                        <input type="submit" value="Create New Classified" name="create_new">
+                    <?php if ( ! $__classifieds_core->is_full_access() ): ?>
+                        <div class="av-credits"><?php _e( 'Available Credits:', 'classifieds' ); ?> <?php $user_credits = ( get_user_meta( get_current_user_id(), 'cf_credits', true ) ) ? get_user_meta( get_current_user_id(), 'cf_credits', true ) : 0; echo $user_credits; ?></div>
+                    <?php
+                    endif;
+                    ?>
+
+                    <form method="post" class="create-new-btn">
+                        <input type="submit" value="<?php _e( 'Create New Classified', 'classifieds' ); ?>" name="create_new">
+                        <input type="submit" value="<?php _e( 'My Credits', 'classifieds' ); ?>" name="my_credits">
                     </form>
 
                     <ul class="button-nav">
@@ -92,7 +98,7 @@ get_header(); ?>
                                                            <?php echo get_the_term_list( get_the_ID(), $taxonomy, '', ', ', '' ) . ' '; ?>
                                                        <?php endforeach; ?>
                                                     </td>
-                                                <tr>
+                                                </tr>
                                                 <tr>
                                                     <th><?php _e( 'Expires', 'classifieds' ); ?></th>
                                                     <td><?php if ( class_exists('Classifieds_Core') ) echo Classifieds_Core::get_expiration_date( get_the_ID() ); ?></td>
@@ -341,6 +347,70 @@ get_header(); ?>
                         </div><!-- #post-## -->
 
                     <?php endwhile; ?>
+
+                <?php elseif ( $action == 'my-credits' ): ?>
+
+                    <?php $options = $__classifieds_core->get_options('checkout'); ?>
+
+                    <div class="my-credits">
+
+                        <form method="post">
+                            <h3><?php _e( 'Available Credits', $__classifieds_core->text_domain ); ?></h3>
+                            <table class="form-table">
+                                <tr>
+                                    <th>
+                                        <label for="available_credits"><?php _e('Available Credits', $__classifieds_core->text_domain ) ?></label>
+                                    </th>
+                                    <td>
+                                        <input type="text" id="available_credits" class="small-text" name="available_credits" value="<?php echo $__classifieds_core->get_user_credits(); ?>" disabled="disabled" />
+                                        <span class="description"><?php _e( 'All of your currently available credits.', $__classifieds_core->text_domain ); ?></span>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </form>
+
+                        <form method="post" class="purchase_credits" >
+                            <h3><?php _e( 'Purchase Additional Credits', $__classifieds_core->text_domain ); ?></h3>
+                            <table class="form-table">
+                                <tr>
+                                    <th>
+                                        <label for="purchase_credits"><?php _e('Purchase Additional Credits', $__classifieds_core->text_domain ) ?></label>
+                                    </th>
+                                    <td>
+                                        <p class="submit">
+                                            <?php wp_nonce_field('verify'); ?>
+                                            <input type="submit" class="button-secondary" name="purchase" value="<?php _e( 'Purchase', $__classifieds_core->text_domain ); ?>" />
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </form>
+
+                            <?php $credits_log = $__classifieds_core->get_user_credits_log(); ?>
+                            <h3><?php _e( 'Purchase History', $__classifieds_core->text_domain ); ?></h3>
+                            <table class="form-table">
+                                <?php if ( is_array( $credits_log ) ): ?>
+                                    <?php foreach ( $credits_log as $log ): ?>
+                                        <tr>
+                                            <th>
+                                                <label for="available_credits"><?php _e('Purchase Date:', $__classifieds_core->text_domain ) ?> <?php echo $__classifieds_core->format_date( $log['date'] ); ?></label>
+                                            </th>
+                                            <td>
+                                                <input type="text" id="available_credits" class="small-text" name="available_credits" value="<?php echo $log['credits']; ?>" disabled="disabled" />
+                                                <span class="description"><?php _e( 'Credits purchased.', $__classifieds_core->text_domain ); ?></span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                        <?php echo $credits_log; ?>
+                                <?php endif; ?>
+                            </table>
+
+                    </div>
+
+
 
                 <?php endif; ?>
 

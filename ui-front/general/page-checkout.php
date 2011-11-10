@@ -26,7 +26,14 @@ get_header(); ?>
 
                     <div class="entry-content">
 
-                        <?php $step = get_query_var('cf_step'); ?>
+                    <?php $step = get_query_var('cf_step'); ?>
+
+                        <?php         
+                        if ( $__classifieds_core->is_full_access() ) {
+                            _e( 'You already have access to add ads.', 'classifieds' );
+                            $step = '';
+                        }
+                        ?>
 
                         <?php if ( $step == 'disabled' ): ?>
 

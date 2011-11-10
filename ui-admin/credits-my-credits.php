@@ -23,7 +23,7 @@
                 </td>
             </tr>
         </table>
-        
+
     </form>
 
     <form action="" method="post" class="purchase_credits" >
@@ -63,5 +63,5 @@
                     <?php echo $credits_log; ?>
             <?php endif; ?>
         </table>
-            
+
 </div>

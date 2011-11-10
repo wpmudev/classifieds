@@ -69,23 +69,35 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
             'default_subnav_slug'     => 'my-classifieds'
         ));
 
-        $classifieds_page = $__classifieds_core->get_page_by_meta( 'my_classifieds' );
-
-        if ( 0 < $classifieds_page->ID )
-            $nav_title = $classifieds_page->post_title;
-        else
-            $nav_title = 'My Classifieds';
-
-        bp_core_new_subnav_item( array(
-            'name'            => __( $nav_title, $this->text_domain ),
-            'slug'            => 'my-classifieds',
-            'parent_url'      => $parent_url,
-            'parent_slug'     => $bp->classifieds->slug,
-            'screen_function' => array( &$this, 'load_template' ),
-            'position'        => 10,
-            'user_has_access' => true
-        ));
         if ( bp_is_my_profile() ) {
+
+            $classifieds_page = $__classifieds_core->get_page_by_meta( 'my_classifieds' );
+
+            if ( 0 < $classifieds_page->ID )
+                $nav_title = $classifieds_page->post_title;
+            else
+                $nav_title = 'My Classifieds';
+
+            bp_core_new_subnav_item( array(
+                'name'            => __( $nav_title, $this->text_domain ),
+                'slug'            => 'my-classifieds',
+                'parent_url'      => $parent_url,
+                'parent_slug'     => $bp->classifieds->slug,
+                'screen_function' => array( &$this, 'load_template' ),
+                'position'        => 10,
+                'user_has_access' => true
+            ));
+
+            bp_core_new_subnav_item( array(
+                'name'            => __( 'My Credits', $this->text_domain ),
+                'slug'            => 'my-credits',
+                'parent_url'      => $parent_url,
+                'parent_slug'     => $bp->classifieds->slug,
+                'screen_function' => array( &$this, 'load_template' ),
+                'position'        => 10,
+                'user_has_access' => true
+            ));
+
             bp_core_new_subnav_item( array(
                 'name'            => __( 'Create New Ad', $this->text_domain ),
                 'slug'            => 'create-new',
@@ -128,14 +140,17 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
                 /* The credits required to renew the classified for the selected period */
                 $credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
                 /* If user have more credits of the required credits proceed with renewing the ad */
-                if ( $this->user_credits >= $credits_required ) {
+                if ( $this->is_full_access() || $this->user_credits >= $credits_required ) {
                     /* Update ad */
                     $this->update_ad( $_POST, $_FILES );
                     /* Save the expiration date */
                     $this->save_expiration_date( $_POST['post_id'] );
-                    /* Update new credits amount */
-                    $credits = $this->user_credits - $credits_required;
-                    update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+
+                    if ( ! $this->is_full_access() ) {
+                        /* Update new credits amount */
+                        $credits = $this->user_credits - $credits_required;
+                        update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+                    }
 
                     $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'edit', 'post_title' => $_POST['post_title'] ));
                 } else {
@@ -150,15 +165,18 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
                         /* The credits required to renew the classified for the selected period */
                         $credits_required = $this->get_credits_from_duration( $_POST['duration'] );
                         /* If user have more credits of the required credits proceed with renewing the ad */
-                        if ( $this->user_credits >= $credits_required ) {
+                        if ( $this->is_full_access() || $this->user_credits >= $credits_required ) {
                             /* Process the status of the post */
                             $this->process_status( (int) $_POST['post_id'], 'publish' );
                             /* Save the expiration date */
                             $this->save_expiration_date( $_POST['post_id'] );
+
+                            if ( ! $this->is_full_access() ) {
                             /* Update new credits amount */
-                            $credits = $this->user_credits - $credits_required;
-                            update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
-                            /* Set the proper step which will be loaded by "page-my-classifieds.php" */
+                                $credits = $this->user_credits - $credits_required;
+                                update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+                                /* Set the proper step which will be loaded by "page-my-classifieds.php" */
+                            }
 
                             $this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'renew', 'post_title' => $_POST['post_title'] ));
                         } else {
@@ -177,20 +195,24 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
         } elseif ( $bp->current_component == 'classifieds' && $bp->current_action == 'create-new' ) {
 
             if ( isset( $_POST['save'] ) ) {
+
                 $this->validate_fields( $_POST, $_FILES );
                 if ( $this->form_valid ) {
                     /* The credits required to create the classified for the selected period */
                     $credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
                     /* If user have more credits of the required credits proceed with create the ad */
-                    if ( $this->user_credits >= $credits_required ) {
+                    if ( $this->is_full_access() || $this->user_credits >= $credits_required ) {
                         global $bp;
                         /* Create ad */
                         $post_id = $this->update_ad( $_POST, $_FILES );
                         /* Save the expiration date */
                         $this->save_expiration_date( $post_id );
-                        /* Update new credits amount */
-                        $credits = $this->user_credits - $credits_required;
-                        update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+
+                        if ( ! $this->is_full_access() ) {
+                            /* Update new credits amount */
+                            $credits = $this->user_credits - $credits_required;
+                            update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+                        }
 
                         if ( "" != $bp->loggedin_user->userdata->user_url )
                             $this->js_redirect( $bp->loggedin_user->userdata->user_url . '/classifieds/my-classifieds/' );
@@ -215,6 +237,14 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
             } else {
                 $this->render_front('members/single/classifieds/create-new');
             }
+        } elseif ( $bp->current_component == 'classifieds' && $bp->current_action == 'my-credits' ) {
+            //redirect on checkout page
+            if ( isset( $_POST['purchase'] ) ) {
+                $this->js_redirect( get_bloginfo('url') . '/checkout/' );
+                exit;
+            }
+            //show credits page
+            $this->render_front('members/single/classifieds/my-credits');
         }
     }
 

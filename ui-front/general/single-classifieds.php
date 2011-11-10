@@ -13,7 +13,7 @@ get_header(); ?>
 		<div id="container">
 			<div id="content" role="main">
 
-            <?php if ( 1 == $_GET['sent'] ): ?>
+            <?php if ( isset( $_GET['sent'] ) && 1 == $_GET['sent'] ): ?>
                 <br clear="all" />
                 <div id="cf-message">
                    <?php _e( 'Message is sent!', 'classifieds' ); ?>
@@ -40,7 +40,7 @@ get_header(); ?>
                                <td>
 
                                    <?php
-                                   $user = get_userdata( get_the_author_ID() );
+                                   $user = get_userdata( get_the_author_meta('ID') );
 
                                    if ( '' == get_option( 'permalink_structure' ) )
                                         $cf_author_url = '?cf_author=' . $user->user_login;
@@ -49,7 +49,7 @@ get_header(); ?>
 
                                    /* For BuddyPress compatibility */
                                    if ( isset( $bp ) ): ?>
-                                   <a href="<?php echo bp_core_get_user_domain( get_the_author_ID() ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" >
+                                   <a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" >
                                    <?php else: ?>
                                    <a href="<?php echo get_option( 'siteurl' ) . $cf_author_url; ?>" alt="<?php echo $user->display_name; ?> Profile" >
                                    <?php endif; ?>
@@ -87,7 +87,8 @@ get_header(); ?>
                             <?
                             global $current_user;
 
-                            $name   = ( isset( $current_user->first_name ) && '' != $current_user->first_name ) ? $current_user->first_name : ( isset( $current_user->display_name ) && '' != $current_user->display_name ) ? $current_user->display_name : '';
+                            $name   = ( isset( $current_user->display_name ) && '' != $current_user->display_name ) ? $current_user->display_name :
+                                      ( ( isset( $current_user->first_name ) && '' != $current_user->first_name ) ? $current_user->first_name : '' );
                             $email  = ( isset( $current_user->user_email ) && '' != $current_user->user_email ) ? $current_user->user_email : '';
                             ?>
                             <div class="editfield">

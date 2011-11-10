@@ -103,7 +103,7 @@
                                        <?php echo get_the_term_list( get_the_ID(), $taxonomy, '', ', ', '' ) . ' '; ?>
                                    <?php endforeach; ?>
                                 </td>
-                            <tr>
+                            </tr>
                             <tr>
                                 <th><?php _e( 'Expires', 'classifieds' ); ?></th>
                                 <td><?php echo Classifieds_Core::get_expiration_date( get_the_ID() ); ?></td>

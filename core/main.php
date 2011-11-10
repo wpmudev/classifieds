@@ -75,16 +75,19 @@ class Classifieds_Core_Main extends Classifieds_Core {
                 /* The credits required to renew the classified for the selected period */
                 $credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
                 /* If user have more credits of the required credits proceed with renewing the ad */
-                if ( $this->user_credits >= $credits_required ) {
+                if ( $this->is_full_access() || $this->user_credits >= $credits_required ) {
                     /* Update ad */
                     $this->update_ad( $_POST, $_FILES );
                     /* Save the expiration date */
                     $this->save_expiration_date( $_POST['post_id'] );
                     /* Set the proper step which will be loaded by "page-my-classifieds.php" */
                     set_query_var( 'cf_action', 'my-classifieds' );
-                    /* Update new credits amount */
-                    $credits = $this->user_credits - $credits_required;
-                    update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+
+                    if ( ! $this->is_full_access() ) {
+                        /* Update new credits amount */
+                        $credits = $this->user_credits - $credits_required;
+                        update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+                    }
                 } else {
                     set_query_var( 'cf_post_id', $_POST['post_id'] );
                     /* Set the proper step which will be loaded by "page-my-classifieds.php" */
@@ -108,14 +111,17 @@ class Classifieds_Core_Main extends Classifieds_Core {
                         /* The credits required to renew the classified for the selected period */
                         $credits_required = $this->get_credits_from_duration( $_POST['duration'] );
                         /* If user have more credits of the required credits proceed with renewing the ad */
-                        if ( $this->user_credits >= $credits_required ) {
+                        if ( $this->is_full_access() || $this->user_credits >= $credits_required ) {
                             /* Process the status of the post */
                             $this->process_status( (int) $_POST['post_id'], 'publish' );
                             /* Save the expiration date */
                             $this->save_expiration_date( $_POST['post_id'] );
-                            /* Update new credits amount */
-                            $credits = $this->user_credits - $credits_required;
-                            update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+
+                            if ( ! $this->is_full_access() ) {
+                                /* Update new credits amount */
+                                $credits = $this->user_credits - $credits_required;
+                                update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+                            }
                             /* Set the proper step which will be loaded by "page-my-classifieds.php" */
                             set_query_var( 'cf_action', 'my-classifieds' );
                         } else {
@@ -139,6 +145,10 @@ class Classifieds_Core_Main extends Classifieds_Core {
             elseif ( isset( $_POST['create_new'] ) ) {
                 /* Set the proper step which will be loaded by "page-my-classifieds.php" */
                 set_query_var( 'cf_action', 'create-new' );
+            }            /* If create new button is pressed */
+            elseif ( isset( $_POST['my_credits'] ) ) {
+                /* Set the proper step which will be loaded by "page-my-classifieds.php" */
+                set_query_var( 'cf_action', 'my-credits' );
             }
             /* If save new button is pressed */
             elseif ( isset( $_POST['save_new'] ) ) {
@@ -148,14 +158,17 @@ class Classifieds_Core_Main extends Classifieds_Core {
                     /* The credits required to create the classified for the selected period */
                     $credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
                     /* If user have more credits of the required credits proceed with create the ad */
-                    if ( $this->user_credits >= $credits_required ) {
+                    if ( $this->is_full_access() || $this->user_credits >= $credits_required ) {
                         /* Create ad */
                         $post_id = $this->update_ad( $_POST, $_FILES );
                         /* Save the expiration date */
                         $this->save_expiration_date( $post_id );
-                        /* Update new credits amount */
-                        $credits = $this->user_credits - $credits_required;
-                        update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+
+                        if ( ! $this->is_full_access() ) {
+                            /* Update new credits amount */
+                            $credits = $this->user_credits - $credits_required;
+                            update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+                        }
                         /* Set the proper step which will be loaded by "page-my-classifieds.php" */
                         set_query_var( 'cf_action', 'my-classifieds' );
                     } else {

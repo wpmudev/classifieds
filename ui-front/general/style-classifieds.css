@@ -26,7 +26,7 @@ Description: You can override this file in your active theme.
 }
 .entry-content .editfield input {
     margin: 0;
-    width: 100%;
+/*    width: 100%; */
 }
 .entry-content .editfield textarea {
     margin: 0;
