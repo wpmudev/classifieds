@@ -5,6 +5,15 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 == Changelog ==
 
 =
+ 2.0.9 =
+* Fixed Warning\Notice message;
+* Fixed display classifieds on 'My Classifieds' page (general);
+* Fixed "Purchase History";
+* Fixed some HTML\CSS
+* Added 'My Credits' page on front end;
+* Rewrited some logic for 'Annual' and 'One Time' payments;
+
+=
  2.0.8.1 =
 * Display status text after sent message to author of ad;
 * Added title of the ad in the subject of the message;

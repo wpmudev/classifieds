@@ -28,8 +28,8 @@ get_header(); ?>
 
                     <?php $step = get_query_var('cf_step'); ?>
 
-                        <?php         
-                        if ( $__classifieds_core->is_full_access() ) {
+                        <?php
+                        if ( $__classifieds_core->is_full_access() && $step != 'success' && $step != 'api_call_error' ) {
                             _e( 'You already have access to add ads.', 'classifieds' );
                             $step = '';
                         }

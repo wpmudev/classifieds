@@ -187,3 +187,18 @@ ul.button-nav li {
     padding: 5px 50px;
     float: left;
 }
+
+.my-credits h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 15px 0px 15px 0px;
+
+}
+
+.my-credits table {
+    width: inherit;
+}
+
+.my-credits table tr td, .my-credits table tr td {
+    padding: 8px;
+}

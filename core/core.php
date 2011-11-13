@@ -395,6 +395,11 @@ class Classifieds_Core {
                 'billing'    => $billing,
                 'order_info' => $order_info
             );
+            //set time of end annual - 1 year after now
+            if ( 'annual' == $billing ) {
+                $now =  time();
+                $cf_order['time_end_annual'] = mktime( date( 'H', $now ) , date( 'i', $now ), date( 's', $now ), date( 'n', $now ), date( 'j', $now ), date( 'Y', $now ) + 1 ) ;
+            }
             update_user_meta( get_current_user_id(), 'cf_order', $cf_order );
 
             //Update credits only for none 'annual' or  'one_time' users
@@ -416,6 +421,11 @@ class Classifieds_Core {
                     'billing'    => $billing,
                     'order_info' => $order_info
                 );
+                //set time of end annual - 1 year after now
+                if ( 'annual' == $billing ) {
+                    $now =  time();
+                    $cf_order['time_end_annual'] = mktime( date( 'H', $now ) , date( 'i', $now ), date( 's', $now ), date( 'n', $now ), date( 'j', $now ), date( 'Y', $now ) + 1 ) ;
+                }
                 update_user_meta( $user->ID, 'cf_order', $cf_order );
 
                 //Update credits only for none 'annual' or  'one_time' users
@@ -454,6 +464,11 @@ class Classifieds_Core {
                 'billing'    => $billing,
                 'order_info' => $order_info
             );
+            //set time of end annual - 1 year after now
+            if ( 'annual' == $billing ) {
+                $now =  time();
+                $cf_order['time_end_annual'] = mktime( date( 'H', $now ) , date( 'i', $now ), date( 's', $now ), date( 'n', $now ), date( 'j', $now ), date( 'Y', $now ) + 1 ) ;
+            }
             update_user_meta( $user_id, 'cf_order', $cf_order );
 
             //Update credits only for none 'annual' or  'one_time' users
@@ -532,8 +547,13 @@ class Classifieds_Core {
 
         //for paid users
         $cf_order = get_user_meta( $user_id, 'cf_order', true );
-        if ( isset( $cf_order['billing'] ) && ( 'one_time' == $cf_order['billing'] || 'annual' == $cf_order['billing'] ) )
-            return true;
+        if ( isset( $cf_order['billing'] ) ) {
+            if ( 'one_time' == $cf_order['billing'] && 'success' == $cf_order['order_info']['status'] ) {
+                return true;
+            } elseif ( 'annual' == $cf_order['billing'] && 'success' == $cf_order['order_info']['status'] && time() < $cf_order['time_end_annual'] ) {
+                return true;
+            }
+        }
 
         return false;
     }

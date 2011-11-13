@@ -23,9 +23,7 @@ get_header(); ?>
 
                     <?php if ( ! $__classifieds_core->is_full_access() ): ?>
                         <div class="av-credits"><?php _e( 'Available Credits:', 'classifieds' ); ?> <?php $user_credits = ( get_user_meta( get_current_user_id(), 'cf_credits', true ) ) ? get_user_meta( get_current_user_id(), 'cf_credits', true ) : 0; echo $user_credits; ?></div>
-                    <?php
-                    endif;
-                    ?>
+                    <?php endif; ?>
 
                     <form method="post" class="create-new-btn">
                         <input type="submit" value="<?php _e( 'Create New Classified', 'classifieds' ); ?>" name="create_new">
