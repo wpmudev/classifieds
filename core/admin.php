@@ -94,11 +94,16 @@ class Classifieds_Core_Admin extends Classifieds_Core {
                         $this->save_options( $_POST );
                     }
                     $this->render_admin( 'settings-checkout' );
-                } else {
+                } elseif ( isset( $_GET['sub'] ) && $_GET['sub'] == 'credits' ) {
                     if ( isset( $_POST['save'] ) ) {
                         $this->save_options( $_POST );
                     }
                     $this->render_admin( 'settings-credits' );
+                } else {
+                    if ( isset( $_POST['save'] ) ) {
+                        $this->save_options( $_POST );
+                    }
+                    $this->render_admin( 'settings-general' );
                 }
             }
         } elseif ( $_GET['page'] == 'classifieds_credits' ) {

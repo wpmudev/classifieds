@@ -22,6 +22,9 @@ if ( !$this->form_valid ) {
     $msg = __( 'Please make sure you fill in all required fields before saving.', $this->text_domain );
     $class = 'error';
 }
+
+$options = $this->get_options( 'general' );
+
 ?>
 
 <div class="profile">
@@ -68,7 +71,7 @@ if ( !$this->form_valid ) {
         </div>
 
         <div class="editfield">
-            <label for="image"><?php _e( 'Select Featured Image', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
+            <label for="image"><?php _e( 'Select Featured Image', $this->text_domain ); ?> <?php echo ( !isset( $options['field_image_req'] ) || '1' != $options['field_image_req'] ) ? '(' . __( 'required', $this->text_domain ) . ')' : ''; ?></label>
             <p id="featured-image">
                 <input type="file" id="image" name="image">
                 <input type="hidden" value="featured-image" id="action" name="action">

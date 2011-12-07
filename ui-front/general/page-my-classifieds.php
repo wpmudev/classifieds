@@ -8,7 +8,11 @@
  * @since Classifieds 2.0
  */
 
-get_header(); ?>
+$options_general = $__classifieds_core->get_options( 'general' );
+
+get_header();
+
+?>
 
 		<div id="container">
             <div id="content" class="my-classifieds" role="main">
@@ -79,7 +83,16 @@ get_header(); ?>
 
                                     <div class="cf-ad">
 
-                                        <div class="cf-image"><?php echo get_the_post_thumbnail( get_the_ID(), array( 200, 150 ) ); ?></div>
+                                        <div class="cf-image">
+                                        <?php
+                                        if ( '' == get_post_meta( get_the_ID(), '_thumbnail_id', true ) ) {
+                                            if ( isset( $options_general['field_image_def'] ) && '' != $options_general['field_image_def'] )
+                                               echo '<img width="150" height="150" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $options_general['field_image_def'] . '">';
+                                        } else {
+                                           echo get_the_post_thumbnail( get_the_ID(), array( 200, 150 ) );
+                                        }
+                                        ?>
+                                        </div>
                                         <div class="cf-info">
                                             <table>
                                                 <tr>
@@ -204,7 +217,14 @@ get_header(); ?>
                                     </div>
 
                                     <div class="editfield">
-                                        <?php echo get_the_post_thumbnail( get_the_ID(), array( 200, 150 ) ); ?>
+                                        <?php
+                                        if ( '' == get_post_meta( get_the_ID(), '_thumbnail_id', true ) ) {
+                                            if ( isset( $options_general['field_image_def'] ) && '' != $options_general['field_image_def'] )
+                                               echo '<img width="150" height="150" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $options_general['field_image_def'] . '">';
+                                        } else {
+                                           echo get_the_post_thumbnail( get_the_ID(), array( 200, 150 ) );
+                                        }
+                                        ?>
                                         <label for="image"><?php _e( 'Change Featured Image', 'classifieds' ); ?></label>
                                         <p id="featured-image">
                                             <input type="file" id="image" name="image">
@@ -307,7 +327,7 @@ get_header(); ?>
                                         </div>
 
                                         <div class="editfield">
-                                            <label for="image"><?php _e( 'Select Featured Image', 'classifieds' ); ?> (<?php _e( 'required', 'classifieds' ); ?>)</label>
+                                            <label for="image"><?php _e( 'Select Featured Image', 'classifieds' ); ?> <?php echo ( !isset( $options_general['field_image_req'] ) || '1' != $options_general['field_image_req'] ) ? '(' . __( 'required', 'classifieds' ) . ')' : ''; ?></label>
                                             <p id="featured-image">
                                                 <input type="file" id="image" name="image">
                                                 <input type="hidden" value="featured-image" id="action" name="action">

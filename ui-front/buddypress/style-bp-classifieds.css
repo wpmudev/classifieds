@@ -168,7 +168,8 @@ ul.button-nav li {
     float: left;
 }
 
-#cf-message {
+#cf-message,
+#cf-message-error {
     background-color: #8FF57A;
     color: #1A6A00;
     -moz-border-radius: 3px 3px 3px 3px;
@@ -180,6 +181,12 @@ ul.button-nav li {
     font-size: 12px;
     padding: 5px 50px;
     float: left;
+}
+
+#cf-message-error {
+    background-color: #EF0E0E;
+    color: #000;
+    border: 1px solid #4C0000;
 }
 
 .my-credits h3 {

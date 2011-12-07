@@ -5,6 +5,12 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 == Changelog ==
 
 =
+ 2.1.0 =
+* Changed template for "Contact user" email;
+* Added feature for to make field of image as not required (general tab in settings);
+* Added feature for set default image for ads without any images (general tab in settings);
+
+=
  2.0.9 =
 * Fixed Warning\Notice message;
 * Fixed display classifieds on 'My Classifieds' page (general);

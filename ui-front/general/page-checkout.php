@@ -55,7 +55,7 @@ get_header(); ?>
                                 <table  <?php do_action( 'login_invalid' ); ?>>
                                     <tr>
                                         <td><label for="username"><?php _e( 'Username', 'classifieds' ); ?>:</label></td>
-                                        <td><input type="text" id="username" name="username" value="<?php echo $_POST['username'] ?>" /></td>
+                                        <td><input type="text" id="username" name="username" value="<?php echo ( isset( $_POST['username'] ) ) ? $_POST['username'] : ''; ?>" /></td>
                                     </tr>
                                     <tr>
                                         <td><label for="password"><?php _e( 'Password', 'classifieds' ); ?>:</label></td>

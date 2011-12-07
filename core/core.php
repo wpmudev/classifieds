@@ -704,7 +704,7 @@ class Classifieds_Core {
             }
             /* If no requests are made load default step */
             else {
-                if ( is_user_logged_in() || $_POST['new_account'] ) {
+                if ( is_user_logged_in() || isset( $_POST['new_account'] ) ) {
                     /* Set the proper step which will be loaded by "page-checkout.php" */
                     set_query_var( 'cf_step', 'terms' );
                 } else {
@@ -721,18 +721,40 @@ class Classifieds_Core {
     function handle_contact_form_requests() {
         /* Only handle request if on single{}.php template and our post type */
         if ( get_post_type() == $this->post_type && is_single() ) {
-            if ( isset( $_POST['contact_form_send'] ) ) {
-                global $post;
-                /** @todo validate fields */
-                $bottom_text = "\r\n\r\nClassifieds link:\r\n" . get_permalink( $post->ID ) ;
 
-                $user_info  = get_userdata( $post->post_author );
-                $to         = $user_info->user_email;
-                $subject    = $_POST['subject'] . ' [ ' . $post->post_title . ' ]';
-                $message    = $_POST['message'] . $bottom_text;
-                $headers    = 'From: ' . $_POST['name'] . ' <' . $_POST['email'] . '>' . "\r\n";
-                wp_mail( $to, $subject, $message, $headers );
-                wp_redirect( get_permalink( $post->ID ) . '?sent=1' );
+            if ( isset( $_POST['contact_form_send'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'send_message' ) ) {
+                if ( isset( $_POST['name'] ) && '' != $_POST['name'] &&
+                    isset( $_POST['email'] ) && '' != $_POST['email'] &&
+                    isset( $_POST['subject'] ) && '' != $_POST['subject'] &&
+                    isset( $_POST['message'] ) && '' != $_POST['message'] ) {
+
+                    global $post;
+
+                    $user_info  = get_userdata( $post->post_author );
+
+                    $body       = 'Hi %s, you have received message from:<br />
+                    <br />
+                    Name: %s <br />
+                    Email: %s <br />
+                    Subject: %s <br />
+                    Message: <br />
+                    %s
+                    <br />
+                    <br />
+                    <br />
+                    Classifieds link: %s
+                    ';
+
+                    $tm_subject =  'Contact Request: %s [ %s ]';
+
+                    $to         = $user_info->user_email;
+                    $subject    = sprintf( __( $tm_subject, 'classifieds' ), $_POST['subject'], $post->post_title );
+                    $message    = sprintf( __( $body, 'classifieds' ), $user_info->user_nicename, $_POST['name'], $_POST['email'], $_POST['subject'], $_POST['message'], get_permalink( $post->ID ) );
+                    $headers    = "MIME-Version: 1.0\n" . "From: " . $_POST['name'] .  " <{$_POST['email']}>\n" . "Content-Type: text/html; charset=\"" . get_option( 'blog_charset' ) . "\"\n";
+
+                    wp_mail( $to, $subject, $message, $headers );
+                    wp_redirect( get_permalink( $post->ID ) . '?sent=1' );
+                }
             }
         }
     }
@@ -994,9 +1016,15 @@ class Classifieds_Core {
         if ( empty( $params['title'] ) || empty( $params['description'] ) || empty( $params['terms'] ) || empty( $params['status'] )) {
             $this->form_valid = false;
         }
-        if ( $file['image']['error'] !== 0 ) {
-            $this->form_valid = false;
-        }
+
+        $options = $this->get_options( 'general' );
+
+        //do image field not required
+        if ( !isset( $options['field_image_req'] ) || '1' != $options['field_image_req'] )
+            if ( $file['image']['error'] !== 0 ) {
+                $this->form_valid = false;
+            }
+
     }
 
     /**

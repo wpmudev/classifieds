@@ -13,8 +13,11 @@
 
 <?php
 global $bp;
-$post = get_post( $post_id );
+$post       = get_post( $post_id );
 $post_terms = wp_get_object_terms( $post->ID, $this->taxonomy_names );
+
+$options    = $this->get_options( 'general' );
+
 
 /* Build messages */
 if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
@@ -67,7 +70,14 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
         </div>
 
         <div class="editfield">
-            <?php echo get_the_post_thumbnail( $post->ID, array( 200, 150 ) ); ?>
+            <?php
+            if ( '' == get_post_meta( get_the_ID(), '_thumbnail_id', true ) ) {
+                if ( isset( $options['field_image_def'] ) && '' != $options['field_image_def'] )
+                   echo '<img width="150" height="150" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $options['field_image_def'] . '">';
+            } else {
+               echo get_the_post_thumbnail( get_the_ID(), array( 200, 150 ) );
+            }
+            ?>
             <label for="image"><?php _e( 'Change Featured Image', $this->text_domain ); ?></label>
             <p id="featured-image">
                 <input type="file" id="image" name="image">

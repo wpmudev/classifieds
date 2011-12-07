@@ -12,6 +12,9 @@
 ?>
 
 <?php
+
+$options = $this->get_options( 'general' );
+
 global $bp;
 /* Get posts based on post_status */
 if ( in_array( 'active', $bp->action_variables ) || empty( $bp->action_variables ) ) {
@@ -45,7 +48,7 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
         <?php if ( ! $this->is_full_access() ): ?>
             <div class="av-credits"><?php _e( 'Available Credits:', 'classifieds' ); ?> <?php $user_credits = ( get_user_meta( get_current_user_id(), 'cf_credits', true ) ) ? get_user_meta( get_current_user_id(), 'cf_credits', true ) : 0; echo $user_credits; ?></div>
         <?php endif; ?>
-        
+
     <?php endif; ?>
 
     <div class="clear"></div>
@@ -83,7 +86,16 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
 
         <div class="cf-ad">
 
-            <div class="cf-image"><?php echo get_the_post_thumbnail( get_the_ID(), array( 200, 150 ) ); ?></div>
+            <div class="cf-image">
+            <?php
+            if ( '' == get_post_meta( get_the_ID(), '_thumbnail_id', true ) ) {
+                if ( isset( $options['field_image_def'] ) && '' != $options['field_image_def'] )
+                   echo '<img width="150" height="150" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $options['field_image_def'] . '">';
+            } else {
+               echo get_the_post_thumbnail( get_the_ID(), array( 200, 150 ) );
+            }
+            ?>
+            </div>
             <div class="cf-info">
                 <table>
                     <tr>

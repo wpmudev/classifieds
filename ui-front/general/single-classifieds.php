@@ -8,17 +8,27 @@
  * @since Classifieds 2.0
  */
 
-get_header(); ?>
+$options = $__classifieds_core->get_options( 'general' );
+
+get_header();
+
+?>
 
 		<div id="container">
 			<div id="content" role="main">
 
-            <?php if ( isset( $_GET['sent'] ) && 1 == $_GET['sent'] ): ?>
-                <br clear="all" />
-                <div id="cf-message">
-                   <?php _e( 'Message is sent!', 'classifieds' ); ?>
-                </div>
-                <br clear="all" />
+            <?php if ( isset( $_POST['_wpnonce'] ) ): ?>
+                    <br clear="all" />
+                        <div id="cf-message-error">
+                           <?php _e( "Send message failed: you don't filled all required fields in contact form!", 'classifieds' ); ?>
+                        </div>
+                    <br clear="all" />
+            <?php elseif ( isset( $_GET['sent'] ) && 1 == $_GET['sent'] ): ?>
+                    <br clear="all" />
+                        <div id="cf-message">
+                           <?php _e( 'Message is sent!', 'classifieds' ); ?>
+                        </div>
+                    <br clear="all" />
             <?php endif; ?>
 
             <?php /* For BuddyPress compatibility */ ?>
@@ -31,7 +41,16 @@ get_header(); ?>
 
 					<div class="entry-content">
 
-                        <div class="cf-image"><?php echo get_the_post_thumbnail( get_the_ID(), array( 300, 300 ) ); ?></div>
+                        <div class="cf-image">
+                        <?php
+                        if ( '' == get_post_meta( get_the_ID(), '_thumbnail_id', true ) ) {
+                            if ( isset( $options['field_image_def'] ) && '' != $options['field_image_def'] )
+                               echo '<img width="300" height="300" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $options['field_image_def'] . '">';
+                        } else {
+                           echo get_the_post_thumbnail( get_the_ID(), array( 300, 300 ) );
+                        }
+                        ?>
+                        </div>
 
                         <table class="cf-ad-info">
 
@@ -93,27 +112,28 @@ get_header(); ?>
                             ?>
                             <div class="editfield">
                                 <label for="name"><?php _e( 'Name', 'classifieds' ); ?> (<?php _e( 'required', 'classifieds' ); ?>)</label>
-                                <input type="text" id="name" name ="name" value="<?php echo $name; ?>" />
+                                <input type="text" id="name" name ="name" value="<?php echo ( isset( $_POST['name'] ) ) ? $_POST['name'] : $name; ?>" />
                                 <p class="description"><?php _e( 'Enter your full name here.', 'classifieds' ); ?></p>
                             </div>
                             <div class="editfield">
                                 <label for="email"><?php _e( 'Email', 'classifieds' ); ?> (<?php _e( 'required', 'classifieds' ); ?>)</label>
-                                <input type="text" id="email" name ="email" value="<?php echo $email; ?>" />
+                                <input type="text" id="email" name ="email" value="<?php echo ( isset( $_POST['email'] ) ) ? $_POST['email'] : $email; ?>" />
                                 <p class="description"><?php _e( 'Enter a valid email address here.', 'classifieds' ); ?></p>
                             </div>
                             <div class="editfield">
                                 <label for="subject"><?php _e( 'Subject', 'classifieds' ); ?> (<?php _e( 'required', 'classifieds' ); ?>)</label>
-                                <input type="text" id="subject" name ="subject" value="" />
+                                <input type="text" id="subject" name ="subject" value="<?php echo ( isset( $_POST['subject'] ) ) ? $_POST['subject'] : ''; ?>" />
                                 <p class="description"><?php _e( 'Enter the subject of your inquire here.', 'classifieds' ); ?></p>
                             </div>
                             <div class="editfield">
                                 <label for="message"><?php _e( 'Message', 'classifieds' ); ?> (<?php _e( 'required', 'classifieds' ); ?>)</label>
-                                <textarea id="message" name="message"></textarea>
+                                <textarea id="message" name="message"><?php echo ( isset( $_POST['message'] ) ) ? $_POST['message'] : ''; ?></textarea>
                                 <p class="description"><?php _e( 'Enter the content of your inquire here.', 'classifieds' ); ?></p>
                             </div>
 
                             <div class="submit">
                                 <p>
+                                    <?php wp_nonce_field( 'send_message' ); ?>
                                     <input type="submit" class="button confirm" value="<?php _e( 'Send', 'classifieds' ); ?>" name="contact_form_send" />
                                     <input type="submit" class="button cancel"  value="<?php _e( 'Cancel', 'classifieds' ); ?>" onClick="classifieds.cancel_contact_form(); return false;" />
                                 </p>

@@ -10,9 +10,10 @@
     <?php endif; ?>
 </h2>
 
-<?php if ( $sub == 'credits' || $sub == 'checkout' ): ?>
+<?php if ( $sub == 'general' || $sub == 'credits' || $sub == 'checkout' ): ?>
 <ul>
-    <li class="subsubsub"><h3><a class="<?php if ( $_GET['sub'] == 'credits' || empty( $_GET['tab'] ) )   echo 'current'; ?>" href="admin.php?page=classifieds_settings&tab=general&sub=credits"><?php _e( 'Credits', $this->text_domain ); ?></a> | </h3></li>
+    <li class="subsubsub"><h3><a class="<?php if ( $_GET['sub'] == 'general' || empty( $_GET['tab'] ) ) echo 'current'; ?>" href="admin.php?page=classifieds_settings&tab=general&sub=general"><?php _e( 'General', $this->text_domain ); ?></a> | </h3></li>
+    <li class="subsubsub"><h3><a class="<?php if ( $_GET['sub'] == 'credits' )  echo 'current'; ?>" href="admin.php?page=classifieds_settings&tab=general&sub=credits"><?php _e( 'Credits', $this->text_domain ); ?></a> | </h3></li>
     <li class="subsubsub"><h3><a class="<?php if ( $_GET['sub'] == 'checkout' ) echo 'current'; ?>" href="admin.php?page=classifieds_settings&tab=general&sub=checkout"><?php _e( 'Checkout', $this->text_domain ); ?></a></h3></li>
 </ul>
 <?php endif; ?>
