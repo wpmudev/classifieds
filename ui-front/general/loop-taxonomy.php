@@ -19,6 +19,7 @@
  * @since Classifieds 2.0
  */
 
+global $__classifieds_core;
 
 $options = $__classifieds_core->get_options( 'general' );
 
