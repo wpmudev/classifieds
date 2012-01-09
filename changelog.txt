@@ -5,6 +5,10 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 == Changelog ==
 
 =
+ 2.1.2 =
+* Fixed problem with allow user edit/delete other users classified posts;
+
+=
  2.1.1 =
 * Fixed problem with loop of categories;
 

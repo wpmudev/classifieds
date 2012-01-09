@@ -100,11 +100,28 @@ class Content_Types_Core {
                     'not_found_in_trash' => $_POST['labels']['not_found_in_trash'],
                     'parent_item_colon'  => $_POST['labels']['parent_item_colon']
                 );
+
+                $capability_map = array();
+                if ( isset( $_POST['post_type'] ) && 'classifieds' == $_POST['post_type'] ) {
+                    $capability_map = array(
+                        'publish_posts'         => 'publish_classifieds',
+                        'edit_posts'            => 'edit_classifieds',
+                        'edit_others_posts'     => 'edit_others_classifieds',
+                        'delete_posts'          => 'delete_classifieds',
+                        'delete_others_posts'   => 'delete_others_classifieds',
+                        'read_private_posts'    => 'read_private_classifieds',
+                        'edit_post'             => 'edit_classified',
+                        'delete_post'           => 'delete_classified',
+                        'read_post'             => 'read_classified',
+                    );
+                }
+
                 /* Post type args */
                 $args = array(
                     'labels'              => $labels,
                     'supports'            => $_POST['supports'],
-                    'capability_type'     => ( $_POST['capability_type'] ) ? $_POST['capability_type'] : 'post',
+                    'capability_type'     => ( isset( $_POST['capability_type'] ) ) ? $_POST['capability_type'] : 'post',
+                    'capabilities'        => $capability_map,
                     'description'         => $_POST['description'],
                     'menu_position'       => (int)  $_POST['menu_position'],
                     'public'              => (bool) $_POST['public'] ,

@@ -92,8 +92,10 @@ class Classifieds_Core {
         add_action( 'check_expiration_dates', array( &$this, 'check_expiration_dates_callback' ) );
         /* Set signup credits for new users */
         add_action( 'user_register', array( &$this, 'set_signup_user_credits' ) );
-        /** Map meta capabilities @todo */
-        //add_filter( 'map_meta_cap', array( &$this, 'map_meta_cap' ), 10, 4 );
+        /** Map meta capabilities */
+        add_filter( 'map_meta_cap', array( &$this, 'map_meta_cap' ), 11, 4 );
+        /** Show only user's classifieds on classifieds posttype page*/
+        add_filter( 'parse_query',  array( &$this, 'show_only_c_user_classifieds' ) );
 
         /* filter for $wp_query on classifieds page - it is necessary that the other plug-ins have not changed it in these pages */
         add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts_for_classifieds' ), 101 );
@@ -297,11 +299,12 @@ class Classifieds_Core {
         if ( $wp_roles ) {
             /** @todo remove remove_role */
             $wp_roles->remove_role( $this->user_role );
+
             $wp_roles->add_role( $this->user_role, 'Classifieds Member', array(
                 'publish_classifieds'       => true,
                 'edit_classifieds'          => true,
                 'edit_others_classifieds'   => false,
-                'delete_classifieds'        => false,
+                'delete_classifieds'        => true,
                 'delete_others_classifieds' => false,
                 'read_private_classifieds'  => false,
                 'edit_classified'           => true,
@@ -311,6 +314,7 @@ class Classifieds_Core {
                 'assign_terms'              => true,
                 'read'                      => true
             ) );
+
             /* Set administrator roles */
             $wp_roles->add_cap( 'administrator', 'publish_classifieds' );
             $wp_roles->add_cap( 'administrator', 'edit_classifieds' );
@@ -323,6 +327,17 @@ class Classifieds_Core {
             $wp_roles->add_cap( 'administrator', 'read_classified' );
             $wp_roles->add_cap( 'administrator', 'assign_terms' );
         }
+    }
+
+    /**
+     * Show only current user classifieds on page of classifieds posttype page.
+     *
+     * @return void
+     **/
+    function show_only_c_user_classifieds ( $wp_query ) {
+        if ( strpos( $_SERVER[ 'REQUEST_URI' ], '/wp-admin/edit.php' ) !== false )
+            if ( isset( $_GET['post_type'] ) && 'classifieds' == $_GET['post_type'] &&  !current_user_can( 'level_10' ) )
+                $wp_query->set( 'author', get_current_user_id() );
     }
 
     /**
@@ -339,7 +354,8 @@ class Classifieds_Core {
      * @return array
      **/
     function map_meta_cap( $caps, $cap, $user_id, $args ) {
-        /* If editing, deleting, or reading a classified, get the post and post type object. */
+
+        /* If editing, deleting, or reading a movie, get the post and post type object. */
         if ( 'edit_classified' == $cap || 'delete_classified' == $cap || 'read_classified' == $cap ) {
             $post = get_post( $args[0] );
             $post_type = get_post_type_object( $post->post_type );
@@ -347,22 +363,26 @@ class Classifieds_Core {
             /* Set an empty array for the caps. */
             $caps = array();
         }
-        /* If editing a classified, assign the required capability. */
+
+        /* If editing a movie, assign the required capability. */
         if ( 'edit_classified' == $cap ) {
             if ( $user_id == $post->post_author )
                 $caps[] = $post_type->cap->edit_posts;
             else
-                $caps[] = $post_type->cap->edit_posts;
+                $caps[] = $post_type->cap->edit_others_posts;
         }
-        /* If deleting a classified, assign the required capability. */
+
+        /* If deleting a movie, assign the required capability. */
         elseif ( 'delete_classified' == $cap ) {
             if ( $user_id == $post->post_author )
                 $caps[] = $post_type->cap->delete_posts;
             else
                 $caps[] = $post_type->cap->delete_others_posts;
         }
-        /* If reading a private classified, assign the required capability. */
+
+        /* If reading a private movie, assign the required capability. */
         elseif ( 'read_classified' == $cap ) {
+
             if ( 'private' != $post->post_status )
                 $caps[] = 'read';
             elseif ( $user_id == $post->post_author )
@@ -370,6 +390,7 @@ class Classifieds_Core {
             else
                 $caps[] = $post_type->cap->read_private_posts;
         }
+
         /* Return the capabilities required by the user. */
         return $caps;
     }
