@@ -191,13 +191,15 @@ class Classifieds_Core {
         $post_statuses = array( 'publish', 'trash', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit' );
         foreach ( $post_statuses as $post_status ) {
             $args = array(
+                    'hierarchical'  => 0,
                     'meta_key'      => 'classifieds_type',
                     'meta_value'    => $value,
                     'post_type'     => 'page',
                     'post_status'   => $post_status
                 );
 
-            $page = get_posts( $args );
+            $page = get_pages( $args );
+
             if ( isset( $page[0] ) && 0 < $page[0]->ID )
                 return $page[0];
         }
