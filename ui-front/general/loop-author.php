@@ -22,7 +22,7 @@
 global $query_string;
 query_posts( $query_string . "&post_type=classifieds&post_status=publish");
 
-$options = $__classifieds_core->get_options( 'general' );
+$cf_options = $__classifieds_core->get_options( 'general' );
 
 ?>
 <?php /* Display navigation to next/previous pages when applicable */ ?>
@@ -69,8 +69,8 @@ $options = $__classifieds_core->get_options( 'general' );
                     <div class="cf-image">
                     <?php
                     if ( '' == get_post_meta( get_the_ID(), '_thumbnail_id', true ) ) {
-                        if ( isset( $options['field_image_def'] ) && '' != $options['field_image_def'] )
-                           echo '<img width="150" height="150" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $options['field_image_def'] . '">';
+                        if ( isset( $cf_options['field_image_def'] ) && '' != $cf_options['field_image_def'] )
+                           echo '<img width="150" height="150" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $cf_options['field_image_def'] . '">';
                     } else {
                        echo get_the_post_thumbnail( get_the_ID(), array( 200, 150 ) );
                     }

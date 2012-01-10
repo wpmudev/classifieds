@@ -78,7 +78,7 @@ get_header(); ?>
 
                         <?php elseif ( $step == 'terms' ): ?>
 
-                            <?php $options = get_option('classifieds_options'); ?>
+                            <?php $cf_options = get_option('classifieds_options'); ?>
 
                             <form action="" method="post"  class="cf-checkout">
 
@@ -91,29 +91,29 @@ get_header(); ?>
                                             <select name="credits_cost">
                                                 <?php for ( $i = 1; $i <= 10; $i++ ): ?>
                                                 <?php $credits = 10 * $i; ?>
-                                                <?php $amount = $credits * $options['credits']['cost_credit']; ?>
-                                                <option value="<?php echo $amount; ?>" <?php if ( isset( $_POST['credits_cost'] ) && $_POST['credits_cost'] == $amount ) echo 'selected="selected"'; ?> ><?php echo $credits; ?> Credits for <?php echo $amount . ' ' . $options['paypal']['currency']; ?></option>
+                                                <?php $amount = $credits * $cf_options['credits']['cost_credit']; ?>
+                                                <option value="<?php echo $amount; ?>" <?php if ( isset( $_POST['credits_cost'] ) && $_POST['credits_cost'] == $amount ) echo 'selected="selected"'; ?> ><?php echo $credits; ?> Credits for <?php echo $amount . ' ' . $cf_options['paypal']['currency']; ?></option>
                                                 <?php endfor; ?>
                                             </select>
                                         </td>
                                     </tr>
 
-                                    <?php if ( isset( $options['checkout']['annual_txt'] ) && 0 < strlen( $options['checkout']['annual_txt'] ) && isset( $options['checkout']['annual_cost'] ) &&  0 <= $options['checkout']['annual_cost'] && '' != $options['checkout']['annual_cost'] ): ?>
+                                    <?php if ( isset( $cf_options['checkout']['annual_txt'] ) && 0 < strlen( $cf_options['checkout']['annual_txt'] ) && isset( $cf_options['checkout']['annual_cost'] ) &&  0 <= $cf_options['checkout']['annual_cost'] && '' != $cf_options['checkout']['annual_cost'] ): ?>
                                     <tr>
-                                        <td><label for="billing"><?php echo $options['checkout']['annual_txt']; ?></label></td>
+                                        <td><label for="billing"><?php echo $cf_options['checkout']['annual_txt']; ?></label></td>
                                         <td>
-                                            <input type="radio" name="billing" value="annual" <?php if ( isset( $_POST['billing'] ) && $_POST['billing'] == 'annual' ) echo 'checked="checked"'; ?> />  <?php echo $options['checkout']['annual_cost']; ?> <?php echo $options['paypal']['currency']; ?>
-                                            <input type="hidden" name="annual_cost" value="<?php echo $options['checkout']['annual_cost']; ?>" />
+                                            <input type="radio" name="billing" value="annual" <?php if ( isset( $_POST['billing'] ) && $_POST['billing'] == 'annual' ) echo 'checked="checked"'; ?> />  <?php echo $cf_options['checkout']['annual_cost']; ?> <?php echo $cf_options['paypal']['currency']; ?>
+                                            <input type="hidden" name="annual_cost" value="<?php echo $cf_options['checkout']['annual_cost']; ?>" />
                                         </td>
                                     </tr>
                                     <?php endif;?>
 
-                                    <?php if ( isset( $options['checkout']['one_time_txt'] ) && 0 < strlen( $options['checkout']['one_time_txt'] ) && isset( $options['checkout']['one_time_cost'] ) && 0 <= $options['checkout']['one_time_cost'] && '' != $options['checkout']['one_time_cost'] ): ?>
+                                    <?php if ( isset( $cf_options['checkout']['one_time_txt'] ) && 0 < strlen( $cf_options['checkout']['one_time_txt'] ) && isset( $cf_options['checkout']['one_time_cost'] ) && 0 <= $cf_options['checkout']['one_time_cost'] && '' != $cf_options['checkout']['one_time_cost'] ): ?>
                                     <tr>
-                                        <td><label for="billing"><?php echo $options['checkout']['one_time_txt']; ?></label></td>
+                                        <td><label for="billing"><?php echo $cf_options['checkout']['one_time_txt']; ?></label></td>
                                         <td>
-                                            <input type="radio" name="billing" value="one_time" <?php if ( isset( $_POST['billing'] ) && $_POST['billing'] == 'one_time' ) echo 'checked="checked"'; ?> /> <?php echo $options['checkout']['one_time_cost']; ?> <?php echo $options['paypal']['currency']; ?>
-                                            <input type="hidden" name="one_time_cost" value="<?php echo $options['checkout']['one_time_cost']; ?>" />
+                                            <input type="radio" name="billing" value="one_time" <?php if ( isset( $_POST['billing'] ) && $_POST['billing'] == 'one_time' ) echo 'checked="checked"'; ?> /> <?php echo $cf_options['checkout']['one_time_cost']; ?> <?php echo $cf_options['paypal']['currency']; ?>
+                                            <input type="hidden" name="one_time_cost" value="<?php echo $cf_options['checkout']['one_time_cost']; ?>" />
                                         </td>
                                     </tr>
                                     <?php endif;?>
@@ -123,7 +123,7 @@ get_header(); ?>
                                 <strong><?php _e( 'Terms of Service', 'classifieds' ); ?></strong>
                                 <table>
                                     <tr>
-                                        <td><div class="terms"><?php if ( isset( $options['checkout']['tos_txt'] ) ) echo nl2br( $options['checkout']['tos_txt'] ); ?></div></td>
+                                        <td><div class="terms"><?php if ( isset( $cf_options['checkout']['tos_txt'] ) ) echo nl2br( $cf_options['checkout']['tos_txt'] ); ?></div></td>
                                     </tr>
                                 </table>
                                 <br />
@@ -173,8 +173,8 @@ get_header(); ?>
                                     <?php if ( $_POST['billing'] == 'credits' ): ?>
                                         <input type="hidden" name="cost" value="<?php echo $_POST['credits_cost']; ?>" />
                                         <input type="hidden" name="billing" value="credits" />
-                                        <?php $options = get_option('classifieds_options'); ?>
-                                        <?php $credits = ( isset( $_POST['credits_cost'] ) && 0 < $_POST['credits_cost'] ) ? $_POST['credits_cost'] / $options['credits']['cost_credit'] : 0; ?>
+                                        <?php $cf_options = get_option('classifieds_options'); ?>
+                                        <?php $credits = ( isset( $_POST['credits_cost'] ) && 0 < $_POST['credits_cost'] ) ? $_POST['credits_cost'] / $cf_options['credits']['cost_credit'] : 0; ?>
                                         <input type="hidden" name="credits" value="<?php echo $credits; ?>" />
                                     <?php elseif ( $_POST['billing'] == 'annual' ): ?>
                                         <input type="hidden" name="cost" value="<?php echo $_POST['annual_cost']; ?>" />
@@ -190,7 +190,7 @@ get_header(); ?>
 
                         <?php elseif ( $step == 'cc_details' ): ?>
 
-                            <?php $options = get_option('classifieds_options'); ?>
+                            <?php $cf_options = get_option('classifieds_options'); ?>
 
                             <form action="" method="post" class="cf-checkout">
 
@@ -482,7 +482,7 @@ get_header(); ?>
                                     <tr>
                                         <td><?php _e( 'Total Amount', 'classifieds' ); ?>:</td>
                                         <td>
-                                            <strong><?php echo $_POST['cost']; ?> <?php echo $options['paypal']['currency']; ?></strong>
+                                            <strong><?php echo $_POST['cost']; ?> <?php echo $cf_options['paypal']['currency']; ?></strong>
                                             <input type="hidden" name="total_amount" value="<?php echo $_POST['cost']; ?>" />
                                         </td>
                                     </tr>

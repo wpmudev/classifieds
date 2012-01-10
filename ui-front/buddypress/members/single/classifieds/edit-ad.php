@@ -16,7 +16,7 @@ global $bp;
 $post       = get_post( $post_id );
 $post_terms = wp_get_object_terms( $post->ID, $this->taxonomy_names );
 
-$options    = $this->get_options( 'general' );
+$cf_options    = $this->get_options( 'general' );
 
 
 /* Build messages */
@@ -72,8 +72,8 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
         <div class="editfield">
             <?php
             if ( '' == get_post_meta( get_the_ID(), '_thumbnail_id', true ) ) {
-                if ( isset( $options['field_image_def'] ) && '' != $options['field_image_def'] )
-                   echo '<img width="150" height="150" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $options['field_image_def'] . '">';
+                if ( isset( $cf_options['field_image_def'] ) && '' != $cf_options['field_image_def'] )
+                   echo '<img width="150" height="150" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $cf_options['field_image_def'] . '">';
             } else {
                echo get_the_post_thumbnail( get_the_ID(), array( 200, 150 ) );
             }

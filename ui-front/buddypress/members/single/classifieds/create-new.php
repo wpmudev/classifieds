@@ -23,7 +23,7 @@ if ( !$this->form_valid ) {
     $class = 'error';
 }
 
-$options = $this->get_options( 'general' );
+$cf_options = $this->get_options( 'general' );
 
 ?>
 
@@ -71,7 +71,7 @@ $options = $this->get_options( 'general' );
         </div>
 
         <div class="editfield">
-            <label for="image"><?php _e( 'Select Featured Image', $this->text_domain ); ?> <?php echo ( !isset( $options['field_image_req'] ) || '1' != $options['field_image_req'] ) ? '(' . __( 'required', $this->text_domain ) . ')' : ''; ?></label>
+            <label for="image"><?php _e( 'Select Featured Image', $this->text_domain ); ?> <?php echo ( !isset( $cf_options['field_image_req'] ) || '1' != $cf_options['field_image_req'] ) ? '(' . __( 'required', $this->text_domain ) . ')' : ''; ?></label>
             <p id="featured-image">
                 <input type="file" id="image" name="image">
                 <input type="hidden" value="featured-image" id="action" name="action">

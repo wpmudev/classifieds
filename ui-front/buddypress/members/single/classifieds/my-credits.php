@@ -13,7 +13,7 @@
 
 <div class="profile">
 
-    <?php $options = $this->get_options('checkout'); ?>
+    <?php $cf_options = $this->get_options('checkout'); ?>
 
     <div class="my-credits">
 

@@ -137,11 +137,11 @@ get_header();
                                             <input type="hidden" name="post_title" value="<?php the_title(); ?>" />
                                             <?php if ( isset( $sub ) && ( $sub == 'saved' || $sub == 'ended' ) ): ?>
                                                 <select name="duration">
-                                                    <?php $options = get_option('classifieds_options'); ?>
-                                                    <option value="1 Week"><?php _e( '1 Week for ',  'classifieds' ); ?> <?php echo 1 * $options['credits']['credits_per_week']; ?><?php _e( ' Credits',  'classifieds' ); ?></option>
-                                                    <option value="2 Weeks"><?php _e( '2 Weeks for', 'classifieds' ); ?> <?php echo 2 * $options['credits']['credits_per_week']; ?><?php _e( ' Credits',  'classifieds' ); ?></option>
-                                                    <option value="3 Weeks"><?php _e( '3 Weeks for', 'classifieds' ); ?> <?php echo 3 * $options['credits']['credits_per_week']; ?><?php _e( ' Credits',  'classifieds' ); ?></option>
-                                                    <option value="4 Weeks"><?php _e( '4 Weeks for', 'classifieds' ); ?> <?php echo 4 * $options['credits']['credits_per_week']; ?><?php _e( ' Credits',  'classifieds' ); ?></option>
+                                                    <?php $cf_options = get_option('classifieds_options'); ?>
+                                                    <option value="1 Week"><?php _e( '1 Week for ',  'classifieds' ); ?> <?php echo 1 * $cf_options['credits']['credits_per_week']; ?><?php _e( ' Credits',  'classifieds' ); ?></option>
+                                                    <option value="2 Weeks"><?php _e( '2 Weeks for', 'classifieds' ); ?> <?php echo 2 * $cf_options['credits']['credits_per_week']; ?><?php _e( ' Credits',  'classifieds' ); ?></option>
+                                                    <option value="3 Weeks"><?php _e( '3 Weeks for', 'classifieds' ); ?> <?php echo 3 * $cf_options['credits']['credits_per_week']; ?><?php _e( ' Credits',  'classifieds' ); ?></option>
+                                                    <option value="4 Weeks"><?php _e( '4 Weeks for', 'classifieds' ); ?> <?php echo 4 * $cf_options['credits']['credits_per_week']; ?><?php _e( ' Credits',  'classifieds' ); ?></option>
                                                 </select>
                                             <?php endif; ?>
                                             <input type="submit" class="button confirm" value="<?php _e( 'Confirm', 'classifieds' ); ?>" name="confirm" />
@@ -368,7 +368,7 @@ get_header();
 
                 <?php elseif ( $action == 'my-credits' ): ?>
 
-                    <?php $options = $__classifieds_core->get_options('checkout'); ?>
+                    <?php $cf_options = $__classifieds_core->get_options('checkout'); ?>
 
                     <div class="my-credits">
 
