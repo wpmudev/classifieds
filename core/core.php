@@ -44,6 +44,8 @@ class Classifieds_Core {
     /** @var boolean flag whether to flush all plugin data on plugin deactivation */
     var $flush_plugin_data = false;
 
+    var $cf_page;
+
     /**
      * Constructor.
      *
@@ -1084,6 +1086,9 @@ class Classifieds_Core {
      **/
     function get_page_template( $template ) {
         global $post;
+        
+        $this->cf_page = get_query_var( 'paged' );
+
         if ( ! file_exists( get_template_directory() . "/page-{$post->post_name}.php" )
             && file_exists( "{$this->plugin_dir}/ui-front/general/page-{$post->post_name}.php" ) )
             return "{$this->plugin_dir}/ui-front/general/page-{$post->post_name}.php";

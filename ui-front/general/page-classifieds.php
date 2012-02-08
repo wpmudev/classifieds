@@ -10,10 +10,19 @@
 
 $cf_options = $__classifieds_core->get_options( 'general' );
 
+//var_dump( $__classifieds_core->cf_page );
+//exit;
+if ( isset( $__classifieds_core->cf_page ) && 1 < $__classifieds_core->cf_page )
+    $cf_page = $__classifieds_core->cf_page;
+else
+    $cf_page = '1';
+
+//var_dump( $cf_page );
+//exit;
+
 get_header();
 
 ?>
-
 		<div id="container">
             <div id="content" class="cf-bp-wrap" role="main">
 
@@ -22,7 +31,31 @@ get_header();
 
                 <h1 class="entry-title"><?php the_title(); ?></h1>
 
-                <?php query_posts( array( 'post_status' => 'publish' , 'post_type' => array( 'classifieds' )  ) ); ?>
+                <?php
+//                query_posts( array( 'post_status' => 'publish', 'post_type' => array( 'classifieds' )  ) );
+                query_posts( array( 'paged' => $cf_page, 'post_status' => 'publish', 'post_type' => array( 'classifieds' )  ) );
+                ?>
+
+                <?php
+//                  set_query_var( 'paged', 1 );
+//                var_dump( get_query_var( 'paged' ) );
+//                var_dump( get_query_var( 'cf_paged' ) );
+//                var_dump( $wp_query );
+//                exit;
+                ?>
+                <?php /* Display navigation to next/previous pages when applicable */ ?>
+                <?php if ( $wp_query->max_num_pages > 1 ) : ?>
+                    <div id="nav-above" class="navigation">
+                        <?php if ( class_exists( PageNavi_Core ) ) : ?>
+                            <!-- WP-PageNavi - pagination -->
+                            <?php wp_pagenavi(); ?>
+                        <?php else: ?>
+                            <!-- default pagination -->
+                            <div class="nav-previous"><?php next_posts_link( __( '<span class="meta-nav">&larr;</span> Older posts', 'twentyten' ) ); ?></div>
+                            <div class="nav-next"><?php previous_posts_link( __( 'Newer posts <span class="meta-nav">&rarr;</span>', 'twentyten' ) ); ?></div>
+                        <?php endif; ?>
+                    </div><!-- #nav-above -->
+                <?php endif; ?>
 
                 <?php if ( !have_posts() ): ?>
                         <br />
@@ -103,13 +136,27 @@ get_header();
                     </div><!-- #post-## -->
 
                 <?php endwhile; ?>
-                <?php wp_reset_query(); ?>
-
 
             <?php /* For BuddyPress compatibility */ ?>
             <?php if ( isset( $bp ) ): ?>
                 </div>
             <?php endif; ?>
+
+            <?php /* Display navigation to next/previous pages when applicable */ ?>
+            <?php if ( $wp_query->max_num_pages > 1 ) : ?>
+                <div id="nav-below" class="navigation">
+                    <?php if ( class_exists( PageNavi_Core ) ) : ?>
+                        <!-- WP-PageNavi - pagination -->
+                        <?php wp_pagenavi(); ?>
+                    <?php else: ?>
+                        <!-- default pagination -->
+                        <div class="nav-previous"><?php next_posts_link( __( '<span class="meta-nav">&larr;</span> Older posts', 'twentyten' ) ); ?></div>
+                        <div class="nav-next"><?php previous_posts_link( __( 'Newer posts <span class="meta-nav">&rarr;</span>', 'twentyten' ) ); ?></div>
+                    <?php endif; ?>
+                </div><!-- #nav-above -->
+            <?php endif; ?>
+
+            <?php wp_reset_query(); ?>
 
 			</div><!-- #content -->
 
