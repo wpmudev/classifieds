@@ -10,16 +10,6 @@
 
 $cf_options = $__classifieds_core->get_options( 'general' );
 
-//var_dump( $__classifieds_core->cf_page );
-//exit;
-if ( isset( $__classifieds_core->cf_page ) && 1 < $__classifieds_core->cf_page )
-    $cf_page = $__classifieds_core->cf_page;
-else
-    $cf_page = '1';
-
-//var_dump( $cf_page );
-//exit;
-
 get_header();
 
 ?>
@@ -31,18 +21,8 @@ get_header();
 
                 <h1 class="entry-title"><?php the_title(); ?></h1>
 
-                <?php
-//                query_posts( array( 'post_status' => 'publish', 'post_type' => array( 'classifieds' )  ) );
-                query_posts( array( 'paged' => $cf_page, 'post_status' => 'publish', 'post_type' => array( 'classifieds' )  ) );
-                ?>
+                <?php query_posts( array( 'paged' => $__classifieds_core->cf_page, 'post_status' => 'publish', 'post_type' => array( 'classifieds' )  ) ); ?>
 
-                <?php
-//                  set_query_var( 'paged', 1 );
-//                var_dump( get_query_var( 'paged' ) );
-//                var_dump( get_query_var( 'cf_paged' ) );
-//                var_dump( $wp_query );
-//                exit;
-                ?>
                 <?php /* Display navigation to next/previous pages when applicable */ ?>
                 <?php if ( $wp_query->max_num_pages > 1 ) : ?>
                     <div id="nav-above" class="navigation">

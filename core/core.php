@@ -43,7 +43,7 @@ class Classifieds_Core {
     var $user_credits;
     /** @var boolean flag whether to flush all plugin data on plugin deactivation */
     var $flush_plugin_data = false;
-
+    /** @var string/int Current page for pagination (usas in query)*/
     var $cf_page;
 
     /**
@@ -1086,8 +1086,12 @@ class Classifieds_Core {
      **/
     function get_page_template( $template ) {
         global $post;
-        
-        $this->cf_page = get_query_var( 'paged' );
+
+        //get page number for pagination
+        if ( 1 < get_query_var( 'paged' ) )
+            $this->cf_page = get_query_var( 'paged' );
+        else
+            $this->cf_page = '1';
 
         if ( ! file_exists( get_template_directory() . "/page-{$post->post_name}.php" )
             && file_exists( "{$this->plugin_dir}/ui-front/general/page-{$post->post_name}.php" ) )

@@ -8,6 +8,10 @@
  * @since Classifieds 2.0
  */
 global $query_string;
+
+//reset query for correct $wp_query->max_num_pages in loop-author.php (for pagination)
+wp_reset_query();
+
 if ( '' == get_option( 'permalink_structure' ) )
     $cf_author_name = $_REQUEST['cf_author'];
 else

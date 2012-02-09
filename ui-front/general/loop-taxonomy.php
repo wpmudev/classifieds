@@ -23,10 +23,6 @@ global $__classifieds_core;
 
 $cf_options = $__classifieds_core->get_options( 'general' );
 
-
-//var_dump( get_query_var( 'paged' ) );
-//var_dump( $wp_query );
-//exit;
 ?>
 
 <?php /* Display navigation to next/previous pages when applicable */ ?>

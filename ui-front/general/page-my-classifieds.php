@@ -49,13 +49,13 @@ get_header();
                     $current_user = wp_get_current_user();
                     /* Get posts based on post_status */
                     if ( isset( $_GET['saved'] ) ) {
-                        query_posts( array( 'author' => $current_user->ID, 'post_type' => array( 'classifieds' ), 'post_status' => 'draft' ) );
+                        query_posts( array( 'author' => $current_user->ID, 'post_type' => array( 'classifieds' ), 'post_status' => 'draft', 'paged' => $__classifieds_core->cf_page ) );
                         $sub = 'saved';
                     } elseif ( isset( $_GET['ended'] ) ) {
-                        query_posts( array( 'author' => $current_user->ID, 'post_type' => array( 'classifieds' ), 'post_status' => 'private' ) );
+                        query_posts( array( 'author' => $current_user->ID, 'post_type' => array( 'classifieds' ), 'post_status' => 'private', 'paged' => $__classifieds_core->cf_page ) );
                         $sub = 'ended';
                     } else {
-                        query_posts( array( 'author' => $current_user->ID, 'post_type' => array( 'classifieds' ), 'post_status' => 'publish' ) );
+                        query_posts( array( 'author' => $current_user->ID, 'post_type' => array( 'classifieds' ), 'post_status' => 'publish', 'paged' => $__classifieds_core->cf_page ) );
                         $sub = 'active';
                     } ?>
 
