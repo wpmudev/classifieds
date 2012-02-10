@@ -54,31 +54,8 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
 
     <div class="clear"></div>
 
-    <?php $current_user = wp_get_current_user();  ?>
     <?php
-
-//    wp_reset_query();
-
-     ?>
-    <?php
-//    query_posts( array( 'author' => bp_displayed_user_id(), 'post_type' => array( 'classifieds' ), 'post_status' => $status,  'paged' => '2' ) );
-     ?>
-
-    <?php
-//    var_dump( get_query_var( 'paged' ) );
     $wp_query = new WP_Query( array( 'author' => bp_displayed_user_id(), 'post_type' => array( 'classifieds' ), 'post_status' => $status,  'paged' => get_query_var( 'paged' ) ) );
-//    var_dump( $wp_query->max_num_pages );
-//    var_dump( $my_query );
-
-//    $arg = array( 'post_type' => 'classifieds', 'post_status' => $status ) ;
-//       $r =    get_posts( $arg );
-//      wp_reset_query();
-//    var_dump( $r );
-//    var_dump( $wp_query->max_num_pages );
-//    var_dump( $wp_query );
-//    var_dump( $wp_query );
-//    exit;
-
 
     /* Build messages */
     if ( !$wp_query->have_posts() ) {
@@ -105,21 +82,8 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
         </div>
     <?php endif; ?>
 
-
     <?php /* Display navigation to next/previous pages when applicable */ ?>
-    <?php if ( $wp_query->max_num_pages > 1 ) : ?>
-        <div id="nav-above" class="navigation">
-            <?php if ( class_exists( PageNavi_Core ) ) : ?>
-                <!-- WP-PageNavi - pagination -->
-                <?php wp_pagenavi(); ?>
-            <?php else: ?>
-                <!-- default pagination -->
-                <div class="nav-previous"><?php next_posts_link( __( '<span class="meta-nav">&larr;</span> Older posts', 'twentyten' ) ); ?></div>
-                <div class="nav-next"><?php previous_posts_link( __( 'Newer posts <span class="meta-nav">&rarr;</span>', 'twentyten' ) ); ?></div>
-            <?php endif; ?>
-        </div><!-- #nav-above -->
-    <?php endif; ?>
-
+    <?php $this->cf_display_pagination( 'above' ); ?>
 
     <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
@@ -198,21 +162,9 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
         </div>
 
     <?php endwhile; ?>
-
-
+    
     <?php /* Display navigation to next/previous pages when applicable */ ?>
-    <?php if ( $wp_query->max_num_pages > 1 ) : ?>
-        <div id="nav-below" class="navigation">
-            <?php if ( class_exists( PageNavi_Core ) ) : ?>
-                <!-- WP-PageNavi - pagination -->
-                <?php wp_pagenavi(); ?>
-            <?php else: ?>
-                <!-- default pagination -->
-                <div class="nav-previous"><?php next_posts_link( __( '<span class="meta-nav">&larr;</span> Older posts', 'twentyten' ) ); ?></div>
-                <div class="nav-next"><?php previous_posts_link( __( 'Newer posts <span class="meta-nav">&rarr;</span>', 'twentyten' ) ); ?></div>
-            <?php endif; ?>
-        </div><!-- #nav-above -->
-    <?php endif; ?>
+    <?php $this->cf_display_pagination( 'below' ); ?>
 
 
     <?php wp_reset_query(); ?>

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Classifieds\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-08 00:29+0200\n"
+"POT-Creation-Date: 2012-02-10 16:45+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Andrey Shipilov\n"
 "Language-Team: \n"
@@ -34,32 +34,47 @@ msgid "My Credits"
 msgstr ""
 
 #: /classifieds/core/buddypress.php:102
+#: /classifieds/core/buddypress____.php:103
 msgid "Create New Ad"
 msgstr ""
 
-#: /classifieds/core/buddypress.php:138
-#: /classifieds/core/buddypress.php:190
-#: /classifieds/core/core.php:965
+#: /classifieds/core/buddypress.php:114
+msgid "All"
+msgstr ""
+
+#: /classifieds/core/buddypress.php:152
+#: /classifieds/core/buddypress.php:204
+#: /classifieds/core/buddypress____.php:139
+#: /classifieds/core/buddypress____.php:185
+#: /classifieds/core/core.php:990
 #: /classifieds/core/main.php:70
 #: /classifieds/core/main.php:141
 msgid "Security check failed!"
 msgstr ""
 
-#: /classifieds/core/core.php:276
+#: /classifieds/core/core.php:282
 msgid "Please fill in the required fields."
 msgstr ""
 
-#: /classifieds/core/core.php:796
+#: /classifieds/core/core.php:821
 msgid "No expiration date set."
 msgstr ""
 
-#: /classifieds/core/core.php:908
+#: /classifieds/core/core.php:933
 msgid "No History"
 msgstr ""
 
-#: /classifieds/core/core.php:1160
-#: /classifieds/core/core.php:1161
+#: /classifieds/core/core.php:1192
+#: /classifieds/core/core.php:1193
 msgid "You are being redirected. Please wait."
+msgstr ""
+
+#: /classifieds/core/core.php:1218
+msgid "<span class=\"meta-nav\">&larr;</span> Older posts"
+msgstr ""
+
+#: /classifieds/core/core.php:1219
+msgid "Newer posts <span class=\"meta-nav\">&rarr;</span>"
 msgstr ""
 
 #: /classifieds/core/main.php:95
@@ -102,8 +117,6 @@ msgstr ""
 
 #: /classifieds/submodules/content-types/ui-admin/add-custom-field.php:25
 #: /classifieds/submodules/content-types/ui-admin/add-custom-field.php:29
-#: /classifieds/submodules/content-types/ui-admin/custom-fields.php:15
-#: /classifieds/submodules/content-types/ui-admin/custom-fields.php:24
 msgid "Field Type"
 msgstr ""
 
@@ -350,8 +363,6 @@ msgstr ""
 
 #: /classifieds/submodules/content-types/ui-admin/add-post-type.php:194
 #: /classifieds/submodules/content-types/ui-admin/add-post-type.php:198
-#: /classifieds/submodules/content-types/ui-admin/custom-fields.php:16
-#: /classifieds/submodules/content-types/ui-admin/custom-fields.php:25
 msgid "Description"
 msgstr ""
 
@@ -703,8 +714,6 @@ msgid "False to prevent queries. Default will use the taxonomy system name as qu
 msgstr ""
 
 #: /classifieds/submodules/content-types/ui-admin/content-types.php:7
-#: /classifieds/submodules/content-types/ui-admin/custom-fields.php:17
-#: /classifieds/submodules/content-types/ui-admin/custom-fields.php:26
 msgid "Post Types"
 msgstr ""
 
@@ -723,22 +732,36 @@ msgid "Field ID"
 msgstr ""
 
 #: /classifieds/submodules/content-types/ui-admin/custom-fields.php:40
+#: /classifieds/submodules/content-types/ui-admin/delete-custom-field.php:46
 msgid "Edit this custom field"
 msgstr ""
 
 #: /classifieds/submodules/content-types/ui-admin/custom-fields.php:40
+#: /classifieds/submodules/content-types/ui-admin/delete-custom-field.php:46
+#: /classifieds/submodules/content-types/ui-admin/delete-post-type.php:48
+#: /classifieds/submodules/content-types/ui-admin/delete-taxonomy.php:43
+#: /classifieds/submodules/content-types/ui-admin/post-types.php:49
+#: /classifieds/submodules/content-types/ui-admin/taxonomies.php:42
 msgid "Edit"
 msgstr ""
 
 #: /classifieds/submodules/content-types/ui-admin/custom-fields.php:43
+#: /classifieds/submodules/content-types/ui-admin/taxonomies.php:45
 msgid "Show embed code"
 msgstr ""
 
 #: /classifieds/submodules/content-types/ui-admin/custom-fields.php:43
+#: /classifieds/submodules/content-types/ui-admin/delete-custom-field.php:20
+#: /classifieds/submodules/content-types/ui-admin/delete-custom-field.php:32
+#: /classifieds/submodules/content-types/ui-admin/delete-taxonomy.php:18
+#: /classifieds/submodules/content-types/ui-admin/delete-taxonomy.php:29
+#: /classifieds/submodules/content-types/ui-admin/taxonomies.php:45
 msgid "Embed Code"
 msgstr ""
 
 #: /classifieds/submodules/content-types/ui-admin/custom-fields.php:46
+#: /classifieds/submodules/content-types/ui-admin/post-types.php:52
+#: /classifieds/submodules/content-types/ui-admin/taxonomies.php:48
 msgid "Delete"
 msgstr ""
 
@@ -1219,71 +1242,71 @@ msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:43
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:42
-#: /classifieds/ui-front/general/page-my-classifieds.php:185
-#: /classifieds/ui-front/general/page-my-classifieds.php:298
+#: /classifieds/ui-front/general/page-my-classifieds.php:202
+#: /classifieds/ui-front/general/page-my-classifieds.php:315
 msgid "Enter title here."
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:49
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:48
-#: /classifieds/ui-front/general/page-my-classifieds.php:191
-#: /classifieds/ui-front/general/page-my-classifieds.php:304
+#: /classifieds/ui-front/general/page-my-classifieds.php:208
+#: /classifieds/ui-front/general/page-my-classifieds.php:321
 msgid "The main description of your ad."
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:53
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:52
-#: /classifieds/ui-front/general/page-my-classifieds.php:195
-#: /classifieds/ui-front/general/page-my-classifieds.php:308
+#: /classifieds/ui-front/general/page-my-classifieds.php:212
+#: /classifieds/ui-front/general/page-my-classifieds.php:325
 msgid "Terms ( Categories / Tags )"
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:70
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:69
-#: /classifieds/ui-front/general/page-my-classifieds.php:216
-#: /classifieds/ui-front/general/page-my-classifieds.php:326
+#: /classifieds/ui-front/general/page-my-classifieds.php:233
+#: /classifieds/ui-front/general/page-my-classifieds.php:343
 msgid "Select category for your ad."
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:74
-#: /classifieds/ui-front/general/page-my-classifieds.php:330
+#: /classifieds/ui-front/general/page-my-classifieds.php:347
 msgid "Select Featured Image"
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:83
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:90
-#: /classifieds/ui-front/general/page-my-classifieds.php:237
-#: /classifieds/ui-front/general/page-my-classifieds.php:339
+#: /classifieds/ui-front/general/page-my-classifieds.php:254
+#: /classifieds/ui-front/general/page-my-classifieds.php:356
 msgid "Ad Status"
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:85
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:92
-#: /classifieds/ui-front/general/page-my-classifieds.php:239
-#: /classifieds/ui-front/general/page-my-classifieds.php:341
+#: /classifieds/ui-front/general/page-my-classifieds.php:256
+#: /classifieds/ui-front/general/page-my-classifieds.php:358
 msgid "Published"
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:86
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:93
-#: /classifieds/ui-front/general/page-my-classifieds.php:240
-#: /classifieds/ui-front/general/page-my-classifieds.php:342
+#: /classifieds/ui-front/general/page-my-classifieds.php:257
+#: /classifieds/ui-front/general/page-my-classifieds.php:359
 msgid "Draft"
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/create-new.php:89
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:96
-#: /classifieds/ui-front/general/page-my-classifieds.php:243
-#: /classifieds/ui-front/general/page-my-classifieds.php:345
+#: /classifieds/ui-front/general/page-my-classifieds.php:260
+#: /classifieds/ui-front/general/page-my-classifieds.php:362
 msgid "Check a status for your Ad."
 msgstr ""
 
 #: /classifieds/ui-front/buddypress/members/single/classifieds/edit-ad.php:81
-#: /classifieds/ui-front/general/page-my-classifieds.php:228
+#: /classifieds/ui-front/general/page-my-classifieds.php:245
 msgid "Change Featured Image"
 msgstr ""
 
-#: /classifieds/ui-front/buddypress/members/single/classifieds/my-classifieds.php:49
+#: /classifieds/ui-front/buddypress/members/single/classifieds/my-classifieds.php:50
 #: /classifieds/ui-front/general/page-my-classifieds.php:29
 msgid "Available Credits:"
 msgstr ""
@@ -1312,42 +1335,27 @@ msgstr ""
 msgid "Ad \"%s\" deleted successfully."
 msgstr ""
 
-#: /classifieds/ui-front/buddypress/members/single/classifieds/my-classifieds.php:117
-#: /classifieds/ui-front/general/loop-author.php:110
-#: /classifieds/ui-front/general/loop-taxonomy.php:121
-#: /classifieds/ui-front/general/page-classifieds.php:94
+#: /classifieds/ui-front/buddypress/members/single/classifieds/my-classifieds.php:120
+#: /classifieds/ui-front/general/loop-author.php:116
+#: /classifieds/ui-front/general/loop-taxonomy.php:117
+#: /classifieds/ui-front/general/page-classifieds.php:96
 #: /classifieds/ui-front/general/page-my-classifieds.php:114
 msgid "Expires"
 msgstr ""
 
-#: /classifieds/ui-front/general/author.php:38
+#: /classifieds/ui-front/general/author.php:42
 #, php-format
 msgid "Classifieds By: %s"
 msgstr ""
 
-#: /classifieds/ui-front/general/loop-author.php:31
-#: /classifieds/ui-front/general/loop-author.php:126
-#: /classifieds/ui-front/general/loop-taxonomy.php:30
-#: /classifieds/ui-front/general/loop-taxonomy.php:137
-msgid "<span class=\"meta-nav\">&larr;</span> Older posts"
-msgstr ""
-
-#: /classifieds/ui-front/general/loop-author.php:32
-#: /classifieds/ui-front/general/loop-author.php:127
-#: /classifieds/ui-front/general/loop-taxonomy.php:31
-#: /classifieds/ui-front/general/loop-taxonomy.php:138
-msgid "Newer posts <span class=\"meta-nav\">&rarr;</span>"
-msgstr ""
-
-#: /classifieds/ui-front/general/loop-author.php:41
-#: /classifieds/ui-front/general/loop-taxonomy.php:40
+#: /classifieds/ui-front/general/loop-author.php:47
+#: /classifieds/ui-front/general/loop-taxonomy.php:36
 msgid "Apologies, but no results were found for the requested classifieds. Perhaps searching will help find a related classified."
 msgstr ""
 
-#: /classifieds/ui-front/general/loop-author.php:88
-#: /classifieds/ui-front/general/loop-taxonomy.php:87
-#: /classifieds/ui-front/general/page-classifieds.php:62
-#: /classifieds/ui-front/general/single-classifieds.php:58
+#: /classifieds/ui-front/general/loop-author.php:94
+#: /classifieds/ui-front/general/loop-taxonomy.php:83
+#: /classifieds/ui-front/general/page-classifieds.php:64
 msgid "Posted By"
 msgstr ""
 
@@ -1503,7 +1511,7 @@ msgstr ""
 msgid "Pages:"
 msgstr ""
 
-#: /classifieds/ui-front/general/page-classifieds.php:30
+#: /classifieds/ui-front/general/page-classifieds.php:32
 #: /classifieds/ui-front/general/page-my-classifieds.php:65
 msgid "No Classifieds found."
 msgstr ""
@@ -1535,11 +1543,11 @@ msgstr ""
 msgid "4 Weeks for"
 msgstr ""
 
-#: /classifieds/ui-front/general/page-my-classifieds.php:272
+#: /classifieds/ui-front/general/page-my-classifieds.php:289
 msgid "Create New"
 msgstr ""
 
-#: /classifieds/ui-front/general/page-my-classifieds.php:440
+#: /classifieds/ui-front/general/page-my-classifieds.php:457
 msgid "You have to login to view the contents of this page."
 msgstr ""
 

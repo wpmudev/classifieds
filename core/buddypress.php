@@ -65,8 +65,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
             'slug'                    => $bp->classifieds->slug,
             'position'                => 100,
             'show_for_displayed_user' => true,
-            'screen_function'         => array( &$this, 'load_template' ),
-            'default_subnav_slug'     => 'my-classifieds'
+            'screen_function'         => array( &$this, 'load_template' )
         ));
 
         if ( bp_is_my_profile() ) {
@@ -107,6 +106,18 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
                 'position'        => 10,
                 'user_has_access' => true
             ));
+
+        } else {
+            //display author classifids page
+            bp_core_new_subnav_item( array(
+                'name'            => __( 'All', $this->text_domain ),
+                'slug'            => 'all',
+                'parent_url'      => $parent_url,
+                'parent_slug'     => $bp->classifieds->slug,
+                'screen_function' => array( &$this, 'load_template' ),
+                'position'        => 10,
+                'user_has_access' => true
+            ));
         }
     }
 
@@ -130,6 +141,8 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
      **/
     function handle_template_requests() {
         global $bp;
+
+        //Component my-classifieds page
         if ( $bp->current_component == 'classifieds' && $bp->current_action == 'my-classifieds' ) {
             if ( isset( $_POST['edit'] ) ) {
                 if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) )
@@ -192,7 +205,9 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
             } else {
                 $this->render_front('members/single/classifieds/my-classifieds');
             }
-        } elseif ( $bp->current_component == 'classifieds' && $bp->current_action == 'create-new' ) {
+        }
+        //Component create-new page
+        elseif ( $bp->current_component == 'classifieds' && $bp->current_action == 'create-new' ) {
 
             if ( isset( $_POST['save'] ) ) {
 
@@ -237,7 +252,10 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
             } else {
                 $this->render_front('members/single/classifieds/create-new');
             }
-        } elseif ( $bp->current_component == 'classifieds' && $bp->current_action == 'my-credits' ) {
+
+        }
+        //Component my-credits page
+        elseif ( $bp->current_component == 'classifieds' && $bp->current_action == 'my-credits' ) {
             //redirect on checkout page
             if ( isset( $_POST['purchase'] ) ) {
                 $this->js_redirect( get_bloginfo('url') . '/checkout/' );
@@ -245,7 +263,22 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
             }
             //show credits page
             $this->render_front('members/single/classifieds/my-credits');
+
         }
+        //Component Author classifieds page (classifieds/all)
+        elseif ( $bp->current_component == 'classifieds' && $bp->current_action == 'all' ) {
+            //show author classifieds page
+            $this->render_front('members/single/classifieds/my-classifieds');
+        }
+        //default for classifieds page
+        else {
+            if ( bp_is_my_profile() ) {
+                $this->js_redirect( $bp->loggedin_user->domain . 'classifieds/my-classifieds' );
+            } else {
+                $this->js_redirect( $bp->loggedin_user->domain . 'all' );
+            }
+        }
+
     }
 
     /**
