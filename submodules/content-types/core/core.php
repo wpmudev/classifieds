@@ -170,6 +170,7 @@ class Content_Types_Core {
                 update_site_option( 'ct_custom_post_types', $post_types );
                 /* Redirect to post types page */
                 wp_redirect( admin_url( 'admin.php?page=ct_content_types&ct_content_type=post_type&updated' ));
+                exit;
             }
         }
         elseif ( isset( $_REQUEST['submit'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'delete_post_type' )  ) {
@@ -180,9 +181,11 @@ class Content_Types_Core {
             update_site_option( 'ct_custom_post_types', $post_types );
             /* Redirect to post types page */
             wp_redirect( admin_url( 'admin.php?page=ct_content_types&ct_content_type=post_type&updated' ));
+            exit;
         }
         elseif ( isset( $_POST['redirect_add_post_type'] ) ) {
             wp_redirect( admin_url( 'admin.php?page=ct_content_types&ct_content_type=post_type&ct_add_post_type=true' ) );
+            exit;
         }
     }
 
@@ -201,7 +204,7 @@ class Content_Types_Core {
             foreach ( $post_types as $post_type => $args )
                 register_post_type( $post_type, $args );
             /* Flush the rewrite rules if necessary */
-            flush_rewrite_rules();
+            $this->flush_rewrite_rules();
         }
     }
 
@@ -280,6 +283,7 @@ class Content_Types_Core {
                 update_site_option( 'ct_custom_taxonomies', $taxonomies );
                 /* Redirect back to the taxonomies page */
                 wp_redirect( admin_url( 'admin.php?page=ct_content_types&ct_content_type=taxonomy&updated' ) );
+                exit;
             }
         }
         elseif ( isset( $_REQUEST['submit'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'delete_taxonomy' )  ) {
@@ -291,9 +295,11 @@ class Content_Types_Core {
             update_site_option( 'ct_custom_taxonomies', $taxonomies );
             /* Redirect back to the taxonomies page */
             wp_redirect( admin_url( 'admin.php?page=ct_content_types&ct_content_type=taxonomy&updated' ) );
+            exit;
         }
         elseif (  isset( $_POST['redirect_add_taxonomy'] ) )  {
             wp_redirect( admin_url( 'admin.php?page=ct_content_types&ct_content_type=taxonomy&ct_add_taxonomy=true' ));
+            exit;
         }
     }
 
@@ -366,6 +372,7 @@ class Content_Types_Core {
             $custom_fields = ( $this->custom_fields ) ? array_merge( $this->custom_fields, array( $field_id => $args ) ) : array( $field_id => $args );
             update_site_option( 'ct_custom_fields', $custom_fields );
             wp_redirect( admin_url( 'admin.php?page=ct_content_types&ct_content_type=custom_field&updated' ) );
+            exit;
         }
         elseif ( isset( $_REQUEST['ct_submit_update_custom_field'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'delete_custom_field' )  ) {
             /* Set available custom fields */
@@ -376,9 +383,11 @@ class Content_Types_Core {
             update_site_option( 'ct_custom_fields', $custom_fields );
             /* Redirect back to the taxonomies page */
             wp_redirect( admin_url( 'admin.php?page=ct_content_types&ct_content_type=custom_field&updated' ) );
+            exit;
         }
         elseif ( isset( $_POST['redirect_add_custom_field'] ) ) {
             wp_redirect( admin_url( 'admin.php?page=ct_content_types&ct_content_type=custom_field&ct_add_custom_field=true' ));
+            exit;
         }
     }
 

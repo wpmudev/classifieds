@@ -5,10 +5,12 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 == Changelog ==
 
 =
- 2.1.3.3 =
+ 2.1.4 =
+* Fixed problem compatibility with BBPress;
+* Fixed problem of redirection after updating values of the Post Type;
 * Added pagination for classifieds pages;
 * Ability to use WP-PageNavi plugin for pagination;
-
+* Added filter for replacement pagination (cf_pagination);
 
 =
  2.1.3 =
