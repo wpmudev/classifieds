@@ -146,7 +146,7 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
                 <input type="hidden" name="post_id" value="<?php the_ID(); ?>" />
                 <input type="hidden" name="post_title" value="<?php the_title(); ?>" />
                 <?php if ( $sub == 'saved' || $sub == 'ended' ): ?>
-                    <select name="duration">
+                    <select name="duration" id="duration-<?php the_ID(); ?>">
                         <option value="1 Week"><?php _e( '1 Week',  $this->text_domain ); ?></option>
                         <option value="2 Weeks"><?php _e( '2 Weeks', $this->text_domain ); ?></option>
                         <option value="3 Weeks"><?php _e( '3 Weeks', $this->text_domain ); ?></option>
@@ -162,7 +162,7 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
         </div>
 
     <?php endwhile; ?>
-    
+
     <?php /* Display navigation to next/previous pages when applicable */ ?>
     <?php $this->cf_display_pagination( 'below' ); ?>
 

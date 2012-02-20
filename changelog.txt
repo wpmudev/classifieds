@@ -5,6 +5,12 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 == Changelog ==
 
 =
+ 2.1.5 =
+* Fixed problem compatibility with some BP components;
+* Fixed redirection problem on Classifieds page;
+* Removed selectbox when try delete Classified;
+
+=
  2.1.4 =
 * Fixed problem compatibility with BBPress;
 * Fixed problem of redirection after updating values of the Post Type;

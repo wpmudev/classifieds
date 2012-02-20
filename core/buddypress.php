@@ -271,7 +271,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
             $this->render_front('members/single/classifieds/my-classifieds');
         }
         //default for classifieds page
-        else {
+        elseif ( $bp->current_component == 'classifieds' ) {
             if ( bp_is_my_profile() ) {
                 $this->js_redirect( $bp->loggedin_user->domain . 'classifieds/my-classifieds' );
             } else {
@@ -316,12 +316,14 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
                 },
                 toggle_renew: function(key) {
                     jQuery('#confirm-form-'+key).show();
+                    jQuery('#duration-'+key).show();
                     jQuery('#action-form-'+key).hide();
                     jQuery('input[name="action"]').val('renew');
                 },
                 toggle_delete: function(key) {
                     jQuery('#confirm-form-'+key).show();
                     jQuery('#action-form-'+key).hide();
+                    jQuery('#duration-'+key).hide();
                     jQuery('input[name="action"]').val('delete');
                 },
                 toggle_contact_form: function() {
