@@ -26,7 +26,7 @@ $cf_options = $__classifieds_core->get_options( 'general' );
 ?>
 
 <?php /* Display navigation to next/previous pages when applicable */ ?>
-<?php $__classifieds_core->cf_display_pagination( 'above' ); ?>
+<?php $__classifieds_core->cf_display_pagination( 'top' ); ?>
 
 <?php /* If there are no posts to display, such as an empty archive page */ ?>
 <?php if ( ! have_posts() ) : ?>
@@ -128,4 +128,4 @@ $cf_options = $__classifieds_core->get_options( 'general' );
 <?php endwhile; // End the loop. Whew. ?>
 
 <?php /* Display navigation to next/previous pages when applicable */ ?>
-<?php $__classifieds_core->cf_display_pagination( 'below' ); ?>
+<?php $__classifieds_core->cf_display_pagination( 'bottom' ); ?>

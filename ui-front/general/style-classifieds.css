@@ -6,206 +6,240 @@ Description: You can override this file in your active theme.
 /* =Styles for Classifieds Main component.
 -------------------------------------------------------------- */
 .error {
-    background: #FFEBE8;
+	background: #FFEBE8;
 }
 .submit {
-    margin: 10px 0;
+	margin: 10px 0;
 }
 .invalid-login {
-    margin-top: 10px;
+	margin-top: 10px;
 }
 .description {
-    color:#888888;
-    font-size:12px;
+	color:#888888;
+	font-size:12px;
 }
 .editfield label, .editfield .label {
-    font-size:14px;
-    color: #333;
-    display: block;
-    font-family:"Helvetica Neue",Arial,Helvetica,"Nimbus Sans L",sans-serif;
+	font-size:14px;
+	color: #333;
+	display: block;
+	font-family:"Helvetica Neue",Arial,Helvetica,"Nimbus Sans L",sans-serif;
 }
 .entry-content .editfield input {
-    margin: 0;
-/*    width: 100%; */
+	margin: 0;
+	/*    width: 100%; */
 }
 .entry-content .editfield textarea {
-    margin: 0;
-    width: 100%;
+	margin: 0;
+	width: 100%;
 }
 .entry-content .editfield select, .entry-content .confirm-form select, .entry-content .cf-checkout select {
-    margin: 0;
+	margin: 0;
 }
 .entry-content .cf-ad input {
-    margin: 0;
+	margin: 0;
 }
 .entry-content .cf-checkout input {
-    margin: 0;
+	margin: 0;
 }
 .entry-content .cf-login input {
-    margin: 0;
+	margin: 0;
 }
 #content .editfield table {
-    border:0;
-    width:inherit;
-    margin: 0;
+	border:0;
+	width:inherit;
+	margin: 0;
 }
 #content .editfield tr td {
-    border-top:0;
-    padding:0 15px 0 0;
-    vertical-align: top;
+	border-top:0;
+	padding:0 15px 0 0;
+	vertical-align: top;
 }
 #content .cf-ad table {
-    margin: 0 0 0 15px;
-    width: 453px;
-    border: 1px solid #ddd;
-    border-collapse: collapse;
+	margin: 0 0 0 15px;
+	width: 453px;
+	border: 1px solid #ddd;
+	border-collapse: collapse;
 }
 .cf-ad {
-    border: 1px solid #ddd;
-    padding: 10px;
-    display: block;
-    overflow: hidden;
-    float: left;
-    margin: 0 0 15px 0;
+	border: 1px solid #ddd;
+	padding: 10px;
+	display: block;
+	overflow: hidden;
+	float: left;
+	margin: 0 0 15px 0;
 }
 .cf-ad table th {
-    text-align: right;
-    width: 50px;
+	text-align: right;
+	width: 50px;
 }
 .cf-ad table th, .bp-cf-ad table td {
-    border-width: 1px;
-    border-style: inset;
-    border-color: #ddd;
+	border-width: 1px;
+	border-style: inset;
+	border-color: #ddd;
 }
 .cf-ad form {
-    padding-right: 7px;
-    overflow: hidden;
-    float: right;
+	padding-right: 7px;
+	overflow: hidden;
+	float: right;
 }
 .cf-ad form.del-form {
-    padding-right: 7px;
+	padding-right: 7px;
 }
 .cf-image {
-    float: left;
+	float: left;
 }
 .cf-info {
-    float: left;
+	float: left;
 }
 #content table.cf-ad-info {
-    width: inherit;
+	width: inherit;
 }
 #content table.cf-ad-info th {
-    text-align: right;
+	text-align: right;
 }
 ul.button-nav li {
-    float: left;
-    list-style: none;
-    padding-right: 15px;
+	float: left;
+	list-style: none;
+	padding-right: 15px;
 }
 #content .hentry ul {
-    overflow: hidden;
-    margin: 0;
-    padding-bottom: 15px;
+	overflow: hidden;
+	margin: 0;
+	padding-bottom: 15px;
 }
 .cf-checkout {
-    margin-right: 15px;
+	margin-right: 15px;
 }
 #content .cf-checkout table {
-    margin:0;
+	margin:0;
 }
 #content .cf-checkout table tr td {
-    padding:6px 0 6px 24px;
+	padding:6px 0 6px 24px;
 }
 #content .cf-login table {
-    margin:0;
+	margin:0;
 }
 .terms {
-    height:100px;
-    overflow-x: hidden;
-    color:#888888;
-    font-size:12px;
-    font-family:"Helvetica Neue",Arial,Helvetica,"Nimbus Sans L",sans-serif;
+	height:100px;
+	overflow-x: hidden;
+	color:#888888;
+	font-size:12px;
+	font-family:"Helvetica Neue",Arial,Helvetica,"Nimbus Sans L",sans-serif;
 }
 .editfield .wp-post-image {
-    border: 1px solid #ddd;
-    padding: 15px;
+	border: 1px solid #ddd;
+	padding: 15px;
 }
 .single-classifieds #content img.wp-post-image {
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin: 0 15px 10px 0;
+	border: 1px solid #ddd;
+	padding: 15px;
+	margin: 0 15px 10px 0;
 }
 .button-nav {
-    margin: 12px 0 0 0;
+	margin: 12px 0 0 0;
 }
 .button-nav li a {
-    text-decoration: none;
-    -moz-border-radius:3px 3px 3px 3px;
-    border:1px solid #DDDDDD;
-    color:#888888;
-    cursor:pointer;
-    font-size:12px;
-    font-weight:normal;
-    padding:3px 10px;
+	text-decoration: none;
+	-moz-border-radius:3px 3px 3px 3px;
+	border:1px solid #DDDDDD;
+	color:#888888;
+	cursor:pointer;
+	font-size:12px;
+	font-weight:normal;
+	padding:3px 10px;
 }
 .button-nav li.current a {
-    color: #000;
+	color: #000;
 }
 .create-new-btn {
-    float: right;
+	float: right;
 }
 .cf-custom-fields .alt {
-    background: #F3F3F3;
+	background: #F3F3F3;
 }
 #content .cf-custom-fields tr th {
-    border-top:1px solid #E7E7E7;
+	border-top:1px solid #E7E7E7;
 }
 .action-form, .confirm-form {
-    margin-top: 10px;
+	margin-top: 10px;
 }
 .cf-contact-form {
-    width: 290px;
-    float: left;
-    margin-top: -25px;
+	width: 290px;
+	float: left;
+	margin-top: -25px;
 }
 .av-credits {
-    float: right;
-    margin-top: -30px;
-    color: green;
+	float: right;
+	margin-top: -30px;
+	color: green;
 }
 
 #cf-message,
 #cf-message-error {
-    background-color: #8FF57A;
-    color: #1A6A00;
-    -moz-border-radius: 3px 3px 3px 3px;
-    border: 1px solid #80CF70;
-    font-weight: normal;
-    margin: 3px 0px 10px 0px;
-    text-decoration: none;
-    display: block;
-    font-size: 12px;
-    padding: 5px 50px;
-    float: left;
+	background-color: #8FF57A;
+	color: #1A6A00;
+	-moz-border-radius: 3px 3px 3px 3px;
+	border: 1px solid #80CF70;
+	font-weight: normal;
+	margin: 3px 0px 10px 0px;
+	text-decoration: none;
+	display: block;
+	font-size: 12px;
+	padding: 5px 50px;
+	float: left;
 }
 
 #cf-message-error {
-    background-color: #EF0E0E;
-    color: #000;
-    border: 1px solid #4C0000;
+	background-color: #EF0E0E;
+	color: #000;
+	border: 1px solid #4C0000;
 }
 
 .my-credits h3 {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 15px 0px 15px 0px;
+	font-size: 20px;
+	font-weight: bold;
+	margin: 15px 0px 15px 0px;
 
 }
 
 .my-credits table {
-    width: inherit;
+	width: inherit;
 }
 
 .my-credits table tr td, .my-credits table tr td {
-    padding: 8px;
+	padding: 8px;
+}
+
+/* Pagination styles */
+.navigation{
+	float:right;
+}
+
+.pagination {
+	clear:both;
+	padding:20px 0;
+	position: relative;
+	font-size:11px;
+	line-height:13px;
+	z-index:99;
+}
+
+.pagination span, .pagination a {
+	display:block;
+	float:left;
+	margin: 2px 2px 2px 0;
+	padding:6px 9px 5px 9px;
+	text-decoration:none;
+	width:auto;
+	color:#fff;
+	background: #555;
+}
+.pagination a:hover{
+	color:#fff;
+	background: #3279BB;
+}
+.pagination .current{
+	padding:6px 9px 5px 9px;
+	background: #3279BB;
+	color:#fff;
 }

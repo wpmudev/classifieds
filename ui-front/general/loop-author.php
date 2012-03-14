@@ -29,14 +29,14 @@ else
 
 $GLOBALS['paged'] = $cf_page;
 
-query_posts( array( 'paged' => $cf_page, 'author_name' => get_query_var( 'cf_author_name' ), 'post_status' => 'publish', 'post_type' => array( 'classifieds' )  ) );
+query_posts( array( 'posts_per_page' => $__classifieds_core->cf_ads_per_page, 'paged' => $cf_page, 'author_name' => get_query_var( 'cf_author_name' ), 'post_status' => 'publish', 'post_type' => 'classifieds'  ) );
 
 $cf_options = $__classifieds_core->get_options( 'general' );
 
 ?>
 
 <?php /* Display navigation to next/previous pages when applicable */ ?>
-<?php $__classifieds_core->cf_display_pagination( 'above' ); ?>
+<?php $__classifieds_core->cf_display_pagination( 'top' ); ?>
 
 
 <?php /* If there are no posts to display, such as an empty archive page */ ?>
@@ -127,4 +127,4 @@ $cf_options = $__classifieds_core->get_options( 'general' );
 <?php endwhile; // End the loop. Whew. ?>
 
 <?php /* Display navigation to next/previous pages when applicable */ ?>
-<?php $__classifieds_core->cf_display_pagination( 'below' ); ?>
+<?php $__classifieds_core->cf_display_pagination( 'bottom' ); ?>

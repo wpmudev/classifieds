@@ -1,11 +1,22 @@
 === Classifieds ===
-Authors: Author: Ivan Shaovchev, Andrey Shipilov (Incsub)   
+Authors: Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub)   
 Plugin Page: http://premium.wpmudev.org/project/classifieds     
 
 == Changelog ==
 
-=
- 2.1.5 =
+= 2.1.6 =
+* Corrected CF_PLUGIN_URL & CT_SUBMODULE_URL for SSL
+* Allowed author.php to be relocated to the theme directory
+* Fixed inability to edited Saved or Ended Ads on the Front End
+* Added new Pagination features with settings in 'General'
+* Got pagination working when the Classifieds page is set as the static front page
+* Added CSS for the pagination feature
+* Fixed disappearing custom fields when ads are Quick edited
+* Added Ads per page settings
+* Added top and bottom pagination position settings
+* Range setting for the number of page links on the pagination display
+
+= 2.1.5 =
 * Fixed problem compatibility with some BP components;
 * Fixed redirection problem on Classifieds page;
 * Removed selectbox when try delete Classified;

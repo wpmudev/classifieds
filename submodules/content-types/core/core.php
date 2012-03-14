@@ -423,8 +423,10 @@ class Content_Types_Core {
      */
     function save_custom_fields( $post_id ) {
         /* Prevent autosave from deleting the custom fields */
-        if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
-            return;
+        if ((defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) 
+        || (defined('DOING_AJAX') && DOING_AJAX) 
+        || isset($_REQUEST['bulk_edit'])) 
+        return; 
 
         $prefix = '_ct_';
         $custom_fields = $this->custom_fields;

@@ -4,7 +4,7 @@ Donate link:
 Tags: post types, taxonomies, custom fields, classifieds, ads, paypal, payments
 Requires at least: 3.0
 Tested up to: 3.0.2
-Stable tag: 2.0.0
+Stable tag: 2.1.6
 
 == Description ==
 

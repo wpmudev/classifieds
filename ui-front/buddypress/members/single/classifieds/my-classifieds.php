@@ -55,7 +55,7 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
     <div class="clear"></div>
 
     <?php
-    $wp_query = new WP_Query( array( 'author' => bp_displayed_user_id(), 'post_type' => array( 'classifieds' ), 'post_status' => $status,  'paged' => get_query_var( 'paged' ) ) );
+    $wp_query = new WP_Query( array( 'author' => bp_displayed_user_id(), 'post_type' => 'classifieds', 'post_status' => $status,  'paged' => get_query_var( 'paged' ) ) );
 
     /* Build messages */
     if ( !$wp_query->have_posts() ) {
@@ -83,7 +83,7 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
     <?php endif; ?>
 
     <?php /* Display navigation to next/previous pages when applicable */ ?>
-    <?php $this->cf_display_pagination( 'above' ); ?>
+    <?php $this->cf_display_pagination( 'top' ); ?>
 
     <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
@@ -164,7 +164,7 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
     <?php endwhile; ?>
 
     <?php /* Display navigation to next/previous pages when applicable */ ?>
-    <?php $this->cf_display_pagination( 'below' ); ?>
+    <?php $this->cf_display_pagination( 'bottom' ); ?>
 
 
     <?php wp_reset_query(); ?>
