@@ -95,9 +95,11 @@ class Classifieds_Core_Data extends Classifieds_Core {
 		}
 	}
 }
-endif;
 
 /* Initiate Class */
-if ( class_exists('Classifieds_Core_Data') )
+
 $__classifieds_core_data = new Classifieds_Core_Data();
+
+endif;
+
 ?>

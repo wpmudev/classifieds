@@ -147,7 +147,8 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	/**
 	* Print document styles.
 	*/
-	function admin_print_styles() { ?>
+	function admin_print_styles() {
+		?>
 		<style type="text/css">
 			.wrap table    { text-align: left; }
 			.wrap table th { width: 200px; }
@@ -157,52 +158,55 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 			.purchase_credits .submit { padding: 0; margin: 0; float: left; }
 			.purchase_credits #purchase_credits { float: left; }
 			.subsubsub h3 { margin: 0; }
-			</style> <?php
-		}
+		</style>
+		<?php
+	}
 
-		/**
-		* Print document scripts
-		*/
-		function admin_print_scripts() { ?>
-			<script type="text/javascript">
-				//<![CDATA[
-				jQuery(document).ready(function($) {
-					$('form.cf-form').hide();
-				});
-				var classifieds = {
-					toggle_end: function(key) {
-						jQuery('#form-'+key).show();
-						jQuery('.action-links-'+key).hide();
-						jQuery('.separators-'+key).hide();
-						jQuery('input[name="action"]').val('end');
-					},
-					toggle_publish: function(key) {
-						jQuery('#form-'+key).show();
-						jQuery('#form-'+key+' select').show();
-						jQuery('.action-links-'+key).hide();
-						jQuery('.separators-'+key).hide();
-						jQuery('input[name="action"]').val('publish');
-					},
-					toggle_delete: function(key) {
-						jQuery('#form-'+key).show();
-						jQuery('#form-'+key+' select').hide();
-						jQuery('.action-links-'+key).hide();
-						jQuery('.separators-'+key).hide();
-						jQuery('input[name="action"]').val('delete');
-					},
-					cancel: function(key) {
-						jQuery('#form-'+key).hide();
-						jQuery('.action-links-'+key).show();
-						jQuery('.separators-'+key).show();
-					}
-				};
-				//]]>
-				</script> <?php
-			}
-		}
-		endif;
-
-		if ( class_exists('Classifieds_Core_Admin') )
-		$__classifieds_core_admin = new Classifieds_Core_Admin();
-
+	/**
+	* Print document scripts
+	*/
+	function admin_print_scripts() {
 		?>
+		<script type="text/javascript">//<![CDATA[
+			jQuery(document).ready(function($) {
+				$('form.cf-form').hide();
+			});
+			var classifieds = {
+				toggle_end: function(key) {
+					jQuery('#form-'+key).show();
+					jQuery('.action-links-'+key).hide();
+					jQuery('.separators-'+key).hide();
+					jQuery('input[name="action"]').val('end');
+				},
+				toggle_publish: function(key) {
+					jQuery('#form-'+key).show();
+					jQuery('#form-'+key+' select').show();
+					jQuery('.action-links-'+key).hide();
+					jQuery('.separators-'+key).hide();
+					jQuery('input[name="action"]').val('publish');
+				},
+				toggle_delete: function(key) {
+					jQuery('#form-'+key).show();
+					jQuery('#form-'+key+' select').hide();
+					jQuery('.action-links-'+key).hide();
+					jQuery('.separators-'+key).hide();
+					jQuery('input[name="action"]').val('delete');
+				},
+				cancel: function(key) {
+					jQuery('#form-'+key).hide();
+					jQuery('.action-links-'+key).show();
+					jQuery('.separators-'+key).show();
+				}
+			};
+			//]]>
+		</script>
+		<?php
+	}
+}
+
+$__classifieds_core_admin = new Classifieds_Core_Admin();
+
+endif;
+
+
+?>

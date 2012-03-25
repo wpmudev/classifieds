@@ -235,9 +235,10 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	* @global object $bp
 	* @return void
 	**/
-	function print_scripts() { ?>
+	function print_scripts() {
+		?>
 		<script type="text/javascript">
-			//<![CDATA[
+			-			//<![CDATA[
 			jQuery(document).ready(function($) {
 				$('form.confirm-form').hide();
 				$('form.cf-contact-form').hide();
@@ -276,13 +277,14 @@ class Classifieds_Core_Main extends Classifieds_Core {
 				}
 			};
 			//]]>
-			</script> <?php
-		}
+		</script>
+		<?php
 	}
-	endif;
+}
 
-	/* Initiate Class */
-	if ( class_exists('Classifieds_Core_Main') ) {
-		$__classifieds_core_main = new Classifieds_Core_Main();
-	}
-	?>
+/* Initiate Class */
+if ( class_exists('Classifieds_Core_Main') ) {
+	$__classifieds_core_main = new Classifieds_Core_Main();
+}
+endif;
+?>

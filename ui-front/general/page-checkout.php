@@ -159,15 +159,15 @@ get_header(); ?>
 										<img  src="https://www.paypal.com/en_US/i/logo/PayPal_mark_37x23.gif" border="0" alt="Acceptance Mark">
 									</td>
 								</tr>
-<!--
+								<!--
 								<tr>
-									<td><label for="payment_method"><?php _e( 'Credit Card', 'classifieds' ); ?></label></td>
-									<td>
-										<input type="radio" name="payment_method" value="cc" />
-										<img  src="<?php echo CF_PLUGIN_URL; ?>ui-front/general/images/cc-logos-small.jpg" border="0" alt="Solution Graphics">
-									</td>
+								<td><label for="payment_method"><?php _e( 'Credit Card', 'classifieds' ); ?></label></td>
+								<td>
+								<input type="radio" name="payment_method" value="cc" />
+								<img  src="<?php echo CF_PLUGIN_URL; ?>ui-front/general/images/cc-logos-small.jpg" border="0" alt="Solution Graphics">
+								</td>
 								</tr>
--->								
+								-->
 							</table>
 
 							<div class="submit">

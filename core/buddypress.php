@@ -301,7 +301,8 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	**/
 	function print_scripts() {
 		global $bp;
-		if ( $bp->current_component == 'classifieds' || is_single() ) { ?>
+		if ( $bp->current_component == 'classifieds' || is_single() ) {
+			?>
 			<script type="text/javascript">
 				//<![CDATA[
 				jQuery(document).ready(function($) {
@@ -342,13 +343,13 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 					}
 				};
 				//]]>
-				</script> <?php
-			}
+			</script>
+			<?php
 		}
 	}
-	endif;
+}
 
-	/* Initiate Class */
-	if ( class_exists('Classifieds_Core_BuddyPress') )
-	$__classifieds_core_buddypress = new Classifieds_Core_BuddyPress();
-	?>
+/* Initiate Class */
+$__classifieds_core_buddypress = new Classifieds_Core_BuddyPress();
+endif;
+?>

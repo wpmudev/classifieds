@@ -1228,28 +1228,31 @@ class Classifieds_Core {
 		?>
 		<p><?php _e( 'You are being redirected. Please wait.', $this->text_domain );  ?></p>
 		<img src="<?php echo $this->plugin_url .'/ui-front/general/images/loader.gif'; ?>" alt="<?php _e( 'You are being redirected. Please wait.', $this->text_domain );  ?>" />
-		<script type="text/javascript">//<![CDATA[ window.location = '<?php echo $url; ?>';	//]]></script>
-			<?php
-		}
+		<script type="text/javascript">//<![CDATA[
+			window.location = '<?php echo $url; ?>';	//]]>
+		</script>
+		<?php
+	}
 
-		/**
-		* Display pagination on classifids pages.
-		**/
-		function cf_display_pagination( $pag_id ) {
-			global $wp_query, $paged;
+	/**
+	* Display pagination on classifids pages.
+	**/
+	function cf_display_pagination( $pag_id ) {
+		global $wp_query, $paged;
 
-			if ($pag_id =='top' && ! $this->cf_pagination_top) return '';
-			if ($pag_id =='bottom' && ! $this->cf_pagination_bottom) return '';
+		if ($pag_id =='top' && ! $this->cf_pagination_top) return '';
+		if ($pag_id =='bottom' && ! $this->cf_pagination_bottom) return '';
 
-			ob_start();
+		ob_start();
 
-			/* Display navigation to next/previous pages when applicable */
-			if ( $wp_query->max_num_pages > 1 ) : ?>
-			<div id="nav-<?php echo $pag_id; ?>" class="navigation">
+		/* Display navigation to next/previous pages when applicable */
+		if ( $wp_query->max_num_pages > 1 ) : ?>
+		<div id="nav-<?php echo $pag_id; ?>" class="navigation">
 
 			<?php if ( class_exists( PageNavi_Core ) ) : //If they have the plugin ?>
 			<!-- WP-PageNavi - pagination -->
 			<?php wp_pagenavi();
+
 			else:
 
 			//Do fancy pagination
@@ -1267,30 +1270,30 @@ class Classifieds_Core {
 			if(1 != $this->cf_pages) : ?>
 
 			<div class="pagination"><!--begin pagination-->
-			<span><?php echo sprintf( __('Page %1$d of %2$d',$this->text_domain), $paged, $this->cf_pages); ?></span>
+				<span><?php echo sprintf( __('Page %1$d of %2$d',$this->text_domain), $paged, $this->cf_pages); ?></span>
 
-			<?php if($paged > 2 && $paged > $this->cf_range+1 && $showitems < $this->cf_pages): ?>
-			<a href="<?php get_pagenum_link(1); ?>">&laquo;<?php _e('First',$this->text_domain); ?></a>
-			<?php endif; ?>
+				<?php if($paged > 2 && $paged > $this->cf_range+1 && $showitems < $this->cf_pages): ?>
+				<a href="<?php get_pagenum_link(1); ?>">&laquo;<?php _e('First',$this->text_domain); ?></a>
+				<?php endif; ?>
 
-			<?php if($paged > 1 && $showitems < $this->cf_pages) : ?>
-			<a href="<?php echo get_pagenum_link($paged - 1); ?>">&lsaquo;<?php _e('Previous',$this->text_domain); ?></a>
-			<?php endif; ?>
+				<?php if($paged > 1 && $showitems < $this->cf_pages) : ?>
+				<a href="<?php echo get_pagenum_link($paged - 1); ?>">&lsaquo;<?php _e('Previous',$this->text_domain); ?></a>
+				<?php endif; ?>
 
-			<?php for ($i=1;$i <= $this->cf_pages;$i++) :
-			if (1 != $this->cf_pages && ( !($i >= $paged + $this->cf_range + 1 || $i <= $paged - $this->cf_range - 1) || $this->cf_pages <= $showitems )):
-			echo ($paged == $i) ? '<span class="current">' . $i . '</span>' : '<a href="' . get_pagenum_link($i) . '" class="inactive">' . $i . '</a>';
-			endif;
-			endfor;
+				<?php for ($i=1;$i <= $this->cf_pages;$i++) :
+				if (1 != $this->cf_pages && ( !($i >= $paged + $this->cf_range + 1 || $i <= $paged - $this->cf_range - 1) || $this->cf_pages <= $showitems )):
+				echo ($paged == $i) ? '<span class="current">' . $i . '</span>' : '<a href="' . get_pagenum_link($i) . '" class="inactive">' . $i . '</a>';
+				endif;
+				endfor;
 
-			if ($paged < $this->cf_pages && $showitems < $this->cf_pages) : ?>
-			<a href="<?php echo get_pagenum_link($paged + 1); ?>"><?php _e('Next',$this->text_domain); ?>&rsaquo;</a>
-			<?php endif; ?>
+				if ($paged < $this->cf_pages && $showitems < $this->cf_pages) : ?>
+				<a href="<?php echo get_pagenum_link($paged + 1); ?>"><?php _e('Next',$this->text_domain); ?>&rsaquo;</a>
+				<?php endif; ?>
 
 
-			<?php if ($paged < $this->cf_pages - 1 &&  $paged + $this->cf_range - 1 < $this->cf_pages && $showitems < $this->cf_pages): ?>
-			<a href="<?php echo get_pagenum_link($this->cf_pages); ?>"><?php _e('Last', $this->text_domain); ?>&raquo;</a>
-			<?php endif; ?>
+				<?php if ($paged < $this->cf_pages - 1 &&  $paged + $this->cf_range - 1 < $this->cf_pages && $showitems < $this->cf_pages): ?>
+				<a href="<?php echo get_pagenum_link($this->cf_pages); ?>"><?php _e('Last', $this->text_domain); ?>&raquo;</a>
+				<?php endif; ?>
 
 			</div> <!--end pagination-->
 			<?php
@@ -1305,11 +1308,9 @@ class Classifieds_Core {
 		}
 	}
 
-	endif;
-
 	/* Initiate Class */
-	if ( class_exists('Classifieds_Core') )
 	$__classifieds_core = new Classifieds_Core();
 
+	endif;
 
-?>
+	?>

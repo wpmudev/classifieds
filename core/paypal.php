@@ -596,5 +596,6 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
 		return $nvp_array;
 	}
 }
+
 endif;
 ?>

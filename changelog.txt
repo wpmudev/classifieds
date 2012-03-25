@@ -4,6 +4,10 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.1.7 =
+
+Replaced Submodule with actual CustomPress for easier code maintenance
+
 = 2.1.6 =
 * Corrected CF_PLUGIN_URL & CT_SUBMODULE_URL for SSL
 * Allowed author.php to be relocated to the theme directory
