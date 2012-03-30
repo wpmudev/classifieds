@@ -18,10 +18,15 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	*
 	* @return void
 	**/
-	function Classifieds_Core_Admin() {
+	function Classifieds_Core_Admin() { __construct(); }
+
+	function __construct(){
+		
+		parent::__construct();
+		
 		/* Attach plugin to the "init" hook */
-		add_action( 'init', array( &$this, 'init' ) );
-		add_action( 'init', array( &$this, 'init_vars' ) );
+		//add_action( 'init', array( &$this, 'init' ) );
+		//add_action( 'init', array( &$this, 'init_vars' ) );
 	}
 
 	/**
@@ -30,6 +35,9 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	* @return void
 	**/
 	function init() {
+	
+		parent::init();	
+
 		/* Init if admin only */
 		if ( is_admin() ) {
 			/* Initiate admin menus and admin head */
@@ -204,9 +212,9 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	}
 }
 
-$__classifieds_core_admin = new Classifieds_Core_Admin();
+global $__classifieds_core;
+$__classifieds_core = new Classifieds_Core_Admin();
 
 endif;
-
 
 ?>

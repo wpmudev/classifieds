@@ -11,31 +11,29 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	*
 	* @return void
 	**/
-	function Classifieds_Core_BuddyPress() {
-		/* Init plugin BuddyPress integration when BP is ready */
-		add_action( 'bp_init', array( &$this, 'init' ) );
-		/* Initiate plugin variables */
-		add_action( 'init', array( &$this, 'init_vars' ) );
+	function Classifieds_Core_BuddyPress() { __construct(); }
+
+	function __construct(){
+
+		parent::__construct(); //Inheritance
+
 	}
 
-	/**
-	* Initiate BuddyPress
-	*
-	* @return void
-	**/
-	function init() {
-		if ( !is_admin() ) {
-			/* Set BuddyPress active state */
-			$this->bp_active = true;
-			/* Add navigation */
-			add_action( 'wp', array( &$this, 'add_navigation' ), 2 );
-			/* Add navigation */
-			add_action( 'admin_menu', array( &$this, 'add_navigation' ), 2 );
-			/* Enqueue styles */
-			add_action( 'wp_print_styles', array( &$this, 'enqueue_styles' ) );
-			add_action( 'wp_head', array( &$this, 'print_scripts' ) );
-			add_action( 'bp_template_content', array( &$this, 'handle_template_requests' ) );
-		}
+	function init(){
+		
+		parent::init(); //Inheritance
+		
+		echo 'Init BP';
+		/* Set BuddyPress active state */
+		$this->bp_active = true;
+		/* Add navigation */
+		add_action( 'wp', array( &$this, 'add_navigation' ), 2 );
+		/* Add navigation */
+		add_action( 'admin_menu', array( &$this, 'add_navigation' ), 2 );
+		/* Enqueue styles */
+		add_action( 'wp_print_styles', array( &$this, 'enqueue_styles' ) );
+		add_action( 'wp_head', array( &$this, 'print_scripts' ) );
+		add_action( 'bp_template_content', array( &$this, 'handle_template_requests' ) );
 	}
 
 	/**
@@ -46,19 +44,23 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	function add_navigation() {
 		global $bp;
 		/* Set up classifieds as a sudo-component for identification and nav selection */
-		$bp->classifieds->slug = 'classifieds';
+		$classifieds_page = get_page($this->classifieds_page_id);
+
+		$bp->classifieds->slug = $classifieds_page->post_name;
 		/* Construct URL to the BuddyPress profile URL */
 		$user_domain = ( !empty( $bp->displayed_user->domain ) ) ? $bp->displayed_user->domain : $bp->loggedin_user->domain;
 		$parent_url = $user_domain . $bp->classifieds->slug . '/';
 
 		/* Add the settings navigation item */
-		$__classifieds_core = new Classifieds_Core();
-		$classifieds_page = $__classifieds_core->get_page_by_meta( 'classifieds' );
+		//		$__classifieds_core = new Classifieds_Core();
+		//		$classifieds_page = $__classifieds_core->get_page_by_meta( 'classifieds' );
 
 		if ( 0 < $classifieds_page->ID )
 		$nav_title = $classifieds_page->post_title;
 		else
 		$nav_title = 'Classifieds';
+		
+		print_r($bp->classifieds->slug);
 
 		bp_core_new_nav_item( array(
 		'name'                    => __( $nav_title, $this->text_domain ),
@@ -70,7 +72,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 
 		if ( bp_is_my_profile() ) {
 
-			$classifieds_page = $__classifieds_core->get_page_by_meta( 'my_classifieds' );
+			$classifieds_page = get_page($this->my_classifieds_page_id);;
 
 			if ( 0 < $classifieds_page->ID )
 			$nav_title = $classifieds_page->post_title;
@@ -79,7 +81,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 
 			bp_core_new_subnav_item( array(
 			'name'            => __( $nav_title, $this->text_domain ),
-			'slug'            => 'my-classifieds',
+			'slug'            => $classifieds_page->post_name,
 			'parent_url'      => $parent_url,
 			'parent_slug'     => $bp->classifieds->slug,
 			'screen_function' => array( &$this, 'load_template' ),
@@ -143,10 +145,11 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		global $bp;
 
 		//Component my-classifieds page
-		if ( $bp->current_component == 'classifieds' && $bp->current_action == 'my-classifieds' ) {
+		if ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == $this->my_classifieds_page_slug ) {
+			
 			if ( isset( $_POST['edit'] ) ) {
 				if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) )
-				$this->render_front('members/single/classifieds/edit-ad', array( 'post_id' => (int) $_POST['post_id'] ));
+				$this->render_front('edit-ad', array( 'post_id' => (int) $_POST['post_id'] ));
 				else
 				die( __( 'Security check failed!', $this->text_domain ) );
 			} elseif ( isset( $_POST['update'] ) ) {
@@ -165,15 +168,15 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 						update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
 					}
 
-					$this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'edit', 'post_title' => $_POST['post_title'] ));
+					$this->render_front('my-classifieds', array( 'action' => 'edit', 'post_title' => $_POST['post_title'] ));
 				} else {
-					$this->render_front('members/single/classifieds/edit-ad', array( 'post_id' => (int) $_POST['post_id'], 'cl_credits_error' => '1' ));
+					$this->render_front('edit-ad', array( 'post_id' => (int) $_POST['post_id'], 'cl_credits_error' => '1' ));
 				}
 			} elseif ( isset( $_POST['confirm'] ) ) {
 				if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) ) {
 					if ( $_POST['action'] == 'end' ) {
 						$this->process_status( (int) $_POST['post_id'], 'private' );
-						$this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'end', 'post_title' => $_POST['post_title'] ));
+						$this->render_front('my-classifieds', array( 'action' => 'end', 'post_title' => $_POST['post_title'] ));
 					} elseif ( $_POST['action'] == 'renew' ) {
 						/* The credits required to renew the classified for the selected period */
 						$credits_required = $this->get_credits_from_duration( $_POST['duration'] );
@@ -191,23 +194,23 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 								/* Set the proper step which will be loaded by "page-my-classifieds.php" */
 							}
 
-							$this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'renew', 'post_title' => $_POST['post_title'] ));
+							$this->render_front('my-classifieds', array( 'action' => 'renew', 'post_title' => $_POST['post_title'] ));
 						} else {
-							$this->render_front('members/single/classifieds/my-classifieds', array( 'cl_credits_error' => '1' ));
+							$this->render_front('my-classifieds', array( 'cl_credits_error' => '1' ));
 						}
 					} elseif ( $_POST['action'] == 'delete' ) {
 						wp_delete_post( $_POST['post_id'] );
-						$this->render_front('members/single/classifieds/my-classifieds', array( 'action' => 'delete', 'post_title' => $_POST['post_title'] ));
+						$this->render_front('my-classifieds', array( 'action' => 'delete', 'post_title' => $_POST['post_title'] ));
 					}
 				} else {
 					die( __( 'Security check failed!', $this->text_domain ) );
 				}
 			} else {
-				$this->render_front('members/single/classifieds/my-classifieds');
+				$this->render_front('my-classifieds');
 			}
 		}
 		//Component create-new page
-		elseif ( $bp->current_component == 'classifieds' && $bp->current_action == 'create-new' ) {
+		elseif ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == 'create-new' ) {
 
 			if ( isset( $_POST['save'] ) ) {
 
@@ -230,55 +233,54 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 						}
 
 						if ( "" != $bp->loggedin_user->userdata->user_url )
-						$this->js_redirect( $bp->loggedin_user->userdata->user_url . '/classifieds/my-classifieds/' );
+						$this->js_redirect( $bp->loggedin_user->userdata->user_url . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
 						else
-						$this->js_redirect( $bp->loggedin_user->domain . '/classifieds/my-classifieds/' );
+						$this->js_redirect( $bp->loggedin_user->domain . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
 					} else {
 						//save ad if have not credits but select draft
 						if ( isset( $_POST['status'] ) && 'draft' == $_POST['status'] ) {
 							/* Create ad */
 							$post_id = $this->update_ad( $_POST, $_FILES );
 							if ( "" != $bp->loggedin_user->userdata->user_url )
-							$this->js_redirect( $bp->loggedin_user->userdata->user_url . '/classifieds/my-classifieds/' );
+							$this->js_redirect( $bp->loggedin_user->userdata->user_url . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
 							else
-							$this->js_redirect( $bp->loggedin_user->domain . '/classifieds/my-classifieds/' );
+							$this->js_redirect( $bp->loggedin_user->domain . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
 						} else {
-							$this->render_front('members/single/classifieds/create-new', array( 'cl_credits_error' => '1' ));
+							$this->render_front('create-new', array( 'cl_credits_error' => '1' ));
 						}
 					}
 				} else {
-					$this->render_front('members/single/classifieds/create-new');
+					$this->render_front('create-new');
 				}
 			} else {
-				$this->render_front('members/single/classifieds/create-new');
+				$this->render_front('create-new');
 			}
 
 		}
 		//Component my-credits page
-		elseif ( $bp->current_component == 'classifieds' && $bp->current_action == 'my-credits' ) {
+		elseif ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == 'my-credits' ) {
 			//redirect on checkout page
 			if ( isset( $_POST['purchase'] ) ) {
 				$this->js_redirect( get_bloginfo('url') . '/checkout/' );
 				exit;
 			}
 			//show credits page
-			$this->render_front('members/single/classifieds/my-credits');
+			$this->render_front('my-credits');
 
 		}
 		//Component Author classifieds page (classifieds/all)
-		elseif ( $bp->current_component == 'classifieds' && $bp->current_action == 'all' ) {
+		elseif ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == 'all' ) {
 			//show author classifieds page
-			$this->render_front('members/single/classifieds/my-classifieds');
+			$this->render_front('my-classifieds');
 		}
 		//default for classifieds page
-		elseif ( $bp->current_component == 'classifieds' ) {
+		elseif ( $bp->current_component == $this->classifieds_page_slug ) {
 			if ( bp_is_my_profile() ) {
-				$this->js_redirect( $bp->loggedin_user->domain . 'classifieds/my-classifieds' );
+				$this->js_redirect( $bp->loggedin_user->domain . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
 			} else {
 				$this->js_redirect( $bp->loggedin_user->domain . 'all' );
 			}
 		}
-
 	}
 
 	/**
@@ -301,7 +303,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	**/
 	function print_scripts() {
 		global $bp;
-		if ( $bp->current_component == 'classifieds' || is_single() ) {
+		if ( $bp->current_component == $this->classifieds_page_slug || is_single() ) {
 			?>
 			<script type="text/javascript">
 				//<![CDATA[
@@ -350,6 +352,9 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 }
 
 /* Initiate Class */
-$__classifieds_core_buddypress = new Classifieds_Core_BuddyPress();
+//Only gets called if code is included by bp_include action from Buddypress
+global $__classifieds_core;
+$__classifieds_core = new Classifieds_Core_BuddyPress();
+
 endif;
 ?>

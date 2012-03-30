@@ -6,7 +6,9 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 = 2.1.7 =
 
-Replaced Submodule with actual CustomPress for easier code maintenance
+* Replaced Submodule with actual CustomPress for easier code maintenance
+* Changes default page tracking (classifieds, my-classifieds, checkout) to numeric triggers
+
 
 = 2.1.6 =
 * Corrected CF_PLUGIN_URL & CT_SUBMODULE_URL for SSL

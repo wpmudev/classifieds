@@ -11,42 +11,29 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	*
 	* @return void
 	**/
-	function Classifieds_Core_Main() {
-		/* Hook the entire class to WordPress init hook */
-		add_action( 'init', array( &$this, 'init' ) );
-		/* Initiate class variables from core class */
-		add_action( 'init', array( &$this, 'init_vars' ) );
-		/* Hook to bp_init so we can determine whether BuddyPress is active */
-		add_action( 'bp_init', array( &$this, 'buddypress_active' ) );
+
+	function Classifieds_Core_Main() { __construct();}
+
+	function __construct(){
+		echo 'Main';
+
+		parent::__construct(); //Get the inheritance right
+
 	}
 
-	/**
-	* Initiate Main.
-	*
-	* @return void
-	**/
-	function init() {
-		/* Load general WordPress front if BuddyPress is disabled and not admin */
-		if ( !$this->bp_active && !is_admin() ) {
-			/* Handle requests for plugin pages */
-			add_action( 'template_redirect', array( &$this, 'handle_page_requests' ) );
-			/* Enqueue styles */
-			add_action( 'wp_print_styles', array( &$this, 'enqueue_styles' ) );
-			/* Enqueue scripts */
-			add_action( 'wp_print_scripts', array( &$this, 'enqueue_scripts' ) );
-			/* Print scripts */
-			add_action( 'wp_head', array( &$this, 'print_scripts' ) );
-		}
-	}
+	function init(){
 
-	/**
-	* Determine whether BuddyPress is active and based on that disable functions
-	* that may interfere with the BuddyPress install
-	*
-	* @return void
-	**/
-	function buddypress_active() {
-		$this->bp_active = true;
+		parent::init();
+
+		echo 'Init Main';		
+		/* Handle requests for plugin pages */
+		add_action( 'template_redirect', array( &$this, 'handle_page_requests' ) );
+		/* Enqueue styles */
+		add_action( 'wp_print_styles', array( &$this, 'enqueue_styles' ) );
+		/* Enqueue scripts */
+		add_action( 'wp_print_scripts', array( &$this, 'enqueue_scripts' ) );
+		/* Print scripts */
+		add_action( 'wp_head', array( &$this, 'print_scripts' ) );
 	}
 
 	/**
@@ -57,7 +44,16 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	**/
 	function handle_page_requests() {
 		/* Handles request for my-classifieds page */
-		if ( is_page('my-classifieds') ) {
+
+		/* Handles request for classifieds page */
+		if ( is_page($this->classifieds_page_id) ) {
+			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
+			echo 'Classifieds';
+			set_query_var( 'cf_action', 'my-classifieds' );
+		}
+
+		if (is_page($this->my_classifieds_page_id) ){
+
 			/* If edit button is pressed */
 			if ( isset( $_POST['edit'] ) ) {
 				/* Verify _wpnonce field */
@@ -191,20 +187,16 @@ class Classifieds_Core_Main extends Classifieds_Core {
 			}
 			/* If user wants to go to My Classifieds main page  */
 			elseif ( isset( $_POST['go_my_classifieds'] ) ) {
-				wp_redirect( get_bloginfo('url') . '/classifieds/my-classifieds/' );
+				wp_redirect( get_permalink($this->my_classifieds_page_id) );
+				;
 			}
 			/* If user wants to go to My Classifieds main page  */
 			elseif ( isset( $_POST['go_purchase'] ) ) {
-				wp_redirect( get_bloginfo('url') . '/checkout/' );
+				wp_redirect(  get_permalink($this->checkout_page_id)  );
 			} else {
 				/* Set the proper step which will be loaded by "page-my-classifieds.php" */
 				set_query_var( 'cf_action', 'my-classifieds' );
 			}
-		}
-		/* Handles request for classifieds page */
-		elseif ( is_page('classifieds') ) {
-			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-			set_query_var( 'cf_action', 'my-classifieds' );
 		}
 	}
 
@@ -283,8 +275,8 @@ class Classifieds_Core_Main extends Classifieds_Core {
 }
 
 /* Initiate Class */
-if ( class_exists('Classifieds_Core_Main') ) {
-	$__classifieds_core_main = new Classifieds_Core_Main();
-}
+global $__classifieds_core;
+$__classifieds_core = new Classifieds_Core_Main();
+
 endif;
 ?>

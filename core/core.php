@@ -2,6 +2,9 @@
 /**
 * Classifieds Core Class
 **/
+
+global $__classifieds_core;
+
 if ( !class_exists('Classifieds_Core') ):
 class Classifieds_Core {
 
@@ -56,14 +59,31 @@ class Classifieds_Core {
 	/** @var string/int Current maximum number of ads to show per page (used in query)*/
 	var $cf_ads_per_page = 10;
 
+	/** @var int classifieds_page_id the Classifieds default page ID number. Track by ID so the page permalink and slug may be internationalized */
+	var $classifieds_page_id = 0;
+	/** @var string classifieds_page_slug the Classifieds page slug. Track by ID so the page permalink and slug may be internationalized */
+	var $classifieds_page_slug = '';
+	/** @var string classifieds_page_name the Classifieds default page name for templates. Track by ID so the page permalink and slug may be internationalized */
+	var $classifieds_page_name = 'classifieds';
+
+	/** @var int the My Classifieds default page ID number. Track by ID so the page permalink and slug may be internationalized */
+	var $my_classifieds_page_id = 0;
+	/** @var string the My Classifieds page slug. Track by ID so the page permalink and slug may be internationalized */
+	var $my_classifieds_page_slug = '';
+	/** @var string classifieds_page_name the Classifieds default page name for templates. Track by ID so the page permalink and slug may be internationalized */
+	var $my_classifieds_page_name = 'my-classifieds';
+
+	/** @var int the Checkout default page ID number. Track by ID so the page permalink and slug may be internationalized */
+	var $checkout_page_id = 0;
+	/** @var string classifieds_page_name the Classifieds default page name for templates. Track by ID so the page permalink and slug may be internationalized */
+	var $checkout_page_name = 'checkout';
+
 	/**
 	* Constructor. Old style
 	*
 	* @return void
 	**/
-	function Classifieds_Core() {
-		__construct();
-	}
+	function Classifieds_Core() { __construct(); }
 
 	/**
 	* Constructor.
@@ -71,27 +91,23 @@ class Classifieds_Core {
 	* @return void
 	**/
 	function __construct(){
+
 		/* Hook the entire class to WordPress init hook */
+		//		add_action( 'init', array( &$this, 'init' ) );
+
+		/* Initiate class variables from core class */
 		add_action( 'init', array( &$this, 'init' ) );
-		/* Load plugin translation file */
-		add_action( 'init', array( &$this, 'load_plugin_textdomain' ), 0 );
+
 		/* Register activation hook */
 		register_activation_hook( $this->plugin_dir . 'loader.php', array( &$this, 'plugin_activate' ) );
 		/* Register deactivation hook */
 		register_deactivation_hook( $this->plugin_dir . 'loader.php', array( &$this, 'plugin_deactivate' ) );
 		/* Add theme support for post thumbnails */
 		add_theme_support( 'post-thumbnails' );
-	}
 
-	/**
-	* Intiate plugin.
-	*
-	* @return void
-	**/
-	function init() {
 		/* Create neccessary pages */
 		add_action( 'wp_loaded', array( &$this, 'create_default_pages' ) );
-		/* Setup reles and capabilities */
+		/* Setup roles and capabilities */
 		add_action( 'wp_loaded', array( &$this, 'roles' ) );
 		/* Schedule expiration check */
 		add_action( 'wp_loaded', array( &$this, 'scheduly_expiration_check' ) );
@@ -134,7 +150,11 @@ class Classifieds_Core {
 	*
 	* @return void
 	**/
-	function init_vars() {
+	function init() {
+
+		//Loads "classifieds-[xx_XX].mo" language file from the "languages" directory
+		load_plugin_textdomain( $this->text_domain, null, 'classifieds/languages/' );
+
 		/* Set Taxonomy objects and names */
 		$this->taxonomy_objects = get_object_taxonomies( $this->post_type, 'objects' );
 		$this->taxonomy_names   = get_object_taxonomies( $this->post_type, 'names' );
@@ -152,16 +172,8 @@ class Classifieds_Core {
 		$this->current_user = wp_get_current_user();
 		/* Set current user credits */
 		$this->user_credits = get_user_meta( $this->current_user->ID, 'cf_credits', true );
-	}
 
-
-	/**
-	* Loads "classifieds-[xx_XX].mo" language file from the "languages" directory
-	*
-	* @return void
-	**/
-	function load_plugin_textdomain() {
-		load_plugin_textdomain( $this->text_domain, null, 'classifieds/languages/' );
+		echo 'Init Core';
 	}
 
 	/**
@@ -171,6 +183,7 @@ class Classifieds_Core {
 	**/
 	function pre_get_posts_for_classifieds() {
 		global $wp_query;
+
 		if ( isset( $wp_query->query_vars['post_type'][0] ) && 'classifieds' == $wp_query->query_vars['post_type'][0] ) {
 			$wp_query->query_vars['cat']            = '';
 			$wp_query->query_vars['category__in']   = array();
@@ -244,7 +257,9 @@ class Classifieds_Core {
 
 		$classifieds_page = $this->get_page_by_meta( 'classifieds' );
 
-		if ( !$classifieds_page || 0 >= $classifieds_page->ID ) {
+		$parent_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
+
+		if (empty($parent_id) ) {
 			$current_user = wp_get_current_user();
 			/* Construct args for the new post */
 			$args = array(
@@ -256,12 +271,16 @@ class Classifieds_Core {
 			'comment_status' => 'closed'
 			);
 			$parent_id = wp_insert_post( $args );
-			add_post_meta( $parent_id, "classifieds_type", "classifieds" );
+			add_post_meta( $parent_id, "classifieds_type", $this->classifieds_page_name );
 		}
 
-		$classifieds_page = $this->get_page_by_meta( 'my_classifieds' );
+		$this->classifieds_page_id = $parent_id; //Remember the number
+		$this->classifieds_page_slug = $classifieds_page->post_name; //Remember the slug
 
-		if ( !$classifieds_page || 0 >= $classifieds_page->ID ) {
+		$classifieds_page = $this->get_page_by_meta( 'my_classifieds' );
+		$page_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
+
+		if ( empty($page_id) ) {
 			$current_user = wp_get_current_user();
 			/* Construct args for the new post */
 			$args = array(
@@ -274,8 +293,11 @@ class Classifieds_Core {
 			'comment_status' => 'closed'
 			);
 			$page_id = wp_insert_post( $args );
-			add_post_meta( $page_id, "classifieds_type", "my_classifieds" );
+			add_post_meta( $page_id, "classifieds_type", $this->my_classifieds_page_name );
 		}
+
+		$this->my_classifieds_page_id = $page_id; // Remember the number
+		$this->my_classifieds_page_slug = $classifieds_page->post_name; //Remember the slug
 
 		$page['checkout'] = get_page_by_title('Checkout');
 		if ( !isset( $page['checkout'] ) ) {
@@ -290,7 +312,7 @@ class Classifieds_Core {
 			'comment_status' => 'closed'
 			);
 			$page_id = wp_insert_post( $args );
-			add_post_meta( $page_id, "classifieds_type", "checkout" );
+			add_post_meta( $page_id, "classifieds_type", $this->checkout_page_name );
 		}
 	}
 
@@ -615,6 +637,7 @@ class Classifieds_Core {
 	* @return void
 	**/
 	function handle_login_requests() {
+
 		if ( isset( $_POST['login_submit'] ) )
 		$this->login_error = $this->login( $_POST['username'], $_POST['password'] );
 	}
@@ -626,6 +649,7 @@ class Classifieds_Core {
 	* @return NULL If the payment gateway options are not configured.
 	**/
 	function handle_checkout_requests() {
+
 		/* Only handle request if on the proper page */
 		if ( is_page('checkout') ) {
 			/* Start session */
@@ -751,7 +775,7 @@ class Classifieds_Core {
 			}
 			/* If transaction processed successfully, redirect to my-classifieds */
 			elseif( isset( $_POST['redirect_my_classifieds'] ) ) {
-				wp_redirect( get_bloginfo('url') . '/classifieds/my-classifieds/' );
+				wp_redirect( get_permalink($this->my_classifieds_page_id) );
 			}
 			/* If no requests are made load default step */
 			else {
@@ -770,6 +794,7 @@ class Classifieds_Core {
 	* Handles the request for the contact form on the single{}.php template
 	**/
 	function handle_contact_form_requests() {
+
 		/* Only handle request if on single{}.php template and our post type */
 		if ( get_post_type() == $this->post_type && is_single() ) {
 
@@ -1092,8 +1117,8 @@ class Classifieds_Core {
 	function get_single_template( $template ) {
 		global $post;
 		if ( ! file_exists( get_template_directory() . "/single-{$post->post_type}.php" )
-		&& file_exists( "{$this->plugin_dir}/ui-front/general/single-{$post->post_type}.php" ) )
-		return "{$this->plugin_dir}/ui-front/general/single-{$post->post_type}.php";
+		&& file_exists( "{$this->plugin_dir}ui-front/general/single-{$post->post_type}.php" ) )
+		return "{$this->plugin_dir}ui-front/general/single-{$post->post_type}.php";
 		else
 		return $template;
 	}
@@ -1124,11 +1149,17 @@ class Classifieds_Core {
 
 		$this->cf_page = $paged;
 
-		if ( ! file_exists( get_template_directory() . "/page-{$post->post_name}.php" )
-		&& file_exists( "{$this->plugin_dir}/ui-front/general/page-{$post->post_name}.php" ) )
-		return "{$this->plugin_dir}/ui-front/general/page-{$post->post_name}.php";
-		else
-		return $template;
+		//Translate back to standard names.
+		$name = $post->post_name;
+		if($post->ID == $this->classifieds_page_id) $name = $this->classifieds_page_name;
+		if($post->ID == $this->my_classifieds_page_id) $name = $this->my_classifieds_page_name;
+		if($post->ID == $this->checkout_page_id) $name = $this->checkout_page_name;
+
+		if ( ! file_exists( get_template_directory() . "/page-{$name}.php" ) && file_exists( "{$this->plugin_dir}ui-front/general/page-{$name}.php" ) ){
+			return "{$this->plugin_dir}ui-front/general/page-{$name}.php";
+		} else {
+			return $template;
+		}
 	}
 
 	/**
@@ -1136,12 +1167,13 @@ class Classifieds_Core {
 	**/
 	function get_cf_author_template() {
 		global $wp_query;
+
 		if ( '' != get_query_var( 'cf_author_name' ) || isset( $_REQUEST['cf_author'] ) && '' != $_REQUEST['cf_author'] )  {
 
 			if ( file_exists(get_template_directory() . '/author.php')){
 				load_template( get_template_directory() . '/author.php' );
 			} else {
-				load_template( "{$this->plugin_dir}/ui-front/general/author.php" );
+				load_template( "{$this->plugin_dir}ui-front/general/author.php" );
 			}
 			exit();
 		}
@@ -1159,6 +1191,7 @@ class Classifieds_Core {
 	* @return string Templatepath
 	**/
 	function get_taxonomy_template( $template ) {
+
 		$taxonomy = get_query_var('taxonomy');
 		$term = get_query_var('term');
 
@@ -1168,14 +1201,14 @@ class Classifieds_Core {
 		/* Check whether the files dosn't exist in the active theme directrory,
 		* alos check for file to load in our general template directory */
 		if ( ! file_exists( get_template_directory() . "/taxonomy-{$taxonomy}-{$term}.php" )
-		&& file_exists( "{$this->plugin_dir}/ui-front/general/taxonomy-{$taxonomy}-{$term}.php" ) )
-		return "{$this->plugin_dir}/ui-front/general/taxonomy-{$taxonomy}-{$term}.php";
+		&& file_exists( "{$this->plugin_dir}ui-front/general/taxonomy-{$taxonomy}-{$term}.php" ) )
+		return "{$this->plugin_dir}ui-front/general/taxonomy-{$taxonomy}-{$term}.php";
 		elseif ( ! file_exists( get_template_directory() . "/taxonomy-{$taxonomy}.php" )
-		&& file_exists( "{$this->plugin_dir}/ui-front/general/taxonomy-{$taxonomy}.php" ) )
-		return "{$this->plugin_dir}/ui-front/general/taxonomy-{$taxonomy}.php";
+		&& file_exists( "{$this->plugin_dir}ui-front/general/taxonomy-{$taxonomy}.php" ) )
+		return "{$this->plugin_dir}ui-front/general/taxonomy-{$taxonomy}.php";
 		elseif ( ! file_exists( get_template_directory() . "/taxonomy.php" )
-		&& file_exists( "{$this->plugin_dir}/ui-front/general/taxonomy.php" ) )
-		return "{$this->plugin_dir}/ui-front/general/taxonomy.php";
+		&& file_exists( "{$this->plugin_dir}ui-front/general/taxonomy.php" ) )
+		return "{$this->plugin_dir}ui-front/general/taxonomy.php";
 		else
 		return $template;
 	}
@@ -1190,10 +1223,10 @@ class Classifieds_Core {
 	function render_admin( $name, $vars = array() ) {
 		foreach ( $vars as $key => $val )
 		$$key = $val;
-		if ( file_exists( "{$this->plugin_dir}/ui-admin/{$name}.php" ) )
-		include "{$this->plugin_dir}/ui-admin/{$name}.php";
+		if ( file_exists( "{$this->plugin_dir}ui-admin/{$name}.php" ) )
+		include "{$this->plugin_dir}ui-admin/{$name}.php";
 		else
-		echo "<p>Rendering of admin template {$this->plugin_dir}/ui-admin/{$name}.php failed</p>";
+		echo "<p>Rendering of admin template {$this->plugin_dir}ui-admin/{$name}.php failed</p>";
 	}
 
 	/**
@@ -1209,14 +1242,27 @@ class Classifieds_Core {
 		foreach ( $vars as $key => $val )
 		$$key = $val;
 		/* Include templates */
-		if ( file_exists( get_template_directory() . "/{$name}.php" ) )
-		include get_template_directory() . "/{$name}.php";
-		elseif ( file_exists( "{$this->plugin_dir}/ui-front/buddypress/{$name}.php" ) && $this->bp_active )
-		include "{$this->plugin_dir}/ui-front/buddypress/{$name}.php";
-		elseif ( file_exists( "{$this->plugin_dir}/ui-front/general/{$name}.php" ) )
-		include "{$this->plugin_dir}/ui-front/general/{$name}.php";
-		else
-		echo "<p>Rendering of template {$name}.php failed</p>";
+
+		$result = get_template_directory() . "/{$name}.php";
+		if ( file_exists( $result ) ){
+			include($result);
+			return;
+		}
+
+		$result = "{$this->plugin_dir}ui-front/buddypress/members/single/classifieds/{$name}.php";
+		if ( file_exists( $result ) && $this->bp_active ){
+			include($result);
+			return;
+		}
+
+		$result = "{$this->plugin_dir}ui-front/general/{$name}.php";
+
+		if ( file_exists( $result ) ) {
+			include($result);
+			return;
+		}
+
+		echo "<p>Rendering of template $result {$name}.php failed</p>";
 	}
 
 	/**
@@ -1246,10 +1292,13 @@ class Classifieds_Core {
 		ob_start();
 
 		/* Display navigation to next/previous pages when applicable */
-		if ( $wp_query->max_num_pages > 1 ) : ?>
+		if ( $wp_query->max_num_pages > 1 ) :
+		?>
+
 		<div id="nav-<?php echo $pag_id; ?>" class="navigation">
 
-			<?php if ( class_exists( PageNavi_Core ) ) : //If they have the plugin ?>
+			<?php if ( class_exists( 'PageNavi_Core' ) ) : //If they have the plugin
+			?>
 			<!-- WP-PageNavi - pagination -->
 			<?php wp_pagenavi();
 
@@ -1267,7 +1316,8 @@ class Classifieds_Core {
 				}
 			}
 
-			if(1 != $this->cf_pages) : ?>
+			if(1 != $this->cf_pages) :
+			?>
 
 			<div class="pagination"><!--begin pagination-->
 				<span><?php echo sprintf( __('Page %1$d of %2$d',$this->text_domain), $paged, $this->cf_pages); ?></span>
@@ -1307,9 +1357,6 @@ class Classifieds_Core {
 			echo apply_filters( 'cf_pagination', $pagination );
 		}
 	}
-
-	/* Initiate Class */
-	$__classifieds_core = new Classifieds_Core();
 
 	endif;
 

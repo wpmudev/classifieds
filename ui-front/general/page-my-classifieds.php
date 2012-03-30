@@ -7,7 +7,6 @@
 * @subpackage UI Front
 * @since Classifieds 2.0
 */
-
 $options_general = $__classifieds_core->get_options( 'general' );
 
 get_header();

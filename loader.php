@@ -41,12 +41,26 @@ define ( 'CF_PLUGIN_DIR', plugin_dir_path(__FILE__));
 /* Load plugin files */
 include_once 'core/core.php';
 include_once 'core/data.php';
-include_once 'core/main.php';
-include_once 'core/admin.php';
-include_once 'core/buddypress.php';
 include_once 'core/paypal.php';
 
-if(!class_exists('CustomPress_Core')) {
-	include_once 'custompress/loader.php';
+//Decide whether to load Admin, Buddypress or Standard version
+add_action('plugins_loaded', 'cf_on_plugins_loaded');
+function cf_on_plugins_loaded(){
+
+	if(is_admin()){ 	//Are we admin
+		include_once 'core/admin.php';
+	} 
+	elseif(defined('BP_VERSION')){ //Are we BuddyPress
+		include_once 'core/buddypress.php';
+	} 
+	else {
+		include_once 'core/main.php';
+	}
+
+	//If another version of CustomPress not loaded, load ours.
+	if(!class_exists('CustomPress_Core')) {
+		include_once 'custompress/loader.php';
+	}
 }
+
 ?>
