@@ -20,16 +20,18 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	}
 
 	function init(){
-		
+
 		parent::init(); //Inheritance
-		
-		echo 'Init BP';
+
 		/* Set BuddyPress active state */
 		$this->bp_active = true;
+
 		/* Add navigation */
 		add_action( 'wp', array( &$this, 'add_navigation' ), 2 );
+
 		/* Add navigation */
 		add_action( 'admin_menu', array( &$this, 'add_navigation' ), 2 );
+
 		/* Enqueue styles */
 		add_action( 'wp_print_styles', array( &$this, 'enqueue_styles' ) );
 		add_action( 'wp_head', array( &$this, 'print_scripts' ) );
@@ -59,8 +61,6 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		$nav_title = $classifieds_page->post_title;
 		else
 		$nav_title = 'Classifieds';
-		
-		print_r($bp->classifieds->slug);
 
 		bp_core_new_nav_item( array(
 		'name'                    => __( $nav_title, $this->text_domain ),
@@ -88,17 +88,20 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 			'position'        => 10,
 			'user_has_access' => true
 			));
-
-			bp_core_new_subnav_item( array(
-			'name'            => __( 'My Credits', $this->text_domain ),
-			'slug'            => 'my-credits',
-			'parent_url'      => $parent_url,
-			'parent_slug'     => $bp->classifieds->slug,
-			'screen_function' => array( &$this, 'load_template' ),
-			'position'        => 10,
-			'user_has_access' => true
-			));
-
+			
+			$options = $this->get_options('credits');
+			if($options['enable_credits']){
+				bp_core_new_subnav_item( array(
+				'name'            => __( 'My Credits', $this->text_domain ),
+				'slug'            => 'my-credits',
+				'parent_url'      => $parent_url,
+				'parent_slug'     => $bp->classifieds->slug,
+				'screen_function' => array( &$this, 'load_template' ),
+				'position'        => 10,
+				'user_has_access' => true
+				));
+			}
+			
 			bp_core_new_subnav_item( array(
 			'name'            => __( 'Create New Ad', $this->text_domain ),
 			'slug'            => 'create-new',
@@ -144,15 +147,18 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	function handle_template_requests() {
 		global $bp;
 
+		
 		//Component my-classifieds page
 		if ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == $this->my_classifieds_page_slug ) {
-			
+
 			if ( isset( $_POST['edit'] ) ) {
 				if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) )
 				$this->render_front('edit-ad', array( 'post_id' => (int) $_POST['post_id'] ));
 				else
 				die( __( 'Security check failed!', $this->text_domain ) );
-			} elseif ( isset( $_POST['update'] ) ) {
+			}
+
+			elseif ( isset( $_POST['update'] ) ) {
 				/* The credits required to renew the classified for the selected period */
 				$credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
 				/* If user have more credits of the required credits proceed with renewing the ad */
@@ -172,7 +178,8 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 				} else {
 					$this->render_front('edit-ad', array( 'post_id' => (int) $_POST['post_id'], 'cl_credits_error' => '1' ));
 				}
-			} elseif ( isset( $_POST['confirm'] ) ) {
+			}
+			elseif ( isset( $_POST['confirm'] ) ) {
 				if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) ) {
 					if ( $_POST['action'] == 'end' ) {
 						$this->process_status( (int) $_POST['post_id'], 'private' );
@@ -266,10 +273,10 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 			}
 			//show credits page
 			$this->render_front('my-credits');
-
 		}
 		//Component Author classifieds page (classifieds/all)
 		elseif ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == 'all' ) {
+			
 			//show author classifieds page
 			$this->render_front('my-classifieds');
 		}
@@ -278,7 +285,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 			if ( bp_is_my_profile() ) {
 				$this->js_redirect( $bp->loggedin_user->domain . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
 			} else {
-				$this->js_redirect( $bp->loggedin_user->domain . 'all' );
+				$this->js_redirect( $bp->displayed_user->domain . $this->classifieds_page_slug . '/' . 'all' );
 			}
 		}
 	}

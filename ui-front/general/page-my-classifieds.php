@@ -35,9 +35,9 @@ get_header();
 		</form>
 
 		<ul class="button-nav">
-			<li class="<?php if ( isset( $_GET['active'] ) || empty( $_GET ) ) echo 'current'; ?>"><a href="<?php echo get_bloginfo('url') . '/classifieds/my-classifieds/?active'; ?>"><?php _e( 'Active Ads', 'classifieds' ); ?></a></li>
-			<li class="<?php if ( isset( $_GET['saved'] ) )  echo 'current'; ?>"><a href="<?php echo get_bloginfo('url') . '/classifieds/my-classifieds/?saved'; ?>"><?php _e( 'Saved Ads', 'classifieds' ); ?></a></li>
-			<li class="<?php if ( isset( $_GET['ended'] ) )  echo 'current'; ?>"><a href="<?php echo get_bloginfo('url') . '/classifieds/my-classifieds/?ended'; ?>"><?php _e( 'Ended Ads', 'classifieds' ); ?></a></li>
+			<li class="<?php if ( isset( $_GET['active'] ) || empty( $_GET ) ) echo 'current'; ?>"><a href="<?php echo get_bloginfo('url') . $this->classifieds_page_slug .'/' . $this->my_classifieds_page_slug . '/?active'; ?>"><?php _e( 'Active Ads', 'classifieds' ); ?></a></li>
+			<li class="<?php if ( isset( $_GET['saved'] ) )  echo 'current'; ?>"><a href="<?php echo get_bloginfo('url') . $this->classifieds_page_slug .'/' . $this->my_classifieds_page_slug . '/?saved'; ?>"><?php _e( 'Saved Ads', 'classifieds' ); ?></a></li>
+			<li class="<?php if ( isset( $_GET['ended'] ) )  echo 'current'; ?>"><a href="<?php echo get_bloginfo('url') . $this->classifieds_page_slug .'/' . $this->my_classifieds_page_slug . '/?ended'; ?>"><?php _e( 'Ended Ads', 'classifieds' ); ?></a></li>
 		</ul>
 		<div class="clear"></div>
 

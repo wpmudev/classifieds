@@ -172,8 +172,6 @@ class Classifieds_Core {
 		$this->current_user = wp_get_current_user();
 		/* Set current user credits */
 		$this->user_credits = get_user_meta( $this->current_user->ID, 'cf_credits', true );
-
-		echo 'Init Core';
 	}
 
 	/**
@@ -1116,7 +1114,7 @@ class Classifieds_Core {
 	**/
 	function get_single_template( $template ) {
 		global $post;
-		if ( ! file_exists( get_template_directory() . "/single-{$post->post_type}.php" )
+				if ( ! file_exists( get_template_directory() . "/single-{$post->post_type}.php" )
 		&& file_exists( "{$this->plugin_dir}ui-front/general/single-{$post->post_type}.php" ) )
 		return "{$this->plugin_dir}ui-front/general/single-{$post->post_type}.php";
 		else
@@ -1197,6 +1195,7 @@ class Classifieds_Core {
 
 		if ( "classifieds_categories" != $taxonomy && "classifieds_tags" != $taxonomy )
 		return;
+
 
 		/* Check whether the files dosn't exist in the active theme directrory,
 		* alos check for file to load in our general template directory */

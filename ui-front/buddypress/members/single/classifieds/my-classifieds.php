@@ -40,9 +40,9 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
 
     <?php if ( bp_is_my_profile() ): ?>
         <ul class="button-nav">
-            <li class="<?php if ( in_array( 'active', $bp->action_variables ) || empty( $bp->action_variables ) ) echo 'current'; ?>"><a href="<?php echo $bp->displayed_user->domain . 'classifieds/my-classifieds/active/'; ?>"><?php _e( 'Active Ads', $this->text_domain ); ?></a></li>
-            <li class="<?php if ( in_array( 'saved',  $bp->action_variables ) ) echo 'current'; ?>"><a href="<?php echo $bp->displayed_user->domain . 'classifieds/my-classifieds/saved/'; ?>"><?php _e( 'Saved Ads', $this->text_domain ); ?></a></li>
-            <li class="<?php if ( in_array( 'ended',  $bp->action_variables ) ) echo 'current'; ?>"><a href="<?php echo $bp->displayed_user->domain . 'classifieds/my-classifieds/ended/'; ?>"><?php _e( 'Ended Ads', $this->text_domain ); ?></a></li>
+            <li class="<?php if ( in_array( 'active', $bp->action_variables ) || empty( $bp->action_variables ) ) echo 'current'; ?>"><a href="<?php echo $bp->displayed_user->domain . $this->classifieds_page_slug .'/' . $this->my_classifieds_page_slug . '/active/'; ?>"><?php _e( 'Active Ads', $this->text_domain ); ?></a></li>
+            <li class="<?php if ( in_array( 'saved',  $bp->action_variables ) ) echo 'current'; ?>"><a href="<?php echo $bp->displayed_user->domain . $this->classifieds_page_slug .'/' . $this->my_classifieds_page_slug . '/saved/'; ?>"><?php _e( 'Saved Ads', $this->text_domain ); ?></a></li>
+            <li class="<?php if ( in_array( 'ended',  $bp->action_variables ) ) echo 'current'; ?>"><a href="<?php echo $bp->displayed_user->domain . $this->classifieds_page_slug .'/' . $this->my_classifieds_page_slug . '/ended/'; ?>"><?php _e( 'Ended Ads', $this->text_domain ); ?></a></li>
         </ul>
 
         <?php if ( ! $this->is_full_access() ): ?>

@@ -21,9 +21,9 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	function Classifieds_Core_Admin() { __construct(); }
 
 	function __construct(){
-		
+
 		parent::__construct();
-		
+
 		/* Attach plugin to the "init" hook */
 		//add_action( 'init', array( &$this, 'init' ) );
 		//add_action( 'init', array( &$this, 'init_vars' ) );
@@ -35,8 +35,8 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	* @return void
 	**/
 	function init() {
-	
-		parent::init();	
+
+		parent::init();
 
 		/* Init if admin only */
 		if ( is_admin() ) {
