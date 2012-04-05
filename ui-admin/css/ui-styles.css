@@ -1,0 +1,27 @@
+.wrap h2 {
+	border-bottom:1px solid #CCCCCC;
+	padding-bottom:0;
+}
+
+.postbox h3.hndle {
+	padding: 7px 10px;
+	cursor: default;
+}
+.postbox .inside .note {
+	background-color: #FFFFE0;
+	border: 1px solid #E6DB55;
+	padding: 0 0.6em;
+	-moz-border-radius:3px;
+	-khtml-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+}
+
+.wrap table    { text-align: left; }
+.wrap table th { width: 200px; }
+.classifieds_page_classifieds_settings .wrap h2 { border-bottom:1px solid #CCCCCC; padding-bottom:0; }
+.classifieds_page_classifieds_credits .wrap h2 { border-bottom:1px solid #CCCCCC; padding-bottom:0; }
+.form-table #available_credits { color: #333; }
+.purchase_credits .submit { padding: 0; margin: 0; float: left; }
+.purchase_credits #purchase_credits { float: left; }
+.subsubsub h3 { margin: 0; }

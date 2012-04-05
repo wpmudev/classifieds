@@ -93,17 +93,13 @@ $taxonomies = $this->taxonomies;
 		<tr id="embed-code-<?php echo( $name ); ?>" class="embed-code <?php echo ( $class ); ?>">
 			<td colspan="10">
 				<div class="embed-code-wrap">
-					<span class="description"><?php _e('Returns an HTML string of taxonomy terms associated with a post and given taxonomy. <br />Terms are linked to their respective term listing pages. Use it in templates inside the Loop.', $this->text_domain ); ?></span>
+					<span class="description"><?php _e('Embed code returns an HTML string of taxonomy terms associated with a post and given taxonomy. <br />Terms are linked to their respective term listing pages. Use it in templates inside the Loop.', $this->text_domain ); ?></span>
 					<br />
 					<code><span style="color:red">&lt;?php</span> echo <strong>do_shortcode('[tax id="<?php echo( $name ); ?>" before="your text before " separator=", " after=" your text after"]')</strong>; <span style="color:red">?&gt;</span></code>
 					<br /><br />
-					<span class="description"><?php _e('Returns an HTML string of taxonomy terms associated with a post and given taxonomy. <br />Terms are linked to their respective term listing pages. Use it inside the Loop.', $this->text_domain ); ?></span>
+					<span class="description"><?php _e('Shortcode returns an HTML string of taxonomy terms associated with a post and given taxonomy. <br />Terms are linked to their respective term listing pages. Use it inside the Loop.', $this->text_domain ); ?></span>
 					<br />
 					<code><strong>[tax id="<?php echo( $name ); ?>" before="your text before: " separator=", " after=" your text after"]</strong></code>
-
-<!--
-					<code><span style="color:red">&lt;?php</span> echo <strong>get_the_term_list(</strong> $post->ID, '<?php echo( $name ); ?>', 'Before: ', ', ', 'After' <strong>)</strong>; <span style="color:red">?&gt;</span></code>
--->				
 				</div>
 			</td>
 		</tr>

@@ -200,6 +200,9 @@ class CustomPress_Core_Admin extends CustomPress_Core {
 	* @return void
 	*/
 	function handle_settings_page_requests() {
+		
+		$_POST = array_map('stripslashes_deep',$_POST);
+		
 		// Save settings
 		if ( isset( $_POST['save'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) ) {
 

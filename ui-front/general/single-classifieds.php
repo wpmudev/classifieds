@@ -8,6 +8,7 @@
 * @since Classifieds 2.0
 */
 
+global $__classifieds_core;
 $cf_options = $__classifieds_core->get_options( 'general' );
 
 get_header();

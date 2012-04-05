@@ -5,7 +5,7 @@ Author URI: http://premium.wpmudev.org
 
 == Changelog ==
 
-= 1.2.1 = 2012-03-24 Arnold Bailey
+= 1.2.1 = 2012-04-05 Arnold Bailey
 
 * Added field reordering to Custom Fields
 * Added Required fields
@@ -22,6 +22,7 @@ Author URI: http://premium.wpmudev.org
 * Fixed Group checkbox problem
 * Added class exists exclusions
 * Verified function as a direct sub module for Classifieds, Directory etc.
+* Added stripslashes_deep on $_POST to handle apostrophes properly.
 
 =1.2.0 =
 

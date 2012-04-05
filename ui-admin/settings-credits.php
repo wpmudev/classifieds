@@ -5,7 +5,7 @@
 <div class="wrap">
 	<?php screen_icon('options-general'); ?>
 
-	<?php $this->render_admin( 'navigation', array( 'sub' => 'credits' ) ); ?>
+	<?php $this->render_admin( 'navigation', array( 'page' => 'classifieds_settings','tab' => 'payments' ) ); ?>
 
 	<?php $this->render_admin( 'message' ); ?>
 

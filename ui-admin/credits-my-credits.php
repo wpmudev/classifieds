@@ -5,10 +5,9 @@
 <div class="wrap">
 	<?php screen_icon('options-general'); ?>
 
-	<?php $this->render_admin( 'navigation', array( 'sub' => 'my_credits' ) ); ?>
+	<?php $this->render_admin( 'navigation', array( 'page' => 'classifieds_credits','tab' => 'my-credits' ) ); ?>
 
 	<?php $this->render_admin( 'message' ); ?>
-
 	<form action="" method="post">
 
 		<h3><?php _e( 'Available Credits', $this->text_domain ); ?></h3>

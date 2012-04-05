@@ -47,8 +47,12 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
 	*
 	* @return void
 	**/
-	function Classifieds_Core_PayPal() {
-		$this->init_vars();
+	function Classifieds_Core_PayPal() { __construct(); }
+	
+	
+	function __construct(){
+    parent::__construct();	
+    $this->init_vars();	
 	}
 
 	/**
@@ -58,7 +62,8 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
 	*/
 	function init_vars() {
 		/* Get PayPal options defined in the admin area */
-		$options = $this->get_options('paypal');
+
+		$options = $this->get_options('payment_types');
 
 		if ( !empty( $options ) ) {
 
@@ -522,7 +527,7 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
 	* @param string $method_name is name of API  method.
 	* @param string $nvpstr is nvp string.
 	*
-	* @return array $nvpResArray Associtive array containing the response from the server.
+	* @return array $nvpResArray Associative array containing the response from the server.
 	**/
 	function hash_call( $method_name, $nvpstr ) {
 		/* Setting the curl parameters */
@@ -545,6 +550,7 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
 		'&USER='         . urlencode( $this->api_username ) .
 		'&SIGNATURE='    . urlencode( $this->api_signature ) . $nvpstr .
 		'&BUTTONSOURCE=' . urlencode( $this->sbn_code );
+
 
 		/* Setting the nvpreq as POST FIELD to curl */
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $nvpreq );

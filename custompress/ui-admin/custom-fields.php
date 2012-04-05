@@ -40,12 +40,12 @@ $nonce = wp_create_nonce('reorder_custom_fields');
 		</tr>
 	</tfoot>
 	<tbody>
-		
+
 		<?php if ( !empty( $custom_fields ) ): ?>
-		<?php 
-		
+		<?php
+
 		$last = count($custom_fields);
-		$i = 0; 
+		$i = 0;
 		foreach ( $custom_fields as $custom_field ): ?>
 
 		<?php
@@ -57,14 +57,14 @@ $nonce = wp_create_nonce('reorder_custom_fields');
 
 		<?php $class = ( $i % 2) ? 'ct-edit-row alternate' : 'ct-edit-row'; $i++; ?>
 		<tr class="<?php echo ( $class ); ?>">
-<td>
-	<?php if($i != 1): ?>
-			<span class="ct-up"><a href="<?php echo( self_admin_url( 'admin.php?page=' . $_GET['page'] . "&ct_content_type=custom_field&direction=up&_wpnonce=$nonce&ct_reorder_custom_field=" . $custom_field['field_id'] )); ?>"><img src="<?php echo $this->plugin_url . 'ui-admin/images/up.png'; ?>" /></a> </span>
-	<?php endif; ?>			
-	<?php if($i != $last): ?>
-		<span class="ct-down"><a href="<?php echo( self_admin_url( 'admin.php?page=' . $_GET['page'] . "&ct_content_type=custom_field&direction=down&_wpnonce=$nonce&ct_reorder_custom_field=" . $custom_field['field_id'] )); ?>"><img src="<?php echo $this->plugin_url . 'ui-admin/images/down.png'; ?>" /></a></span>
-	<?php endif; ?>			
-</td>
+			<td>
+				<?php if($i != 1): ?>
+				<span class="ct-up"><a href="<?php echo( self_admin_url( 'admin.php?page=' . $_GET['page'] . "&ct_content_type=custom_field&direction=up&_wpnonce=$nonce&ct_reorder_custom_field=" . $custom_field['field_id'] )); ?>"><img src="<?php echo $this->plugin_url . 'ui-admin/images/up.png'; ?>" /></a> </span>
+				<?php endif; ?>
+				<?php if($i != $last): ?>
+				<span class="ct-down"><a href="<?php echo( self_admin_url( 'admin.php?page=' . $_GET['page'] . "&ct_content_type=custom_field&direction=down&_wpnonce=$nonce&ct_reorder_custom_field=" . $custom_field['field_id'] )); ?>"><img src="<?php echo $this->plugin_url . 'ui-admin/images/down.png'; ?>" /></a></span>
+				<?php endif; ?>
+			</td>
 			<td>
 				<strong>
 					<a href="<?php echo( self_admin_url( 'admin.php?page=' . $_GET['page'] . '&ct_content_type=custom_field&ct_edit_custom_field=' . $custom_field['field_id'] )); ?>"><?php echo( $custom_field['field_title'] ); ?></a>
@@ -101,16 +101,13 @@ $nonce = wp_create_nonce('reorder_custom_fields');
 		<tr id="embed-code-<?php echo $custom_field['field_id']; ?>" class="embed-code <?php echo ( $class ); ?>">
 			<td colspan="10">
 				<div class="embed-code-wrap">
-					<span class="description"><?php _e( 'Returns the values of the custom fields with the specified key from the specified post.', $this->text_domain ); ?></span>
+					<span class="description"><?php _e( 'Embed code returns the values of the custom field with the specified key from the specified post. Property may be one of "title", "description" or "value". If property is not used "value" wil be returned. Use inside the loop in templates and PHP code ', $this->text_domain ); ?></span>
+					<br />
+					<code><span style="color:red">&lt;?php</span> echo <strong>do_shortcode('[ct id="<?php echo( $prefix . $custom_field['field_id'] ); ?>" property="title | description | value"]')</strong>; <span style="color:red">?&gt;</span></code>
 					<br /><br />
-     					<code><span style="color:red">&lt;?php</span> echo <strong>do_shortcode('[ct id="<?php echo( $prefix . $custom_field['field_id'] ); ?>"]')</strong>; <span style="color:red">?&gt;</span></code>
-<!--
-					<?php if ( $custom_field['field_type'] == 'text'|| $custom_field['field_type'] == 'textarea' || $custom_field['field_type'] == 'datepicker' ):  ?>
-					<code><span style="color:red">&lt;?php</span> echo <strong>get_post_meta(</strong> $post->ID, '<?php echo( $prefix . $custom_field['field_id'] ); ?>', true <strong>)</strong>; <span style="color:red">?&gt;</span></code>
-					<?php else: ?>
-					<code><span style="color:red">&lt;?php</span> if ( <strong>get_post_meta(</strong> $post->ID, '<?php echo( $prefix . $custom_field['field_id'] ); ?>', true <strong>)</strong> ) { foreach ( <strong>get_post_meta(</strong> $post->ID, '<?php echo( $prefix . $custom_field['field_id'] ); ?>', true <strong>)</strong> as $value ) { echo $value . ', '; }} <span style="color:red">?&gt;</span></code>
-					<?php endif; ?>
--->		
+					<span class="description"><?php _e( 'Shortcode returns the values of the custom field with the specified key from the specified post. Property may be one of "title", "description" or "value". If property is not used "value" wil be returned. Use inside the loop in Posts and Widgets', $this->text_domain ); ?></span>
+					<br />
+					<code><strong>[ct id="<?php echo $prefix . $custom_field['field_id'] ; ?>" property="title | description | value"]</strong></code>
 				</div>
 			</td>
 		</tr>

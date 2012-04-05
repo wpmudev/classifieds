@@ -15,7 +15,6 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	function Classifieds_Core_Main() { __construct();}
 
 	function __construct(){
-		echo 'Main';
 
 		parent::__construct(); //Get the inheritance right
 
@@ -25,7 +24,6 @@ class Classifieds_Core_Main extends Classifieds_Core {
 
 		parent::init();
 
-		echo 'Init Main';		
 		/* Handle requests for plugin pages */
 		add_action( 'template_redirect', array( &$this, 'handle_page_requests' ) );
 		/* Enqueue styles */
@@ -43,12 +41,10 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	* @return void|die() if "_wpnonce" is not verified
 	**/
 	function handle_page_requests() {
-		/* Handles request for my-classifieds page */
 
 		/* Handles request for classifieds page */
 		if ( is_page($this->classifieds_page_id) ) {
 			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-			echo 'Classifieds';
 			set_query_var( 'cf_action', 'my-classifieds' );
 		}
 
@@ -186,12 +182,15 @@ class Classifieds_Core_Main extends Classifieds_Core {
 				}
 			}
 			/* If user wants to go to My Classifieds main page  */
-			elseif ( isset( $_POST['go_my_classifieds'] ) ) {
-				wp_redirect( get_permalink($this->my_classifieds_page_id) );
-				;
+			elseif ( isset( $_POST['new_account'] ) ) {
+				wp_redirect( get_permalink($this->checkout_page_id) . '?cf_step=terms' );
 			}
 			/* If user wants to go to My Classifieds main page  */
-			elseif ( isset( $_POST['go_purchase'] ) ) {
+			elseif ( isset( $_POST['go_my_classifieds'] ) ) {
+				wp_redirect( get_permalink($this->my_classifieds_page_id) );
+			}
+			/* If user wants to go to My Classifieds main page  */
+			elseif ( isset( $_POST['purchase'] ) ) {
 				wp_redirect(  get_permalink($this->checkout_page_id)  );
 			} else {
 				/* Set the proper step which will be loaded by "page-my-classifieds.php" */

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CustomPress v1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-24 19:34-0500\n"
-"PO-Revision-Date: 2012-03-24 19:34-0500\n"
+"POT-Creation-Date: 2012-04-05 07:45-0500\n"
+"PO-Revision-Date: 2012-04-05 07:45-0500\n"
 "Last-Translator: Arnold Bailey <abaileytn@gmail.com>\n"
 "Language-Team: Arnold Bailey <arnold@incsub.com>\n"
 "MIME-Version: 1.0\n"
@@ -47,35 +47,35 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/core/content-types.php:894
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/core/content-types.php:903
 msgid "No values"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/core/content-types.php:1146
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/core/content-types.php:1153
 msgid "Invalid Taxonomy name in [tax ] shortcode"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/core/core.php:328
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/core/core.php:331
 msgid "Security check failed!"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:5
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:198
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:8
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:174
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/custom-fields.php:17
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/custom-fields.php:122
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/custom-fields.php:119
 msgid "Add Custom Field"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:10
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:14
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:13
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:17
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:14
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:18
 msgid "Field Title"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:14
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:47
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:150
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:17
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:50
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:153
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-post-type.php:12
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-taxonomy.php:14
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-taxonomy.php:29
@@ -87,38 +87,38 @@ msgstr ""
 msgid "required"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:18
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:21
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:22
 msgid "The title of the custom field."
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:23
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:26
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:27
 msgid "Required Field"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:27
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:30
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:31
 msgid "Make this a Required Field."
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:32
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:35
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:36
 msgid "Allow for WP/plugins"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:32
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:35
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:36
 msgid "can't be changed"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:36
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:39
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:41
 msgid "The WP and other plugins can use this custom field."
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:43
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:47
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:46
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:50
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/custom-fields.php:26
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/custom-fields.php:37
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:48
@@ -126,99 +126,99 @@ msgstr ""
 msgid "Field Type"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:51
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:54
 msgid "Text Box"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:52
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:55
 msgid "Multi-line Text Box"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:53
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:56
 msgid "Radio Buttons"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:54
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:57
 msgid "Checkboxes"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:55
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:58
 msgid "Drop Down Select Box"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:56
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:59
 msgid "Multi Select Box"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:57
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:60
 msgid "Date Picker"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:59
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:62
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:64
 msgid "Select type of the custom field."
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:70
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:87
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:73
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:90
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:76
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:93
 msgid "Fill in the options for this field"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:73
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:76
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:79
 msgid "Select Date Format option or type your own"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:76
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:79
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:82
 msgid "Date picker sample"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:89
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:92
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:95
 msgid "Order By"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:91
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:94
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:97
 msgid "Order Entered"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:102
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:112
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:105
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:115
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:108
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:118
 msgid "Option"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:105
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:115
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:108
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:118
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:111
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:121
 msgid "Default Value"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:121
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:124
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:127
 msgid "Add another option"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:129
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:133
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:132
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:136
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:135
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:139
 msgid "Field Description"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:137
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:140
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:143
 msgid "Description for the custom field."
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:146
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:150
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:149
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:153
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-post-type.php:8
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-post-type.php:12
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-taxonomy.php:25
@@ -234,7 +234,7 @@ msgstr ""
 msgid "Post Type"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:161
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/add-custom-field.php:164
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:167
 msgid "Select one or more post types to add this custom field to."
 msgstr ""
@@ -1191,14 +1191,18 @@ msgid "Deny"
 msgstr ""
 
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/custom-fields.php:104
-msgid "Returns the values of the custom fields with the specified key from the specified post."
+msgid "Embed code returns the values of the custom field with the specified key from the specified post. Property may be one of \"title\", \"description\" or \"value\". If property is not used \"value\" wil be returned. Use inside the loop in templates and PHP code "
+msgstr ""
+
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/custom-fields.php:108
+msgid "Shortcode returns the values of the custom field with the specified key from the specified post. Property may be one of \"title\", \"description\" or \"value\". If property is not used \"value\" wil be returned. Use inside the loop in Posts and Widgets"
 msgstr ""
 
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:8
 msgid "Edit Custom Field"
 msgstr ""
 
-#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:203
+#: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/edit-custom-field.php:176
 msgid "Update Custom Field"
 msgstr ""
 
@@ -1339,11 +1343,11 @@ msgid "Edit this taxonomy"
 msgstr ""
 
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/taxonomies.php:96
-msgid "Returns an HTML string of taxonomy terms associated with a post and given taxonomy. <br />Terms are linked to their respective term listing pages. Use it in templates inside the Loop."
+msgid "Embed code returns an HTML string of taxonomy terms associated with a post and given taxonomy. <br />Terms are linked to their respective term listing pages. Use it in templates inside the Loop."
 msgstr ""
 
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/taxonomies.php:100
-msgid "Returns an HTML string of taxonomy terms associated with a post and given taxonomy. <br />Terms are linked to their respective term listing pages. Use it inside the Loop."
+msgid "Shortcode returns an HTML string of taxonomy terms associated with a post and given taxonomy. <br />Terms are linked to their respective term listing pages. Use it inside the Loop."
 msgstr ""
 
 #: D:\wamp\www\custompress\wp-content\plugins\custompress/ui-admin/update-message.php:5

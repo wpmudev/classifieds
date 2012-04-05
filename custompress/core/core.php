@@ -274,6 +274,9 @@ class CustomPress_Core {
 		* @return JSON Encoded data
 		*/
 		function ajax_action_callback() {
+
+			$_POST = array_map('stripslashes_deep',$_POST);
+
 			$page_name = $_POST['cp_ajax_page_name'];
 			$options = $this->get_options();
 			if ( isset( $options['display_post_types'][$page_name]['post_type'] ) ) {

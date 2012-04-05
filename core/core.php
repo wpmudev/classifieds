@@ -46,7 +46,7 @@ class Classifieds_Core {
 	var $user_credits;
 	/** @var boolean flag whether to flush all plugin data on plugin deactivation */
 	var $flush_plugin_data = false;
-	/** @var string/int Current page for pagination (usas in query)*/
+	/** @var string/int Current page for pagination (used in query)*/
 	var $cf_page;
 	/** @var string/int Current number of pages for pagination (uses in query)*/
 	var $cf_pages ='';
@@ -75,8 +75,19 @@ class Classifieds_Core {
 
 	/** @var int the Checkout default page ID number. Track by ID so the page permalink and slug may be internationalized */
 	var $checkout_page_id = 0;
+	/** @var string the My Classifieds page slug. Track by ID so the page permalink and slug may be internationalized */
+	var $checkout_page_slug = '';
 	/** @var string classifieds_page_name the Classifieds default page name for templates. Track by ID so the page permalink and slug may be internationalized */
 	var $checkout_page_name = 'checkout';
+
+	var $use_credits = false;
+	var $use_paypal = false;
+	var $use_authorizenet = false;
+
+	var $use_free = false;
+	var $use_annual = false;
+	var $use_one_time = false;
+
 
 	/**
 	* Constructor. Old style
@@ -137,13 +148,9 @@ class Classifieds_Core {
 		/* filter for $wp_query on classifieds page - it is necessary that the other plug-ins have not changed it in these pages */
 		add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts_for_classifieds' ), 101 );
 
-		// Get pagination settings
-		$options = $this->get_options('general');
-		$this->cf_range = (is_numeric($options['pagination_range'])) ? intval($options['pagination_range']) : 4;
-		$this->cf_ads_per_page = (is_numeric($options['ads_per_page'])) ? intval($options['ads_per_page']) : 10;
-		$this->cf_pagination_top = ( ! empty($options['pagination_top']));
-		$this->cf_pagination_bottom = ( ! empty($options['pagination_bottom']));
+
 	}
+
 
 	/**
 	* Initiate variables.
@@ -172,6 +179,32 @@ class Classifieds_Core {
 		$this->current_user = wp_get_current_user();
 		/* Set current user credits */
 		$this->user_credits = get_user_meta( $this->current_user->ID, 'cf_credits', true );
+
+		// Get pagination settings
+		$options = $this->get_options('general');
+		$this->cf_range = (is_numeric($options['pagination_range'])) ? intval($options['pagination_range']) : 4;
+		$this->cf_ads_per_page = (is_numeric($options['ads_per_page'])) ? intval($options['ads_per_page']) : 10;
+		$this->cf_pagination_top = ( ! empty($options['pagination_top']));
+		$this->cf_pagination_bottom = ( ! empty($options['pagination_bottom']));
+
+		//How do we sell stuff
+		$options = $this->get_options('payment_types');
+		$this->use_free = (! empty($options['free']));
+		if (! $this->use_free) { //Can't use gateways if it's free.
+			$this->use_paypal = (! empty($options['paypal']));
+			if ($this->use_paypal){ //make sure the api fields have something in them
+				$this->use_paypal = (! empty($options['api_username'])) && (! empty($options['api_password'])) && (! empty($options['api_signature']));
+			}
+			
+			$this->use_authorizenet = (! empty($options['authorizenet']));
+			
+			$options = $this->get_options('payments');
+			
+			$this->use_credits = (! empty($options['enable_credits']));
+			$this->use_annual = (! empty($options['enable_annual']));
+			$this->use_once = (! empty($options['enable_once']));
+		}
+
 	}
 
 	/**
@@ -254,10 +287,9 @@ class Classifieds_Core {
 		/* Create neccasary pages */
 
 		$classifieds_page = $this->get_page_by_meta( 'classifieds' );
-
 		$parent_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
 
-		if (empty($parent_id) ) {
+		if ( empty($parent_id) ) {
 			$current_user = wp_get_current_user();
 			/* Construct args for the new post */
 			$args = array(
@@ -291,14 +323,16 @@ class Classifieds_Core {
 			'comment_status' => 'closed'
 			);
 			$page_id = wp_insert_post( $args );
-			add_post_meta( $page_id, "classifieds_type", $this->my_classifieds_page_name );
+			add_post_meta( $page_id, "classifieds_type",  'my_classifieds' );
 		}
 
 		$this->my_classifieds_page_id = $page_id; // Remember the number
 		$this->my_classifieds_page_slug = $classifieds_page->post_name; //Remember the slug
 
-		$page['checkout'] = get_page_by_title('Checkout');
-		if ( !isset( $page['checkout'] ) ) {
+		$classifieds_page = $this->get_page_by_meta( 'checkout' );
+		$page_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
+
+		if ( empty($page_id) ) {
 			$current_user = wp_get_current_user();
 			/* Construct args for the new post */
 			$args = array(
@@ -306,12 +340,18 @@ class Classifieds_Core {
 			'post_status'    => 'publish',
 			'post_author'    => $current_user->ID,
 			'post_type'      => 'page',
+			'post_parent'    => $parent_id,
 			'ping_status'    => 'closed',
-			'comment_status' => 'closed'
+			'comment_status' => 'closed',
+			'menu_order'     => 1
 			);
 			$page_id = wp_insert_post( $args );
-			add_post_meta( $page_id, "classifieds_type", $this->checkout_page_name );
+			add_post_meta( $page_id, "classifieds_type", 'checkout' );
 		}
+
+		$this->checkout_page_id = $page_id; // Remember the number
+		$this->checkout_page_slug = $classifieds_page->post_name; //Remember the slug
+
 	}
 
 	/**
@@ -660,14 +700,20 @@ class Classifieds_Core {
 				/** @todo Set redirect */
 				//wp_redirect( get_bloginfo('url') );
 			}
-			/* If no PayPal API credentials are set, disable the checkout process */
-			if ( empty( $options['paypal'] ) ) {
+			/* If no Payment type setup, disable the checkout process */
+			if ( ! ($this->use_free || $this->use_paypal || $this->use_authorizenet) ) {
 				/* Set the proper step which will be loaded by "page-checkout.php" */
 				set_query_var( 'cf_step', 'disabled' );
 				return;
 			}
+
 			/* If Terms and Costs step is submitted */
 			if ( isset( $_POST['terms_submit'] ) ) {
+				
+				if($this->use_free){
+					set_query_var( 'cf_step', 'cc_details' );
+					return;
+				}
 				/* Validate fields */
 				if ( empty( $_POST['tos_agree'] ) || empty( $_POST['billing'] ) ) {
 					if ( empty( $_POST['tos_agree'] ))
@@ -718,6 +764,14 @@ class Classifieds_Core {
 			}
 			/* If direct CC payment is submitted */
 			elseif ( isset( $_POST['direct_payment_submit'] ) ) {
+				
+				if($this->use_free){
+					$this->update_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'], 0, $result );
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'success' );
+					return;
+				}
+				
 				/* Initiate paypal class */
 				$checkout = new Classifieds_Core_PayPal();
 				/* Make API call */
@@ -927,7 +981,7 @@ class Classifieds_Core {
 	* @return void
 	**/
 	function set_signup_user_credits( $user_id ) {
-		$options = $this->get_options('credits');
+		$options = $this->get_options('payments');
 		if ( $options['enable_credits'] == true ) {
 			if ( !empty( $options['signup_credits'] ) )
 			update_user_meta( $user_id, 'cf_credits', $options['signup_credits'] );
@@ -1004,9 +1058,9 @@ class Classifieds_Core {
 	* @return int|string Number of credits
 	**/
 	function get_credits_from_duration( $duration ) {
-		$options = $this->get_options('credits');
+		$options = $this->get_options('payments');
 
-		if ( !isset( $options['credits_per_week'] ) )
+		if ( !isset( $options['credits_per_week'] ) || $this->use_free)
 		$options['credits_per_week'] = 0;
 
 		switch ( $duration ) {
@@ -1114,7 +1168,7 @@ class Classifieds_Core {
 	**/
 	function get_single_template( $template ) {
 		global $post;
-				if ( ! file_exists( get_template_directory() . "/single-{$post->post_type}.php" )
+		if ( ! file_exists( get_template_directory() . "/single-{$post->post_type}.php" )
 		&& file_exists( "{$this->plugin_dir}ui-front/general/single-{$post->post_type}.php" ) )
 		return "{$this->plugin_dir}ui-front/general/single-{$post->post_type}.php";
 		else
@@ -1189,7 +1243,7 @@ class Classifieds_Core {
 	* @return string Templatepath
 	**/
 	function get_taxonomy_template( $template ) {
-
+		
 		$taxonomy = get_query_var('taxonomy');
 		$term = get_query_var('term');
 
@@ -1197,8 +1251,8 @@ class Classifieds_Core {
 		return;
 
 
-		/* Check whether the files dosn't exist in the active theme directrory,
-		* alos check for file to load in our general template directory */
+		/* Check whether the files doesn't exist in the active theme directrory,
+		* also check for file to load in our general template directory */
 		if ( ! file_exists( get_template_directory() . "/taxonomy-{$taxonomy}-{$term}.php" )
 		&& file_exists( "{$this->plugin_dir}ui-front/general/taxonomy-{$taxonomy}-{$term}.php" ) )
 		return "{$this->plugin_dir}ui-front/general/taxonomy-{$taxonomy}-{$term}.php";
@@ -1210,22 +1264,6 @@ class Classifieds_Core {
 		return "{$this->plugin_dir}ui-front/general/taxonomy.php";
 		else
 		return $template;
-	}
-
-	/**
-	* Renders an admin section of display code.
-	*
-	* @param  string $name Name of the admin file(without extension)
-	* @param  string $vars Array of variable name=>value that is available to the display code(optional)
-	* @return void
-	**/
-	function render_admin( $name, $vars = array() ) {
-		foreach ( $vars as $key => $val )
-		$$key = $val;
-		if ( file_exists( "{$this->plugin_dir}ui-admin/{$name}.php" ) )
-		include "{$this->plugin_dir}ui-admin/{$name}.php";
-		else
-		echo "<p>Rendering of admin template {$this->plugin_dir}ui-admin/{$name}.php failed</p>";
 	}
 
 	/**
@@ -1269,10 +1307,12 @@ class Classifieds_Core {
 	*
 	* @param string $url The URL to which the function should redirect
 	**/
-	function js_redirect( $url ) {
+	function js_redirect( $url, $silent = false ) {
+		if(! $silent ):
 		?>
 		<p><?php _e( 'You are being redirected. Please wait.', $this->text_domain );  ?></p>
 		<img src="<?php echo $this->plugin_url .'/ui-front/general/images/loader.gif'; ?>" alt="<?php _e( 'You are being redirected. Please wait.', $this->text_domain );  ?>" />
+		<?php endif; ?>
 		<script type="text/javascript">//<![CDATA[
 			window.location = '<?php echo $url; ?>';	//]]>
 		</script>

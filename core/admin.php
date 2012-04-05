@@ -24,9 +24,6 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 
 		parent::__construct();
 
-		/* Attach plugin to the "init" hook */
-		//add_action( 'init', array( &$this, 'init' ) );
-		//add_action( 'init', array( &$this, 'init_vars' ) );
 	}
 
 	/**
@@ -56,8 +53,28 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 		add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
 		add_submenu_page( $this->menu_slug, __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
 		add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', 'classifieds_settings', array( &$this, 'handle_admin_requests' ) );
+		
+		
 		add_submenu_page( $this->menu_slug, __( 'Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
 	}
+
+
+	/**
+	* Renders an admin section of display code.
+	*
+	* @param  string $name Name of the admin file(without extension)
+	* @param  string $vars Array of variable name=>value that is available to the display code(optional)
+	* @return void
+	**/
+	function render_admin( $name, $vars = array() ) {
+		foreach ( $vars as $key => $val )
+		$$key = $val;
+		if ( file_exists( "{$this->plugin_dir}ui-admin/{$name}.php" ) )
+		include "{$this->plugin_dir}ui-admin/{$name}.php";
+		else
+		echo "<p>Rendering of admin template {$this->plugin_dir}ui-admin/{$name}.php failed</p>";
+	}
+
 
 	/**
 	* Flow of a typical admin page request.
@@ -65,7 +82,12 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	* @return void
 	**/
 	function handle_admin_requests() {
-		if ( isset( $_GET['page'] ) && $_GET['page'] == $this->menu_slug ) {
+		$valid_tabs = array('general', 'payments', 'payment-types');
+		
+		$page = (empty($_GET['page'])) ? '' : $_GET['page'] ;
+		$tab = (empty($_GET['tab'])) ? 'general' : $_GET['tab']; //default tab
+
+		if ( $page == $this->menu_slug ) {
 			if ( isset( $_POST['confirm'] ) ) {
 				/* Change post status */
 				if ( $_POST['action'] == 'end' )
@@ -84,38 +106,22 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 				/* Render admin template */
 				$this->render_admin( 'dashboard' );
 			}
-		} elseif ( isset( $_GET['page'] ) && $_GET['page'] == 'classifieds_settings' ) {
-			if ( isset( $_GET['tab'] ) && $_GET['tab'] == 'payments' ) {
-				if ( $_GET['sub'] == 'authorizenet' ) {
-					$this->render_admin( 'payments-authorizenet' );
-				} else {
-					/* Save options */
-					if ( isset( $_POST['save'] ) ) {
-						$this->save_options( $_POST );
-					}
-					/* Render admin template */
-					$this->render_admin( 'payments-paypal' );
+		}
+		elseif ( $page == 'classifieds_settings' ) {
+			if ( in_array( $tab, $valid_tabs)) {
+				/* Save options */
+				if ( isset( $_POST['save'] ) ) {
+					
+					check_admin_referer('verify');
+					
+					$this->save_options( $_POST );
 				}
-			} else {
-				if ( isset( $_GET['sub'] ) && $_GET['sub'] == 'checkout' ) {
-					if ( isset( $_POST['save'] ) ) {
-						$this->save_options( $_POST );
-					}
-					$this->render_admin( 'settings-checkout' );
-				} elseif ( isset( $_GET['sub'] ) && $_GET['sub'] == 'credits' ) {
-					if ( isset( $_POST['save'] ) ) {
-						$this->save_options( $_POST );
-					}
-					$this->render_admin( 'settings-credits' );
-				} else {
-					if ( isset( $_POST['save'] ) ) {
-						$this->save_options( $_POST );
-					}
-					$this->render_admin( 'settings-general' );
-				}
+				/* Render admin template */
+				$this->render_admin( "settings-{$tab}" );
+
 			}
-		} elseif ( $_GET['page'] == 'classifieds_credits' ) {
-			if ( isset( $_GET['tab'] ) && $_GET['tab'] == 'send_credits' ) {
+		} elseif ( $page == 'classifieds_credits' ) {
+			if ( $tab == 'send-credits' ) {
 
 			} else {
 				if ( isset( $_POST['purchase'] ) ) {
@@ -150,6 +156,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	**/
 	function admin_enqueue_scripts() {
 		wp_enqueue_script('jquery');
+		wp_enqueue_style( 'cf-admin-styles', $this->plugin_url . 'ui-admin/css/ui-styles.css');
 	}
 
 	/**
@@ -157,16 +164,6 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	*/
 	function admin_print_styles() {
 		?>
-		<style type="text/css">
-			.wrap table    { text-align: left; }
-			.wrap table th { width: 200px; }
-			.classifieds_page_classifieds_settings .wrap h2 { border-bottom:1px solid #CCCCCC; padding-bottom:0; }
-			.classifieds_page_classifieds_credits .wrap h2 { border-bottom:1px solid #CCCCCC; padding-bottom:0; }
-			.form-table #available_credits { color: #333; }
-			.purchase_credits .submit { padding: 0; margin: 0; float: left; }
-			.purchase_credits #purchase_credits { float: left; }
-			.subsubsub h3 { margin: 0; }
-		</style>
 		<?php
 	}
 

@@ -36,7 +36,24 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		add_action( 'wp_print_styles', array( &$this, 'enqueue_styles' ) );
 		add_action( 'wp_head', array( &$this, 'print_scripts' ) );
 		add_action( 'bp_template_content', array( &$this, 'handle_template_requests' ) );
+
+		/* template for  page */
+		add_action( 'template_redirect', array( &$this, 'handle_nav' ) );
+
 	}
+
+
+	function handle_nav(){
+
+		global $bp, $post;
+		/* Handles request for classifieds page */
+		if ( $post->ID == $this->my_classifieds_page_id ) {
+			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
+			$this->js_redirect($bp->loggedin_user->domain . $this->classifieds_page_slug .'/' . $this->my_classifieds_page_slug . '/active', true);
+		}
+	}
+
+
 
 	/**
 	* Add BuddyPress navigation.
@@ -45,6 +62,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	**/
 	function add_navigation() {
 		global $bp;
+
 		/* Set up classifieds as a sudo-component for identification and nav selection */
 		$classifieds_page = get_page($this->classifieds_page_id);
 
@@ -88,9 +106,8 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 			'position'        => 10,
 			'user_has_access' => true
 			));
-			
-			$options = $this->get_options('credits');
-			if($options['enable_credits']){
+
+			if($this->use_credits && ! $this->is_full_access()){
 				bp_core_new_subnav_item( array(
 				'name'            => __( 'My Credits', $this->text_domain ),
 				'slug'            => 'my-credits',
@@ -101,7 +118,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 				'user_has_access' => true
 				));
 			}
-			
+
 			bp_core_new_subnav_item( array(
 			'name'            => __( 'Create New Ad', $this->text_domain ),
 			'slug'            => 'create-new',
@@ -135,6 +152,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		/* This is generic BuddyPress plugins file. All other functions hook
 		* themselves into the plugins template hooks. Each BuddyPress component
 		* "members", "groups", etc. offers different plugin file and different hooks */
+
 		bp_core_load_template( 'members/single/plugins', true );
 	}
 
@@ -147,7 +165,6 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	function handle_template_requests() {
 		global $bp;
 
-		
 		//Component my-classifieds page
 		if ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == $this->my_classifieds_page_slug ) {
 
@@ -276,7 +293,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		}
 		//Component Author classifieds page (classifieds/all)
 		elseif ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == 'all' ) {
-			
+
 			//show author classifieds page
 			$this->render_front('my-classifieds');
 		}

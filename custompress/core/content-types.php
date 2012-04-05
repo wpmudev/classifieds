@@ -85,6 +85,9 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	* @return void
 	*/
 	function handle_post_type_requests() {
+
+		//$_POST = array_map('stripslashes_deep',$_POST);
+		
 		// If add/update request is made
 		if ( isset( $_POST['submit'] )
 		&& isset( $_POST['_wpnonce'] )
@@ -270,6 +273,9 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	* @return void
 	*/
 	function handle_taxonomy_requests() {
+
+		//$_POST = array_map('stripslashes_deep',$_POST);
+
 		// If valid add/edit taxonomy request is made
 		if (   isset( $_POST['submit'] )
 		&& isset( $_POST['_wpnonce'] )
@@ -438,12 +444,15 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	* Intercepts $_POST request and processes the custom fields submissions
 	*/
 	function handle_custom_field_requests() {
-
+		
+		$_POST = array_map('stripslashes_deep',$_POST);
+		
 		// If valid add/edit custom field request is made
 		if ( isset( $_POST['submit'] )
 		&& isset( $_POST['_wpnonce'] )
 		&& wp_verify_nonce( $_POST['_wpnonce'], 'submit_custom_field' )
 		) {
+	
 			// Validate input fields data
 			$field_title_valid       = $this->validate_field( 'field_title', ( isset( $_POST['field_title'] ) ) ? $_POST['field_title'] : null );
 			$field_object_type_valid = $this->validate_field( 'object_type', ( isset( $_POST['object_type'] ) ) ? $_POST['object_type'] : null );
