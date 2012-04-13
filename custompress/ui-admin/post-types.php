@@ -51,11 +51,11 @@ $post_types = $this->post_types;
 				</strong>
 				<div class="row-actions" id="row-actions-<?php echo $name; ?>">
 					<span class="edit">
-						<a title="<?php _e('Edit the post type', $this->text_domain); ?>" href="<?php echo self_admin_url( 'admin.php?page=' . $_GET['page'] . '&ct_content_type=post_type&ct_edit_post_type=' . $name ); ?>"><?php _e('Edit', $this->text_domain); ?></a> | 
-						</span>
+						<a title="<?php _e('Edit the post type', $this->text_domain); ?>" href="<?php echo self_admin_url( 'admin.php?page=' . $_GET['page'] . '&ct_content_type=post_type&ct_edit_post_type=' . $name ); ?>"><?php _e('Edit', $this->text_domain); ?></a> |
+					</span>
 					<span class="trash">
 						<a class="submitdelete" href="#" onclick="javascript:content_types.toggle_delete('<?php echo( $name ); ?>'); return false;"><?php _e('Delete', $this->text_domain); ?></a>
-						</span>
+					</span>
 				</div>
 				<form action="" method="post" id="form-<?php echo( $name ); ?>" class="del-form">
 					<?php wp_nonce_field('delete_post_type'); ?>
@@ -70,9 +70,12 @@ $post_types = $this->post_types;
 				<img src="<?php if ( isset( $post_type['menu_icon'] ) ) echo $post_type['menu_icon']; else echo $this->plugin_url . 'ui-admin/images/default-menu-icon.png'; ?>" alt="<?php if ( empty( $post_type['menu_icon'] ) ) echo( 'No Icon'); ?>" />
 			</td>
 			<td class="ct-supports">
-				<?php foreach ( $post_type['supports'] as $value ): ?>
+				<?php
+				if(is_array($post_type['supports'])):
+				foreach( $post_type['supports'] as $value ): ?>
 				<?php echo( $value ); ?>
-				<?php endforeach; ?>
+				<?php endforeach;
+				endif; ?>
 			</td>
 			<td><?php echo( $post_type['capability_type'] ); ?></td>
 			<td class="ct-tf-icons-wrap">

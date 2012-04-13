@@ -4,11 +4,12 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
-= 2.1.7 =
+= 2.2 =
 
 * Replaced Submodule with actual CustomPress for easier code maintenance
 * Changes default page tracking (classifieds, my-classifieds, checkout) to numeric triggers
-
+* Added send credits
+* Lots of Buddy press fixes
 
 = 2.1.6 =
 * Corrected CF_PLUGIN_URL & CT_SUBMODULE_URL for SSL

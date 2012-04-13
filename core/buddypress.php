@@ -43,15 +43,6 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	}
 
 
-	function handle_nav(){
-
-		global $bp, $post;
-		/* Handles request for classifieds page */
-		if ( $post->ID == $this->my_classifieds_page_id ) {
-			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-			$this->js_redirect($bp->loggedin_user->domain . $this->classifieds_page_slug .'/' . $this->my_classifieds_page_slug . '/active', true);
-		}
-	}
 
 
 
@@ -156,6 +147,22 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		bp_core_load_template( 'members/single/plugins', true );
 	}
 
+	function handle_nav(){
+
+		global $bp, $post;
+
+		/* Handles request for classifieds page */
+		if ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == 'all' ) {
+			$this->js_redirect( trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug .'/' . $this->my_classifieds_page_slug . '/active', true);
+
+		}
+		elseif( $post->ID == $this->my_classifieds_page_id ) {
+			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
+			$this->js_redirect( trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug .'/' . $this->my_classifieds_page_slug . '/active', true);
+		}
+	}
+
+
 	/**
 	* Load the content for the specific classifieds component and handle requests
 	*
@@ -256,19 +263,19 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 							update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
 						}
 
-						if ( "" != $bp->loggedin_user->userdata->user_url )
-						$this->js_redirect( $bp->loggedin_user->userdata->user_url . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
-						else
-						$this->js_redirect( $bp->loggedin_user->domain . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
+						//						if ( "" != $bp->loggedin_user->userdata->user_url )
+						//						$this->js_redirect( trailingslashit($bp->loggedin_user->userdata->user_url) . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
+						//						else
+						$this->js_redirect( trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
 					} else {
 						//save ad if have not credits but select draft
 						if ( isset( $_POST['status'] ) && 'draft' == $_POST['status'] ) {
 							/* Create ad */
 							$post_id = $this->update_ad( $_POST, $_FILES );
-							if ( "" != $bp->loggedin_user->userdata->user_url )
-							$this->js_redirect( $bp->loggedin_user->userdata->user_url . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
-							else
-							$this->js_redirect( $bp->loggedin_user->domain . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
+							//							if ( "" != $bp->loggedin_user->userdata->user_url )
+							//							$this->js_redirect( trailingslashit($bp->loggedin_user->userdata->user_url) . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
+							//							else
+							$this->js_redirect( trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
 						} else {
 							$this->render_front('create-new', array( 'cl_credits_error' => '1' ));
 						}
@@ -285,7 +292,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		elseif ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == 'my-credits' ) {
 			//redirect on checkout page
 			if ( isset( $_POST['purchase'] ) ) {
-				$this->js_redirect( get_bloginfo('url') . '/checkout/' );
+				$this->js_redirect( get_permalink($this->checkout_page_id) );
 				exit;
 			}
 			//show credits page
@@ -300,9 +307,9 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		//default for classifieds page
 		elseif ( $bp->current_component == $this->classifieds_page_slug ) {
 			if ( bp_is_my_profile() ) {
-				$this->js_redirect( $bp->loggedin_user->domain . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
+				$this->js_redirect( trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
 			} else {
-				$this->js_redirect( $bp->displayed_user->domain . $this->classifieds_page_slug . '/' . 'all' );
+				$this->js_redirect( trailingslashit($bp->displayed_user->domain) . $this->classifieds_page_slug . '/' . 'all' );
 			}
 		}
 	}

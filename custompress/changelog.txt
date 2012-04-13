@@ -5,6 +5,14 @@ Author URI: http://premium.wpmudev.org
 
 == Changelog ==
 
+= 1.2.1.2 = 2012-04-12 Arnold Bailey
+* Fixed $_REQUEST parameter name collision of 'post_type' conflicting with wp admin.php
+* Fixes settings not being remembered for Post Type checkboxes.
+
+= 1.2.1.1 = 2012-04-11 Arnold Bailey
+* Fixed error on display of radio and selectbox shortcodes
+* Fixed debug warnings in several places. 
+
 = 1.2.1 = 2012-04-05 Arnold Bailey
 
 * Added field reordering to Custom Fields

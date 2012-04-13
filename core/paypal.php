@@ -101,14 +101,14 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
 			* has been succesfully authorized.
 			* This is set to the value entered on the Integration Assistant.
 			*/
-			$this->return_url =  get_bloginfo('url') . '/checkout/';
+			$this->return_url =  get_permalink($this->checkout_page_id);
 
 			/*
 			* The cancelURL is the location buyers are sent to when they hit the
 			* cancel button during authorization of payment during the PayPal flow.
 			* This is set to the value entered on the Integration Assistant
 			*/
-			$this->cancel_url = get_bloginfo('url') . '/';
+			$this->cancel_url = home_url('/');
 		}
 	}
 

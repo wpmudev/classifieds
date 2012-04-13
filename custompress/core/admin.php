@@ -40,10 +40,13 @@ class CustomPress_Core_Admin extends CustomPress_Core {
 	* @return void
 	*/
 	function admin_init() {
+
 		//Add custom fields as Columns on edit Post Type page
-		if ( isset( $_GET['post_type'] ) && true === is_array( $this->post_types[$_GET['post_type']] ) ) {
-			add_filter( 'manage_edit-' . $_GET['post_type'] . '_columns', array( &$this, 'add_new_cf_columns' ) );
-			add_action( 'manage_' . $_GET['post_type'] . '_posts_custom_column', array( &$this, 'manage_cf_columns' ), 10, 2 );
+		if ( isset( $_GET['post_type'] )){
+			if( isset($this->post_types[$_GET['post_type']]) && is_array( $this->post_types[$_GET['post_type'] ] ) ) {
+				add_filter( 'manage_edit-' . $_GET['post_type'] . '_columns', array( &$this, 'add_new_cf_columns' ) );
+				add_action( 'manage_' . $_GET['post_type'] . '_posts_custom_column', array( &$this, 'manage_cf_columns' ), 10, 2 );
+			}
 		}
 	}
 
@@ -171,7 +174,7 @@ class CustomPress_Core_Admin extends CustomPress_Core {
 		wp_enqueue_script( 'ct-admin-scripts',
 		$this->plugin_url . 'ui-admin/js/ct-scripts.js',
 		array( 'jquery' ) );
-		
+
 	}
 
 	/**
@@ -200,9 +203,9 @@ class CustomPress_Core_Admin extends CustomPress_Core {
 	* @return void
 	*/
 	function handle_settings_page_requests() {
-		
+
 		$_POST = array_map('stripslashes_deep',$_POST);
-		
+
 		// Save settings
 		if ( isset( $_POST['save'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) ) {
 
@@ -225,13 +228,13 @@ class CustomPress_Core_Admin extends CustomPress_Core {
 			}
 
 			// Process post types display
-			$args = array( 'page' => 'home', 'post_type' => ( isset( $_POST['post_type'] ) ) ? $_POST['post_type'] : null );
+			$args = array( 'page' => 'home', 'post_type' => ( isset( $_POST['cp_post_type'] ) ) ? $_POST['cp_post_type'] : null );
 			$options = $this->get_options();
 			$options = array_merge( $options , array( 'display_post_types' => array( $args['page'] => $args )) );
-			
+
 			//Update datepicker settings
 			if (! empty($_POST['datepicker_theme']) && ! empty($_POST['date_format']))
-			$options = array_merge( $options, array('datepicker_theme' => $_POST['datepicker_theme'], 'date_format' => $_POST['date_format']  ) ); 
+			$options = array_merge( $options, array('datepicker_theme' => $_POST['datepicker_theme'], 'date_format' => $_POST['date_format']  ) );
 			update_option( $this->options_name, $options );
 		}
 

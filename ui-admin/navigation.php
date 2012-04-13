@@ -1,5 +1,6 @@
 <?php if (!defined('ABSPATH')) die('No direct access allowed!'); ?>
 
+
 <h2>
 
 	<?php if($page == 'classifieds_settings'): ?>
@@ -11,6 +12,13 @@
 
 	<?php if( $page == 'classifieds_credits'):?>
 	<a class="nav-tab <?php if ( $tab == 'my-credits' || empty( $tab) )  echo 'nav-tab-active'; ?>" href="admin.php?page=classifieds_credits&tab=my-credits"><?php _e( 'My Credits', $this->text_domain ); ?></a>
+	
+	<?php 
+	$current_user = wp_get_current_user();
+	if(! empty($current_user->ID) && $current_user->has_cap('manage_options')): ?>
+	<a class="nav-tab <?php if ( $tab == 'send-credits' || empty( $tab) )  echo 'nav-tab-active'; ?>" href="admin.php?page=classifieds_credits&tab=send-credits"><?php _e( 'Send Credits', $this->text_domain ); ?></a>
+	<?php endif; ?>
+
 	<?php endif; ?>
 	
 </h2>

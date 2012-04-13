@@ -14,7 +14,7 @@ $cf = &$__classifieds_core; //Shorthand
 
 $options_general = $cf->get_options( 'general' );
 
-$cf_path = get_bloginfo('url') . '/' . $cf->classifieds_page_slug .'/' . $cf->my_classifieds_page_slug;
+$cf_path = home_url('/') . $cf->classifieds_page_slug .'/' . $cf->my_classifieds_page_slug;
 
 get_header();
 

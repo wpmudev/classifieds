@@ -86,7 +86,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	*/
 	function handle_post_type_requests() {
 
-		//$_POST = array_map('stripslashes_deep',$_POST);
+		$_POST = array_map('stripslashes_deep',$_POST);
 		
 		// If add/update request is made
 		if ( isset( $_POST['submit'] )
@@ -233,6 +233,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	* @return void
 	*/
 	function register_post_types() {
+
 		// TODO This sucks, think of a better way
 		$keep_network_content_types = get_site_option('keep_network_content_types');
 
@@ -263,7 +264,6 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				}
 			}
 		}
-
 		$this->flush_rewrite_rules();
 	}
 
@@ -274,7 +274,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	*/
 	function handle_taxonomy_requests() {
 
-		//$_POST = array_map('stripslashes_deep',$_POST);
+		$_POST = array_map('stripslashes_deep',$_POST);
 
 		// If valid add/edit taxonomy request is made
 		if (   isset( $_POST['submit'] )
@@ -688,7 +688,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 					$meta_box_label = 'Custom Fields';
 
 					if ( isset( $this->post_types[$object_type] ) ) {
-						if ( 0 < strlen( $this->post_types[$object_type]['labels']['custom_fields_block'] ) )
+						if ( ! empty( $this->post_types[$object_type]['labels']['custom_fields_block'] ) )
 						$meta_box_label = $this->post_types[$object_type]['labels']['custom_fields_block'];
 					}
 
@@ -1116,9 +1116,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 			default: {
 				switch ($custom_field['field_type']){
 					case 'checkbox':
-					case 'selectbox':
-					case 'multiselectbox':
-					case 'radio': {
+					case 'multiselectbox': {
 						if ( get_post_meta( $post->ID, $id, true ) ) {
 							foreach ( get_post_meta( $post->ID, $id, true ) as $value ) {
 								$result .= (empty($result)) ? $value : ', ' . $value;
@@ -1126,7 +1124,18 @@ class CustomPress_Content_Types extends CustomPress_Core {
 						}
 						break;
 					}
-					default: $result = get_post_meta( $post->ID, $id, true ); break;
+					case 'selectbox':
+					case 'radio': {
+						if ( get_post_meta( $post->ID, $id, false ) ) {
+							foreach ( get_post_meta( $post->ID, $id, false ) as $value ) {
+								$result .= (empty($result)) ? $value : ', ' . $value;
+							}
+						}
+						break;
+					}
+					default: {
+						$result = get_post_meta( $post->ID, $id, true ); break;
+					}
 				}
 			}
 		}

@@ -10,8 +10,11 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	var $hook;
 	/** @var string $menu_slug The main menu slug */
 	var $menu_slug        = 'classifieds';
-	/** @var string $sub_menu_slug Submenu slug @todo better way of hadnling this */
+	/** @var string $sub_menu_slug Submenu slug @todo better way of handling this */
 	var $sub_menu_slug    = 'classifieds_credits';
+
+	/** @var string $message Return message after save settigns operation */
+	var $message  = '';
 
 	/**
 	* Constructor. Hooks the whole module to the "init" hook.
@@ -41,6 +44,8 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 			add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
 			add_action( 'admin_init', array( &$this, 'admin_head' ) );
 			add_action( 'save_post',  array( &$this, 'save_expiration_date' ), 1, 1 );
+
+			$this->message = __( 'Settings Saved.', $this->text_domain );
 		}
 	}
 
@@ -53,9 +58,10 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 		add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
 		add_submenu_page( $this->menu_slug, __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
 		add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', 'classifieds_settings', array( &$this, 'handle_admin_requests' ) );
-		
-		
-		add_submenu_page( $this->menu_slug, __( 'Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
+
+		if($this->use_credits){
+			add_submenu_page( $this->menu_slug, __( 'Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
+		}
 	}
 
 
@@ -83,7 +89,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	**/
 	function handle_admin_requests() {
 		$valid_tabs = array('general', 'payments', 'payment-types');
-		
+
 		$page = (empty($_GET['page'])) ? '' : $_GET['page'] ;
 		$tab = (empty($_GET['tab'])) ? 'general' : $_GET['tab']; //default tab
 
@@ -111,21 +117,52 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 			if ( in_array( $tab, $valid_tabs)) {
 				/* Save options */
 				if ( isset( $_POST['save'] ) ) {
-					
+
 					check_admin_referer('verify');
-					
+
 					$this->save_options( $_POST );
 				}
 				/* Render admin template */
 				$this->render_admin( "settings-{$tab}" );
 
 			}
-		} elseif ( $page == 'classifieds_credits' ) {
+		}
+		//Send credits to other users.
+		elseif ( $page == 'classifieds_credits' ) {
+
 			if ( $tab == 'send-credits' ) {
+				if(!empty($_POST)) check_admin_referer('verify');
+				$send_to = ( empty($_POST['manage_credits'])) ? '' : $_POST['manage_credits'];
+				$send_to_user = ( empty($_POST['manage_credits_user'])) ? '' : $_POST['manage_credits_user'];
+				$send_to_count = ( empty($_POST['manage_credits_count'])) ? '' : $_POST['manage_credits_count'];
+
+				$credits = (is_numeric($send_to_count)) ? abs(intval($send_to_count)) : 0;
+
+				if ($send_to == 'send_single'){
+					$user = get_user_by('login', $send_to_user);
+					if($user){
+						$this->update_user_credits($credits, $user->ID);
+					} else {
+						$this->message = sprintf(__('User "%s" not found or not a Classifieds member',$this-text_domain), $send_to_user);
+					}
+				}
+
+				if ($send_to == 'send_all'){
+					$search = array();
+					if(is_multisite()) $search['blog_id'] = get_current_blog_id();
+					$users = get_users($search);
+					foreach($users as $user){
+						$this->update_user_credits($credits, $user->ID);
+					}
+					$this->message = sprintf(__('All users have had "%s" credits added to their accounts.',$this-text_domain), $credits);
+
+				}
+
+				$this->render_admin( "settings-{$tab}" );
 
 			} else {
 				if ( isset( $_POST['purchase'] ) ) {
-					$this->js_redirect( get_bloginfo('url') . '/checkout/' );
+					$this->js_redirect( get_permalink($this->checkout_page_id) );
 				} else {
 					$this->render_admin( 'credits-my-credits' );
 				}

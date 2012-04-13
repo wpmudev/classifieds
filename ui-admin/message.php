@@ -4,6 +4,6 @@
 
 <?php if ( isset( $_POST['save'] ) ): ?>
 <div class="updated below-h2" id="message">
-	<p><?php echo $msg; ?></p>
+	<p><?php echo $this->message; ?></p>
 </div>
 <?php endif; ?>

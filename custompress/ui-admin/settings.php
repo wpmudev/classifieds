@@ -13,6 +13,9 @@ $post_types = $this->post_types;
 if ( $enable_subsite_content_types && $keep_network_content_types )
 $network_post_types = get_site_option('ct_custom_post_types');
 
+$options = $this->get_options();
+
+$cp_post_type = $options['display_post_types']['home']['post_type'];
 
 ?>
 
@@ -32,13 +35,13 @@ $network_post_types = get_site_option('ct_custom_post_types');
 					<label for="enable_subsite_content_types"><?php _e('Enable sub-site content types.', $this->text_domain) ?></label>
 				</th>
 				<td>
-					<input type="checkbox" id="enable_subsite_content_types" name="enable_subsite_content_types" value="1" <?php if ( !empty( $enable_subsite_content_types ) ) echo 'checked="checked"'; ?>  />
+					<input type="checkbox" id="enable_subsite_content_types" name="enable_subsite_content_types" value="1" <?php checked(empty( $enable_subsite_content_types ), false ); ?>  />
 					<span class="description"><?php _e('If you enable this option, sub-sites on your network will be able to define their own content types. If this option is not enabled ( default ) all sites on your network will be forced to use the network-wide content types defined by you, the Super Admin.', $this->text_domain); ?></span>
 					<br /><br />
-					<input type="radio" name="keep_network_content_types" value="1" <?php if ( !empty( $keep_network_content_types ) ) echo 'checked="checked"'; ?> />
+					<input type="radio" name="keep_network_content_types" value="1" <?php checked(empty( $keep_network_content_types ), false ); ?> />
 					<span class="description"><?php _e('Keep the network-wide content types on sub-sites.', $this->text_domain); ?></span>
 					<br />
-					<input type="radio" name="keep_network_content_types" value="0" <?php if ( empty( $keep_network_content_types ) ) echo 'checked="checked"'; ?> />
+					<input type="radio" name="keep_network_content_types" value="0" <?php checked( empty($keep_network_content_types ), true ); ?> />
 					<span class="description"><?php _e('Remove the network-wide content types from sub-sites.', $this->text_domain); ?></span>
 				</td>
 			</tr>
@@ -51,21 +54,21 @@ $network_post_types = get_site_option('ct_custom_post_types');
 		<table class="form-table">
 			<tr>
 				<th>
-					<label for="post_type"><?php _e('Display post types on "Home": ', $this->text_domain) ?></label>
+					<label for="cp_post_type"><?php _e('Display post types on "Home": ', $this->text_domain) ?></label>
 				</th>
 				<td>
-					<input type="checkbox" name="post_type[]" value="post" />
+					<input type="checkbox" name="cp_post_type[]" value="post" <?php checked(is_array($cp_post_type) && in_array('post',$cp_post_type),true); ?> />
 					<span class="description"><strong>post</strong></span>
 					<br />
-					<input type="checkbox" name="post_type[]" value="page" />
+					<input type="checkbox" name="cp_post_type[]" value="page" <?php checked(is_array($cp_post_type) && in_array('page',$cp_post_type),true); ?> />
 					<span class="description"><strong>page</strong></span>
 					<br />
-					<input type="checkbox" name="post_type[]" value="attachment" />
+					<input type="checkbox" name="cp_post_type[]" value="attachment" <?php checked(is_array($cp_post_type) && in_array('attachment',$cp_post_type),true); ?> />
 					<span class="description"><strong>attachment</strong></span>
 					<br />
 					<?php if ( !empty( $post_types ) ): ?>
 					<?php foreach ( $post_types as $post_type => $args ): ?>
-					<input type="checkbox" name="post_type[]" value="<?php echo( $post_type ); ?>" />
+					<input type="checkbox" name="cp_post_type[]" value="<?php echo( $post_type ); ?>" <?php checked(is_array($cp_post_type) && in_array($post_type,$cp_post_type),true); ?> />
 					<span class="description"><strong><?php echo $post_type; ?></strong></span>
 					<br />
 					<?php endforeach; ?>
@@ -73,7 +76,7 @@ $network_post_types = get_site_option('ct_custom_post_types');
 					<?php if ( $enable_subsite_content_types && $keep_network_content_types ): ?>
 					<?php if ( !empty( $network_post_types ) ): ?>
 					<?php foreach ( $network_post_types as $post_type => $args ): ?>
-					<input type="checkbox" name="post_type[]" value="<?php echo( $post_type ); ?>" />
+					<input type="checkbox" name="cp_post_type[]" value="<?php echo( $post_type ); ?>" <?php checked(is_array($cp_post_type) && in_array($post_type,$cp_post_type),true); ?> />
 					<span class="description"><strong><?php echo $post_type; ?></strong></span>
 					<br />
 					<?php endforeach; ?>
@@ -82,7 +85,7 @@ $network_post_types = get_site_option('ct_custom_post_types');
 					<br />
 					<span class="description"><?php _e('Check the custom post types you want to display on the "Home" page.', $this->text_domain); ?></span>
 					<br /><br />
-					<input type="checkbox" name="post_type[]" value="default" />
+					<input type="checkbox" name="cp_post_type[]" value="default" <?php checked(is_array($cp_post_type) && in_array('default', $cp_post_type),true); ?> />
 					<span class="description"><strong>default</strong></span><br /><br />
 					<span class="description"><?php _e('If "default" is checked the "Home" page will display the default post types.', $this->text_domain); ?></span>
 				</td>
@@ -107,7 +110,7 @@ $network_post_types = get_site_option('ct_custom_post_types');
 						$datepicker_theme = (is_array($datepicker_theme)) ? 'excite-bike' : $datepicker_theme;
 
 						$this->jquery_ui_css($datepicker_theme); //Load the current ui theme css
-						
+
 						$themes = glob($this->plugin_dir . 'datepicker/css/*', GLOB_ONLYDIR);
 						foreach($themes as $theme){
 							$theme = basename($theme);

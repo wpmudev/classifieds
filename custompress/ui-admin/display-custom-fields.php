@@ -21,12 +21,12 @@ $output = false;
 			<?php endforeach; ?>
 
 			<?php
-			if ( isset( $custom_field['field_wp_allow'] ) && 1 == $custom_field['field_wp_allow'] )
-			$prefix = 'ct_';
-			else
+			if ( empty( $custom_field['field_wp_allow'] ) )
 			$prefix = '_ct_';
+			else
+			$prefix = 'ct_';
 
-			$required = ($custom_field['field_required'] == 1) ? 'required' : ''; //required field class
+			$required = (empty($custom_field['field_required'])) ? '' : 'required'; //required field class
 			?>
 
 			<?php if ( $output ): ?>

@@ -611,7 +611,7 @@ class Classifieds_Core {
 		'post_author'    => $current_user->ID,
 		'post_type'      => $this->post_type,
 		'ping_status'    => 'closed',
-		'comment_status' => 'closed'
+		'comment_status' => 'open'
 		);
 		/* Insert page and get the ID */
 		$post_id = wp_insert_post( $args );
@@ -996,10 +996,7 @@ class Classifieds_Core {
 	function get_user_credits() {
 		$credits = get_user_meta( get_current_user_id(), 'cf_credits', true );
 		$credits_log = get_user_meta( get_current_user_id(), 'cf_credits_log', true );
-		if ( empty( $credits ) )
-		return 0;
-		else
-		return $credits;
+		return ( empty( $credits ) ) ? 0 : $credits;
 	}
 
 	/**
@@ -1010,17 +1007,12 @@ class Classifieds_Core {
 	* @return void
 	**/
 	function update_user_credits( $credits, $user_id = NULL ) {
-		if ( isset( $user_id ) ) {
-			$available_credits = get_user_meta( $user_id , 'cf_credits', true );
-			$total_credits = ( get_user_meta( $user_id , 'cf_credits', true ) ) ? ( $available_credits + $credits ) : $credits;
-			update_user_meta( $user_id, 'cf_credits', $total_credits );
-			$this->update_user_credits_log( $credits, $user_id );
-		} else {
-			$available_credits = get_user_meta( $this->current_user->ID , 'cf_credits', true );
-			$total_credits = ( get_user_meta( $this->current_user->ID , 'cf_credits', true ) ) ? ( $available_credits + $credits ) : $credits;
-			update_user_meta( $this->current_user->ID, 'cf_credits', $total_credits );
-			$this->update_user_credits_log( $credits, $user_id );
-		}
+
+		$user_id = (empty($user_id)) ? $this->current_user->ID : $user_id;
+		$available_credits = get_user_meta( $user_id , 'cf_credits', true );
+		$total_credits = ( $available_credits ) ? ( $available_credits + $credits ) : $credits;
+		update_user_meta( $user_id, 'cf_credits', $total_credits );
+		$this->update_user_credits_log( $credits, $user_id );
 	}
 
 	/**
