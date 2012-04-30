@@ -19,8 +19,8 @@ class CustomPress_Core {
 	/** @var string $plugin_dir Path to plugin directory */
 	var $plugin_dir = CP_PLUGIN_DIR;
 	/** @var string $text_domain The text domain for strings localization */
-	var $text_domain = 'custompress';
-	/** @var string $text_domain The text domain for strings localization */
+	var $text_domain = CP_TEXT_DOMAIN;
+	/** @var string $options_name The options name */
 	var $options_name = 'cp_options';
 
 	function CustomPress_Core() {
@@ -29,8 +29,11 @@ class CustomPress_Core {
 		add_action( 'wp_ajax_cp_get_post_types', array( &$this, 'ajax_action_callback' ) );
 
 		add_action('admin_enqueue_scripts', array($this, 'on_enqueue_scripts'));
+		add_action('wp_enqueue_scripts', array($this, 'on_enqueue_scripts'));
 
-		add_action('admin_head', array($this, 'on_admin_head'));
+		add_action('admin_print_scripts', array($this, 'on_print_scripts'));
+		add_action('wp_print_scripts', array($this, 'on_print_scripts'));
+
 		add_action('admin_print_footer_scripts', array($this, 'on_admin_print_footer_scripts'));
 
 		register_activation_hook( $this->plugin_dir . 'loader.php', array( &$this, 'plugin_activate' ) );
@@ -72,7 +75,7 @@ class CustomPress_Core {
 		wp_enqueue_style('jquery-combobox');
 	}
 
-	function on_admin_head(){
+	function on_print_scripts(){
 		// Load the dynamic jQuery-UI theme loader for DatePicker
 		?>
 
@@ -365,7 +368,7 @@ class CustomPress_Core {
 		}
 
 		/**
-		* get_jquery_ui_css -  Returns a piece of javascript the will load or switch the jQuery-ui css Stylesheet to the current theme. This is used so the theme won't be loaded unless ther is a ui conpnent on the page.
+		* get_jquery_ui_css -  Returns a piece of javascript that will load or switch the jQuery-ui css Stylesheet to the current theme. This is used so the theme won't be loaded unless ther is a ui conpnent on the page.
 		*
 		*/
 		function jquery_ui_css($theme = ''){

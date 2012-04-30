@@ -121,7 +121,7 @@ class Classifieds_Core {
 		/* Setup roles and capabilities */
 		add_action( 'wp_loaded', array( &$this, 'roles' ) );
 		/* Schedule expiration check */
-		add_action( 'wp_loaded', array( &$this, 'scheduly_expiration_check' ) );
+		add_action( 'wp_loaded', array( &$this, 'schedule_expiration_check' ) );
 		/* Add template filter */
 		add_filter( 'single_template', array( &$this, 'get_single_template' ) ) ;
 		/* Add template filter */
@@ -150,7 +150,6 @@ class Classifieds_Core {
 
 
 	}
-
 
 	/**
 	* Initiate variables.
@@ -951,7 +950,7 @@ class Classifieds_Core {
 	*
 	* @return void
 	**/
-	function scheduly_expiration_check() {
+	function schedule_expiration_check() {
 		if ( !wp_next_scheduled( 'check_expiration_dates' ) ) {
 			wp_schedule_event( time(), 'twicedaily', 'check_expiration_dates' );
 		}
@@ -1243,7 +1242,7 @@ class Classifieds_Core {
 		return;
 
 
-		/* Check whether the files doesn't exist in the active theme directrory,
+		/* Check whether the files doesn't exist in the active theme directory,
 		* also check for file to load in our general template directory */
 		if ( ! file_exists( get_template_directory() . "/taxonomy-{$taxonomy}-{$term}.php" )
 		&& file_exists( "{$this->plugin_dir}ui-front/general/taxonomy-{$taxonomy}-{$term}.php" ) )

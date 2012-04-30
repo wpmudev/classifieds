@@ -209,43 +209,43 @@ $cf = &$__classifieds_core; //shorthand reference
 							<!--Begin CC Details -->
 							<?php $cf_options = $cf->get_options(); ?>
 
-							<form action="" method="post" class="cf-checkout">
+							<form action="" method="post" class="cf-checkout" id="cfcheckout">
 
 								<strong><?php _e( 'Payment Details', 'classifieds' ); ?></strong>
 								<div class="clear"></div>
 								<table>
 									<tr>
 										<td><label for="email"><?php _e( 'Email Adress', 'classifieds' ); ?>:</label></td>
-										<td><input type="text" id="email" name="email" value="" /></td>
+										<td><input type="text" id="email" name="email" value="" class="required email" /></td>
 									</tr>
 									<tr>
 										<td><label for="first-name"><?php _e( 'First Name', 'classifieds' ); ?>:</label></td>
-										<td><input type="text" id="first-name" name="first_name" value="" /></td>
+										<td><input type="text" id="first-name" name="first_name" value="" class="required"  /></td>
 									</tr>
 									<tr>
 										<td><label for="last-name"><?php _e( 'Last Name', 'classifieds' ); ?>:</label></td>
-										<td><input type="text" id="last-name" name="last_name" value="" /></td>
+										<td><input type="text" id="last-name" name="last_name" value="" class="required"  /></td>
 									</tr>
 									<tr>
 										<td><label for="street"><?php _e( 'Street', 'classifieds' ); ?>:</label></td>
-										<td><input type="text" id="street" name="street" value="" /></td>
+										<td><input type="text" id="street" name="street" value="" class="required" /></td>
 									</tr>
 									<tr>
 										<td><label for="city"><?php _e( 'City', 'classifieds' ); ?>:</label></td>
-										<td><input type="text" id="city" name="city" value="" /></td>
+										<td><input type="text" id="city" name="city" value="" class="required" /></td>
 									</tr>
 									<tr>
 										<td><label for="state"><?php _e( 'State', 'classifieds' ); ?>:</label></td>
-										<td><input type="text" id="state" name="state" value="" /></td>
+										<td><input type="text" id="state" name="state" value="" class="required" /></td>
 									</tr>
 									<tr>
 										<td><label for="zip"><?php _e( 'ZIP', 'classifieds' ); ?>:</label></td>
-										<td><input type="text" id="zip" name="zip" value="" /></td>
+										<td><input type="text" id="zip" name="zip" value="" class="required" /></td>
 									</tr>
 									<tr>
 										<td><label for="country"><?php _e( 'Country', 'classifieds' ); ?>:</label></td>
 										<td>
-											<select id="country" name="country_code">
+											<select id="country" name="country_code"  class="required">
 												<option value="">Select One</option>
 												<option value="US">United States</option>
 												<option value="CA">Canada</option>
@@ -496,9 +496,9 @@ $cf = &$__classifieds_core; //shorthand reference
 											</select>
 										</td>
 									</tr>
-									
+
 									<?php if(! $cf->use_free): ?>
-									
+
 									<tr>
 										<td><?php _e( 'Total Amount', 'classifieds' ); ?>:</td>
 										<td>
@@ -522,17 +522,17 @@ $cf = &$__classifieds_core; //shorthand reference
 									</tr>
 									<tr>
 										<td><label for="cc_number"><?php _e( 'Credit Card Number', 'classifieds' ); ?>:</label></td>
-										<td><input type="text" name="cc_number" /></td>
+										<td><input type="text" name="cc_number" class="required"/></td>
 									</tr>
 									<tr>
 										<td><label for="exp_date"><?php _e( 'Expiration Date', 'classifieds' ); ?>:</label></td>
-										<td><input type="text" name="exp_date" /></td>
+										<td><input type="text" name="exp_date" class="required" /></td>
 									</tr>
 									<tr>
 										<td><label for="cvv2"><?php _e( 'CVV2', 'classifieds' ); ?>:</label></td>
-										<td><input type="text" name="cvv2" /></td>
+										<td><input type="text" name="cvv2" class="required" /></td>
 									</tr>
-									<?php endif; ?>	
+									<?php endif; ?>
 
 								</table>
 
@@ -622,6 +622,7 @@ $cf = &$__classifieds_core; //shorthand reference
 						<?php if ( isset( $bp ) ): ?>
 					</div>
 					<?php endif; ?>
+					<script type="text/javascript">jQuery('.cf-checkout').validate();</script>
 
 				</div><!-- #content -->
 
@@ -637,4 +638,6 @@ $cf = &$__classifieds_core; //shorthand reference
 			<?php get_sidebar(); ?>
 			<?php endif; ?>
 
+
 			<?php get_footer(); ?>
+

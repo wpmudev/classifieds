@@ -4,8 +4,10 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
-= 2.2 =
+= 2.2.1 =
+* Corrected Validation on Checkout Page
 
+= 2.2 =
 * Replaced Submodule with actual CustomPress for easier code maintenance
 * Changes default page tracking (classifieds, my-classifieds, checkout) to numeric triggers
 * Added send credits

@@ -5,6 +5,9 @@ Author URI: http://premium.wpmudev.org
 
 == Changelog ==
 
+= 1.2.1.3 = 2012-04-30 Arnold Bailey
+* changed script inclusion so the datepicker and validation can run on the front end for Directory and classifieds.
+
 = 1.2.1.2 = 2012-04-12 Arnold Bailey
 * Fixed $_REQUEST parameter name collision of 'post_type' conflicting with wp admin.php
 * Fixes settings not being remembered for Post Type checkboxes.
