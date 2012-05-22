@@ -11,7 +11,7 @@
 
 if (!class_exists('CustomPress_Core_Admin')):
 
-class CustomPress_Core_Admin extends CustomPress_Core {
+class CustomPress_Core_Admin extends CustomPress_Content_Types {
 
 	/** @var array Avilable Post Types */
 	var $post_types;
@@ -22,7 +22,12 @@ class CustomPress_Core_Admin extends CustomPress_Core {
 	/** @var boolean Flag whether the users have the ability to declair post type for their own blogs */
 	var $enable_subsite_content_types = false;
 
-	function CustomPress_Core_Admin() {
+	function CustomPress_Core_Admin() { __construct(); }
+
+	function __construct(){
+
+		parent::__construct();
+
 		$this->init_vars();
 
 		add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
@@ -204,17 +209,18 @@ class CustomPress_Core_Admin extends CustomPress_Core {
 	*/
 	function handle_settings_page_requests() {
 
-		$_POST = array_map('stripslashes_deep',$_POST);
+		//$params is the $_POST variable with slashes stripped
+		$params = array_map('stripslashes_deep',$_POST);
 
 		// Save settings
-		if ( isset( $_POST['save'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) ) {
+		if ( isset( $params['save'] ) && wp_verify_nonce( $params['_wpnonce'], 'verify' ) ) {
 
 			// Set network-wide content types
 			if ( is_multisite() && is_super_admin() && is_network_admin() ) {
 
-				if ( !empty( $_POST['enable_subsite_content_types'] ) ) {
+				if ( !empty( $params['enable_subsite_content_types'] ) ) {
 					update_site_option( 'allow_per_site_content_types', true );
-					update_site_option( 'keep_network_content_types', (bool) $_POST['keep_network_content_types'] );
+					update_site_option( 'keep_network_content_types', (bool) $params['keep_network_content_types'] );
 				}
 				else {
 					update_site_option( 'allow_per_site_content_types', false );
@@ -223,18 +229,32 @@ class CustomPress_Core_Admin extends CustomPress_Core {
 			}
 
 			// Create template file
-			if ( !empty( $_POST['post_type_file'] ) ) {
-				$this->create_post_type_files( $_POST['post_type_file'] );
+			if ( !empty( $params['post_type_file'] ) ) {
+				$this->create_post_type_files( $params['post_type_file'] );
 			}
 
 			// Process post types display
-			$args = array( 'page' => 'home', 'post_type' => ( isset( $_POST['cp_post_type'] ) ) ? $_POST['cp_post_type'] : null );
 			$options = $this->get_options();
-			$options = array_merge( $options , array( 'display_post_types' => array( $args['page'] => $args )) );
+
+
+			$dpt = array();
+			$args = array( 'page' => 'home', 'post_type' => ( isset( $params['cp_post_type']['home'] ) ) ? $params['cp_post_type']['home'] : null );
+			$display_post_types['display_post_types'][$args['page']] = $args;
+
+			$args = array( 'page' => 'archive', 'post_type' => ( isset( $params['cp_post_type']['archive'] ) ) ? $params['cp_post_type']['archive'] : null );
+			$display_post_types['display_post_types'][$args['page']] = $args;
+
+			$args = array( 'page' => 'front_page', 'post_type' => ( isset( $params['cp_post_type']['front_page'] ) ) ? $params['cp_post_type']['front_page'] : null );
+			$display_post_types['display_post_types'][$args['page']] = $args;
+
+			$args = array( 'page' => 'search', 'post_type' => ( isset( $params['cp_post_type']['search'] ) ) ? $params['cp_post_type']['search'] : null );
+			$display_post_types['display_post_types'][$args['page']] = $args;
+
+			$options = array_merge( $options , $display_post_types );
 
 			//Update datepicker settings
-			if (! empty($_POST['datepicker_theme']) && ! empty($_POST['date_format']))
-			$options = array_merge( $options, array('datepicker_theme' => $_POST['datepicker_theme'], 'date_format' => $_POST['date_format']  ) );
+			if (! empty($params['datepicker_theme']) && ! empty($params['date_format']))
+			$options = array_merge( $options, array('datepicker_theme' => $params['datepicker_theme'], 'date_format' => $params['date_format']  ) );
 			update_option( $this->options_name, $options );
 		}
 
@@ -280,5 +300,3 @@ class CustomPress_Core_Admin extends CustomPress_Core {
 $CustomPress_Core_Admin = new CustomPress_Core_Admin();
 
 endif;
-
-?>

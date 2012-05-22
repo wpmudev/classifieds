@@ -17,15 +17,15 @@ add_filter( 'widget_text', 'do_shortcode' );
 
 class CustomPress_Content_Types extends CustomPress_Core {
 
-	/** @var array Avilable Post Types */
+	/** @var array Available Post Types */
 	var $post_types;
-	/** @var array Avilable Taxonomies */
+	/** @var array Available Taxonomies */
 	var $taxonomies;
-	/** @var array Avilable Custom Fields */
+	/** @var array Available Custom Fields */
 	var $custom_fields;
 	/** @var boolean Flag whether to flush the rewrite rules or not */
 	var $flush_rewrite_rules = false;
-	/** @var boolean Flag whether the users have the ability to declarE post type for their own blogs */
+	/** @var boolean Flag whether the users have the ability to declare post types for their own blogs */
 	var $enable_subsite_content_types = false;
 
 	/**
@@ -33,7 +33,10 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	*
 	* @return void
 	*/
-	function CustomPress_Content_Types() {
+	function CustomPress_Content_Types() { __construct(); }
+
+	function __construct(){
+		parent::__construct();
 		add_action( 'init', array( &$this, 'handle_post_type_requests' ), 0 );
 		add_action( 'init', array( &$this, 'register_post_types' ), 2 );
 		add_action( 'init', array( &$this, 'handle_taxonomy_requests' ), 0 );
@@ -86,56 +89,57 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	*/
 	function handle_post_type_requests() {
 
-		$_POST = array_map('stripslashes_deep',$_POST);
-		
+		//$params is the $_POST variable with slashes stripped
+		$params = array_map('stripslashes_deep',$_POST);
+
 		// If add/update request is made
-		if ( isset( $_POST['submit'] )
-		&& isset( $_POST['_wpnonce'] )
-		&& wp_verify_nonce( $_POST['_wpnonce'], 'submit_post_type' )
+		if ( isset( $params['submit'] )
+		&& isset( $params['_wpnonce'] )
+		&& wp_verify_nonce( $params['_wpnonce'], 'submit_post_type' )
 		) {
 			// Validate input fields
-			if ( $this->validate_field( 'post_type', strtolower( $_POST['post_type'] ) ) ) {
+			if ( $this->validate_field( 'post_type', strtolower( $params['post_type'] ) ) ) {
 				// Post type labels
 				$labels = array(
-				'name'                  => $_POST['labels']['name'],
-				'singular_name'         => $_POST['labels']['singular_name'],
-				'add_new'               => $_POST['labels']['add_new'],
-				'add_new_item'          => $_POST['labels']['add_new_item'],
-				'edit_item'             => $_POST['labels']['edit_item'],
-				'new_item'              => $_POST['labels']['new_item'],
-				'view_item'             => $_POST['labels']['view_item'],
-				'search_items'          => $_POST['labels']['search_items'],
-				'not_found'             => $_POST['labels']['not_found'],
-				'not_found_in_trash'    => $_POST['labels']['not_found_in_trash'],
-				'parent_item_colon'     => $_POST['labels']['parent_item_colon'],
-				'custom_fields_block'   => $_POST['labels']['custom_fields_block']
+				'name'                  => $params['labels']['name'],
+				'singular_name'         => $params['labels']['singular_name'],
+				'add_new'               => $params['labels']['add_new'],
+				'add_new_item'          => $params['labels']['add_new_item'],
+				'edit_item'             => $params['labels']['edit_item'],
+				'new_item'              => $params['labels']['new_item'],
+				'view_item'             => $params['labels']['view_item'],
+				'search_items'          => $params['labels']['search_items'],
+				'not_found'             => $params['labels']['not_found'],
+				'not_found_in_trash'    => $params['labels']['not_found_in_trash'],
+				'parent_item_colon'     => $params['labels']['parent_item_colon'],
+				'custom_fields_block'   => $params['labels']['custom_fields_block']
 				);
 
 				//choose regular taxonomies
 				$supports_reg_tax = array (
-				'category' => ( isset( $_POST['supports_reg_tax']['category'] ) ) ? '1' : '',
-				'post_tag' => ( isset( $_POST['supports_reg_tax']['post_tag'] ) ) ? '1' : '',
+				'category' => ( isset( $params['supports_reg_tax']['category'] ) ) ? '1' : '',
+				'post_tag' => ( isset( $params['supports_reg_tax']['post_tag'] ) ) ? '1' : '',
 				);
 
 				// Post type args
 				$args = array(
 				'labels'              => $labels,
-				'supports'            => $_POST['supports'],
+				'supports'            => $params['supports'],
 				'supports_reg_tax'    => $supports_reg_tax,
-				'capability_type'     => ( isset( $_POST['capability_type'] ) ) ? $_POST['capability_type'] : 'post',
-				'description'         => $_POST['description'],
-				'menu_position'       => (int)  $_POST['menu_position'],
-				'public'              => (bool) $_POST['public'] ,
-				'show_ui'             => ( isset( $_POST['show_ui'] ) ) ? (bool) $_POST['show_ui'] : null,
-				'show_in_nav_menus'   => ( isset( $_POST['show_in_nav_menus'] ) ) ? (bool) $_POST['show_in_nav_menus'] : null,
-				'publicly_queryable'  => ( isset( $_POST['publicly_queryable'] ) ) ? (bool) $_POST['publicly_queryable'] : null,
-				'exclude_from_search' => ( isset( $_POST['exclude_from_search'] ) ) ? (bool) $_POST['exclude_from_search'] : null,
-				'hierarchical'        => (bool) $_POST['hierarchical'],
-				'has_archive'		  => (bool) $_POST['has_archive'],
-				'rewrite'             => (bool) $_POST['rewrite'],
-				'query_var'           => (bool) $_POST['query_var'],
-				'can_export'          => (bool) $_POST['can_export'],
-				'cf_columns'          => $_POST['cf_columns']
+				'capability_type'     => ( isset( $params['capability_type'] ) ) ? $params['capability_type'] : 'post',
+				'description'         => $params['description'],
+				'menu_position'       => (int)  $params['menu_position'],
+				'public'              => (bool) $params['public'] ,
+				'show_ui'             => ( isset( $params['show_ui'] ) ) ? (bool) $params['show_ui'] : null,
+				'show_in_nav_menus'   => ( isset( $params['show_in_nav_menus'] ) ) ? (bool) $params['show_in_nav_menus'] : null,
+				'publicly_queryable'  => ( isset( $params['publicly_queryable'] ) ) ? (bool) $params['publicly_queryable'] : null,
+				'exclude_from_search' => ( isset( $params['exclude_from_search'] ) ) ? (bool) $params['exclude_from_search'] : null,
+				'hierarchical'        => (bool) $params['hierarchical'],
+				'has_archive'		  => (bool) $params['has_archive'],
+				'rewrite'             => (bool) $params['rewrite'],
+				'query_var'           => (bool) $params['query_var'],
+				'can_export'          => (bool) $params['can_export'],
+				'cf_columns'          => $params['cf_columns']
 				);
 
 				// Remove empty labels so we can use the defaults
@@ -145,11 +149,11 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				}
 
 				// Set menu icon
-				if ( !empty( $_POST['menu_icon'] ) )
-				$args['menu_icon'] = $_POST['menu_icon'];
+				if ( !empty( $params['menu_icon'] ) )
+				$args['menu_icon'] = $params['menu_icon'];
 
 				// remove keys so we can use the defaults
-				if ( $_POST['public'] == 'advanced' ) {
+				if ( $params['public'] == 'advanced' ) {
 					unset( $args['public'] );
 				} else {
 					unset( $args['show_ui'] );
@@ -159,18 +163,18 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				}
 
 				// Set slug for post type archive pages
-				if ( !empty( $_POST['has_archive_slug'] ) )
-				$args['has_archive'] = $_POST['has_archive_slug'];
+				if ( !empty( $params['has_archive_slug'] ) )
+				$args['has_archive'] = $params['has_archive_slug'];
 
 				// Customize taxonomy rewrite
-				if ( !empty( $_POST['rewrite'] ) ) {
+				if ( !empty( $params['rewrite'] ) ) {
 
-					if ( !empty( $_POST['rewrite_slug'] ) )
-					$args['rewrite'] = (array) $args['rewrite'] + array( 'slug' => $_POST['rewrite_slug'] );
+					if ( !empty( $params['rewrite_slug'] ) )
+					$args['rewrite'] = (array) $args['rewrite'] + array( 'slug' => $params['rewrite_slug'] );
 
-					$args['rewrite'] = (array) $args['rewrite'] + array( 'with_front' => !empty( $_POST['rewrite_with_front'] ) ? true : false );
-					$args['rewrite'] = (array) $args['rewrite'] + array( 'feeds' => !empty( $_POST['rewrite_feeds'] ) ? true : false );
-					$args['rewrite'] = (array) $args['rewrite'] + array( 'pages' => !empty( $_POST['rewrite_pages'] ) ? true : false );
+					$args['rewrite'] = (array) $args['rewrite'] + array( 'with_front' => !empty( $params['rewrite_with_front'] ) ? true : false );
+					$args['rewrite'] = (array) $args['rewrite'] + array( 'feeds' => !empty( $params['rewrite_feeds'] ) ? true : false );
+					$args['rewrite'] = (array) $args['rewrite'] + array( 'pages' => !empty( $params['rewrite_pages'] ) ? true : false );
 
 					// Remove boolean remaining from the type casting
 					if ( is_array( $args['rewrite'] ) )
@@ -180,7 +184,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				}
 
 				// Set post type
-				$post_type = ( $_POST['post_type'] ) ? strtolower( $_POST['post_type'] ) : $_GET['ct_edit_post_type'];
+				$post_type = ( $params['post_type'] ) ? strtolower( $params['post_type'] ) : $_GET['ct_edit_post_type'];
 
 				// Set new post types
 				$post_types = ( $this->post_types ) ? array_merge( $this->post_types, array( $post_type => $args ) ) : array( $post_type => $args );
@@ -204,13 +208,13 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				wp_redirect( self_admin_url( 'admin.php?page=ct_content_types&ct_content_type=post_type&updated&frr=' . $this->flush_rewrite_rules ) );
 			}
 		}
-		elseif ( isset( $_POST['submit'] )
-		&& isset( $_POST['_wpnonce'] )
-		&& wp_verify_nonce( $_POST['_wpnonce'], 'delete_post_type' )
+		elseif ( isset( $params['submit'] )
+		&& isset( $params['_wpnonce'] )
+		&& wp_verify_nonce( $params['_wpnonce'], 'delete_post_type' )
 		) {
 			$post_types = $this->post_types;
 			// remove the deleted post type
-			unset( $post_types[$_POST['post_type_name']] );
+			unset( $post_types[$params['post_type_name']] );
 			// update the available post types
 			if ( $this->enable_subsite_content_types == 1 && !is_network_admin() )
 			update_option( 'ct_custom_post_types', $post_types );
@@ -219,7 +223,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 			// Redirect to post types page
 			wp_redirect( self_admin_url( 'admin.php?page=ct_content_types&ct_content_type=post_type&updated' ));
 		}
-		elseif ( isset( $_POST['redirect_add_post_type'] ) ) {
+		elseif ( isset( $params['redirect_add_post_type'] ) ) {
 			wp_redirect( self_admin_url( 'admin.php?page=ct_content_types&ct_content_type=post_type&ct_add_post_type=true' ) );
 		}
 	}
@@ -242,6 +246,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 			// Register each post type if array of data is returned
 			if ( is_array( $post_types ) ) {
 				foreach ( $post_types as $post_type => $args )
+
 				register_post_type( $post_type, $args );
 			}
 		}
@@ -253,8 +258,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 
 				//register post type
 				register_post_type( $post_type, $args );
-
-				//assign post type with regular taxanomies
+			//assign post type with regular taxanomies
 				if ( isset( $args['supports_reg_tax'] ) ) {
 					foreach ( $args['supports_reg_tax'] as $key => $value ) {
 						if ( taxonomy_exists( $key ) && '1' == $value ) {
@@ -274,45 +278,46 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	*/
 	function handle_taxonomy_requests() {
 
-		$_POST = array_map('stripslashes_deep',$_POST);
+		//$params is the $_POST variable with slashes stripped
+		$params = array_map('stripslashes_deep',$_POST);
 
 		// If valid add/edit taxonomy request is made
-		if (   isset( $_POST['submit'] )
-		&& isset( $_POST['_wpnonce'] )
-		&& wp_verify_nonce( $_POST['_wpnonce'], 'submit_taxonomy' )
+		if (   isset( $params['submit'] )
+		&& isset( $params['_wpnonce'] )
+		&& wp_verify_nonce( $params['_wpnonce'], 'submit_taxonomy' )
 		) {
 			// Validate input fields
-			$valid_taxonomy = $this->validate_field( 'taxonomy', ( isset( $_POST['taxonomy'] ) ) ? strtolower( $_POST['taxonomy'] ) : null );
-			$valid_object_type = $this->validate_field( 'object_type', ( isset( $_POST['object_type'] ) ) ? $_POST['object_type'] : null );
+			$valid_taxonomy = $this->validate_field( 'taxonomy', ( isset( $params['taxonomy'] ) ) ? strtolower( $params['taxonomy'] ) : null );
+			$valid_object_type = $this->validate_field( 'object_type', ( isset( $params['object_type'] ) ) ? $params['object_type'] : null );
 
 			if ( $valid_taxonomy && $valid_object_type ) {
 				// Construct args
 				$labels = array(
-				'name'                       => $_POST['labels']['name'],
-				'singular_name'              => $_POST['labels']['singular_name'],
-				'add_new_item'               => $_POST['labels']['add_new_item'],
-				'new_item_name'              => $_POST['labels']['new_item_name'],
-				'edit_item'                  => $_POST['labels']['edit_item'],
-				'update_item'                => $_POST['labels']['update_item'],
-				'search_items'               => $_POST['labels']['search_items'],
-				'popular_items'              => $_POST['labels']['popular_items'],
-				'all_items'                  => $_POST['labels']['all_items'],
-				'parent_item'                => $_POST['labels']['parent_item'],
-				'parent_item_colon'          => $_POST['labels']['parent_item_colon'],
-				'add_or_remove_items'        => $_POST['labels']['add_or_remove_items'],
-				'separate_items_with_commas' => $_POST['labels']['separate_items_with_commas'],
-				'choose_from_most_used'      => $_POST['labels']['all_items']
+				'name'                       => $params['labels']['name'],
+				'singular_name'              => $params['labels']['singular_name'],
+				'add_new_item'               => $params['labels']['add_new_item'],
+				'new_item_name'              => $params['labels']['new_item_name'],
+				'edit_item'                  => $params['labels']['edit_item'],
+				'update_item'                => $params['labels']['update_item'],
+				'search_items'               => $params['labels']['search_items'],
+				'popular_items'              => $params['labels']['popular_items'],
+				'all_items'                  => $params['labels']['all_items'],
+				'parent_item'                => $params['labels']['parent_item'],
+				'parent_item_colon'          => $params['labels']['parent_item_colon'],
+				'add_or_remove_items'        => $params['labels']['add_or_remove_items'],
+				'separate_items_with_commas' => $params['labels']['separate_items_with_commas'],
+				'choose_from_most_used'      => $params['labels']['all_items']
 				);
 
 				$args = array(
 				'labels'              => $labels,
-				'public'              => (bool) $_POST['public'] ,
-				'show_ui'             => ( isset( $_POST['show_ui'] ) ) ? (bool) $_POST['show_ui'] : null,
-				'show_tagcloud'       => ( isset( $_POST['show_tagcloud'] ) ) ? (bool) $_POST['show_tagcloud'] : null,
-				'show_in_nav_menus'   => ( isset( $_POST['show_in_nav_menus'] ) ) ? (bool) $_POST['show_in_nav_menus'] : null,
-				'hierarchical'        => (bool) $_POST['hierarchical'],
-				'rewrite'             => (bool) $_POST['rewrite'],
-				'query_var'           => (bool) $_POST['query_var']
+				'public'              => (bool) $params['public'] ,
+				'show_ui'             => ( isset( $params['show_ui'] ) ) ? (bool) $params['show_ui'] : null,
+				'show_tagcloud'       => ( isset( $params['show_tagcloud'] ) ) ? (bool) $params['show_tagcloud'] : null,
+				'show_in_nav_menus'   => ( isset( $params['show_in_nav_menus'] ) ) ? (bool) $params['show_in_nav_menus'] : null,
+				'hierarchical'        => (bool) $params['hierarchical'],
+				'rewrite'             => (bool) $params['rewrite'],
+				'query_var'           => (bool) $params['query_var']
 				//  'capabilities'        => array () /** TODO implement advanced capabilities */
 				);
 
@@ -323,7 +328,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				}
 
 				// If no advanced is set, unset values so we can use the defaults
-				if ( $_POST['public'] == 'advanced' ) {
+				if ( $params['public'] == 'advanced' ) {
 					unset( $args['public'] );
 				} else {
 					unset( $args['show_ui'] );
@@ -332,13 +337,13 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				}
 
 				// Customize taxonomy rewrite
-				if ( !empty( $_POST['rewrite'] ) ) {
+				if ( !empty( $params['rewrite'] ) ) {
 
-					if ( !empty( $_POST['rewrite_slug'] ) )
-					$args['rewrite'] = (array) $args['rewrite'] + array( 'slug' => $_POST['rewrite_slug'] );
+					if ( !empty( $params['rewrite_slug'] ) )
+					$args['rewrite'] = (array) $args['rewrite'] + array( 'slug' => $params['rewrite_slug'] );
 
-					$args['rewrite'] = (array) $args['rewrite'] + array( 'with_front' => !empty( $_POST['rewrite_with_front'] ) ? true : false );
-					$args['rewrite'] = (array) $args['rewrite'] + array( 'hierarchical' => !empty( $_POST['rewrite_hierarchical'] ) ? true : false );
+					$args['rewrite'] = (array) $args['rewrite'] + array( 'with_front' => !empty( $params['rewrite_with_front'] ) ? true : false );
+					$args['rewrite'] = (array) $args['rewrite'] + array( 'hierarchical' => !empty( $params['rewrite_hierarchical'] ) ? true : false );
 
 					// Remove boolean remaining from the type casting
 					if ( is_array( $args['rewrite'] ) )
@@ -348,10 +353,10 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				}
 
 				// Set the assiciated object types ( post types )
-				$object_type = $_POST['object_type'];
+				$object_type = $params['object_type'];
 
 				// Set the taxonomy which we are adding/updating
-				$taxonomy = ( isset( $_POST['taxonomy'] )) ? strtolower( $_POST['taxonomy'] ) : $_GET['ct_edit_taxonomy'];
+				$taxonomy = ( isset( $params['taxonomy'] )) ? strtolower( $params['taxonomy'] ) : $_GET['ct_edit_taxonomy'];
 
 				// Set new taxonomies
 				$taxonomies = ( $this->taxonomies )
@@ -378,15 +383,15 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				wp_redirect( self_admin_url( 'admin.php?page=ct_content_types&ct_content_type=taxonomy&updated&frr' . $this->flush_rewrite_rules ) );
 			}
 		}
-		elseif ( isset( $_POST['submit'] )
-		&& isset( $_POST['_wpnonce'] )
-		&& wp_verify_nonce( $_POST['_wpnonce'], 'delete_taxonomy' )
+		elseif ( isset( $params['submit'] )
+		&& isset( $params['_wpnonce'] )
+		&& wp_verify_nonce( $params['_wpnonce'], 'delete_taxonomy' )
 		) {
 			// Set available taxonomies
 			$taxonomies = $this->taxonomies;
 
 			// Remove the deleted taxonomy
-			unset( $taxonomies[$_POST['taxonomy_name']] );
+			unset( $taxonomies[$params['taxonomy_name']] );
 
 			// Update the available taxonomies
 			if ( $this->enable_subsite_content_types == 1 && !is_network_admin() )
@@ -397,7 +402,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 			// Redirect back to the taxonomies page
 			wp_redirect( self_admin_url( 'admin.php?page=ct_content_types&ct_content_type=taxonomy&updated' ) );
 		}
-		elseif ( isset( $_POST['redirect_add_taxonomy'] ) ) {
+		elseif ( isset( $params['redirect_add_taxonomy'] ) ) {
 			wp_redirect( self_admin_url( 'admin.php?page=ct_content_types&ct_content_type=taxonomy&ct_add_taxonomy=true' ));
 		}
 	}
@@ -444,23 +449,24 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	* Intercepts $_POST request and processes the custom fields submissions
 	*/
 	function handle_custom_field_requests() {
-		
-		$_POST = array_map('stripslashes_deep',$_POST);
-		
+
+		//$params is the $_POST variable with slashes stripped
+		$params = array_map('stripslashes_deep',$_POST);
+
 		// If valid add/edit custom field request is made
-		if ( isset( $_POST['submit'] )
-		&& isset( $_POST['_wpnonce'] )
-		&& wp_verify_nonce( $_POST['_wpnonce'], 'submit_custom_field' )
+		if ( isset( $params['submit'] )
+		&& isset( $params['_wpnonce'] )
+		&& wp_verify_nonce( $params['_wpnonce'], 'submit_custom_field' )
 		) {
-	
+
 			// Validate input fields data
-			$field_title_valid       = $this->validate_field( 'field_title', ( isset( $_POST['field_title'] ) ) ? $_POST['field_title'] : null );
-			$field_object_type_valid = $this->validate_field( 'object_type', ( isset( $_POST['object_type'] ) ) ? $_POST['object_type'] : null );
+			$field_title_valid       = $this->validate_field( 'field_title', ( isset( $params['field_title'] ) ) ? $params['field_title'] : null );
+			$field_object_type_valid = $this->validate_field( 'object_type', ( isset( $params['object_type'] ) ) ? $params['object_type'] : null );
 
 			// Check for specific field types and validate differently
-			if ( in_array( $_POST['field_type'], array( 'radio', 'checkbox', 'selectbox', 'multiselectbox' ) ) ) {
-				
-				$field_options_valid = $this->validate_field( 'field_options', $_POST['field_options'] ); //2 because an empty first choice is common
+			if ( in_array( $params['field_type'], array( 'radio', 'checkbox', 'selectbox', 'multiselectbox' ) ) ) {
+
+				$field_options_valid = $this->validate_field( 'field_options', $params['field_options'] ); //2 because an empty first choice is common
 				// Check whether fields pass the validation, if not stop execution and return
 				if ( $field_title_valid == false || $field_object_type_valid == false || $field_options_valid == false )
 				return;
@@ -470,25 +476,25 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				return;
 			}
 
-			if ( 2 == $_POST['field_wp_allow'] && empty( $_GET['ct_edit_custom_field'] ) ) {
-				$field_title = str_replace( ' ', '_', $_POST['field_title'] );
+			if ( 2 == $params['field_wp_allow'] && empty( $_GET['ct_edit_custom_field'] ) ) {
+				$field_title = str_replace( ' ', '_', $params['field_title'] );
 				$field_title = substr( preg_replace ( '/\W/', '', $field_title ), 0, 10);
-				$field_id = $field_title . '_' . $_POST['field_type'] . '_' . substr( uniqid(''), 7, 4) ;
+				$field_id = $field_title . '_' . $params['field_type'] . '_' . substr( uniqid(''), 7, 4) ;
 			} else {
-				$field_id = ( empty( $_GET['ct_edit_custom_field'] ) ) ? $_POST['field_type'] . '_' . uniqid('') : $_GET['ct_edit_custom_field'];
+				$field_id = ( empty( $_GET['ct_edit_custom_field'] ) ) ? $params['field_type'] . '_' . uniqid('') : $_GET['ct_edit_custom_field'];
 			}
 
 			$args = array(
-			'field_title'          => $_POST['field_title'],
-			'field_wp_allow'       => ( 2 == $_POST['field_wp_allow'] ) ? 1 : 0,
-			'field_type'           => $_POST['field_type'],
-			'field_sort_order'     => $_POST['field_sort_order'],
-			'field_options'        => $_POST['field_options'],
-			'field_date_format'    => $_POST['field_date_format'],
-			'field_default_option' => ( isset( $_POST['field_default_option'] ) ) ? $_POST['field_default_option'] : NULL,
-			'field_description'    => $_POST['field_description'],
-			'object_type'          => $_POST['object_type'],
-			'field_required'       => (2 == $_POST['field_required'] ) ? 1 : 0,
+			'field_title'          => $params['field_title'],
+			'field_wp_allow'       => ( 2 == $params['field_wp_allow'] ) ? 1 : 0,
+			'field_type'           => $params['field_type'],
+			'field_sort_order'     => $params['field_sort_order'],
+			'field_options'        => $params['field_options'],
+			'field_date_format'    => $params['field_date_format'],
+			'field_default_option' => ( isset( $params['field_default_option'] ) ) ? $params['field_default_option'] : NULL,
+			'field_description'    => $params['field_description'],
+			'object_type'          => $params['object_type'],
+			'field_required'       => (2 == $params['field_required'] ) ? 1 : 0,
 			'field_id'             => $field_id
 			);
 
@@ -515,31 +521,31 @@ class CustomPress_Content_Types extends CustomPress_Core {
 
 			wp_redirect( self_admin_url( 'admin.php?page=ct_content_types&ct_content_type=custom_field&updated' ) );
 		}
-		elseif ( ( isset( $_POST['submit'] ) || isset( $_POST['delete_cf_values'] ) )
-		&& isset( $_POST['_wpnonce'] )
-		&& wp_verify_nonce( $_POST['_wpnonce'], 'delete_custom_field' )
+		elseif ( ( isset( $params['submit'] ) || isset( $params['delete_cf_values'] ) )
+		&& isset( $params['_wpnonce'] )
+		&& wp_verify_nonce( $params['_wpnonce'], 'delete_custom_field' )
 		) {
 			// Set available custom fields
 			$custom_fields = $this->custom_fields;
 
 			// Remove all values of custom field
-			if ( isset( $_POST['delete_cf_values'] ) ) {
+			if ( isset( $params['delete_cf_values'] ) ) {
 
-				if ( isset( $custom_fields[$_POST['custom_field_id']]['field_wp_allow'] ) && 1 == $custom_fields[$_POST['custom_field_id']]['field_wp_allow'] )
+				if ( isset( $custom_fields[$params['custom_field_id']]['field_wp_allow'] ) && 1 == $custom_fields[$params['custom_field_id']]['field_wp_allow'] )
 				$prefix = 'ct_';
 				else
 				$prefix = '_ct_';
 
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->postmeta} WHERE meta_key = '%s'", $prefix . $_POST['custom_field_id'] ) );
+				$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->postmeta} WHERE meta_key = '%s'", $prefix . $params['custom_field_id'] ) );
 			}
 
 			//update custom fields colums for custom post type
 			$cf_columns_update = 0;
-			foreach ( $custom_fields[$_POST['custom_field_id']]['object_type'] as $object_type ) {
+			foreach ( $custom_fields[$params['custom_field_id']]['object_type'] as $object_type ) {
 				if ( is_array( $this->post_types[$object_type]['cf_columns'] ) )
 				foreach ( $this->post_types[$object_type]['cf_columns'] as $key => $value )
-				if ( $_POST['custom_field_id'] == $key ) {
+				if ( $params['custom_field_id'] == $key ) {
 					unset( $this->post_types[$object_type]['cf_columns'][$key] );
 					$cf_columns_update = 1;
 				}
@@ -554,7 +560,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 
 
 			// Remove the deleted custom field
-			unset( $custom_fields[$_POST['custom_field_id']] );
+			unset( $custom_fields[$params['custom_field_id']] );
 
 			//Set the field_order of the fields to the current default order
 			$i = 0;
@@ -629,7 +635,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 
 
 		}
-		elseif ( isset( $_POST['redirect_add_custom_field'] ) ) {
+		elseif ( isset( $params['redirect_add_custom_field'] ) ) {
 			wp_redirect( self_admin_url( 'admin.php?page=ct_content_types&ct_content_type=custom_field&ct_add_custom_field=true' ));
 		}
 	}
@@ -666,7 +672,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				foreach ( $custom_fields as $custom_field ) {
 					foreach ( $custom_field['object_type'] as $object_type ) {
 
-						$meta_box_label = 'Default Custom Fields';
+						$meta_box_label = __('Default CustomPress Fields', $this->text_domain);
 
 						if ( $this->post_types[$object_type] ) {
 							if ( 0 < strlen( $this->post_types[$object_type]['labels']['custom_fields_block'] ) )
@@ -685,7 +691,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 			foreach ( $custom_fields as $custom_field ) {
 				foreach ( $custom_field['object_type'] as $object_type ) {
 
-					$meta_box_label = 'Custom Fields';
+					$meta_box_label = __('CustomPress Fields', $this->text_domain);
 
 					if ( isset( $this->post_types[$object_type] ) ) {
 						if ( ! empty( $this->post_types[$object_type]['labels']['custom_fields_block'] ) )
@@ -723,7 +729,11 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	*/
 	function save_custom_fields( $post_id ) {
 		// Prevent autosave from deleting the custom fields
-		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE || defined('DOING_AJAX') && DOING_AJAX || defined('DOING_CRON') && DOING_CRON )
+		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE
+		|| defined('DOING_AJAX') && DOING_AJAX
+		|| defined('DOING_CRON') && DOING_CRON
+		|| isset($_REQUEST['bulk_edit'])
+		)
 		return;
 
 		$custom_fields = $this->custom_fields;
@@ -738,7 +748,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				if ( isset( $_POST[$prefix . $custom_field['field_id']] ))
 				update_post_meta( $post_id, $prefix . $custom_field['field_id'], $_POST[$prefix . $custom_field['field_id']] );
 				//for non checked checkbox set value -1
-				elseif ( in_array( $_POST["post_type"], $custom_field["object_type"] ) && 'checkbox' == $custom_field['field_type'] )
+				elseif ( isset($_POST["post_type"]) && in_array( $_POST["post_type"], $custom_field["object_type"] ) && 'checkbox' == $custom_field['field_type'] )
 				update_post_meta( $post_id, $prefix . $custom_field['field_id'], -1 );
 				else
 				delete_post_meta( $post_id, $prefix . $custom_field['field_id'] );
@@ -807,13 +817,15 @@ class CustomPress_Content_Types extends CustomPress_Core {
 			if (is_array($value)){
 
 				$invalid = true;
-				
+
 				foreach($value as $item){
-					$invalid = (!empty($item)) ? $false : $invalid; 					
+					$invalid = (!empty($item)) ? $false : $invalid;
 				}
-				
-			} else { $invalid = empty($value); }
-			
+
+			} else {
+				$invalid = empty($value);
+			}
+
 			if ( $invalid ) {
 				if ( $field == 'object_type' )
 				add_action( 'ct_invalid_field_object_type', create_function( '', 'echo "form-invalid";' ) );
@@ -1167,8 +1179,8 @@ class CustomPress_Content_Types extends CustomPress_Core {
 }
 
 // Initiate Content Types Module
-$CustomPress_Content_Types = new CustomPress_Content_Types();
+
+
+if(!is_admin()) $CustomPress_Content_Types = new CustomPress_Content_Types();
 
 endif;
-
-?>

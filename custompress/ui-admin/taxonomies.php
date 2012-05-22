@@ -9,7 +9,7 @@ $taxonomies = $this->taxonomies;
 
 <?php $this->render_admin('update-message'); ?>
 
-<form action="" method="post" class="ct-form-single-btn">
+<form action="#" method="post" class="ct-form-single-btn">
 	<input type="submit" class="button-secondary" name="redirect_add_taxonomy" value="<?php _e('Add Taxonomy', $this->text_domain); ?>" />
 </form>
 <table class="widefat">
@@ -40,11 +40,11 @@ $taxonomies = $this->taxonomies;
 		<tr class="<?php echo ( $class ); ?>">
 			<td>
 				<strong>
-					<a href="<?php echo( self_admin_url( 'admin.php?page=' . $_GET['page'] . '&ct_content_type=taxonomy&ct_edit_taxonomy=' . $name ) ); ?>"><?php echo( $name ); ?></a>
+					<a href="<?php echo self_admin_url('admin.php?page=' . $_GET['page'] . '&ct_content_type=taxonomy&ct_edit_taxonomy=' . $name); ?>"><?php echo( $name ); ?></a>
 				</strong>
 				<div class="row-actions" id="row-actions-<?php echo $name; ?>">
 					<span class="edit">
-						<a title="<?php _e('Edit this taxonomy', $this->text_domain); ?>" href="<?php echo( self_admin_url( 'admin.php?page=' . $_GET['page'] . '&ct_content_type=taxonomy&ct_edit_taxonomy=' . $name ) ); ?>"><?php _e('Edit', $this->text_domain); ?></a> |
+						<a title="<?php _e('Edit this taxonomy', $this->text_domain); ?>" href="<?php echo self_admin_url( 'admin.php?page=' . $_GET['page'] . '&ct_content_type=taxonomy&ct_edit_taxonomy=' . $name ); ?>" ><?php _e('Edit', $this->text_domain); ?></a> |
 					</span>
 					<span>
 						<a title="<?php _e('Show embed code', $this->text_domain); ?>" href="" onclick="javascript:content_types.toggle_embed_code('<?php echo( $name ); ?>'); return false;"><?php _e('Embed Code', $this->text_domain); ?></a> |
@@ -53,7 +53,7 @@ $taxonomies = $this->taxonomies;
 						<a class="submitdelete" href="" onclick="javascript:content_types.toggle_delete('<?php echo( $name ); ?>'); return false;"><?php _e('Delete', $this->text_domain); ?></a>
 					</span>
 				</div>
-				<form action="" method="post" id="form-<?php echo( $name ); ?>" class="del-form">
+				<form action="#" method="post" id="form-<?php echo( $name ); ?>" class="del-form">
 					<?php wp_nonce_field('delete_taxonomy'); ?>
 					<input type="hidden" name="taxonomy_name" value="<?php echo( $name ); ?>" />
 					<input type="submit" class="button confirm" value="<?php _e( 'Confirm', $this->text_domain ); ?>" name="submit" />
@@ -68,30 +68,30 @@ $taxonomies = $this->taxonomies;
 			</td>
 			<td class="ct-tf-icons-wrap">
 				<?php if ( $taxonomy['args']['public'] === null ): ?>
-				<img class="ct-tf-icons" src="<?php echo ( $this->plugin_url . 'ui-admin/images/advanced.png' ); ?>" alt="<?php _e('Advanced', $this->text_domain); ?>" title="<?php _e('Advanced', $this->text_domain); ?>" />
+				<img class="ct-tf-icons" src="<?php echo esc_attr( $this->plugin_url . 'ui-admin/images/advanced.png' ); ?>" alt="<?php _e('Advanced', $this->text_domain); ?>" title="<?php _e('Advanced', $this->text_domain); ?>" />
 				<?php elseif ( $taxonomy['args']['public'] ): ?>
-				<img class="ct-tf-icons" src="<?php echo ( $this->plugin_url . 'ui-admin/images/true.png' ); ?>" alt="<?php _e('True', $this->text_domain); ?>" title="<?php _e('True', $this->text_domain); ?>" />
+				<img class="ct-tf-icons" src="<?php echo esc_attr( $this->plugin_url . 'ui-admin/images/true.png' ); ?>" alt="<?php _e('True', $this->text_domain); ?>" title="<?php _e('True', $this->text_domain); ?>" />
 				<?php else: ?>
-				<img class="ct-tf-icons" src="<?php echo ( $this->plugin_url . 'ui-admin/images/false.png' ); ?>" alt="<?php _e('False', $this->text_domain); ?>" title="<?php _e('False', $this->text_domain); ?>" />
+				<img class="ct-tf-icons" src="<?php echo esc_attr( $this->plugin_url . 'ui-admin/images/false.png' ); ?>" alt="<?php _e('False', $this->text_domain); ?>" title="<?php _e('False', $this->text_domain); ?>" />
 				<?php endif; ?>
 			</td>
 			<td class="ct-tf-icons-wrap">
 				<?php if ( $taxonomy['args']['hierarchical'] ): ?>
-				<img class="ct-tf-icons" src="<?php echo ( $this->plugin_url . 'ui-admin/images/true.png' ); ?>" alt="<?php _e('True', $this->text_domain); ?>" title="<?php _e('True', $this->text_domain); ?>" />
+				<img class="ct-tf-icons" src="<?php echo esc_attr( $this->plugin_url . 'ui-admin/images/true.png' ); ?>" alt="<?php _e('True', $this->text_domain); ?>" title="<?php _e('True', $this->text_domain); ?>" />
 				<?php else: ?>
-				<img class="ct-tf-icons" src="<?php echo ( $this->plugin_url . 'ui-admin/images/false.png' ); ?>" alt="<?php _e('False', $this->text_domain); ?>" title="<?php _e('False', $this->text_domain); ?>" />
+				<img class="ct-tf-icons" src="<?php echo esc_attr( $this->plugin_url . 'ui-admin/images/false.png' ); ?>" alt="<?php _e('False', $this->text_domain); ?>" title="<?php _e('False', $this->text_domain); ?>" />
 				<?php endif; ?>
 			</td>
 			<td class="ct-tf-icons-wrap">
 				<?php if ( $taxonomy['args']['rewrite'] ): ?>
-				<img class="ct-tf-icons" src="<?php echo ( $this->plugin_url . 'ui-admin/images/true.png' ); ?>" alt="<?php _e('True', $this->text_domain); ?>" title="<?php _e('True', $this->text_domain); ?>" />
+				<img class="ct-tf-icons" src="<?php echo esc_attr( $this->plugin_url . 'ui-admin/images/true.png' ); ?>" alt="<?php _e('True', $this->text_domain); ?>" title="<?php _e('True', $this->text_domain); ?>" />
 				<?php else: ?>
-				<img class="ct-tf-icons" src="<?php echo ( $this->plugin_url . 'ui-admin/images/false.png' ); ?>" alt="<?php _e('False', $this->text_domain); ?>" title="<?php _e('False', $this->text_domain); ?>" />
+				<img class="ct-tf-icons" src="<?php echo esc_attr( $this->plugin_url . 'ui-admin/images/false.png' ); ?>" alt="<?php _e('False', $this->text_domain); ?>" title="<?php _e('False', $this->text_domain); ?>" />
 				<?php endif; ?>
 			</td>
 		</tr>
 		<tr id="embed-code-<?php echo( $name ); ?>" class="embed-code <?php echo ( $class ); ?>">
-			<td colspan="10">
+			<td colspan="6">
 				<div class="embed-code-wrap">
 					<span class="description"><?php _e('Embed code returns an HTML string of taxonomy terms associated with a post and given taxonomy. <br />Terms are linked to their respective term listing pages. Use it in templates inside the Loop.', $this->text_domain ); ?></span>
 					<br />
@@ -107,6 +107,6 @@ $taxonomies = $this->taxonomies;
 		<?php endif; ?>
 	</tbody>
 </table>
-<form action="" method="post" class="ct-form-single-btn">
+<form action="#" method="post" class="ct-form-single-btn">
 	<input type="submit" class="button-secondary" name="redirect_add_taxonomy" value="<?php _e('Add Taxonomy', $this->text_domain); ?>" />
 </form>

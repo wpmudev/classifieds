@@ -17,7 +17,7 @@ var_dump( $taxonomy );
 ?>
 
 <h3><?php _e('Add Taxonomy', $this->text_domain); ?></h3>
-<form action="" method="post" class="ct-taxonomy">
+<form action="#" method="post" class="ct-taxonomy">
 	<div class="ct-wrap-left">
 		<div class="ct-table-wrap">
 			<div class="ct-arrow"><br></div>

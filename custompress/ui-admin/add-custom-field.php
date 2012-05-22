@@ -6,7 +6,7 @@ $post_types = get_post_types('','names');
 ?>
 <div style="clear: both">
 	<h3><?php _e('Add Custom Field', $this->text_domain); ?></h3>
-	<form action="" method="post" class="ct-custom-fields">
+	<form action="#" method="post" class="ct-custom-fields">
 		<div class="ct-wrap-left">
 			<div class="ct-table-wrap">
 				<div class="ct-arrow"><br></div>
@@ -17,7 +17,7 @@ $post_types = get_post_types('','names');
 							<label for="field_title"><?php _e('Field Title', $this->text_domain) ?> <span class="ct-required">( <?php _e('required', $this->text_domain); ?> )</span></label>
 						</th>
 						<td>
-							<input type="text" name="field_title" value="<?php if ( isset( $_POST['field_title'] ) ) echo $_POST['field_title']; ?>">
+							<input type="text" name="field_title" value="<?php if ( isset( $_POST['field_title'] ) ) echo $_POST['field_title']; ?>" />
 							<span class="description"><?php _e('The title of the custom field.', $this->text_domain); ?></span>
 						</td>
 					</tr>
@@ -26,7 +26,7 @@ $post_types = get_post_types('','names');
 							<label for="field_required"><?php _e('Required Field', $this->text_domain) ?></label>
 						</th>
 						<td>
-							<input type="checkbox" name="field_required" value="2" <?php echo ( isset( $_POST['field_required'] ) ) ? 'checked' : ''; ?> >
+							<input type="checkbox" name="field_required" value="2" <?php checked( isset( $_POST['field_required'] ) ); ?> />
 							<span class="description"><?php _e('Make this a Required Field.', $this->text_domain); ?></span>
 						</td>
 					</tr>
@@ -35,7 +35,7 @@ $post_types = get_post_types('','names');
 							<label for="field_wp_allow"><?php _e('Allow for WP/plugins', $this->text_domain) ?> <br /><span class="ct-required">(<?php _e("can't be changed", $this->text_domain) ?>)</span></label>
 						</th>
 						<td>
-							<input type="checkbox" name="field_wp_allow" value="2" <?php echo ( isset( $_POST['field_wp_allow'] ) ) ? 'checked' : ''; ?> >
+							<input type="checkbox" name="field_wp_allow" value="2" <?php checked( isset( $_POST['field_wp_allow'] ) ); ?> />
 							<span class="description"><?php _e('The WP and other plugins can use this custom field.', $this->text_domain); ?></span>
 						</td>
 					</tr>
@@ -51,13 +51,13 @@ $post_types = get_post_types('','names');
 						</th>
 						<td>
 							<select name="field_type">
-								<option value="text" <?php if ( isset( $_POST['field_type'] ) && $_POST['field_type'] == 'text' ) echo( 'selected="selected"' ); ?>><?php _e('Text Box', $this->text_domain); ?></option>
-								<option value="textarea" <?php if ( isset( $_POST['field_type'] ) && $_POST['field_type'] == 'textarea' ) echo( 'selected="selected"' ); ?>><?php _e('Multi-line Text Box', $this->text_domain); ?></option>
-								<option value="radio" <?php if ( isset( $_POST['field_type'] ) && $_POST['field_type'] == 'radio' ) echo( 'selected="selected"' ); ?>><?php _e('Radio Buttons', $this->text_domain); ?></option>
-								<option value="checkbox" <?php if ( isset( $_POST['field_type'] ) && $_POST['field_type'] == 'checkbox' ) echo( 'selected="selected"' ); ?>><?php _e('Checkboxes', $this->text_domain); ?></option>
-								<option value="selectbox" <?php if ( isset( $_POST['field_type'] ) && $_POST['field_type'] == 'selectbox' ) echo( 'selected="selected"' ); ?>><?php _e('Drop Down Select Box', $this->text_domain); ?></option>
-								<option value="multiselectbox" <?php if ( isset( $_POST['field_type'] ) && $_POST['field_type'] == 'multiselectbox' ) echo( 'selected="selected"' ); ?>><?php _e('Multi Select Box', $this->text_domain); ?></option>
-								<option value="datepicker" <?php if ( isset( $_POST['field_type'] ) && $_POST['field_type'] == 'datepicker' ) echo( 'selected="selected"' ); ?>><?php _e('Date Picker', $this->text_domain); ?></option>
+								<option value="text" <?php selected( isset( $_POST['field_type'] ) && $_POST['field_type'] == 'text' ); ?>><?php _e('Text Box', $this->text_domain); ?></option>
+								<option value="textarea" <?php selected( isset( $_POST['field_type'] ) && $_POST['field_type'] == 'textarea' ); ?>><?php _e('Multi-line Text Box', $this->text_domain); ?></option>
+								<option value="radio" <?php selected( isset( $_POST['field_type'] ) && $_POST['field_type'] == 'radio' ); ?>><?php _e('Radio Buttons', $this->text_domain); ?></option>
+								<option value="checkbox" <?php selected( isset( $_POST['field_type'] ) && $_POST['field_type'] == 'checkbox' ); ?>><?php _e('Checkboxes', $this->text_domain); ?></option>
+								<option value="selectbox" <?php selected( isset( $_POST['field_type'] ) && $_POST['field_type'] == 'selectbox' ); ?>><?php _e('Drop Down Select Box', $this->text_domain); ?></option>
+								<option value="multiselectbox" <?php selected( isset( $_POST['field_type'] ) && $_POST['field_type'] == 'multiselectbox' ); ?>><?php _e('Multi Select Box', $this->text_domain); ?></option>
+								<option value="datepicker" <?php selected( isset( $_POST['field_type'] ) && $_POST['field_type'] == 'datepicker' ); ?>><?php _e('Date Picker', $this->text_domain); ?></option>
 							</select>
 							<span class="description"><?php _e('Select type of the custom field.', $this->text_domain); ?></span>
 							<div class="ct-date-type-options">
@@ -77,12 +77,6 @@ $post_types = get_post_types('','names');
 									<br />
 									<input class="pickdate" id="datepicker" type="text" size="38" value="" /><br />
 									<span class="description"><?php _e('Date picker sample', $this->text_domain) ?></span>
-
-									<script type="text/javascript">
-										jQuery('#datepicker').datepicker({ dateFormat : '<?php echo $date_format; ?>' });
-										jQuery('#datepicker').attr('value', jQuery.datepicker.formatDate('<?php echo $date_format; ?>', new Date(), {}) );
-									</script>
-
 								</p>
 
 							</div>
@@ -104,7 +98,7 @@ $post_types = get_post_types('','names');
 								<p>
 									<?php _e('Option', $this->text_domain); ?> <?php echo( $key ); ?>:
 									<input type="text" name="field_options[<?php echo( $key ); ?>]" value="<?php echo( $field_option ); ?>" />
-									<input type="radio" value="<?php echo( $key ); ?>" name="field_default_option" <?php if ( $_POST['field_default_option'] == $key ) echo ( 'checked="checked"' ); ?> />
+									<input type="radio" value="<?php echo( $key ); ?>" name="field_default_option" <?php checked( $_POST['field_default_option'] == $key ); ?> />
 									<?php _e('Default Value', $this->text_domain); ?>
 									<?php if ( $key != 1 ): ?>
 									<a href="#" class="ct-field-delete-option">[x]</a>
@@ -113,8 +107,8 @@ $post_types = get_post_types('','names');
 								<?php endforeach; ?>
 								<?php else: ?>
 								<p><?php _e('Option', $this->text_domain); ?> 1:
-									<input type="text" name="field_options[1]" value="<?php if ( isset( $_POST['field_options'][1] ) ) echo $_POST['field_options'][1]; ?>">
-									<input type="radio" value="1" name="field_default_option" <?php if ( isset( $_POST['field_default_option'] ) && $_POST['field_default_option'] == '1' ) echo 'checked="checked"'; ?>>
+									<input type="text" name="field_options[1]" value="<?php if ( isset( $_POST['field_options'][1] ) ) echo $_POST['field_options'][1]; ?>" />
+									<input type="radio" value="1" name="field_default_option" <?php checked( isset( $_POST['field_default_option'] ) && $_POST['field_default_option'] == '1' ); ?> />
 									<?php _e('Default Value', $this->text_domain); ?>
 								</p>
 								<?php endif; ?>
@@ -156,7 +150,7 @@ $post_types = get_post_types('','names');
 							<select name="object_type[]" multiple="multiple" class="ct-object-type">
 								<?php if ( is_array( $post_types )): ?>
 								<?php foreach( $post_types as $post_type ): ?>
-								<option value="<?php echo ( $post_type ); ?>" <?php if ( isset( $_POST['object_type'] ) && is_array( $_POST['object_type'] )) { foreach ( $_POST['object_type'] as $post_value ) { if ( $post_value == $post_type ) echo( 'selected="selected"' ); }} ?>><?php echo ( $post_type ); ?></option>
+								<option value="<?php echo ( $post_type ); ?>" <?php if ( isset( $_POST['object_type'] ) && is_array( $_POST['object_type'] )) { foreach ( $_POST['object_type'] as $post_value ) { selected( $post_value == $post_type ); }} ?>><?php echo ( $post_type ); ?></option>
 								<?php endforeach; ?>
 								<?php endif; ?>
 							</select>
@@ -176,3 +170,10 @@ $post_types = get_post_types('','names');
 		<br /><br /><br /><br />
 	</form>
 </div>
+
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+		jQuery('#datepicker').datepicker({ dateFormat : '<?php echo $date_format; ?>' });
+		jQuery('#datepicker').attr('value', jQuery.datepicker.formatDate('<?php echo $date_format; ?>', new Date(), {}) );
+	});
+</script>

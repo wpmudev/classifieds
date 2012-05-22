@@ -9,7 +9,7 @@
 
 	<?php $this->render_admin( 'message' ); ?>
 
-	<form action="" method="post">
+	<form action="#" method="post">
 		<div class="postbox">
 			<h3 class='hndle'><span><?php _e( 'Recurring Payments', $this->text_domain ) ?></span></h3>
 			<div class="inside">

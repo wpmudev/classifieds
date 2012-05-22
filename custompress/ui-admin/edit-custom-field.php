@@ -6,7 +6,7 @@ $custom_field = $this->custom_fields[$_GET['ct_edit_custom_field']];
 ?>
 <div class="wrap">
 	<h3><?php _e('Edit Custom Field', $this->text_domain); ?></h3>
-	<form action="" method="post" class="ct-custom-fields">
+	<form action="#" method="post" class="ct-custom-fields">
 		<?php wp_nonce_field( 'ct_submit_custom_field_verify', 'ct_submit_custom_field_secret' ); ?>
 		<div class="ct-wrap-left">
 			<div class="ct-table-wrap">
@@ -36,7 +36,7 @@ $custom_field = $this->custom_fields[$_GET['ct_edit_custom_field']];
 							<label for="field_title"><?php _e('Allow for WP/plugins', $this->text_domain) ?> <br /><span class="ct-required">(<?php _e("can't be changed", $this->text_domain) ?>)</span></label>
 						</th>
 						<td>
-							<input type="hidden" name="field_wp_allow"  readonly value="<?php echo ( isset( $custom_field['field_wp_allow'] ) && 1 == $custom_field['field_wp_allow'] ) ? '2' : '0'; ?>" />
+							<input type="hidden" name="field_wp_allow"  readonly="readonly" value="<?php echo ( isset( $custom_field['field_wp_allow'] ) && 1 == $custom_field['field_wp_allow'] ) ? '2' : '0'; ?>" />
 							<input type="checkbox" disabled value="1" <?php echo ( isset( $custom_field['field_wp_allow'] ) && 1 == $custom_field['field_wp_allow'] ) ? 'checked' : ''; ?> />
 							<span class="description"><?php _e('The WP and other plugins can use this custom field.', $this->text_domain); ?></span>
 						</td>
@@ -80,12 +80,6 @@ $custom_field = $this->custom_fields[$_GET['ct_edit_custom_field']];
 									<br />
 									<input class="pickdate" id="datepicker" type="text" size="38" value="" /><br />
 									<span class="description"><?php _e('Date picker sample', $this->text_domain) ?></span>
-
-									<script type="text/javascript">
-										jQuery('#datepicker').datepicker({ dateFormat : '<?php echo $date_format; ?>' });
-										jQuery('#datepicker').attr('value', jQuery.datepicker.formatDate('<?php echo $date_format; ?>', new Date(), {}) );
-									</script>
-
 								</p>
 
 							</div>
@@ -179,3 +173,11 @@ $custom_field = $this->custom_fields[$_GET['ct_edit_custom_field']];
 	</form>
 
 </div>
+
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+		jQuery('#datepicker').datepicker({ dateFormat : '<?php echo $date_format; ?>' });
+		jQuery('#datepicker').attr('value', jQuery.datepicker.formatDate('<?php echo $date_format; ?>', new Date(), {}) );
+	});
+</script>
+

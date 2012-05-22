@@ -5,11 +5,11 @@ if ( is_network_admin() )
 $post_types = get_site_option('ct_custom_post_types');
 else
 $post_types = $this->post_types;
+$this->render_admin('update-message');
+
 ?>
 
-<?php $this->render_admin('update-message'); ?>
-
-<form action="" method="post" class="ct-form-single-btn">
+<form action="#" method="post" class="ct-form-single-btn">
 	<input type="submit" class="button-secondary" name="redirect_add_post_type" value="<?php _e('Add Post Type', $this->text_domain); ?>" />
 </form>
 
@@ -47,17 +47,17 @@ $post_types = $this->post_types;
 		<tr class="<?php echo $class; ?>">
 			<td style="min-width:8em;">
 				<strong>
-					<a href="<?php echo( self_admin_url( 'admin.php?page=' . $_GET['page'] . '&ct_content_type=post_type&ct_edit_post_type=' . $name ) ); ?>"><?php echo $name; ?></a>
+					<a href="<?php echo( self_admin_url( 'admin.php?page=' . $_GET['page'] . '&amp;ct_content_type=post_type&amp;ct_edit_post_type=' . $name ) ); ?>"><?php echo $name; ?></a>
 				</strong>
 				<div class="row-actions" id="row-actions-<?php echo $name; ?>">
 					<span class="edit">
-						<a title="<?php _e('Edit the post type', $this->text_domain); ?>" href="<?php echo self_admin_url( 'admin.php?page=' . $_GET['page'] . '&ct_content_type=post_type&ct_edit_post_type=' . $name ); ?>"><?php _e('Edit', $this->text_domain); ?></a> | 
-						</span>
+						<a title="<?php _e('Edit the post type', $this->text_domain); ?>" href="<?php echo self_admin_url( 'admin.php?page=' . $_GET['page'] . '&amp;ct_content_type=post_type&amp;ct_edit_post_type=' . $name ); ?>"><?php _e('Edit', $this->text_domain); ?></a> |
+					</span>
 					<span class="trash">
 						<a class="submitdelete" href="#" onclick="javascript:content_types.toggle_delete('<?php echo( $name ); ?>'); return false;"><?php _e('Delete', $this->text_domain); ?></a>
-						</span>
+					</span>
 				</div>
-				<form action="" method="post" id="form-<?php echo( $name ); ?>" class="del-form">
+				<form action="#" method="post" id="form-<?php echo( $name ); ?>" class="del-form">
 					<?php wp_nonce_field('delete_post_type'); ?>
 					<input type="hidden" name="post_type_name" value="<?php echo( $name ); ?>" />
 					<input type="submit" class="button confirm" value="<?php _e( 'Confirm', $this->text_domain ); ?>" name="submit" />
@@ -104,6 +104,6 @@ $post_types = $this->post_types;
 	</tbody>
 </table>
 
-<form action="" method="post" class="ct-form-single-btn">
+<form action="#" method="post" class="ct-form-single-btn">
 	<input type="submit" class="button-secondary" name="redirect_add_post_type" value="<?php _e('Add Post Type', $this->text_domain); ?>" />
 </form>

@@ -132,11 +132,11 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
 			<?php if ( bp_is_my_profile() ): ?>
 			<input type="submit" name="edit" value="<?php _e( 'Edit Ad', $this->text_domain ); ?>" />
 			<?php if ( $sub == 'active' ): ?>
-			<input type="submit" name="end" value="<?php _e( 'End Ad', $this->text_domain ); ?>" onClick="classifieds.toggle_end('<?php the_ID(); ?>'); return false;" />
+			<input type="submit" name="end" value="<?php _e( 'End Ad', $this->text_domain ); ?>" onclick="classifieds.toggle_end('<?php the_ID(); ?>'); return false;" />
 			<?php elseif ( $sub == 'saved' || $sub == 'ended' ): ?>
-			<input type="submit" name="renew" value="<?php _e( 'Renew Ad', $this->text_domain ); ?>" onClick="classifieds.toggle_renew('<?php the_ID(); ?>'); return false;" />
+			<input type="submit" name="renew" value="<?php _e( 'Renew Ad', $this->text_domain ); ?>" onclick="classifieds.toggle_renew('<?php the_ID(); ?>'); return false;" />
 			<?php endif; ?>
-			<input type="submit" name="delete" value="<?php _e( 'Delete Ad', $this->text_domain ); ?>" onClick="classifieds.toggle_delete('<?php the_ID(); ?>'); return false;" />
+			<input type="submit" name="delete" value="<?php _e( 'Delete Ad', $this->text_domain ); ?>" onclick="classifieds.toggle_delete('<?php the_ID(); ?>'); return false;" />
 			<?php endif; ?>
 		</form>
 
@@ -156,7 +156,7 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
 			</select>
 			<?php endif; ?>
 			<input type="submit" class="button confirm" value="<?php _e( 'Confirm', $this->text_domain ); ?>" name="confirm" />
-			<input type="submit" class="button cancel"  value="<?php _e( 'Cancel', $this->text_domain ); ?>" onClick="classifieds.cancel('<?php the_ID(); ?>'); return false;" />
+			<input type="submit" class="button cancel"  value="<?php _e( 'Cancel', $this->text_domain ); ?>" onclick="classifieds.cancel('<?php the_ID(); ?>'); return false;" />
 		</form>
 
 		<?php endif; ?>

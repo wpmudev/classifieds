@@ -15,7 +15,7 @@ $network_post_types = get_site_option('ct_custom_post_types');
 
 $options = $this->get_options();
 
-$cp_post_type = $options['display_post_types']['home']['post_type'];
+$cp_post_type = $options['display_post_types'];
 
 ?>
 
@@ -25,7 +25,7 @@ $cp_post_type = $options['display_post_types']['home']['post_type'];
 
 	<?php $this->render_admin('message'); ?>
 
-	<form action="" method="post" class="cp-main">
+	<form action="#" method="post" class="cp-main">
 
 		<?php if ( is_multisite() && is_super_admin() && is_network_admin() ): ?>
 		<h3><?php _e( 'General', $this->text_domain );  ?></h3>
@@ -54,21 +54,21 @@ $cp_post_type = $options['display_post_types']['home']['post_type'];
 		<table class="form-table">
 			<tr>
 				<th>
-					<label for="cp_post_type"><?php _e('Display post types on "Home": ', $this->text_domain) ?></label>
+					<label for="cp_post_type"><?php _e('On "Blog / Home" page, display these post types: ', $this->text_domain) ?></label>
 				</th>
 				<td>
-					<input type="checkbox" name="cp_post_type[]" value="post" <?php checked(is_array($cp_post_type) && in_array('post',$cp_post_type),true); ?> />
+					<input type="checkbox" name="cp_post_type[home][]" value="post" <?php checked(is_array($cp_post_type['home']['post_type']) && in_array('post',$cp_post_type['home']['post_type'])); ?> />
 					<span class="description"><strong>post</strong></span>
 					<br />
-					<input type="checkbox" name="cp_post_type[]" value="page" <?php checked(is_array($cp_post_type) && in_array('page',$cp_post_type),true); ?> />
+					<input type="checkbox" name="cp_post_type[home][]" value="page" <?php checked(is_array($cp_post_type['home']['post_type']) && in_array('page',$cp_post_type['home']['post_type'])); ?> />
 					<span class="description"><strong>page</strong></span>
 					<br />
-					<input type="checkbox" name="cp_post_type[]" value="attachment" <?php checked(is_array($cp_post_type) && in_array('attachment',$cp_post_type),true); ?> />
+					<input type="checkbox" name="cp_post_type[home][]" value="attachment" <?php checked(is_array($cp_post_type['home']['post_type']) && in_array('attachment',$cp_post_type['home']['post_type'])); ?> />
 					<span class="description"><strong>attachment</strong></span>
 					<br />
 					<?php if ( !empty( $post_types ) ): ?>
 					<?php foreach ( $post_types as $post_type => $args ): ?>
-					<input type="checkbox" name="cp_post_type[]" value="<?php echo( $post_type ); ?>" <?php checked(is_array($cp_post_type) && in_array($post_type,$cp_post_type),true); ?> />
+					<input type="checkbox" name="cp_post_type[home][]" value="<?php echo( $post_type ); ?>" <?php checked(is_array($cp_post_type['home']['post_type']) && in_array($post_type,$cp_post_type['home']['post_type'])); ?> />
 					<span class="description"><strong><?php echo $post_type; ?></strong></span>
 					<br />
 					<?php endforeach; ?>
@@ -76,21 +76,145 @@ $cp_post_type = $options['display_post_types']['home']['post_type'];
 					<?php if ( $enable_subsite_content_types && $keep_network_content_types ): ?>
 					<?php if ( !empty( $network_post_types ) ): ?>
 					<?php foreach ( $network_post_types as $post_type => $args ): ?>
-					<input type="checkbox" name="cp_post_type[]" value="<?php echo( $post_type ); ?>" <?php checked(is_array($cp_post_type) && in_array($post_type,$cp_post_type),true); ?> />
+					<input type="checkbox" name="cp_post_type[home][]" value="<?php echo( $post_type ); ?>" <?php checked(is_array($cp_post_type['home']['post_type']) && in_array($post_type,$cp_post_type['home']['post_type'])); ?> />
 					<span class="description"><strong><?php echo $post_type; ?></strong></span>
 					<br />
 					<?php endforeach; ?>
 					<?php endif; ?>
 					<?php endif; ?>
-					<br />
-					<span class="description"><?php _e('Check the custom post types you want to display on the "Home" page.', $this->text_domain); ?></span>
+
+					<span class="description"><?php _e('Check the custom post types you want to display on the "Blog / Home" page.', $this->text_domain); ?></span>
 					<br /><br />
-					<input type="checkbox" name="cp_post_type[]" value="default" <?php checked(is_array($cp_post_type) && in_array('default', $cp_post_type),true); ?> />
-					<span class="description"><strong>default</strong></span><br /><br />
-					<span class="description"><?php _e('If "default" is checked the "Home" page will display the default post types.', $this->text_domain); ?></span>
+					<input type="checkbox" name="cp_post_type[home][]" value="default" <?php checked(empty($cp_post_type['home']['post_type']) || (is_array($cp_post_type['home']['post_type']) && in_array('default', $cp_post_type['home']['post_type']))); ?> />
+					<span class="description"><strong>default</strong></span><br />
+					<span class="description"><?php _e('If "default" is checked the list above will be disabled and only default post_types will display.', $this->text_domain); ?></span>
 				</td>
 			</tr>
 		</table>
+
+		<table class="form-table">
+			<tr>
+				<th>
+					<label for="cp_post_type"><?php _e('On "Front" page, display these post types: ', $this->text_domain) ?></label>
+				</th>
+				<td>
+					<input type="checkbox" name="cp_post_type[front_page][]" value="post" <?php checked(is_array($cp_post_type['front_page']['post_type']) && in_array('post',$cp_post_type['front_page']['post_type'])); ?> />
+					<span class="description"><strong>post</strong></span>
+					<br />
+					<input type="checkbox" name="cp_post_type[front_page][]" value="page" <?php checked(is_array($cp_post_type['front_page']['post_type']) && in_array('page',$cp_post_type['front_page']['post_type'])); ?> />
+					<span class="description"><strong>page</strong></span>
+					<br />
+					<input type="checkbox" name="cp_post_type[front_page][]" value="attachment" <?php checked(is_array($cp_post_type['front_page']['post_type']) && in_array('attachment',$cp_post_type['front_page']['post_type'])); ?> />
+					<span class="description"><strong>attachment</strong></span>
+					<br />
+					<?php if ( !empty( $post_types ) ): ?>
+					<?php foreach ( $post_types as $post_type => $args ): ?>
+					<input type="checkbox" name="cp_post_type[front_page][]" value="<?php echo( $post_type ); ?>" <?php checked(is_array($cp_post_type['front_page']['post_type']) && in_array($post_type,$cp_post_type['front_page']['post_type'])); ?> />
+					<span class="description"><strong><?php echo $post_type; ?></strong></span>
+					<br />
+					<?php endforeach; ?>
+					<?php endif; ?>
+					<?php if ( $enable_subsite_content_types && $keep_network_content_types ): ?>
+					<?php if ( !empty( $network_post_types ) ): ?>
+					<?php foreach ( $network_post_types as $post_type => $args ): ?>
+					<input type="checkbox" name="cp_post_type[front_page][]" value="<?php echo( $post_type ); ?>" <?php checked(empty($cp_post_type['front_page']['post_type']) || (is_array($cp_post_type['front_page']['post_type']) && in_array($post_type,$cp_post_type['front_page']['post_type']))); ?> />
+					<span class="description"><strong><?php echo $post_type; ?></strong></span>
+					<br />
+					<?php endforeach; ?>
+					<?php endif; ?>
+					<?php endif; ?>
+
+					<span class="description"><?php _e('Check the custom post types you want to display on the "Front" static page.', $this->text_domain); ?></span>
+					<br /><br />
+					<input type="checkbox" name="cp_post_type[front_page][]" value="default" <?php checked(is_array($cp_post_type['front_page']['post_type']) && in_array('default', $cp_post_type['front_page']['post_type'])); ?> />
+					<span class="description"><strong>default</strong></span><br />
+					<span class="description"><?php _e('If "default" is checked the list above will be disabled and only default post_types will display.', $this->text_domain); ?></span>
+				</td>
+			</tr>
+		</table>
+
+		<table class="form-table">
+			<tr>
+				<th>
+					<label for="cp_post_type"><?php _e('On "Archive" pages, display these post types:  ', $this->text_domain) ?></label>
+				</th>
+				<td>
+					<input type="checkbox" name="cp_post_type[archive][]" value="post" <?php checked(is_array($cp_post_type['archive']['post_type']) && in_array('post',$cp_post_type['archive']['post_type'])); ?> />
+					<span class="description"><strong>post</strong></span>
+					<br />
+					<input type="checkbox" name="cp_post_type[archive][]" value="page" <?php checked(is_array($cp_post_type['archive']['post_type']) && in_array('page',$cp_post_type['archive']['post_type'])); ?> />
+					<span class="description"><strong>page</strong></span>
+					<br />
+					<input type="checkbox" name="cp_post_type[archive][]" value="attachment" <?php checked(is_array($cp_post_type['archive']['post_type']) && in_array('attachment',$cp_post_type['archive']['post_type'])); ?> />
+					<span class="description"><strong>attachment</strong></span>
+					<br />
+					<?php if ( !empty( $post_types ) ): ?>
+					<?php foreach ( $post_types as $post_type => $args ): ?>
+					<input type="checkbox" name="cp_post_type[archive][]" value="<?php echo( $post_type ); ?>" <?php checked(is_array($cp_post_type['archive']['post_type']) && in_array($post_type,$cp_post_type['archive']['post_type'])); ?> />
+					<span class="description"><strong><?php echo $post_type; ?></strong></span>
+					<br />
+					<?php endforeach; ?>
+					<?php endif; ?>
+					<?php if ( $enable_subsite_content_types && $keep_network_content_types ): ?>
+					<?php if ( !empty( $network_post_types ) ): ?>
+					<?php foreach ( $network_post_types as $post_type => $args ): ?>
+					<input type="checkbox" name="cp_post_type[archive][]" value="<?php echo( $post_type ); ?>" <?php checked(is_array($cp_post_type['archive']['post_type']) && in_array($post_type,$cp_post_type['archive']['post_type'])); ?> />
+					<span class="description"><strong><?php echo $post_type; ?></strong></span>
+					<br />
+					<?php endforeach; ?>
+					<?php endif; ?>
+					<?php endif; ?>
+
+					<span class="description"><?php _e('Check the custom post types you want to display on the "Archive" page.', $this->text_domain); ?></span>
+					<br /><br />
+					<input type="checkbox" name="cp_post_type[archive][]" value="default" <?php checked(empty($cp_post_type['archive']['post_type']) || (is_array($cp_post_type['archive']['post_type']) && in_array('default', $cp_post_type['archive']['post_type']))); ?> />
+					<span class="description"><strong>default</strong></span><br />
+					<span class="description"><?php _e('If "default" is checked the list above will be disabled and only default post_types will display.', $this->text_domain); ?></span>
+				</td>
+			</tr>
+		</table>
+
+		<table class="form-table">
+			<tr>
+				<th>
+					<label for="cp_post_type"><?php _e('On "Search" pages, display these post types:  ', $this->text_domain) ?></label>
+				</th>
+				<td>
+					<input type="checkbox" name="cp_post_type[search][]" value="post" <?php checked(is_array($cp_post_type['search']['post_type']) && in_array('post',$cp_post_type['search']['post_type'])); ?> />
+					<span class="description"><strong>post</strong></span>
+					<br />
+					<input type="checkbox" name="cp_post_type[search][]" value="page" <?php checked(is_array($cp_post_type['search']['post_type']) && in_array('page',$cp_post_type['search']['post_type'])); ?> />
+					<span class="description"><strong>page</strong></span>
+					<br />
+					<input type="checkbox" name="cp_post_type[search][]" value="attachment" <?php checked(is_array($cp_post_type['search']['post_type']) && in_array('attachment',$cp_post_type['search']['post_type'])); ?> />
+					<span class="description"><strong>attachment</strong></span>
+					<br />
+					<?php if ( !empty( $post_types ) ): ?>
+					<?php foreach ( $post_types as $post_type => $args ): ?>
+					<input type="checkbox" name="cp_post_type[search][]" value="<?php echo( $post_type ); ?>" <?php checked(is_array($cp_post_type['search']['post_type']) && in_array($post_type,$cp_post_type['search']['post_type'])); ?> />
+					<span class="description"><strong><?php echo $post_type; ?></strong></span>
+					<br />
+					<?php endforeach; ?>
+					<?php endif; ?>
+					<?php if ( $enable_subsite_content_types && $keep_network_content_types ): ?>
+					<?php if ( !empty( $network_post_types ) ): ?>
+					<?php foreach ( $network_post_types as $post_type => $args ): ?>
+					<input type="checkbox" name="cp_post_type[search][]" value="<?php echo( $post_type ); ?>" <?php checked(is_array($cp_post_type['search']['post_type']) && in_array($post_type,$cp_post_type['search']['post_type'])); ?> />
+					<span class="description"><strong><?php echo $post_type; ?></strong></span>
+					<br />
+					<?php endforeach; ?>
+					<?php endif; ?>
+					<?php endif; ?>
+
+					<span class="description"><?php _e('Check the custom post types you want to display on the "Search" page.', $this->text_domain); ?></span>
+					<br /><br />
+					<input type="checkbox" name="cp_post_type[search][]" value="default" <?php checked(empty($cp_post_type['search']['post_type']) || (is_array($cp_post_type['search']['post_type']) && in_array('default', $cp_post_type['search']['post_type']))); ?> />
+					<span class="description"><strong>default</strong></span><br />
+					<span class="description"><?php _e('If "default" is checked the list above will be disabled and only default post_types will display.', $this->text_domain); ?></span>
+				</td>
+			</tr>
+		</table>
+
 		<?php endif; ?>
 
 		<?php if ( is_admin() && !is_network_admin() ): ?>
@@ -100,18 +224,19 @@ $cp_post_type = $options['display_post_types']['home']['post_type'];
 				<th>
 				</th>
 				<td style="vertical-align:top; width:240px;">
+					<?php
+					$date_format = $this->get_options('date_format');
+					$date_format = (is_array($date_format)) ? 'mm/dd/yy' : $date_format;
 
+					$datepicker_theme = $this->get_options('datepicker_theme');
+					$datepicker_theme = (is_array($datepicker_theme)) ? 'excite-bike' : $datepicker_theme;
+
+					$this->jquery_ui_css($datepicker_theme); //Load the current ui theme css
+
+					$themes = glob($this->plugin_dir . 'datepicker/css/*', GLOB_ONLYDIR);
+					?>
 					<select id="datepicker_theme" name="datepicker_theme" style="width:230px" onchange="jQuery('#custom_date_format').val(''); update_stylesheet('<?php echo $this->plugin_url . 'datepicker/css/'; ?>' + this.options[this.selectedIndex].value + '/datepicker.css'); " >
 						<?php
-						$date_format = $this->get_options('date_format');
-						$date_format = (is_array($date_format)) ? 'mm/dd/yy' : $date_format;
-
-						$datepicker_theme = $this->get_options('datepicker_theme');
-						$datepicker_theme = (is_array($datepicker_theme)) ? 'excite-bike' : $datepicker_theme;
-
-						$this->jquery_ui_css($datepicker_theme); //Load the current ui theme css
-
-						$themes = glob($this->plugin_dir . 'datepicker/css/*', GLOB_ONLYDIR);
 						foreach($themes as $theme){
 							$theme = basename($theme);
 							$selected = ($theme == $datepicker_theme) ? 'selected="selected"' : '';
@@ -129,13 +254,6 @@ $cp_post_type = $options['display_post_types']['home']['post_type'];
 					<br /><br />
 					<input class="pickdate" id="datepicker" type="text" size="38" value="" /><br />
 					<span class="description"><?php _e('Date picker sample', $this->text_domain) ?></span>
-					<script type="text/javascript">
-						//Make em pickers
-						jQuery('.pickdate').datepicker({ dateFormat : '<?php echo $date_format; ?>' });
-						//Default date for display
-						jQuery('#datepicker').attr('value', jQuery.datepicker.formatDate('<?php echo $date_format; ?>', new Date(), {}) );
-					</script>
-
 				</td>
 			</tr>
 		</table>
@@ -175,3 +293,12 @@ $cp_post_type = $options['display_post_types']['home']['post_type'];
 
 	</form>
 </div>
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+		//Make em pickers
+		jQuery('.pickdate').datepicker({ dateFormat : '<?php echo $date_format; ?>' });
+		//Default date for display
+		jQuery('#datepicker').attr('value', jQuery.datepicker.formatDate('<?php echo $date_format; ?>', new Date(), {}) );
+	});
+</script>
+

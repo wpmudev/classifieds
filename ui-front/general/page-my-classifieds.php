@@ -135,11 +135,11 @@ get_header();
 							<input type="hidden" name="url" value="<?php the_permalink(); ?>" />
 							<input type="submit" name="edit" value="<?php _e('Edit Ad', 'classifieds' ); ?>" />
 							<?php if ( isset( $sub ) && $sub == 'active' ): ?>
-							<input type="submit" name="end" value="<?php _e('End Ad', 'classifieds' ); ?>" onClick="classifieds.toggle_end('<?php echo $post->ID; ?>'); return false;" />
+							<input type="submit" name="end" value="<?php _e('End Ad', 'classifieds' ); ?>" onclick="classifieds.toggle_end('<?php echo $post->ID; ?>'); return false;" />
 							<?php elseif ( isset( $sub ) && ( $sub == 'saved' || $sub == 'ended' ) ): ?>
-							<input type="submit" name="renew" value="<?php _e('Renew Ad', 'classifieds' ); ?>" onClick="classifieds.toggle_renew('<?php echo $post->ID; ?>'); return false;" />
+							<input type="submit" name="renew" value="<?php _e('Renew Ad', 'classifieds' ); ?>" onclick="classifieds.toggle_renew('<?php echo $post->ID; ?>'); return false;" />
 							<?php endif; ?>
-							<input type="submit" name="delete" value="<?php _e('Delete Ad', 'classifieds' ); ?>" onClick="classifieds.toggle_delete('<?php echo $post->ID; ?>'); return false;" />
+							<input type="submit" name="delete" value="<?php _e('Delete Ad', 'classifieds' ); ?>" onclick="classifieds.toggle_delete('<?php echo $post->ID; ?>'); return false;" />
 						</form>
 
 						<form action="" method="post" id="confirm-form-<?php the_ID(); ?>" class="confirm-form">
@@ -157,7 +157,7 @@ get_header();
 							</select>
 							<?php endif; ?>
 							<input type="submit" class="button confirm" value="<?php _e( 'Confirm', 'classifieds' ); ?>" name="confirm" />
-							<input type="submit" class="button cancel"  value="<?php _e( 'Cancel', 'classifieds' ); ?>" onClick="classifieds.cancel('<?php echo $post->ID; ?>'); return false;" />
+							<input type="submit" class="button cancel"  value="<?php _e( 'Cancel', 'classifieds' ); ?>" onclick="classifieds.cancel('<?php echo $post->ID; ?>'); return false;" />
 						</form>
 
 					</div>

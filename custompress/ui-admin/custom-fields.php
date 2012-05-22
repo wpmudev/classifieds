@@ -13,7 +13,7 @@ $nonce = wp_create_nonce('reorder_custom_fields');
 
 <?php $this->render_admin('update-message'); ?>
 
-<form action="" method="post" class="ct-form-single-btn">
+<form action="#" method="post" class="ct-form-single-btn">
 	<input type="submit" class="button-secondary" name="redirect_add_custom_field" value="<?php _e('Add Custom Field', $this->text_domain); ?>" />
 </form>
 <table class="widefat">
@@ -80,7 +80,7 @@ $nonce = wp_create_nonce('reorder_custom_fields');
 						<a class="submitdelete" href="#" onclick="javascript:content_types.toggle_delete('<?php echo $custom_field['field_id']; ?>'); return false;"><?php _e( 'Delete', $this->text_domain ); ?></a>
 					</span>
 				</div>
-				<form action="" method="post" id="form-<?php echo $custom_field['field_id']; ?>" class="del-form">
+				<form action="#" method="post" id="form-<?php echo $custom_field['field_id']; ?>" class="del-form">
 					<?php wp_nonce_field('delete_custom_field'); ?>
 					<input type="hidden" name="custom_field_id" value="<?php echo $custom_field['field_id']; ?>" />
 					<input type="submit" class="button confirm" value="<?php _e( 'Field and values', $this->text_domain ); ?>" name="delete_cf_values" />
@@ -115,6 +115,6 @@ $nonce = wp_create_nonce('reorder_custom_fields');
 		<?php endif; ?>
 	</tbody>
 </table>
-<form action="" method="post" class="ct-form-single-btn">
+<form action="#" method="post" class="ct-form-single-btn">
 	<input type="submit" class="button-secondary" name="redirect_add_custom_field" value="<?php _e('Add Custom Field', $this->text_domain); ?>" />
 </form>

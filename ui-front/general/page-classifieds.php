@@ -13,7 +13,6 @@ $cf_options = $__classifieds_core->get_options( 'general' );
 get_header();
 
 ?>
-<div id="container">
 	<div id="content" class="cf-bp-wrap" role="main">
 
 		<?php /* For BuddyPress compatibility */ ?>
@@ -123,7 +122,6 @@ get_header();
 		<?php locate_template( array( 'sidebar.php' ), true ); ?>
 		<?php endif; ?>
 
-	</div><!-- #container -->
 
 	<?php /* For BuddyPress compatibility */ ?>
 	<?php if ( !isset( $bp ) ): ?>

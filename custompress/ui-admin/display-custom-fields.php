@@ -13,6 +13,7 @@ $output = false;
 	<div class="form-field form-required ct-form-field">
 		<table class="form-table">
 
+			<?php if(is_array($custom_fields)): ?>
 			<?php foreach ( $custom_fields as $custom_field ): ?>
 			<?php foreach ( $custom_field['object_type'] as $custom_field_object_type ): ?>
 			<?php if ( $custom_field_object_type == $post->post_type ): ?>
@@ -175,7 +176,11 @@ $output = false;
 						$fid = $prefix . $custom_field['field_id'];
 						?>
 						<input type="text" class="pickdate <?php echo $required; ?>" name="<?php echo $fid; ?>" id="<?php echo $fid; ?>" value="<?php echo ( get_post_meta( $post->ID, $prefix . $custom_field['field_id'], true )); ?>" />
-						<script type="text/javascript">jQuery('#<?php echo $fid; ?>').datepicker({ dateFormat : '<?php echo $custom_field['field_date_format']; ?>' });</script>
+						<script type="text/javascript">
+							jQuery(document).ready(function(){
+								jQuery('#<?php echo $fid; ?>').datepicker({ dateFormat : '<?php echo $custom_field['field_date_format']; ?>' });
+							});
+							</script>
 						<p><?php echo ( $custom_field['field_description'] ); ?></p>
 					</td>
 				</tr>
@@ -183,6 +188,7 @@ $output = false;
 
 				<?php endif; $output = false; ?>
 				<?php endforeach; ?>
+				<?php endif; //is_array($custom_fields) ?>
 
 			</table>
 		</div>

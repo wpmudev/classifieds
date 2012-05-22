@@ -100,7 +100,7 @@ get_header();
 						</table>
 
 						<form method="post" action="" class="contact-user-btn action-form" id="action-form">
-							<input type="submit" name="contact_user" value="<?php _e('Contact User', 'classifieds' ); ?>" onClick="classifieds.toggle_contact_form(); return false;" />
+							<input type="submit" name="contact_user" value="<?php _e('Contact User', 'classifieds' ); ?>" onclick="classifieds.toggle_contact_form(); return false;" />
 						</form>
 
 						<form method="post" action="" class="standard-form base cf-contact-form" id="confirm-form">
@@ -136,7 +136,7 @@ get_header();
 								<p>
 									<?php wp_nonce_field( 'send_message' ); ?>
 									<input type="submit" class="button confirm" value="<?php _e( 'Send', 'classifieds' ); ?>" name="contact_form_send" />
-									<input type="submit" class="button cancel"  value="<?php _e( 'Cancel', 'classifieds' ); ?>" onClick="classifieds.cancel_contact_form(); return false;" />
+									<input type="submit" class="button cancel"  value="<?php _e( 'Cancel', 'classifieds' ); ?>" onclick="classifieds.cancel_contact_form(); return false;" />
 								</p>
 							</div>
 
@@ -160,22 +160,32 @@ get_header();
 						<table class="cf-custom-fields" >
 							<?php $prefix = '_ct_'; $i = 1; ?>
 							<?php $custom_fields = get_site_option('ct_custom_fields'); ?>
-							<?php foreach ( $custom_fields as $custom_field ): ?>
-							<?php $field_value = get_post_meta( get_the_ID(), $prefix . $custom_field['field_id'], true ); ?>
-							<tr class="<?php if ( $i % 2 == 0 ) echo 'alt' ?>">
-								<th><?php echo $custom_field['field_title']; ?></th>
-								<td>
-									<?php
-									if ( is_array( $field_value ) ) {
-										foreach ( $field_value as $value )
-										echo $value  . ' ';
-									} else {
-										echo $field_value;
-									} ?>
-								</td>
-							</tr>
-							<?php $i++; ?>
-							<?php endforeach; ?>
+							<?php foreach ( $custom_fields as $custom_field ):
+							$output = false;
+							foreach ( $custom_field['object_type'] as $custom_field_object_type ){
+								if ( $custom_field_object_type == 'classifieds' ){
+									$output = true; break;
+								}
+							}
+
+							if($output){ ?>
+
+								<?php $field_value = get_post_meta( get_the_ID(), $prefix . $custom_field['field_id'], true ); ?>
+								<tr class="<?php if ( $i % 2 == 0 ) echo 'alt' ?>">
+									<th><?php echo $custom_field['field_title']; ?></th>
+									<td>
+										<?php
+										if ( is_array( $field_value ) ) {
+											foreach ( $field_value as $value )
+											echo $value  . ' ';
+										} else {
+											echo $field_value;
+										} ?>
+									</td>
+								</tr>
+								<?php $i++;
+							}
+							endforeach; ?>
 						</table>
 
 					</div><!-- .entry-content -->

@@ -4,6 +4,10 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.2.2 =
+* New CustomPress 1.2.2.1 updated
+* Fixed display of other taxonomy custom fields.
+
 = 2.2.1 =
 * Corrected Validation on Checkout Page
 

@@ -13,7 +13,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	/** @var string $sub_menu_slug Submenu slug @todo better way of handling this */
 	var $sub_menu_slug    = 'classifieds_credits';
 
-	/** @var string $message Return message after save settigns operation */
+	/** @var string $message Return message after save settings operation */
 	var $message  = '';
 
 	/**
@@ -55,12 +55,12 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	* @return void
 	**/
 	function admin_menu() {
-		add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
-		add_submenu_page( $this->menu_slug, __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
-		add_submenu_page( $this->menu_slug, __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', 'classifieds_settings', array( &$this, 'handle_admin_requests' ) );
+		//add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
+		add_submenu_page( 'edit.php?post_type=classifieds', __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
+		add_submenu_page( 'edit.php?post_type=classifieds', __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', 'classifieds_settings', array( &$this, 'handle_admin_requests' ) );
 
 		if($this->use_credits){
-			add_submenu_page( $this->menu_slug, __( 'Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
+			add_submenu_page( 'edit.php?post_type=classifieds', __( 'Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
 		}
 	}
 
