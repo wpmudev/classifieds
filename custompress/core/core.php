@@ -234,29 +234,37 @@ class CustomPress_Core {
 
 		//Home Page
 		if ( isset($options['display_post_types']['home']['post_type']) && is_array( $options['display_post_types']['home']['post_type'] ) ) {
-			if ( is_home() && !in_array( 'default', $options['display_post_types']['home']['post_type'] ) ){
-				$wp_query->query_vars['post_type'] = $options['display_post_types']['home']['post_type'];
+			$post_types = $options['display_post_types']['home']['post_type'];
+			if ( is_archive() && !in_array( 'default', $post_types ) ){
+				if(count($post_types) == 1) $post_types = $post_types[0];
+				$wp_query->query_vars['post_type'] = $post_types;
 			}
 		}
 
 		//Archive Page
 		if (isset($options['display_post_types']['archive']['post_type']) && is_array( $options['display_post_types']['archive']['post_type'] ) ) {
-			if ( is_archive() && !in_array( 'default', $options['display_post_types']['archive']['post_type'] ) ){
-				$wp_query->query_vars['post_type'] = $options['display_post_types']['archive']['post_type'];
+			$post_types = $options['display_post_types']['archive']['post_type'];
+			if ( is_archive() && !in_array( 'default', $post_types ) ){
+				if(count($post_types) == 1) $post_types = $post_types[0];
+				$wp_query->query_vars['post_type'] = $post_types;
 			}
 		}
 
 		//Front Page
 		if ( isset($options['display_post_types']['front_page']['post_type']) && is_array( $options['display_post_types']['front_page']['post_type'] ) ) {
-			if ( is_front_page() && !in_array( 'default', $options['display_post_types']['front_page']['post_type'] ) ){
-				$wp_query->query_vars['post_type'] = $options['display_post_types']['front_page']['post_type'];
+			$post_types = $options['display_post_types']['front_page']['post_type'];
+			if ( is_archive() && !in_array( 'default', $post_types ) ){
+				if(count($post_types) == 1) $post_types = $post_types[0];
+				$wp_query->query_vars['post_type'] = $post_types;
 			}
 		}
 
 		//Search Page
 		if ( isset($options['display_post_types']['search']['post_type']) && is_array( $options['display_post_types']['search']['post_type'] ) ) {
-			if ( is_search() && !in_array( 'default', $options['display_post_types']['search']['post_type'] ) ){
-				$wp_query->query_vars['post_type'] = $options['display_post_types']['search']['post_type'];
+			$post_types = $options['display_post_types']['search']['post_type'];
+			if ( is_archive() && !in_array( 'default', $post_types ) ){
+				if(count($post_types) == 1) $post_types = $post_types[0];
+				$wp_query->query_vars['post_type'] = $post_types;
 			}
 		}
 
