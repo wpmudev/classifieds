@@ -4,6 +4,10 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.2.2.2 =
+* Fixed pagination problem in BuddyPress
+* CustomPress 1.2.2.3 updated
+
 = 2.2.2.1 =
 * New CustomPress 1.2.2.2 updated
 

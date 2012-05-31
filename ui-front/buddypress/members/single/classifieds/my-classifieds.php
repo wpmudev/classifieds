@@ -12,31 +12,39 @@
 ?>
 
 <?php
-global $bp, $wp_query;
+
+global $bp, $wp_query, $paged;
 
 $cf_options = $this->get_options( 'general' );
 
 $cf_path = $bp->displayed_user->domain . $this->classifieds_page_slug .'/' . $this->my_classifieds_page_slug;
 
 /* Get posts based on post_status */
-if ( in_array( 'active', $bp->action_variables ) || empty( $bp->action_variables ) ) {
-	$sub = 'active';
-	$status = 'publish';
-}
-elseif ( in_array( 'saved',  $bp->action_variables ) ) {
+if ( in_array( 'saved',  $bp->action_variables ) ) {
 	$sub = 'saved';
 	$status = 'draft';
 }
 elseif ( in_array( 'ended',  $bp->action_variables ) ) {
 	$sub = 'ended';
 	$status = 'private';
+}else {
+	$sub = 'active';
+	$status = 'publish';
 }
+
 
 /* Build messages */
 if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
 	$msg = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.', $this->text_domain );
 	$class = 'error';
 }
+
+if(empty($paged)) $paged = 1;
+
+if(isset($bp)){
+  $paged = $bp->action_variables[array_search('page',$bp->action_variables) + 1]; //find /page/x
+}
+
 ?>
 
 <div class="profile">
@@ -57,7 +65,7 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
 	<div class="clear"></div>
 
 	<?php
-	$wp_query = new WP_Query( array( 'author' => bp_displayed_user_id(), 'post_type' => 'classifieds', 'post_status' => $status,  'paged' => get_query_var( 'paged' ) ) );
+	$wp_query = new WP_Query( array( 'author' => bp_displayed_user_id(), 'post_type' => 'classifieds', 'post_status' => $status,  'paged' => $paged ) );
 
 	/* Build messages */
 	if ( !$wp_query->have_posts() ) {
@@ -86,7 +94,7 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
 
 	<?php /* Display navigation to next/previous pages when applicable */ ?>
 	<?php $this->cf_display_pagination( 'top' ); ?>
-
+	<br />
 	<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
 	<div class="cf-ad">
