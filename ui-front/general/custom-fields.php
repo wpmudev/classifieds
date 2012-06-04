@@ -20,9 +20,12 @@ $post->ID = 0
 <?php foreach ( $custom_fields as $custom_field ):
 
 $output = false;
-foreach ( $custom_field['object_type'] as $custom_field_object_type ){
-	if ( $custom_field_object_type == 'classifieds' ){
-		$output = true; break;
+
+if (is_array($custom_field['object_type'])){
+	foreach ( $custom_field['object_type'] as $custom_field_object_type ){
+		if ( $custom_field_object_type == 'classifieds' ){
+			$output = true; break;
+		}
 	}
 }
 
