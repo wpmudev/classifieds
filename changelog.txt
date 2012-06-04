@@ -4,12 +4,14 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
-= 2.2.2.2 =
-* Fixed pagination problem in BuddyPress
+= 2.2.2.3 =
 * Changed BuddyPress styling for pagination
 * CustomPress 1.2.2.3 updated
 * Changed post type, taxonomy, and custom field creation so they can recreate themselves if deleted.
 * Classifieds core property custom_fields corrupted causing foreach error.
+
+= 2.2.2.2 =
+* Fixed pagination problem in BuddyPress
 
 = 2.2.2.1 =
 * New CustomPress 1.2.2.2 updated
