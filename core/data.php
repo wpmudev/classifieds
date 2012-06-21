@@ -25,12 +25,20 @@ class Classifieds_Core_Data extends Classifieds_Core {
 		$options = ( get_site_option( $this->options_name ) ) ? get_site_option( $this->options_name ) : array();
 
 		// Check whether post types are loaded
-		$ct_custom_post_types = get_option( 'ct_custom_post_types' );
+		$ct_custom_post_types = get_site_option( 'ct_custom_post_types' );
+		
 		if ( ! isset( $ct_custom_post_types['classifieds'] ) ) {
 
+			if(is_multisite()){
+				$ct = get_option( 'ct_custom_post_types' ); // get the blog types
+				if(isset($ct['classifieds'])) unset($ct['classifieds']);
+				update_option( 'ct_custom_post_types', $ct ); //Remove from site specific and move to network options if multisite.
+			}
+			
 			$classifieds_default =
 			array (
 			'capability_type' => 'classified',
+			'map_meta_cap' => true,
 			'description' => 'Classifieds post type.',
 			'menu_position' => '',
 			'public' => true,
@@ -38,6 +46,8 @@ class Classifieds_Core_Data extends Classifieds_Core {
 			'rewrite' => array ( 'slug' => 'classified', 'with_front' => false),
 			'query_var' => true,
 			'can_export' => true,
+
+			'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments', 'revisions', /*'post-formats'*/ ),
 
 			'labels' => array (
 			'name' => 'Classifieds',
@@ -51,9 +61,6 @@ class Classifieds_Core_Data extends Classifieds_Core {
 			'not_found' => 'No Classifieds Found',
 			'not_found_in_trash' => 'No Classifieds Found In Trash',
 			),
-
-			'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments', 'revisions', /*'post-formats'*/ ),
-
 			);
 
 			//Update custom post types
@@ -66,9 +73,16 @@ class Classifieds_Core_Data extends Classifieds_Core {
 
 		/* Check whether taxonomies data is loaded */
 
-		$ct_custom_taxonomies = get_option('ct_custom_taxonomies');
+		
+		$ct_custom_taxonomies = get_site_option( 'ct_custom_taxonomies' );
 
 		if (empty($ct_custom_taxonomies['classifieds_tags'])){
+
+			if(is_multisite()){
+				$ct = get_option( 'ct_custom_taxonomies' ); // get the blog types
+				if(isset($ct['classifieds_tags'])) unset($ct['classifieds_tags']);
+				update_option( 'ct_custom_taxonomies', $ct ); //Remove from site specific and move to network otions.
+			}
 
 			$classifieds_tags_default = array();
 			$classifieds_tags_default['object_type'] = array ( 'classifieds');
@@ -94,6 +108,13 @@ class Classifieds_Core_Data extends Classifieds_Core {
 		}
 
 		if (empty($ct_custom_taxonomies['classifieds_categories'])){
+
+			if(is_multisite()){
+				$ct = get_option( 'ct_custom_taxonomies' ); // get the blog types
+				if(isset($ct['classifieds_categories'])) unset($ct['classifieds_categories']);
+				update_option( 'ct_custom_taxonomies', $ct ); //Remove from site specific and move to network options.
+			}
+
 			$classifieds_categories_default = array();
 			$classifieds_categories_default['object_type'] = array ('classifieds');
 			$classifieds_categories_default['args'] = array (
@@ -123,6 +144,12 @@ class Classifieds_Core_Data extends Classifieds_Core {
 
 		if (empty($ct_custom_fields['selectbox_4cf582bd61fa4'])){
 
+			if(is_multisite()){
+				$ct = get_option( 'ct_custom_fields' ); // get the blog types
+				if(isset($ct['selectbox_4cf582bd61fa4'])) unset($ct['selectbox_4cf582bd61fa4']);
+				update_option( 'ct_custom_fields', $ct ); //Remove from site specific and move to network options if multisite.
+			}
+
 			$selectbox_4cf582bd61fa4_default =
 			array (
 			'field_title' => 'Duration',
@@ -140,7 +167,7 @@ class Classifieds_Core_Data extends Classifieds_Core {
 			'field_description' => 'The duration of this ad. ',
 			'object_type' => array ('classifieds'),
 
-			'required' => NULL,
+			'field_required' => NULL,
 			'field_id' => 'selectbox_4cf582bd61fa4',
 			);
 
@@ -150,6 +177,13 @@ class Classifieds_Core_Data extends Classifieds_Core {
 		}
 
 		if (empty($ct_custom_fields['text_4cfeb3eac6f1f'])){
+
+			if(is_multisite()){
+				$ct = get_option( 'ct_custom_fields' ); // get the blog types
+				if(isset($ct['text_4cfeb3eac6f1f'])) unset($ct['text_4cfeb3eac6f1f']);
+				update_option( 'ct_custom_fields', $ct ); //Remove from site specific and move to network options if multisite.
+			}
+
 			$text_4cfeb3eac6f1f_default =
 			array (
 			'field_title' => 'Cost',
@@ -158,7 +192,7 @@ class Classifieds_Core_Data extends Classifieds_Core {
 			'field_default_option' => NULL,
 			'field_description' => 'The cost of the item.',
 			'object_type' => array ('classifieds'),
-			'required' => NULL,
+			'field_required' => NULL,
 			'field_id' => 'text_4cfeb3eac6f1f',
 			);
 

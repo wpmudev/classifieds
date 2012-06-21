@@ -5,6 +5,34 @@ Author URI: http://premium.wpmudev.org
 
 == Changelog ==
 
+= 1.2.4 = 2012-06-18 Arnold Bailey
+* Added Map Meta Capability to Post Types editor. It was being overwritten when the custom post type was saved even if it was set by another program.
+* New custom post types automatically grant all capabilities to administrator role
+* Added Role Capabilities editor to post types. Roles can now be assigned capabilities where the capability type is not equal to "post"
+* Added [custom_field_block] shortcode to display a post's custom fields from a shortcode.
+
+= 1.2.3.2 = 2012-06-15 Arnold Bailey
+* Backup Buddy uses it's own version of Datepicker (timepicker) which was interfering with standard Wordpress Datepicker causing downstream thickbox to fail.
+* More fiddling with the language translation file loading.
+* Changed dynamic stylesheet loader.
+
+= 1.2.3.1 = 2012-06-14 Arnold Bailey
+* Removed duplicate init_vars() overiding the object inheritance
+
+= 1.2.3 = 2012-06-14 Arnold Bailey
+* Added new update notification
+* Tested against WP 3.4
+* Added custom required error messages for custom fields
+* Added regular expression validation for custom text and textarea fields
+* Added custom required error messages for regex validation
+* Reworked Network and Local custom field handling.
+* Added regex options flags
+
+
+= 1.2.2.5 = 2012-06-01 Arnold Bailey
+* Fixed double label on Show UI
+* Fixed display_custom_post_types() to handle multiple post_types.
+
 = 1.2.2.4 = 2012-06-01 Arnold Bailey
 * Changed priority of when custom field shortcodes are expanded so they will occur first. 
 This allows other shortcodes to use the custom values for example 

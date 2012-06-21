@@ -924,7 +924,7 @@ class Classifieds_Core {
 	}
 
 	/**
-	* Calculate the Unix time stam of the modified posts
+	* Calculate the Unix time stamp of the modified posts
 	*
 	* @param int|string $post_id
 	* @param string $duration Valid value: "1 Week", "2 Weeks" ... etc

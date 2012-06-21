@@ -28,14 +28,15 @@ class CustomPress_Core_Admin extends CustomPress_Content_Types {
 
 		parent::__construct();
 
-		$this->init_vars();
-
-		add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
+		add_action( 'admin_menu', array( &$this, 'on_admin_menu' ) );
 		add_action( 'network_admin_menu', array( &$this, 'network_admin_menu' ) );
 		add_action( 'admin_init', array( &$this, 'admin_init' ) );
 
-		add_action( 'admin_print_styles-post.php', array( &$this, 'enqueue_custom_field_styles') );
-		add_action( 'admin_print_styles-post-new.php', array( &$this, 'enqueue_custom_field_styles') );
+		add_action( 'admin_print_styles-post.php', array( &$this, 'enqueue_custom_field_scripts') );
+		add_action( 'admin_print_styles-post-new.php', array( &$this, 'enqueue_custom_field_scripts') );
+
+		add_action( 'wp_ajax_ct_get_caps', array( &$this, 'ajax_get_caps' ) );
+		add_action( 'wp_ajax_ct_save', array( &$this, 'ajax_save' ) );
 
 	}
 
@@ -86,39 +87,14 @@ class CustomPress_Core_Admin extends CustomPress_Content_Types {
 		}
 	}
 
-
-	/**
-	* Initiate variables
-	*
-	* @return void
-	*/
-	function init_vars() {
-		$this->enable_subsite_content_types = apply_filters( 'enable_subsite_content_types', false );
-
-		if ( $this->enable_subsite_content_types ) {
-			$this->post_types    = get_option( 'ct_custom_post_types' );
-			$this->taxonomies    = get_option( 'ct_custom_taxonomies' );
-			$this->custom_fields = get_option( 'ct_custom_fields' );
-		} else {
-			$this->post_types    = get_site_option( 'ct_custom_post_types' );
-			$this->taxonomies    = get_site_option( 'ct_custom_taxonomies' );
-			$this->custom_fields = get_site_option( 'ct_custom_fields' );
-		}
-
-		if ( is_network_admin() ) {
-			$this->post_types    = get_site_option( 'ct_custom_post_types' );
-			$this->taxonomies    = get_site_option( 'ct_custom_taxonomies' );
-			$this->custom_fields = get_site_option( 'ct_custom_fields' );
-		}
-	}
-
 	/**
 	* Register site admin menues.
 	*
 	* @access public
 	* @return void
 	*/
-	function admin_menu() {
+	function on_admin_menu() {
+
 		if ( is_multisite() ) {
 			$menu_slug = $this->enable_subsite_content_types ? 'ct_content_types' : 'cp_main';
 			$menu_callback = $this->enable_subsite_content_types ? 'handle_content_types_page_requests' : 'handle_settings_page_requests';
@@ -132,7 +108,6 @@ class CustomPress_Core_Admin extends CustomPress_Content_Types {
 		if ( $this->enable_subsite_content_types || !is_multisite() ) {
 			$page_content_types = add_submenu_page( 'ct_content_types' , __( 'Content Types', $this->text_domain ), __( 'Content Types', $this->text_domain ), 'activate_plugins', 'ct_content_types', array( &$this, 'handle_content_types_page_requests' ) );
 
-			add_action( 'admin_print_styles-' .  $page_content_types, array( &$this, 'enqueue_styles' ) );
 			add_action( 'admin_print_scripts-' . $page_content_types, array( &$this, 'enqueue_scripts' ) );
 		}
 
@@ -154,20 +129,9 @@ class CustomPress_Core_Admin extends CustomPress_Content_Types {
 		$page_content_types = add_submenu_page( 'ct_content_types' , __( 'Content Types', $this->text_domain ), __( 'Content Types', $this->text_domain ), 'manage_network', 'ct_content_types', array( &$this, 'handle_content_types_page_requests' ) );
 		$page_settings      = add_submenu_page( 'ct_content_types', __('Settings', $this->text_domain), __('Settings', $this->text_domain), 'manage_network', 'cp_main', array( &$this, 'handle_settings_page_requests' ) );
 
-		add_action( 'admin_print_styles-' .  $page_content_types, array( &$this, 'enqueue_styles' ) );
 		add_action( 'admin_print_scripts-' . $page_content_types, array( &$this, 'enqueue_scripts' ) );
 		add_action( 'admin_print_scripts-' . $page_settings, array( &$this, 'enqueue_settings_scripts' ) );
 		add_action( 'admin_head-' . $page_settings, array( &$this, 'ajax_actions' ) );
-	}
-
-	/**
-	* Load styles on plugin admin pages only.
-	*
-	* @return void
-	*/
-	function enqueue_styles() {
-		wp_enqueue_style( 'ct-admin-styles',
-		$this->plugin_url . 'ui-admin/css/styles.css');
 	}
 
 	/**
@@ -176,10 +140,9 @@ class CustomPress_Core_Admin extends CustomPress_Content_Types {
 	* @return void
 	*/
 	function enqueue_scripts() {
-		wp_enqueue_script( 'ct-admin-scripts',
-		$this->plugin_url . 'ui-admin/js/ct-scripts.js',
-		array( 'jquery' ) );
-
+		wp_enqueue_style( 'ct-admin-styles', $this->plugin_url . 'ui-admin/css/styles.css');
+		wp_enqueue_script( 'ct-admin-scripts', $this->plugin_url . 'ui-admin/js/ct-scripts.js', array( 'jquery' ) );
+		$this->enqueue_datepicker();
 	}
 
 	/**
@@ -188,9 +151,8 @@ class CustomPress_Core_Admin extends CustomPress_Content_Types {
 	* @return void
 	*/
 	function enqueue_settings_scripts() {
-		wp_enqueue_script( 'settings-admin-scripts',
-		$this->plugin_url . 'ui-admin/js/settings-scripts.js',
-		array( 'jquery' ) );
+		wp_enqueue_script( 'settings-admin-scripts', $this->plugin_url . 'ui-admin/js/settings-scripts.js', array( 'jquery' ) );
+		$this->enqueue_datepicker();
 	}
 
 	/**
@@ -198,10 +160,11 @@ class CustomPress_Core_Admin extends CustomPress_Content_Types {
 	*
 	* @return void
 	*/
-	function enqueue_custom_field_styles() {
-		wp_enqueue_style( 'ct-admin-custom-field-styles',
-		$this->plugin_url . 'ui-admin/css/custom-fields-styles.css' );
+	function enqueue_custom_field_scripts() {
+		wp_enqueue_style( 'ct-admin-custom-field-styles', $this->plugin_url . 'ui-admin/css/custom-fields-styles.css' );
+		$this->enqueue_datepicker();
 	}
+
 	/**
 	* Handle $_GET and $_POST requests for Settings admin page.
 	*
@@ -220,11 +183,11 @@ class CustomPress_Core_Admin extends CustomPress_Content_Types {
 
 				if ( !empty( $params['enable_subsite_content_types'] ) ) {
 					update_site_option( 'allow_per_site_content_types', true );
-					update_site_option( 'keep_network_content_types', (bool) $params['keep_network_content_types'] );
+					update_site_option( 'display_network_content_types', (bool) $params['display_network_content_types'] );
 				}
 				else {
 					update_site_option( 'allow_per_site_content_types', false );
-					update_site_option( 'keep_network_content_types', false );
+					update_site_option( 'display_network_content_types', false );
 				}
 			}
 
@@ -294,9 +257,80 @@ class CustomPress_Core_Admin extends CustomPress_Content_Types {
 		}
 	}
 
+	/**
+	* Ajax callback which gets the post types associated with each page.
+	*
+	* @return JSON Encoded string
+	*/
+	function ajax_get_caps() {
+		global $wp_roles;
+
+		if ( !current_user_can( 'manage_options' ) ) die(-1);
+	
+		if(empty($_POST['role'])) die(-1);
+		if(empty($_POST['post_type'])) die(-1);
+	
+		$role = $_POST['role'];
+		$post_type = $_POST['post_type'];
+
+		if ( !$wp_roles->is_role( $role ) )
+		die(-1);
+
+		if ( !post_type_exists( $post_type ) )
+		die(-1);
+
+		$role_obj = $wp_roles->get_role( $role );
+		$post_type_obj = get_post_type_object($post_type);
+		
+		$caps = get_object_vars($post_type_obj->cap);
+
+		$response = array_intersect( array_keys( $role_obj->capabilities ), $caps );
+		$response = array_flip( $response );
+
+		// response output
+		header( "Content-Type: application/json" );
+		echo json_encode( $response );
+		die();
+	}
+	
+		/**
+	* Save admin options.
+	*
+	* @return void die() if _wpnonce is not verified
+	*/
+	function ajax_save() {
+
+		check_admin_referer( 'submit_post_type' );
+
+		if ( !current_user_can( 'manage_options' ) )
+		die(-1);
+
+		// add/remove capabilities
+		global $wp_roles;
+
+		$role = $_POST['roles'];
+		$post_type = $_POST['post_type'];
+
+		$post_type_obj = get_post_type_object($post_type);
+		$all_caps = get_object_vars($post_type_obj->cap);
+
+		$to_add = array_keys( $_POST['capabilities'] );
+		$to_remove = array_diff( $all_caps, $to_add );
+
+		foreach ( $to_remove as $capability ) {
+			$wp_roles->remove_cap( $role, $capability );
+		}
+
+		foreach ( $to_add as $capability ) {
+			$wp_roles->add_cap( $role, $capability );
+		}
+
+		die(1);
+	}
 }
 
 /* Initiate Admin Class */
-$CustomPress_Core_Admin = new CustomPress_Core_Admin();
-
+if(is_admin()) {
+	$CustomPress_Core = new CustomPress_Core_Admin();
+}
 endif;
