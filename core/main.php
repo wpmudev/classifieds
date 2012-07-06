@@ -34,6 +34,10 @@ class Classifieds_Core_Main extends Classifieds_Core {
 		add_action( 'wp_head', array( &$this, 'print_scripts' ) );
 	}
 
+	function custom_classifieds_template( $template ) {
+		return $this->classifieds_template;
+	}
+
 	/**
 	* Handle $_REQUEST for main pages.
 	*
@@ -41,14 +45,65 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	* @return void|die() if "_wpnonce" is not verified
 	**/
 	function handle_page_requests() {
+		global $wp_query;
 
 		/* Handles request for classifieds page */
+
 		if ( is_page($this->classifieds_page_id) ) {
 			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-			set_query_var( 'cf_action', 'my-classifieds' );
+			//			set_query_var( 'cf_action', 'my-classifieds' );
+			$templates = array( 'page-classifieds.php' );
+			if ( $this->classifieds_template = locate_template( $templates ) ) {
+				add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			} else {
+				add_filter('the_content', array(&$this, 'content_classifieds'));
+			}
+
+
+		}elseif(is_page($this->add_classified_page_id) || is_page($this->edit_classified_page_id)){
+			$templates = array( 'page-update-classified.php' );
+			if ( $this->classifieds_template = locate_template( $templates ) ) {
+				add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			} else {
+				add_filter('the_content', array(&$this, 'content_update_classified'));
+			}
+		}elseif(is_single() && 'classifieds' == get_query_var('post_type')){
+			$templates = array( 'single-classifieds.php' );
+			if ( $this->classifieds_template = locate_template( $templates ) ) {
+				add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			} else {
+				add_filter('the_content', array(&$this, 'content_single_classifieds'));
+			}
+		}elseif(is_page($this->my_credits_page_id) ){
+			$templates = array( 'page-my-credits.php' );
+			if ( $this->classifieds_template = locate_template( $templates ) ) {
+				add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			} else {
+				add_filter('the_content', array(&$this, 'content_my_credits'));
+			}
+		}elseif(is_page($this->checkout_page_id) ){
+			$templates = array( 'page-checkout.php' );
+			if ( $this->classifieds_template = locate_template( $templates ) ) {
+				add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			} else {
+				add_filter('the_content', array(&$this, 'content_checkout'));
+			}
+		}elseif(is_page($this->signin_page_id) ){
+			$templates = array( 'page-signin.php' );
+			if ( $this->classifieds_template = locate_template( $templates ) ) {
+				add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			} else {
+				add_filter('the_content', array(&$this, 'content_signin'));
+			}
 		}
 
 		if (is_page($this->my_classifieds_page_id) ){
+			$templates = array( 'page-my-classifieds.php' );
+			if ( $this->classifieds_template = locate_template( $templates ) ) {
+				add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			} else {
+				add_filter('the_content', array(&$this, 'content_my_classifieds'));
+			}
 
 			/* If edit button is pressed */
 			if ( isset( $_POST['edit'] ) ) {
@@ -63,7 +118,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 				}
 			}
 			/* If update button is pressed */
-			elseif ( isset( $_POST['update'] ) ) {
+			elseif ( isset( $_POST['update_classified'] ) ) {
 				/* The credits required to renew the classified for the selected period */
 				$credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
 				/* If user have more credits of the required credits proceed with renewing the ad */
@@ -200,6 +255,157 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	}
 
 	/**
+	* Update Classifieds.
+	*
+	* @return void
+	**/
+	function content_classifieds($content = null){
+		if(! in_the_loop()) return $content;
+		ob_start();
+		require($this->template_file('classifieds'));
+		$new_content = ob_get_contents();
+		ob_end_clean();
+		return $new_content;
+	}
+
+	/**
+	* Update Classifieds.
+	*
+	* @return void
+	**/
+	function content_update_classified($content = null){
+		if(! in_the_loop()) return $content;
+		ob_start();
+		require($this->template_file('update-classified'));
+		$new_content = ob_get_contents();
+		ob_end_clean();
+		return $new_content;
+	}
+
+	/**
+	* My Classifieds.
+	*
+	* @return void
+	**/
+	function content_my_classifieds($content = null){
+		if(! in_the_loop()) return $content;
+		ob_start();
+		require($this->template_file('my-classifieds'));
+		$new_content = ob_get_contents();
+		ob_end_clean();
+		return $new_content;
+	}
+
+	/**
+	* My Classifieds.
+	*
+	* @return void
+	**/
+	function content_checkout($content = null){
+		if(! in_the_loop()) return $content;
+		ob_start();
+		require($this->template_file('checkout'));
+		$new_content = ob_get_contents();
+		ob_end_clean();
+		return $new_content;
+	}
+
+	/**
+	* Signin.
+	*
+	* @return void
+	**/
+	function content_signin($content = null){
+		if(! in_the_loop()) return $content;
+		ob_start();
+		require($this->template_file('signin'));
+		$new_content = ob_get_contents();
+		ob_end_clean();
+		return $new_content;
+	}
+
+/**
+	* My Classifieds Credits.
+	*
+	* @return void
+	**/
+	function content_my_credits($content = null){
+		if(! in_the_loop()) return $content;
+		ob_start();
+		require($this->plugin_dir . 'ui-front/general/page-my-classifieds-credits.php');
+		$new_content = ob_get_contents();
+		ob_end_clean();
+		return $new_content;
+	}
+
+	/**
+	* Single Classifieds.
+	*
+	* @return void
+	**/
+	function content_single_classifieds($content = null){
+		if(! in_the_loop()) return $content;
+		ob_start();
+		require($this->plugin_dir . 'ui-front/general/single-classifieds.php');
+		$new_content = ob_get_contents();
+		ob_end_clean();
+		return $new_content;
+	}
+
+	function update_classified($params){
+		/* Construct args for the new post */
+		$args = array(
+		/* If empty ID insert Listing instead of updating it */
+		'ID'             => ( isset( $params['classified_data']['ID'] ) ) ? $params['classified_data']['ID'] : '',
+		'post_title'     => wp_strip_all_tags($params['classified_data']['post_title']),
+		'post_content'   => $params['classified_data']['post_content'],
+		'post_excerpt'   => (isset($params['classified_data']['post_excerpt'])) ? $params['classified_data']['post_excerpt'] : '',
+		'post_status'    => $params['classified_data']['post_status'],
+		'post_author'    => get_current_user_id(),
+		'post_type'      => 'classifieds',
+		'ping_status'    => 'closed',
+		//'comment_status' => 'closed'
+		);
+
+		/* Insert page and get the ID */
+		if (empty($args['ID']))
+		$post_id = wp_insert_post( $args );
+		else
+		$post_id = wp_update_post( $args );
+
+		if (! empty( $post_id ) ) {
+
+			//Save custom tags
+			if(is_array($params['tag_input'])){
+				foreach($params['tag_input'] as $key => $tags){
+					wp_set_post_terms($post_id, $params['tag_input'][$key], $key);
+				}
+			}
+			
+			//Save categories
+			if(is_array($params['post_category'])){
+				wp_set_post_terms($post_id, $params['post_category'], 'category');
+			}
+
+			//Save custom terms
+			if(is_array($params['tax_input'])){
+				foreach($params['tax_input'] as $key => $term_ids){
+					if ( is_array( $params['tax_input'][$key] ) ) {
+						wp_set_post_terms($post_id, $params['tax_input'][$key], $key);
+					}
+				}
+			}
+
+			if ( class_exists( 'CustomPress_Core' ) ) {
+				global $CustomPress_Core;
+				$CustomPress_Core->save_custom_fields( $post_id );
+			}
+
+			return $post_id;
+		}
+	}
+
+	/**
 	* Enqueue styles.
 	*
 	* @return void
@@ -274,8 +480,8 @@ class Classifieds_Core_Main extends Classifieds_Core {
 }
 
 /* Initiate Class */
-global $__classifieds_core;
-$__classifieds_core = new Classifieds_Core_Main();
+global $Classifieds_Core;
+$Classifieds_Core = new Classifieds_Core_Main();
 
 endif;
 ?>

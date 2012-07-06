@@ -133,7 +133,7 @@ if(isset($bp)){
 			</table>
 		</div>
 
-		<form action="" method="post" id="action-form-<?php the_ID(); ?>" class="action-form">
+		<form action="#" method="post" id="action-form-<?php the_ID(); ?>" class="action-form">
 			<?php wp_nonce_field('verify'); ?>
 			<input type="hidden" name="post_id" value="<?php the_ID(); ?>" />
 			<input type="hidden" name="url" value="<?php the_permalink(); ?>" />
@@ -150,7 +150,7 @@ if(isset($bp)){
 
 		<?php if ( bp_is_my_profile() ): ?>
 
-		<form action="" method="post" id="confirm-form-<?php the_ID(); ?>" class="confirm-form">
+		<form action="#" method="post" id="confirm-form-<?php the_ID(); ?>" class="confirm-form">
 			<?php wp_nonce_field('verify'); ?>
 			<input type="hidden" name="action" />
 			<input type="hidden" name="post_id" value="<?php the_ID(); ?>" />

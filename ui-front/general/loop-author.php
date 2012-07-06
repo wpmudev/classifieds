@@ -19,9 +19,9 @@
 * @since Classifieds 2.0
 */
 
-global $query_string, $__classifieds_core;
+global $query_string, $Classifieds_Core;
 
-$cf = &$__classifieds_core; //shorthand
+$cf = &$Classifieds_Core; //shorthand
 
 //page for pagination
 if ( 1 < get_query_var( 'cf_author_page' ) )

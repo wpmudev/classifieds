@@ -45,7 +45,9 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 			add_action( 'admin_init', array( &$this, 'admin_head' ) );
 			add_action( 'save_post',  array( &$this, 'save_expiration_date' ), 1, 1 );
 
-			$this->message = __( 'Settings Saved.', $this->text_domain );
+			add_action( 'wp_ajax_cf_get_caps', array( &$this, 'ajax_get_caps' ) );
+			add_action( 'wp_ajax_cf_save', array( &$this, 'ajax_save' ) );
+
 		}
 	}
 
@@ -57,13 +59,18 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	function admin_menu() {
 		//add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
 		add_submenu_page( 'edit.php?post_type=classifieds', __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
-		add_submenu_page( 'edit.php?post_type=classifieds', __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', 'classifieds_settings', array( &$this, 'handle_admin_requests' ) );
+		$settings_page = add_submenu_page( 'edit.php?post_type=classifieds', __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', 'classifieds_settings', array( &$this, 'handle_admin_requests' ) );
+
+		add_action( 'admin_print_scripts-' .  $settings_page, array( &$this, 'enqueue_scripts' ) );
 
 		if($this->use_credits){
 			add_submenu_page( 'edit.php?post_type=classifieds', __( 'Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
 		}
 	}
 
+	function enqueue_scripts(){
+		wp_enqueue_script( 'cf-admin-scripts', $this->plugin_url . 'ui-admin/js/ui-scripts.js', array( 'jquery' ) );
+	}
 
 	/**
 	* Renders an admin section of display code.
@@ -88,7 +95,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	* @return void
 	**/
 	function handle_admin_requests() {
-		$valid_tabs = array('general', 'payments', 'payment-types');
+		$valid_tabs = array('general', 'capabilities', 'payments', 'payment-types','shortcodes');
 
 		$page = (empty($_GET['page'])) ? '' : $_GET['page'] ;
 		$tab = (empty($_GET['tab'])) ? 'general' : $_GET['tab']; //default tab
@@ -115,12 +122,30 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 		}
 		elseif ( $page == 'classifieds_settings' ) {
 			if ( in_array( $tab, $valid_tabs)) {
-				/* Save options */
-				if ( isset( $_POST['save'] ) ) {
 
+				/* Save options */
+				if ( isset( $_POST['add_role'] ) ) {
 					check_admin_referer('verify');
+					$name = $_POST['new_role'];
+					$slug = strtolower(str_replace(' ','_',$name) );
+					$result = add_role($slug, $name, array('read' => true) );
+					if (empty($result) ) $this->message = __('ROLE ALREADY EXISTS' , $this->text_domain);
+					else $this->message = __('New Role Added' , $this->text_domain);
+				}
+				if ( isset( $_POST['remove_role'] ) ) {
+					check_admin_referer('verify');
+					$name = $_POST['delete_role'];
+					remove_role($name);
+					$this->message = __('Role Removed' , $this->text_domain);
+				}
+				if ( isset( $_POST['save'] ) ) {
+					check_admin_referer('verify');
+					unset($_POST['new_role']);
+					unset($_POST['delete_role']);
+					unset($_POST['save']);
 
 					$this->save_options( $_POST );
+					$this->message = __( 'Settings Saved.', $this->text_domain );
 				}
 				/* Render admin template */
 				$this->render_admin( "settings-{$tab}" );
@@ -244,10 +269,71 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 		</script>
 		<?php
 	}
+
+	/**
+	* Ajax callback which gets the post types associated with each page.
+	*
+	* @return JSON Encoded string
+	*/
+	function ajax_get_caps() {
+		if ( !current_user_can( 'manage_options' ) ) die(-1);
+		if(empty($_POST['role'])) die(-1);
+
+		global $wp_roles;
+
+		$role = $_POST['role'];
+
+		if ( !$wp_roles->is_role( $role ) )
+		die(-1);
+
+		$role_obj = $wp_roles->get_role( $role );
+
+		$response = array_intersect( array_keys( $role_obj->capabilities ), array_keys( $this->capability_map ) );
+		$response = array_flip( $response );
+
+		// response output
+		header( "Content-Type: application/json" );
+		echo json_encode( $response );
+		die();
+	}
+
+	/**
+	* Save admin options.
+	*
+	* @return void die() if _wpnonce is not verified
+	*/
+	function ajax_save() {
+
+		check_admin_referer( 'verify' );
+
+		if ( !current_user_can( 'manage_options' ) )
+		die(-1);
+
+		// add/remove capabilities
+		global $wp_roles;
+
+		$role = $_POST['roles'];
+
+		$all_caps = array_keys( $this->capability_map );
+		$to_add = array_keys( $_POST['capabilities'] );
+		$to_remove = array_diff( $all_caps, $to_add );
+
+		foreach ( $to_remove as $capability ) {
+			$wp_roles->remove_cap( $role, $capability );
+		}
+
+		foreach ( $to_add as $capability ) {
+			$wp_roles->add_cap( $role, $capability );
+		}
+
+		die(1);
+	}
+
 }
 
-global $__classifieds_core;
-$__classifieds_core = new Classifieds_Core_Admin();
+global $Classifieds_Core;
+
+$Classifieds_Core = new Classifieds_Core_Admin();
 
 endif;
 

@@ -9,7 +9,7 @@
 
 	<?php $this->render_admin( 'message' ); ?>
 
-	<form action="" method="post">
+	<form action="#" method="post">
 		<table class="form-table">
 			<tr>
 				<th><label for="enable_credits"><?php _e( 'Enable Credits', $this->text_domain ); ?></label></th>

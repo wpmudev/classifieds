@@ -13,7 +13,7 @@ $send_to_count = ( empty($_POST['manage_credits_count'])) ? '' : $_POST['manage_
 
 	<?php $this->render_admin( 'message' ); ?>
 
-	<form action="" method="post">
+	<form action="#" method="post">
 		<table class="form-table">
 			<tr>
 				<th><label for="manage_credits"><?php _e( 'Send Credits To Classifieds members', $this->text_domain ); ?></label></th>

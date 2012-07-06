@@ -34,7 +34,7 @@ if ( isset( $cl_credits_error ) && '1' == $cl_credits_error ) {
     </div>
     <?php endif; ?>
 
-    <form class="standard-form base" method="post" action="" enctype="multipart/form-data">
+    <form class="standard-form base" method="post" action="#" enctype="multipart/form-data">
 
         <div class="editfield">
             <label for="title"><?php _e( 'Title', $this->text_domain ); ?></label>

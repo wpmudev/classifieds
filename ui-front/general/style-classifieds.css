@@ -5,6 +5,7 @@ Description: You can override this file in your active theme.
 
 /* =Styles for Classifieds Main component.
 -------------------------------------------------------------- */
+
 .error {
 	background: #FFEBE8;
 }
@@ -26,11 +27,9 @@ Description: You can override this file in your active theme.
 }
 .entry-content .editfield input {
 	margin: 0;
-	/*    width: 100%; */
 }
 .entry-content .editfield textarea {
 	margin: 0;
-	width: 100%;
 }
 .entry-content .editfield select, .entry-content .confirm-form select, .entry-content .cf-checkout select {
 	margin: 0;
@@ -38,84 +37,122 @@ Description: You can override this file in your active theme.
 .entry-content .cf-ad input {
 	margin: 0;
 }
+
 .entry-content .cf-checkout input {
 	margin: 0;
 }
 .entry-content .cf-login input {
 	margin: 0;
 }
+
 #content .editfield table {
 	border:0;
-	width:inherit;
+	width: inherit;
 	margin: 0;
 }
+/*
 #content .editfield tr td {
-	border-top:0;
-	padding:0 15px 0 0;
-	vertical-align: top;
+border-top:0;
+padding:0 15px 0 0;
+vertical-align: top;
 }
+
 #content .cf-ad table {
-	margin: 0 0 0 15px;
-	width: 453px;
-	border: 1px solid #ddd;
-	border-collapse: collapse;
+margin: 0 0 0 15px;
+display: block;
+border: 1px solid #ddd;
+border-collapse: collapse;
+width: 100%;
 }
-.cf-ad {
+*/
+
+.cf-ad{
+	width: 100%;
 	border: 1px solid #ddd;
-	padding: 10px;
-	display: block;
 	overflow: hidden;
-	float: left;
-	margin: 0 0 15px 0;
+	margin: 0;
 }
-.cf-ad table th {
+
+.cf-pad{
+	padding:1em;
+}
+
+.cf-image {
+	float: left;
+	background-color: #fafafa;
+}
+
+.cf-info {
+	margin-left: 160px;
+}
+
+.cf-info table{
+	width: 100%;
+	height: 150px;
+	border-collapse: collapse;
+	margin:0;
+}
+
+.cf-info table th {
 	text-align: right;
 	width: 50px;
 }
-.cf-ad table th, .bp-cf-ad table td {
-	border-width: 1px;
-	border-style: inset;
-	border-color: #ddd;
+
+.cf-info table th,
+.cf-info table td {
+	padding: 0 1em;
+	vertical-align: middle;
+	border: 1px solid #ddd;
 }
+
 .cf-ad form {
 	padding-right: 7px;
 	overflow: hidden;
 	float: right;
 }
+
 .cf-ad form.del-form {
 	padding-right: 7px;
 }
-.cf-image {
-	float: left;
+
+.cf-ad-info{
+	border-collapse: collapse;
 }
-.cf-info {
-	float: left;
+
+table.cf-ad-info th,
+table.cf-ad-info td {
+	border: 1px solid #ddd;
+	padding: 0 1em;
 }
-#content table.cf-ad-info {
-	width: inherit;
-}
-#content table.cf-ad-info th {
+
+table.cf-ad-info th {
 	text-align: right;
+	width:50px;
 }
 ul.button-nav li {
 	float: left;
 	list-style: none;
 	padding-right: 15px;
 }
+/*
 #content .hentry ul {
-	overflow: hidden;
-	margin: 0;
-	padding-bottom: 15px;
+overflow: hidden;
+margin: 0;
+padding-bottom: 15px;
 }
+*/
 .cf-checkout {
 	margin-right: 15px;
 }
+
 #content .cf-checkout table {
 	margin:0;
 }
+
 #content .cf-checkout table tr td {
 	padding:6px 0 6px 24px;
 }
+
 #content .cf-login table {
 	margin:0;
 }
@@ -133,7 +170,7 @@ ul.button-nav li {
 .single-classifieds #content img.wp-post-image {
 	border: 1px solid #ddd;
 	padding: 15px;
-	margin: 0 15px 10px 0;
+	margin: 0 auto 10px auto;
 }
 .button-nav {
 	margin: 12px 0 0 0;
@@ -211,13 +248,14 @@ ul.button-nav li {
 }
 
 /* Pagination styles */
+
 .navigation{
 	float:right;
 }
 
 .pagination {
 	clear:both;
-	padding:20px 0;
+	padding:0;
 	position: relative;
 	font-size:11px;
 	line-height:13px;
@@ -242,4 +280,123 @@ ul.button-nav li {
 	padding:6px 9px 5px 9px;
 	background: #3279BB;
 	color:#fff;
+}
+
+/** Sigin Form **/
+/* tabbed list */
+ul.tabs_login {
+	padding-bottom: 0;
+	margin: 0;
+	position: relative;
+	list-style: none;
+	z-index: 1000;
+	float: left;
+}
+ul.tabs_login li {
+	background: #fff;
+	border: 1px solid #E7E9F6;
+	border-top-right-radius: 10px;
+	border-top-left-radius: 10px;
+	line-height: 2em;
+	padding: 0;
+	margin-right: 5px;
+	overflow: hidden;
+	float: left;
+}
+ul.tabs_login li a {
+	text-decoration: none;
+	padding: 0 10px;
+	display: block;
+}
+
+ul.tabs_login li.active_login {
+	border-bottom: 1px solid #fff;
+}
+ul.tabs_login li.active_login a {
+	font-weight: bold;
+	color: #333;
+}
+
+.tab_container_login {
+	background: #fff;
+	position: relative;
+	margin: 0;
+	border: 1px solid #E7E9F6;
+	z-index: 999;
+	float: left;
+	width: 100%;
+	top: -1px;
+}
+.tab_content_login {
+	padding: 15px;
+}
+.tab_content_login ul {
+	padding: 0;
+	margin: 0 0 0 15px;
+}
+.tab_content_login li {
+	margin: 5px 0;
+}
+
+/* global styles */
+#login-register-password {}
+#login-register-password h3 {
+	border: 0 none;
+	margin: 10px 0;
+	padding: 0;
+}
+#login-register-password p {
+	margin: 0 0 15px 0;
+	padding: 0;
+}
+/* form elements */
+.wp-user-form {}
+.username,
+.password,
+.login_fields {
+	margin: 7px 0 0 0;
+	overflow: hidden;
+	width: 100%;
+}
+.username label,
+.password label {
+	float: left;
+	width: 25%;
+}
+.username input,
+.password input {
+	float: left;
+	width: 200px;
+	padding: 2px 3px;
+	color: #777;
+}
+.rememberme {
+	overflow: hidden;
+	width: 100%;
+	margin-bottom: 7px;
+}
+#rememberme {
+	float: left;
+	margin: 4px 4px -4px 0;
+}
+.user-submit {
+	padding: 5px 10px;
+	margin: 5px 0;
+}
+.userinfo { 
+	float: left;
+	width: 75%;
+margin-bottom: 10px; 
+}
+.userinfo p {
+	margin-left: 10px;
+}
+.usericon {
+	float: left;
+	width: 15%;
+	margin: 0 0 10px 22px;
+}
+.usericon img {
+	border: 1px solid #F4950E;
+	padding: 1px;
 }

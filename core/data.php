@@ -1,10 +1,10 @@
 <?php
 
 /**
-* Load core DB data.
+* Load core DB data. Only loaded during Activation
 */
 if ( !class_exists('Classifieds_Core_Data') ):
-class Classifieds_Core_Data extends Classifieds_Core {
+class Classifieds_Core_Data {
 
 	/**
 	* Constructor.
@@ -12,7 +12,7 @@ class Classifieds_Core_Data extends Classifieds_Core {
 	* @return void
 	**/
 	function Classifieds_Core_Data() {
-		add_action( 'init', array( &$this, 'load_data' ), 0 );
+		add_action( 'init', array( &$this, 'load_data' ) );
 	}
 
 	/**
@@ -22,19 +22,12 @@ class Classifieds_Core_Data extends Classifieds_Core {
 	*/
 	function load_data() {
 		/* Get setting options. If empty return an array */
-		$options = ( get_site_option( $this->options_name ) ) ? get_site_option( $this->options_name ) : array();
+		$options = ( get_site_option( CF_OPTIONS_NAME ) ) ? get_site_option( CF_OPTIONS_NAME ) : array();
 
 		// Check whether post types are loaded
-		$ct_custom_post_types = get_site_option( 'ct_custom_post_types' );
-		
-		if ( ! isset( $ct_custom_post_types['classifieds'] ) ) {
 
-			if(is_multisite()){
-				$ct = get_option( 'ct_custom_post_types' ); // get the blog types
-				if(isset($ct['classifieds'])) unset($ct['classifieds']);
-				update_option( 'ct_custom_post_types', $ct ); //Remove from site specific and move to network options if multisite.
-			}
-			
+		if ( ! post_type_exists('classifieds') ) {
+
 			$classifieds_default =
 			array (
 			'capability_type' => 'classified',
@@ -50,22 +43,29 @@ class Classifieds_Core_Data extends Classifieds_Core {
 			'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments', 'revisions', /*'post-formats'*/ ),
 
 			'labels' => array (
-			'name' => 'Classifieds',
-			'singular_name' => 'Classified',
-			'add_new' => 'Add New',
-			'add_new_item' => 'Add New Classified',
-			'edit_item' => 'Edit Classified',
-			'new_item' => 'New Classified',
-			'view_item' => 'View Classified',
-			'search_items' => 'Search Classifieds',
-			'not_found' => 'No Classifieds Found',
-			'not_found_in_trash' => 'No Classifieds Found In Trash',
+			'name'          => __('Classifieds', CF_TEXT_DOMAIN),
+			'singular_name' => __('Classified', CF_TEXT_DOMAIN),
+			'add_new'       => __('Add New', CF_TEXT_DOMAIN),
+			'add_new_item'  => __('Add New Classified', CF_TEXT_DOMAIN),
+			'edit_item'     => __('Edit Classified', CF_TEXT_DOMAIN),
+			'new_item'      => __('New Classified', CF_TEXT_DOMAIN),
+			'view_item'     => __('View Classified', CF_TEXT_DOMAIN),
+			'search_items'  => __('Search Classifieds', CF_TEXT_DOMAIN),
+			'not_found'     => __('No Classifieds Found', CF_TEXT_DOMAIN),
+			'not_found_in_trash' => __('No Classifieds Found In Trash', CF_TEXT_DOMAIN),
 			),
 			);
 
 			//Update custom post types
-			$ct_custom_post_types['classifieds'] = $classifieds_default;
-			update_site_option( 'ct_custom_post_types', $ct_custom_post_types );
+			if(is_network_admin()){
+				$ct_custom_post_types = get_site_option( 'ct_custom_post_types' );
+				$ct_custom_post_types['classifieds'] = $classifieds_default;
+				update_site_option( 'ct_custom_post_types', $ct_custom_post_types );
+			} else {
+				$ct_custom_post_types = get_option( 'ct_custom_post_types' );
+				$ct_custom_post_types['classifieds'] = $classifieds_default;
+				update_option( 'ct_custom_post_types', $ct_custom_post_types );
+			}
 
 			// Update post types and delete tmp options
 			update_site_option( 'ct_flush_rewrite_rules', true );
@@ -73,16 +73,8 @@ class Classifieds_Core_Data extends Classifieds_Core {
 
 		/* Check whether taxonomies data is loaded */
 
-		
-		$ct_custom_taxonomies = get_site_option( 'ct_custom_taxonomies' );
 
-		if (empty($ct_custom_taxonomies['classifieds_tags'])){
-
-			if(is_multisite()){
-				$ct = get_option( 'ct_custom_taxonomies' ); // get the blog types
-				if(isset($ct['classifieds_tags'])) unset($ct['classifieds_tags']);
-				update_option( 'ct_custom_taxonomies', $ct ); //Remove from site specific and move to network otions.
-			}
+		if ( ! taxonomy_exists('classifieds_tags') ){
 
 			$classifieds_tags_default = array();
 			$classifieds_tags_default['object_type'] = array ( 'classifieds');
@@ -94,20 +86,37 @@ class Classifieds_Core_Data extends Classifieds_Core {
 			'capabilities' => array ('assign_terms' => 'assign_terms'),
 
 			'labels' => array (
-			'name' => 'Tags',
-			'singular_name' => 'Tag',
+			'name'          => __( 'Classified Tags', $this->text_domain ),
+			'singular_name' => __( 'Classified Tag', $this->text_domain ),
+			'search_items'  => __( 'Search Classified Tags', $this->text_domain ),
+			'popular_items' => __( 'Popular Classified Tags', $this->text_domain ),
+			'all_items'     => __( 'All Classified Tags', $this->text_domain ),
+			'edit_item'     => __( 'Edit Classified Tag', $this->text_domain ),
+			'update_item'   => __( 'Update Classified Tag', $this->text_domain ),
+			'add_new_item'  => __( 'Add New Classified Tag', $this->text_domain ),
+			'new_item_name' => __( 'New Classified Tag Name', $this->text_domain ),
+			'separate_items_with_commas' => __( 'Separate Classified tags with commas', $this->text_domain ),
+			'add_or_remove_items'        => __( 'Add or remove Classified tags', $this->text_domain ),
+			'choose_from_most_used'      => __( 'Choose from the most used Classified tags', $this->text_domain ),
 			),
 			);
 
-			$ct_custom_taxonomies['classifieds_tags'] = $classifieds_tags_default;
-			update_site_option( 'ct_custom_taxonomies', $ct_custom_taxonomies );
+			if(is_network_admin()){
+				$ct_custom_taxonomies = get_site_option('ct_custom_taxonomies');
+				$ct_custom_taxonomies['classifieds_tags'] = $classifieds_tags_default;
+				update_site_option( 'ct_custom_taxonomies', $ct_custom_taxonomies );
+			} else {
+				$ct_custom_taxonomies = get_option('ct_custom_taxonomies');
+				$ct_custom_taxonomies['classifieds_tags'] = $classifieds_tags_default;
+				update_option( 'ct_custom_taxonomies', $ct_custom_taxonomies );
+			}
 
 			// Update post types and delete tmp options
 			update_site_option( 'ct_flush_rewrite_rules', true );
 
 		}
 
-		if (empty($ct_custom_taxonomies['classifieds_categories'])){
+		if ( ! taxonomy_exists('classifieds_categories') ){
 
 			if(is_multisite()){
 				$ct = get_option( 'ct_custom_taxonomies' ); // get the blog types
@@ -125,13 +134,30 @@ class Classifieds_Core_Data extends Classifieds_Core {
 			'capabilities' => array ( 'assign_terms' => 'assign_terms' ),
 
 			'labels' => array (
-			'name' => 'Categories',
-			'singular_name' => 'Category',
+			'name'          => __( 'Classified Categories', $this->text_domain ),
+			'singular_name' => __( 'Classified Category', $this->text_domain ),
+			'search_items'  => __( 'Search Classified Categories', $this->text_domain ),
+			'popular_items' => __( 'Popular Classified Categories', $this->text_domain ),
+			'all_items'     => __( 'All Classified Categories', $this->text_domain ),
+			'parent_item'   => __( 'Parent Category', $this->text_domain ),
+			'edit_item'     => __( 'Edit Classified Category', $this->text_domain ),
+			'update_item'   => __( 'Update Classified Category', $this->text_domain ),
+			'add_new_item'  => __( 'Add New Classified Category', $this->text_domain ),
+			'new_item_name' => __( 'New Classified Category', $this->text_domain ),
+			'parent_item_colon'   => __( 'Parent Category:', $this->text_domain ),
+			'add_or_remove_items' => __( 'Add or remove Classified categories', $this->text_domain ),
 			),
 			);
 
-			$ct_custom_taxonomies['classifieds_categories'] = $classifieds_categories_default;
-			update_site_option( 'ct_custom_taxonomies', $ct_custom_taxonomies );
+			if(is_network_admin()){
+				$ct_custom_taxonomies = get_site_option('ct_custom_taxonomies');
+				$ct_custom_taxonomies['classifieds_categories'] = $classifieds_categories_default;
+				update_site_option( 'ct_custom_taxonomies', $ct_custom_taxonomies );
+			} else {
+				$ct_custom_taxonomies = get_option('ct_custom_taxonomies');
+				$ct_custom_taxonomies['classifieds_categories'] = $classifieds_categories_default;
+				update_option( 'ct_custom_taxonomies', $ct_custom_taxonomies );
+			}
 
 			// Update post types and delete tmp options
 			update_site_option( 'ct_flush_rewrite_rules', true );
@@ -140,15 +166,10 @@ class Classifieds_Core_Data extends Classifieds_Core {
 
 		/* Check whether custom fields data is loaded */
 
-		$ct_custom_fields = ( get_site_option( 'ct_custom_fields' ) );
+		$ct_custom_fields = ( get_option( 'ct_custom_fields' ) );
+		$ct_network_custom_fields = ( get_site_option( 'ct_custom_fields' ) );
 
-		if (empty($ct_custom_fields['selectbox_4cf582bd61fa4'])){
-
-			if(is_multisite()){
-				$ct = get_option( 'ct_custom_fields' ); // get the blog types
-				if(isset($ct['selectbox_4cf582bd61fa4'])) unset($ct['selectbox_4cf582bd61fa4']);
-				update_option( 'ct_custom_fields', $ct ); //Remove from site specific and move to network options if multisite.
-			}
+		if ( empty($ct_custom_fields['selectbox_4cf582bd61fa4']) && empty($ct_network_custom_fields['selectbox_4cf582bd61fa4'])){
 
 			$selectbox_4cf582bd61fa4_default =
 			array (
@@ -171,33 +192,36 @@ class Classifieds_Core_Data extends Classifieds_Core {
 			'field_id' => 'selectbox_4cf582bd61fa4',
 			);
 
-			$ct_custom_fields['selectbox_4cf582bd61fa4'] = $selectbox_4cf582bd61fa4_default;
-			update_site_option( 'ct_custom_fields', $ct_custom_fields );
-
+			if( is_network_admin() ){
+				$ct_network_custom_fields['selectbox_4cf582bd61fa4'] = $selectbox_4cf582bd61fa4_default;
+				update_site_option( 'ct_custom_fields', $ct_network_custom_fields );
+			} else {
+				$ct_custom_fields['selectbox_4cf582bd61fa4'] = $selectbox_4cf582bd61fa4_default;
+				update_option( 'ct_custom_fields', $ct_custom_fields );
+			}
 		}
 
-		if (empty($ct_custom_fields['text_4cfeb3eac6f1f'])){
-
-			if(is_multisite()){
-				$ct = get_option( 'ct_custom_fields' ); // get the blog types
-				if(isset($ct['text_4cfeb3eac6f1f'])) unset($ct['text_4cfeb3eac6f1f']);
-				update_option( 'ct_custom_fields', $ct ); //Remove from site specific and move to network options if multisite.
-			}
+		if ( empty($ct_custom_fields['text_4cfeb3eac6f1f']) && empty($ct_network_custom_fields['text_4cfeb3eac6f1f'])){
 
 			$text_4cfeb3eac6f1f_default =
 			array (
+			'object_type' => array ('classifieds'),
 			'field_title' => 'Cost',
 			'field_type' => 'text',
 			'field_sort_order' => 'default',
 			'field_default_option' => NULL,
 			'field_description' => 'The cost of the item.',
-			'object_type' => array ('classifieds'),
 			'field_required' => NULL,
 			'field_id' => 'text_4cfeb3eac6f1f',
 			);
 
-			$ct_custom_fields['text_4cfeb3eac6f1f'] = $text_4cfeb3eac6f1f_default;
-			update_site_option( 'ct_custom_fields', $ct_custom_fields );
+			if( is_network_admin() ){
+				$ct_network_custom_fields['text_4cfeb3eac6f1f'] = $text_4cfeb3eac6f1f_default;
+				update_site_option( 'ct_custom_fields', $ct_network_custom_fields );
+			} else {
+				$ct_custom_fields['text_4cfeb3eac6f1f'] = $text_4cfeb3eac6f1f_default;
+				update_option( 'ct_custom_fields', $ct_custom_fields );
+			}
 		}
 
 		//add rule for show cf-author page
@@ -230,10 +254,6 @@ class Classifieds_Core_Data extends Classifieds_Core {
 		}
 	}
 }
-
-/* Initiate Class */
-
-$__classifieds_core_data = new Classifieds_Core_Data();
 
 endif;
 

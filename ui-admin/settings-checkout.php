@@ -9,7 +9,7 @@
 
 	<?php $this->render_admin( 'message' ); ?>
 
-	<form action="" method="post">
+	<form action="#" method="post">
 
 		<table class="form-table">
 			<tr>

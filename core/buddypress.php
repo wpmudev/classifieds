@@ -63,8 +63,8 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		$parent_url = $user_domain . $bp->classifieds->slug . '/';
 
 		/* Add the settings navigation item */
-		//		$__classifieds_core = new Classifieds_Core();
-		//		$classifieds_page = $__classifieds_core->get_page_by_meta( 'classifieds' );
+		//		$Classifieds_Core = new Classifieds_Core();
+		//		$classifieds_page = $Classifieds_Core->get_page_by_meta( 'classifieds' );
 
 		if ( 0 < $classifieds_page->ID )
 		$nav_title = $classifieds_page->post_title;
@@ -384,8 +384,8 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 
 /* Initiate Class */
 //Only gets called if code is included by bp_include action from Buddypress
-global $__classifieds_core;
-$__classifieds_core = new Classifieds_Core_BuddyPress();
+global $Classifieds_Core;
+$Classifieds_Core = new Classifieds_Core_BuddyPress();
 
 endif;
 ?>

@@ -13,21 +13,23 @@
 
 <?php $prefix = $this->custom_fields_prefix; ?>
 
-<?php 
+<?php
 
 if ( !isset( $post->ID ) ) $post->ID = 0;
 
-if(! is_array($this->custom_fields)) $this->custom_fields = array();
+$custom_fields = $this->custom_fields;
 
-foreach ( $this->custom_fields as $custom_field ):
+if(! is_array($custom_fields)) $custom_fields = array();
+
+foreach ( $custom_fields as $custom_field ):
 $output = false;
 
 if (is_array($custom_field['object_type'])){
-foreach ( $custom_field['object_type'] as $custom_field_object_type ){
-	if ( $custom_field_object_type == 'classifieds' ){
-		$output = true; break;
+	foreach ( $custom_field['object_type'] as $custom_field_object_type ){
+		if ( $custom_field_object_type == 'classifieds' ){
+			$output = true; break;
+		}
 	}
-}
 }
 
 if($output){ ?>

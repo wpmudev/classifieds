@@ -19,8 +19,8 @@
 * @since Classifieds 2.0
 */
 
-global $__classifieds_core;
-$cf = &$__classifieds_core; //shorthand
+global $Classifieds_Core;
+$cf = &$Classifieds_Core; //shorthand
 
 $cf_options = $cf->get_options( 'general' );
 

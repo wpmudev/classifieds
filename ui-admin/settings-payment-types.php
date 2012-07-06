@@ -7,7 +7,7 @@
 
 	<?php $this->render_admin( 'navigation', array( 'page' => 'classifieds_settings','tab' => 'payment-types' ) ); ?>
 
-	<form action="" method="post" class="dp-payments">
+	<form action="#" method="post" class="dp-payments">
 
 		<div class="postbox">
 			<h3 class='hndle'><span><?php _e( 'PayPal Settings', $this->text_domain ) ?></span></h3>
@@ -19,7 +19,7 @@
 						<td>
 							<p>
 								<label>
-									<input type="checkbox" class="cf_allowed_gateways" name="free" id="free" value="1" <?php echo 1 == $options['free']  ? ' checked="checked"' : ''; ?> 
+									<input type="checkbox" class="cf_allowed_gateways" name="free" id="free" value="1" <?php checked(! empty($options['free']) ); ?> 
 									onchange="if(this.checked) {getElementById('paypal').checked = false; getElementById('authorizenet').checked = false;}" /> 
 									<?php _e( 'Free Listings', $this->text_domain ) ?>
 									<span class="description"><?php _e( '(logged users can create listings for free).', $this->text_domain ); ?></span>
@@ -27,7 +27,7 @@
 							</p>
 							<p>
 								<label>
-									<input type="checkbox" class="cf_allowed_gateways" name="paypal" id="paypal" value="1" <?php echo 1 == $options['paypal']  ? ' checked="checked"' : ''; ?> 
+									<input type="checkbox" class="cf_allowed_gateways" name="paypal" id="paypal" value="1" <?php checked( ! empty($options['paypal']) ); ?> 
 									onchange="if(this.checked) {getElementById('free').checked = false;}" /> 
 									<?php _e( 'PayPal', $this->text_domain ) ?>
 								</label>
@@ -59,8 +59,8 @@
 						</th>
 						<td>
 							<select id="api_url" name="api_url">
-								<option value="sandbox" <?php if ( isset( $options['api_url'] ) && $options['api_url'] == 'sandbox' ) echo 'selected="selected"' ?>><?php _e( 'Sandbox', $this->text_domain ); ?></option>
-								<option value="live"    <?php if ( isset( $options['api_url'] ) && $options['api_url'] == 'live' )    echo 'selected="selected"' ?>><?php _e( 'Live', $this->text_domain ); ?></option>
+								<option value="sandbox" <?php selected(isset( $options['api_url'] ) && $options['api_url'] == 'sandbox' ); ?>><?php _e( 'Sandbox', $this->text_domain ); ?></option>
+								<option value="live"    <?php selected( isset( $options['api_url'] ) && $options['api_url'] == 'live' ); ?>><?php _e( 'Live', $this->text_domain ); ?></option>
 							</select>
 							<span class="description"><?php _e( 'Choose between PayPal Sandbox and PayPal Live.', $this->text_domain ); ?></span>
 						</td>
@@ -99,21 +99,21 @@
 						</th>
 						<td>
 							<select id="currency" name="currency">
-								<option value="USD" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'USD' ) echo 'selected="selected"' ?>><?php _e( 'U.S. Dollar', $this->text_domain ) ?></option>
-								<option value="EUR" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'EUR' ) echo 'selected="selected"' ?>><?php _e( 'Euro', $this->text_domain ) ?></option>
-								<option value="GBP" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'GBP' ) echo 'selected="selected"' ?>><?php _e( 'Pound Sterling', $this->text_domain ) ?></option>
-								<option value="CAD" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'CAD' ) echo 'selected="selected"' ?>><?php _e( 'Canadian Dollar', $this->text_domain ) ?></option>
-								<option value="AUD" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'AUD' ) echo 'selected="selected"' ?>><?php _e( 'Australian Dollar', $this->text_domain ) ?></option>
-								<option value="JPY" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'JPY' ) echo 'selected="selected"' ?>><?php _e( 'Japanese Yen', $this->text_domain ) ?></option>
-								<option value="CHF" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'CHF' ) echo 'selected="selected"' ?>><?php _e( 'Swiss Franc', $this->text_domain ) ?></option>
-								<option value="SGD" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'SGD' ) echo 'selected="selected"' ?>><?php _e( 'Singapore Dollar', $this->text_domain ) ?></option>
-								<option value="NZD" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'NZD' ) echo 'selected="selected"' ?>><?php _e( 'New Zealand Dollar', $this->text_domain ) ?></option>
-								<option value="SEK" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'SEK' ) echo 'selected="selected"' ?>><?php _e( 'Swedish Krona', $this->text_domain ) ?></option>
-								<option value="DKK" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'DKK' ) echo 'selected="selected"' ?>><?php _e( 'Danish Krone', $this->text_domain ) ?></option>
-								<option value="NOK" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'NOK' ) echo 'selected="selected"' ?>><?php _e( 'Norwegian Krone', $this->text_domain ) ?></option>
-								<option value="CZK" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'CZK' ) echo 'selected="selected"' ?>><?php _e( 'Czech Koruna', $this->text_domain ) ?></option>
-								<option value="HUF" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'HUF' ) echo 'selected="selected"' ?>><?php _e( 'Hungarian Forint', $this->text_domain ) ?></option>
-								<option value="PLN" <?php if ( isset( $options['currency'] ) && $options['currency'] == 'PLN' ) echo 'selected="selected"' ?>><?php _e( 'Polish Zloty', $this->text_domain ) ?></option>
+								<option value="USD" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'USD' ); ?>><?php _e( 'U.S. Dollar', $this->text_domain ) ?></option>
+								<option value="EUR" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'EUR' ); ?>><?php _e( 'Euro', $this->text_domain ) ?></option>
+								<option value="GBP" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'GBP' ); ?>><?php _e( 'Pound Sterling', $this->text_domain ) ?></option>
+								<option value="CAD" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'CAD' ); ?>><?php _e( 'Canadian Dollar', $this->text_domain ) ?></option>
+								<option value="AUD" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'AUD' ); ?>><?php _e( 'Australian Dollar', $this->text_domain ) ?></option>
+								<option value="JPY" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'JPY' ); ?>><?php _e( 'Japanese Yen', $this->text_domain ) ?></option>
+								<option value="CHF" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'CHF' ); ?>><?php _e( 'Swiss Franc', $this->text_domain ) ?></option>
+								<option value="SGD" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'SGD' ); ?>><?php _e( 'Singapore Dollar', $this->text_domain ) ?></option>
+								<option value="NZD" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'NZD' ); ?>><?php _e( 'New Zealand Dollar', $this->text_domain ) ?></option>
+								<option value="SEK" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'SEK' ); ?>><?php _e( 'Swedish Krona', $this->text_domain ) ?></option>
+								<option value="DKK" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'DKK' ); ?>><?php _e( 'Danish Krone', $this->text_domain ) ?></option>
+								<option value="NOK" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'NOK' ); ?>><?php _e( 'Norwegian Krone', $this->text_domain ) ?></option>
+								<option value="CZK" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'CZK' ); ?>><?php _e( 'Czech Koruna', $this->text_domain ) ?></option>
+								<option value="HUF" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'HUF' ); ?>><?php _e( 'Hungarian Forint', $this->text_domain ) ?></option>
+								<option value="PLN" <?php selected( isset( $options['currency'] ) && $options['currency'] == 'PLN' ); ?>><?php _e( 'Polish Zloty', $this->text_domain ) ?></option>
 							</select>
 							<span class="description"><?php _e( 'The currency in which you want to process payments.', $this->text_domain ); ?></span>
 						</td>

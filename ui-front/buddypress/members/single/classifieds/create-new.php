@@ -35,7 +35,7 @@ $cf_options = $this->get_options( 'general' );
 	</div>
 	<?php endif; ?>
 
-	<form class="standard-form base" method="post" action="" enctype="multipart/form-data">
+	<form class="standard-form base" method="post" action="#" enctype="multipart/form-data">
 
 		<div class="editfield">
 			<label for="title"><?php _e( 'Title', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>

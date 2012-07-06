@@ -8,7 +8,7 @@
 	<?php $this->render_admin( 'navigation', array( 'page' => 'classifieds_credits','tab' => 'my-credits' ) ); ?>
 
 	<?php $this->render_admin( 'message' ); ?>
-	<form action="" method="post">
+	<form action="#" method="post">
 
 		<h3><?php _e( 'Available Credits', $this->text_domain ); ?></h3>
 		<table class="form-table">
@@ -25,7 +25,7 @@
 
 	</form>
 
-	<form action="" method="post" class="purchase_credits" >
+	<form action="#" method="post" class="purchase_credits" >
 		<h3><?php _e( 'Purchase Additional Credits', $this->text_domain ); ?></h3>
 		<table class="form-table">
 			<tr>

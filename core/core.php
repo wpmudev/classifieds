@@ -3,23 +3,26 @@
 * Classifieds Core Class
 **/
 
-global $__classifieds_core;
+global $Classifieds_Core;
 
 if ( !class_exists('Classifieds_Core') ):
 class Classifieds_Core {
 
 	/** @var plugin version */
-	var $plugin_version = CF_VERSION;
+	var $plugin_version    = CF_VERSION;
 	/** @var plugin database version */
 	var $plugin_db_version = CF_DB_VERSION;
 	/** @var string $plugin_url Plugin URL */
-	var $plugin_url    = CF_PLUGIN_URL;
+	var $plugin_url        = CF_PLUGIN_URL;
 	/** @var string $plugin_dir Path to plugin directory */
-	var $plugin_dir    = CF_PLUGIN_DIR;
+	var $plugin_dir        = CF_PLUGIN_DIR;
+	/** @var string $text_domain The text domain for strings localization */
+	var $text_domain       = CF_TEXT_DOMAIN;
+	/** @var string $options_name The name of the plugin options entry in DB */
+	var $options_name      = CF_OPTIONS_NAME;
+
 	/** @var string $plugin_prefix Plugin prefix */
 	var $plugin_prefix = 'cf_';
-	/** @var string $text_domain The text domain for strings localization */
-	var $text_domain   = 'classifieds';
 	/** @var string $post_type Plugin post type */
 	var $post_type     = 'classifieds';
 	/** @var array $taxonomies Post taxonomies */
@@ -30,8 +33,6 @@ class Classifieds_Core {
 	var $custom_fields = array();
 	/** @var string $custom_fields_prefix The custom fields DB prefix */
 	var $custom_fields_prefix = '_ct_';
-	/** @var string $options_name The name of the plugin options entry in DB */
-	var $options_name  = 'classifieds_options';
 	/** @var string User role */
 	var $user_role = 'cf_member';
 	/** @var boolean True if submitted form is valid. */
@@ -103,31 +104,58 @@ class Classifieds_Core {
 	**/
 	function __construct(){
 
-		/* Hook the entire class to WordPress init hook */
-		//		add_action( 'init', array( &$this, 'init' ) );
+		//Default capability map for Classifieds
+		$this->capability_map = array(
+		'read_classifieds'             => __( 'View classifieds.', $this->text_domain ),
+		'read_private_classifieds'     => __( 'View private classifieds.', $this->text_domain ),
+
+		'publish_classifieds'          => __( 'Add classifieds.', $this->text_domain ),
+
+		'edit_classifieds'             => __( 'Edit classifieds.', $this->text_domain ),
+		'edit_published_classifieds'   => __( 'Edit published classifieds.', $this->text_domain ),
+		'edit_private_classifieds'     => __( 'Edit private classifieds.', $this->text_domain ),
+
+		'delete_classifieds'           => __( 'Delete classifieds', $this->text_domain ),
+		'delete_published_classifieds' => __( 'Delete published classifieds.', $this->text_domain ),
+		'delete_private_classifieds'   => __( 'Delete private classifieds.', $this->text_domain ),
+
+		'edit_others_classifieds'      => __( 'Edit others\' classifieds.', $this->text_domain ),
+		'delete_others_classifieds'    => __( 'Delete others\' classifieds.', $this->text_domain ),
+
+		'upload_files'                 => __( 'Upload files.', $this->text_domain ),
+		);
+
+
+		/* Register activation hook */
+		register_activation_hook( $this->plugin_dir . 'loader.php', array( &$this, 'on_activate' ) );
+		/* Register deactivation hook */
+		register_deactivation_hook( $this->plugin_dir . 'loader.php', array( &$this, 'on_deactivate' ) );
 
 		/* Initiate class variables from core class */
 		add_action( 'init', array( &$this, 'init' ) );
+		add_action( 'plugins_loaded', array( &$this, 'on_plugins_loaded' ), 8);
 
-		/* Register activation hook */
-		register_activation_hook( $this->plugin_dir . 'loader.php', array( &$this, 'plugin_activate' ) );
-		/* Register deactivation hook */
-		register_deactivation_hook( $this->plugin_dir . 'loader.php', array( &$this, 'plugin_deactivate' ) );
+
 		/* Add theme support for post thumbnails */
 		add_theme_support( 'post-thumbnails' );
 
 		/* Create neccessary pages */
 		add_action( 'wp_loaded', array( &$this, 'create_default_pages' ) );
 		/* Setup roles and capabilities */
-		add_action( 'wp_loaded', array( &$this, 'roles' ) );
+		//add_action( 'wp_loaded', array( &$this, 'roles' ) );
 		/* Schedule expiration check */
 		add_action( 'wp_loaded', array( &$this, 'schedule_expiration_check' ) );
 		/* Add template filter */
-		add_filter( 'single_template', array( &$this, 'get_single_template' ) ) ;
+		//add_filter( 'single_template', array( &$this, 'get_single_template' ) ) ;
 		/* Add template filter */
-		add_filter( 'page_template', array( &$this, 'get_page_template' ) ) ;
+		//add_filter( 'page_template', array( &$this, 'get_page_template' ) ) ;
 		/* Add template filter */
 		add_filter( 'taxonomy_template', array( &$this, 'get_taxonomy_template' ) ) ;
+
+
+		add_filter( 'parse_query', array( &$this, 'on_parse_query' ) ) ;
+
+
 		/* template for cf-author page */
 		add_action( 'template_redirect', array( &$this, 'get_cf_author_template' ) );
 		/* Handle login requests */
@@ -136,6 +164,10 @@ class Classifieds_Core {
 		add_action( 'template_redirect', array( &$this, 'handle_checkout_requests' ) );
 		/* Handle all requests for contact form submission */
 		add_action( 'template_redirect', array( &$this, 'handle_contact_form_requests' ) );
+
+		add_action('wp_enqueue_scripts', array(&$this, 'on_enqueue_scripts'));
+
+
 		/* Check expiration dates */
 		add_action( 'check_expiration_dates', array( &$this, 'check_expiration_dates_callback' ) );
 		/* Set signup credits for new users */
@@ -148,7 +180,24 @@ class Classifieds_Core {
 		/* filter for $wp_query on classifieds page - it is necessary that the other plug-ins have not changed it in these pages */
 		add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts_for_classifieds' ), 101 );
 
+		//Shortcodes
+		add_shortcode( 'cf_classifieds_categories', array( &$this, 'classifieds_categories_sc' ) );
+		add_shortcode( 'cf_classifieds_btn', array( &$this, 'classifieds_btn_sc' ) );
+		add_shortcode( 'cf_add_classified_btn', array( &$this, 'add_classified_btn_sc' ) );
+		add_shortcode( 'cf_edit_classified_btn', array( &$this, 'edit_classified_btn_sc' ) );
+		add_shortcode( 'cf_checkout_btn', array( &$this, 'checkout_btn_sc' ) );
+		add_shortcode( 'cf_my_credits_btn', array( &$this, 'my_credits_btn_sc' ) );
+		add_shortcode( 'cf_my_classifieds_btn', array( &$this, 'my_classifieds_btn_sc' ) );
+		add_shortcode( 'cf_profile_btn', array( &$this, 'profile_btn_sc' ) );
+		add_shortcode( 'cf_logout_btn', array( &$this, 'logout_btn_sc' ) );
+		add_shortcode( 'cf_signin_btn', array( &$this, 'signin_btn_sc' ) );
+		add_shortcode( 'cf_signup_btn', array( &$this, 'signup_btn_sc' ) );
+		add_shortcode( 'cf_custom_fields', array( &$this, 'custom_fields_sc' ) );
+	}
 
+
+	function on_enqueue_scripts(){
+		wp_enqueue_style( 'jquery-taginput', $this->plugin_url . 'ui-front/css/jquery.tagsinput.css' );
 	}
 
 	/**
@@ -158,8 +207,16 @@ class Classifieds_Core {
 	**/
 	function init() {
 
-		//Loads "classifieds-[xx_XX].mo" language file from the "languages" directory
-		load_plugin_textdomain( $this->text_domain, null, 'classifieds/languages/' );
+		// post_status "virtual" for pages not to be displayed in the menus but that users should not be editing.
+		register_post_status( 'virtual', array(
+		'label' => __( 'Virtual', $this->text_domain ),
+		'public' => (! is_admin()), //This trick prevents the virtual pages from appearing in the All Pages list but can be display on the front end.
+		'exclude_from_search' => false,
+		'show_in_admin_all_list' => false,
+		'show_in_admin_status_list' => true,
+		'label_count'               => _n_noop( 'Virtual <span class="count">(%s)</span>', 'Virtual <span class="count">(%s)</span>' ),
+		) );
+
 
 		/* Set Taxonomy objects and names */
 		$this->taxonomy_objects = get_object_taxonomies( $this->post_type, 'objects' );
@@ -181,8 +238,8 @@ class Classifieds_Core {
 
 		// Get pagination settings
 		$options = $this->get_options('general');
-		$this->cf_range = (is_numeric($options['pagination_range'])) ? intval($options['pagination_range']) : 4;
-		$this->cf_ads_per_page = (is_numeric($options['ads_per_page'])) ? intval($options['ads_per_page']) : 10;
+		$this->cf_range = (isset($options['pagination_range'])) ? intval($options['pagination_range']) : 4;
+		$this->cf_ads_per_page = (isset($options['ads_per_page'])) ? intval($options['ads_per_page']) : 10;
 		$this->cf_pagination_top = ( ! empty($options['pagination_top']));
 		$this->cf_pagination_bottom = ( ! empty($options['pagination_bottom']));
 
@@ -194,17 +251,128 @@ class Classifieds_Core {
 			if ($this->use_paypal){ //make sure the api fields have something in them
 				$this->use_paypal = (! empty($options['api_username'])) && (! empty($options['api_password'])) && (! empty($options['api_signature']));
 			}
-			
+
 			$this->use_authorizenet = (! empty($options['authorizenet']));
-			
+
 			$options = $this->get_options('payments');
-			
+
 			$this->use_credits = (! empty($options['enable_credits']));
 			$this->use_annual = (! empty($options['enable_annual']));
 			$this->use_once = (! empty($options['enable_once']));
 		}
-
 	}
+
+	/**
+	* Create the default Directory member roles and capabilities.
+	*
+	* @return void
+	*/
+	function create_default_classifieds_roles() {
+
+		//set capability for admin
+		$admin = get_role('administrator');
+		foreach ( array_keys( $this->capability_map ) as $capability )
+		$admin->add_cap($capability );
+	}
+
+	/**
+	* Update plugin versions
+	*
+	* @return void
+	**/
+	function on_activate() {
+		$this->create_default_classifieds_roles();
+
+		/* Update plugin versions */
+		$versions = array( 'versions' => array( 'version' => $this->plugin_version, 'db_version' => $this->plugin_db_version ) );
+		$options = get_site_option( $this->options_name );
+		$options = ( isset( $options['versions'] ) ) ? array_merge( $options, $versions ) : $versions;
+		update_site_option( $this->options_name, $options );
+	}
+
+	/**
+	* Deactivate plugin. If $this->flush_plugin_data is set to "true"
+	* all plugin data will be deleted
+	*
+	* @return void
+	*/
+	function on_deactivate() {
+		/* if $this->flush_plugin_data is set to true it will delete all plugin data */
+		if ( $this->flush_plugin_data ) {
+			delete_option( $this->options_name );
+			delete_site_option( $this->options_name );
+			delete_site_option( 'ct_custom_post_types' );
+			delete_site_option( 'ct_custom_taxonomies' );
+			delete_site_option( 'ct_custom_fields' );
+			delete_site_option( 'ct_flush_rewrite_rules' );
+		}
+	}
+
+	function on_plugins_loaded(){
+
+		//Loads "classifieds-[xx_XX].mo" language file from the "languages" classifieds
+		load_plugin_textdomain( $this->text_domain, false, plugin_basename($this->plugin_dir . 'languages') );
+
+		//If the activate flag is set then try to initalize the defaults
+		if( get_site_option('cf_activate', false))	{
+			include_once($this->plugin_dir . 'core/data.php');
+			new Classifieds_Core_Data();
+			delete_site_option('cf_activate');
+		}
+	}
+
+	function on_parse_query(){
+		global $wp_query;
+
+		if ( isset( $wp_query ) ) {
+
+			//Handle any security redirects
+
+			if( is_page($this->add_classified_page_id)
+			|| is_page($this->edit_classified_page_id)
+			|| is_page($this->my_classifieds_page_id)
+			|| is_page($this->my_credits_page_id)
+			|| is_page($this->checkout_page_id)
+			){
+				if (! is_user_logged_in()) {
+					wp_redirect( get_permalink($this->signin_page_id) . '?redirect_to=' . urlencode(get_permalink($wp_query->queried_object_id)) );
+					exit;
+				}
+			}
+
+			//Are are we managing credits?
+			if(is_page($this->my_credits_page_id)){
+				if(! $this->use_credits){
+					wp_redirect( get_permalink($this->my_classifieds_page_id) );
+					exit;
+				}
+				//Are we adding a classified?
+				if (is_page($this->add_classified_page_id)) {
+					if(! current_user_can('publish_classifieds')){
+						wp_redirect( get_permalink($this->my_classifieds_page_id) );
+						exit;
+					}
+				}
+
+				//Or are we editing a classified?
+				if(is_page($this->edit_classified_page_id)){
+					//Can the user edit classifieds?
+					if ( ! $this->user_can_edit_classified( $_POST['post_id'] ) ) {
+						wp_redirect( get_permalink($this->my_classifieds_page_id) );
+						exit;
+					}
+				}
+
+				//Or are we listing classifieds?
+				if(is_page($this->classifieds_page_id)){
+					wp_redirect( get_post_type_archive_link('classifieds') );
+					exit;
+				}
+			}
+		}
+	}
+
+
 
 	/**
 	* filter for $wp_query on classifieds page - it is necessary that the other plug-ins have not changed it in these pages
@@ -221,36 +389,6 @@ class Classifieds_Core {
 		}
 	}
 
-	/**
-	* Update plugin versions
-	*
-	* @return void
-	**/
-	function plugin_activate() {
-		/* Update plugin versions */
-		$versions = array( 'versions' => array( 'version' => $this->plugin_version, 'db_version' => $this->plugin_db_version ) );
-		$options = get_site_option( $this->options_name );
-		$options = ( isset( $options['versions'] ) ) ? array_merge( $options, $versions ) : $versions;
-		update_site_option( $this->options_name, $options );
-	}
-
-	/**
-	* Deactivate plugin. If $this->flush_plugin_data is set to "true"
-	* all plugin data will be deleted
-	*
-	* @return void
-	*/
-	function plugin_deactivate() {
-		/* if $this->flush_plugin_data is set to true it will delete all plugin data */
-		if ( $this->flush_plugin_data ) {
-			delete_option( $this->options_name );
-			delete_site_option( $this->options_name );
-			delete_site_option( 'ct_custom_post_types' );
-			delete_site_option( 'ct_custom_taxonomies' );
-			delete_site_option( 'ct_custom_fields' );
-			delete_site_option( 'ct_flush_rewrite_rules' );
-		}
-	}
 
 	/**
 	* Get page by meta value
@@ -258,7 +396,7 @@ class Classifieds_Core {
 	* @return int $page[0] /bool false
 	*/
 	function get_page_by_meta( $value ) {
-		$post_statuses = array( 'publish', 'trash', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit' );
+		$post_statuses = get_post_stati();
 		foreach ( $post_statuses as $post_status ) {
 			$args = array(
 			'hierarchical'  => 0,
@@ -283,12 +421,13 @@ class Classifieds_Core {
 	* @return void
 	**/
 	function create_default_pages() {
-		/* Create neccasary pages */
+		/* Create neccessary pages */
 
+		//Classifieds list
 		$classifieds_page = $this->get_page_by_meta( 'classifieds' );
-		$parent_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
+		$page_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
 
-		if ( empty($parent_id) ) {
+		if ( empty($page_id) ) {
 			$current_user = wp_get_current_user();
 			/* Construct args for the new post */
 			$args = array(
@@ -299,13 +438,15 @@ class Classifieds_Core {
 			'ping_status'    => 'closed',
 			'comment_status' => 'closed'
 			);
-			$parent_id = wp_insert_post( $args );
-			add_post_meta( $parent_id, "classifieds_type", $this->classifieds_page_name );
+			$page_id = wp_insert_post( $args );
+			$classifieds_page = get_post($page_id);
+			add_post_meta( $page_id, "classifieds_type", 'classifieds');
 		}
 
-		$this->classifieds_page_id = $parent_id; //Remember the number
+		$this->classifieds_page_id = $page_id; //Remember the number
 		$this->classifieds_page_slug = $classifieds_page->post_name; //Remember the slug
 
+		//My Classifieds
 		$classifieds_page = $this->get_page_by_meta( 'my_classifieds' );
 		$page_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
 
@@ -317,39 +458,158 @@ class Classifieds_Core {
 			'post_status'    => 'publish',
 			'post_author'    => $current_user->ID,
 			'post_type'      => 'page',
-			'post_parent'    => $parent_id,
+			'post_parent'    => $this->classifieds_page_id,
 			'ping_status'    => 'closed',
 			'comment_status' => 'closed'
 			);
 			$page_id = wp_insert_post( $args );
+			$classifieds_page = get_post($page_id);
 			add_post_meta( $page_id, "classifieds_type",  'my_classifieds' );
 		}
 
 		$this->my_classifieds_page_id = $page_id; // Remember the number
 		$this->my_classifieds_page_slug = $classifieds_page->post_name; //Remember the slug
 
-		$classifieds_page = $this->get_page_by_meta( 'checkout' );
+		//Classifieds Checkout
+		$classifieds_page = $this->get_page_by_meta( 'checkout_classified' );
 		$page_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
 
 		if ( empty($page_id) ) {
 			$current_user = wp_get_current_user();
 			/* Construct args for the new post */
 			$args = array(
-			'post_title'     => 'Checkout',
+			'post_title'     => 'Classifieds Checkout',
+			'post_name'     => 'checkout',
 			'post_status'    => 'publish',
 			'post_author'    => $current_user->ID,
 			'post_type'      => 'page',
-			'post_parent'    => $parent_id,
+			'post_parent'    => $this->classifieds_page_id,
 			'ping_status'    => 'closed',
 			'comment_status' => 'closed',
 			'menu_order'     => 1
 			);
 			$page_id = wp_insert_post( $args );
-			add_post_meta( $page_id, "classifieds_type", 'checkout' );
+			$classifieds_page = get_post($page_id);
+			add_post_meta( $page_id, "classifieds_type", 'checkout_classified' );
 		}
 
 		$this->checkout_page_id = $page_id; // Remember the number
 		$this->checkout_page_slug = $classifieds_page->post_name; //Remember the slug
+
+		$classifieds_page = $this->get_page_by_meta( 'add_classified_page' );
+		$page_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
+
+		if ( empty($page_id) ) {
+			$current_user = wp_get_current_user();
+			/* Construct args for the new post */
+			$args = array(
+			'post_title'     => 'Add Classified',
+			'post_status'    => 'virtual',
+			'post_author'    => $current_user->ID,
+			'post_parent'    => $this->classifieds_page_id,
+			'post_type'      => 'page',
+			'ping_status'    => 'closed',
+			'comment_status' => 'closed'
+			);
+			$page_id = wp_insert_post( $args );
+			$classifieds_page = get_post($page_id);
+			add_post_meta( $page_id, "classifieds_type",  'add_classified_page' );
+		}
+
+		$this->add_classified_page_id = $page_id; // Remember the number
+		$this->add_classified_page_page_slug = $classifieds_page->post_name; //Remember the slug
+
+		$classifieds_page = $this->get_page_by_meta( 'edit_classified' );
+		$page_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
+
+		if ( empty($page_id) ) {
+			$current_user = wp_get_current_user();
+			/* Construct args for the new post */
+			$args = array(
+			'post_title'     => 'Edit Classified',
+			'post_status'    => 'virtual',
+			'post_author'    => $current_user->ID,
+			'post_parent'    => $this->classifieds_page_id,
+			'post_type'      => 'page',
+			'ping_status'    => 'closed',
+			'comment_status' => 'closed'
+			);
+			$page_id = wp_insert_post( $args );
+			$classifieds_page = get_post($page_id);
+			add_post_meta( $page_id, "classifieds_type",  'edit_classified' );
+		}
+
+		$this->edit_classified_page_id = $page_id; // Remember the number
+		$this->edit_classified_page_slug = $classifieds_page->post_name; //Remember the slug
+
+		$classifieds_page = $this->get_page_by_meta( 'my_classifeds_credits' );
+		$page_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
+
+		if ( empty($page_id) ) {
+			$current_user = wp_get_current_user();
+			/* Construct args for the new post */
+			$args = array(
+			'post_title'     => 'My Classifieds Credits',
+			'post_name'     => 'my-credits',
+			'post_status'    => 'virtual',
+			'post_author'    => $current_user->ID,
+			'post_parent'    => $this->classifieds_page_id,
+			'post_type'      => 'page',
+			'ping_status'    => 'closed',
+			'comment_status' => 'closed',
+			);
+			$page_id = wp_insert_post( $args );
+			$classifieds_page = get_post($page_id);
+			add_post_meta( $page_id, "classifieds_type", 'my_classifeds_credits' );
+		}
+
+		$this->my_credits_page_id = $page_id; // Remember the number
+		$this->my_credits_page_slug = $classifieds_page->post_name; //Remember the slug
+
+		$classifieds_page = $this->get_page_by_meta( 'classifieds_signup' );
+		$page_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
+
+		if ( empty($page_id) ) {
+			/* Construct args for the new post */
+			$args = array(
+			'post_title'     => 'Classifieds Signup',
+			'post_status'    => 'virtual',
+			'post_author'    => $current_user->ID,
+			'post_parent'    => $this->classifieds_page_id,
+			'post_type'      => 'page',
+			'ping_status'    => 'closed',
+			'comment_status' => 'closed'
+			);
+			$page_id = wp_insert_post( $args );
+			$classifieds_page = get_post($page_id);
+			add_post_meta( $page_id, "classifieds_type", "classifieds_signup" );
+		}
+
+		$this->signup_page_id = $page_id; //Remember the number
+		$this->signup_page_slug = $classifieds_page->post_name; //Remember the slug
+
+		$classifieds_page = $this->get_page_by_meta( 'classifieds_signin' );
+		$page_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
+
+		if ( empty($page_id) ) {
+			/* Construct args for the new post */
+			$args = array(
+			'post_title'     => 'Classifieds Signin',
+			'post_name'      => 'signin',
+			'post_status'    => 'virtual',
+			'post_author'    => $current_user->ID,
+			'post_parent'    => $this->classifieds_page_id,
+			'post_type'      => 'page',
+			'ping_status'    => 'closed',
+			'comment_status' => 'closed'
+			);
+			$page_id = wp_insert_post( $args );
+			$classifieds_page = get_post($page_id);
+			add_post_meta( $page_id, "classifieds_type", "classifieds_signin" );
+		}
+
+		$this->signin_page_id = $page_id; //Remember the number
+		$this->signin_page_slug = $classifieds_page->post_name; //Remember the slug
 
 	}
 
@@ -390,7 +650,7 @@ class Classifieds_Core {
 
 			$wp_roles->add_role( $this->user_role, 'Classifieds Member', array(
 			'publish_classifieds'       => true,
-			'edit_classifieds'          => true,
+			'edit_classified'          => true,
 			'edit_others_classifieds'   => false,
 			'delete_classifieds'        => true,
 			'delete_others_classifieds' => false,
@@ -405,7 +665,7 @@ class Classifieds_Core {
 
 			/* Set administrator roles */
 			$wp_roles->add_cap( 'administrator', 'publish_classifieds' );
-			$wp_roles->add_cap( 'administrator', 'edit_classifieds' );
+			$wp_roles->add_cap( 'administrator', 'edit_classified' );
 			$wp_roles->add_cap( 'administrator', 'edit_others_classifieds' );
 			$wp_roles->add_cap( 'administrator', 'delete_classifieds' );
 			$wp_roles->add_cap( 'administrator', 'delete_others_classifieds' );
@@ -668,6 +928,8 @@ class Classifieds_Core {
 		return false;
 	}
 
+
+
 	/**
 	* Handle user login.
 	*
@@ -708,7 +970,7 @@ class Classifieds_Core {
 
 			/* If Terms and Costs step is submitted */
 			if ( isset( $_POST['terms_submit'] ) ) {
-				
+
 				if($this->use_free){
 					set_query_var( 'cf_step', 'cc_details' );
 					return;
@@ -763,14 +1025,14 @@ class Classifieds_Core {
 			}
 			/* If direct CC payment is submitted */
 			elseif ( isset( $_POST['direct_payment_submit'] ) ) {
-				
+
 				if($this->use_free){
 					$this->update_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'], 0, $result );
 					/* Set the proper step which will be loaded by "page-checkout.php" */
 					set_query_var( 'cf_step', 'success' );
 					return;
 				}
-				
+
 				/* Initiate paypal class */
 				$checkout = new Classifieds_Core_PayPal();
 				/* Make API call */
@@ -1148,7 +1410,7 @@ class Classifieds_Core {
 
 	/**
 	* Filter the template path to single{}.php templates.
-	* Load from theme directory primary if it doesn't exist load from plugin dir.
+	* Load from theme classifieds primary if it doesn't exist load from plugin dir.
 	*
 	* Learn more: http://codex.wordpress.org/Template_Hierarchy
 	* Learn more: http://codex.wordpress.org/Plugin_API/Filter_Reference#Template_Filters
@@ -1159,10 +1421,25 @@ class Classifieds_Core {
 	**/
 	function get_single_template( $template ) {
 		global $post;
+		$tpldir = get_template_directory();
+		$template = (file_exists("{$tpldir}/single-{$template}.php"))
+		? "{$tpldir}/single-{$template}.php"
+		: (file_exists("{$this->plugin_dir}ui-front/general/single-{$template}.php") ) ? "{$this->plugin_dir}ui-front/general/single-{$template}.php" : $template;
+		return $template;
+		/*
 		if ( ! file_exists( get_template_directory() . "/single-{$post->post_type}.php" )
 		&& file_exists( "{$this->plugin_dir}ui-front/general/single-{$post->post_type}.php" ) )
 		return "{$this->plugin_dir}ui-front/general/single-{$post->post_type}.php";
 		else
+		return $template;
+		*/
+	}
+
+	function template_file($template){
+		$tpldir = get_template_directory();
+		$template = (file_exists("{$tpldir}/page-{$template}.php"))
+		? "{$tpldir}/page-{$template}.php"
+		: (file_exists("{$this->plugin_dir}ui-front/general/page-{$template}.php") ) ? "{$this->plugin_dir}ui-front/general/page-{$template}.php" : $template;
 		return $template;
 	}
 
@@ -1234,7 +1511,7 @@ class Classifieds_Core {
 	* @return string Templatepath
 	**/
 	function get_taxonomy_template( $template ) {
-		
+
 		$taxonomy = get_query_var('taxonomy');
 		$term = get_query_var('term');
 
@@ -1327,8 +1604,7 @@ class Classifieds_Core {
 
 		<div id="nav-<?php echo $pag_id; ?>" class="navigation">
 
-			<?php if ( class_exists( 'PageNavi_Core' ) ) : //If they have the plugin
-			?>
+			<?php if ( class_exists( 'PageNavi_Core' ) ) : //If they have the plugin	?>
 			<!-- WP-PageNavi - pagination -->
 			<?php wp_pagenavi();
 
@@ -1376,18 +1652,317 @@ class Classifieds_Core {
 				<?php endif; ?>
 
 			</div> <!--end pagination-->
+
 			<?php
 			endif; // end 1 != $this->cf_pages
 
-			endif;  //end if ( class_exists( PageNavi_Core ) )
-			echo "</div>\n";
-			endif; //end $wp_query->max_num_pages > 1 )
-			$pagination = ob_get_contents();
-			ob_end_clean();
-			echo apply_filters( 'cf_pagination', $pagination );
-		}
+			endif;  //end if ( class_exists( PageNavi_Core ) ) ?>
+		</div>
+
+		<?php
+		endif; //end $wp_query->max_num_pages > 1 )
+		$pagination = ob_get_contents();
+		ob_end_clean();
+		echo apply_filters( 'cf_pagination', $pagination );
 	}
 
-	endif;
+	function get_post_image_link($post_id = 0){
 
-	?>
+		if ( ! ( post_type_supports( 'classifieds', 'thumbnail' )
+		&& current_theme_supports( 'post-thumbnails', 'classifieds' ) ) )
+		return '';
+
+		ob_start();
+		?>
+		<div id="postimagediv">
+			<div class="inside">
+				<?php
+
+				$html = '<p><a class="thickbox" href="' . esc_attr(admin_url() . "/media-upload.php?post_id={$post_id}&type=image&TB_iframe=1&width=640&height=510") . '" id="set-post-thumbnail" >' . esc_html__( 'Set Featured Image') . '</a></p>';
+
+				if(has_post_thumbnail($post_id)){
+					$html = get_the_post_thumbnail($post_id, array(226,100));
+					$ajax_nonce = wp_create_nonce( "set_post_thumbnail-{$post_id}" );
+					$html .= '<p class="hide-if-no-js"><a href="#" id="remove-post-thumbnail" onclick="WPRemoveThumbnail(\'' . $ajax_nonce . '\');return false;">' . esc_html__( 'Remove featured image' ) . '</a></p>';
+				}
+				echo $html;
+
+				?>
+
+			</div>
+		</div>
+		<?php
+		$result = ob_get_contents();
+		ob_end_clean();
+
+		return $result;
+	}
+
+	/**
+	* Shortcode definitions
+	*/
+
+	function classifieds_categories_sc( $atts, $content = null ) {
+		extract( shortcode_atts( array(
+		'style' => '', //list, grid
+		), $atts ) );
+
+		if($style == 'grid') $result = '<div class="cf_list_grid">' .PHP_EOL;
+		elseif($style == 'list') $result = '<div class="cf_list">' .PHP_EOL;
+		else $result = "<div>\n";
+
+		$result .= the_cf_categories_home( false, $atts );
+
+		$result .= "</div><!--.cf_list-->\n";
+		return $result;
+	}
+
+	function classifieds_btn_sc( $atts, $content = null ) {
+		extract( shortcode_atts( array(
+		'text' => __('Classifieds', $this->text_domain),
+		'view' => 'both', //loggedin, loggedout, both
+		), $atts ) );
+
+		$view = strtolower($view);
+		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
+		else if($view == 'loggedin') return '';
+
+		$content = (empty($content)) ? $text : $content;
+		ob_start();
+		?>
+		<button class="cf_button classifieds_btn" type="button" onclick="window.location.href='<?php echo get_permalink($this->classifieds_page_id); ?>';" ><?php echo $content; ?></button>
+		$result = ob_get_contents();
+		ob_end_clean();
+		return $result;
+		<?php
+	}
+
+	function add_classified_btn_sc( $atts, $content = null ) {
+		extract( shortcode_atts( array(
+		'text' => __('Add Classified', $this->text_domain),
+		'view' => 'both', //loggedin, loggedout, both
+		), $atts ) );
+
+		$view = strtolower($view);
+		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
+		else if($view == 'loggedin') return '';
+
+		$content = (empty($content)) ? $text : $content;
+		ob_start();
+		?>
+		<button class="cf_button add_classified_btn" type="button" onclick="window.location.href='<?php echo get_permalink($this->add_classified_page_id); ?>';" ><?php echo $content; ?></button>
+		<?php
+		$result = ob_get_contents();
+		ob_end_clean();
+		return $result;
+	}
+
+	function edit_classified_btn_sc( $atts, $content = null ) {
+		extract( shortcode_atts( array(
+		'text' => __('Edit Classified', $this->text_domain),
+		'view' => 'both', //loggedin, loggedout, both
+		'post' => '0',
+		), $atts ) );
+
+		$view = strtolower($view);
+		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
+		else if($view == 'loggedin') return '';
+
+		$content = (empty($content)) ? $text : $content;
+		ob_start();
+		?>
+		<button class="cf_button add_classified_btn" type="button" onclick="window.location.href='<?php echo get_permalink($this->edit_classified_page_id) . "?post_id=$post"; ?>';" ><?php echo $content; ?></button>
+		<?php
+		$result = ob_get_contents();
+		ob_end_clean();
+		return $result;
+	}
+
+	function checkout_btn_sc( $atts, $content = null ) {
+		extract( shortcode_atts( array(
+		'text' => __('Classifieds Checkout', $this->text_domain),
+		'view' => 'both', //loggedin, loggedout, both
+		), $atts ) );
+
+		$view = strtolower($view);
+		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
+		else if($view == 'loggedin') return '';
+
+		$content = (empty($content)) ? $text : $content;
+		ob_start();
+		?>
+		<button class="cf_button checkout_btn" type="button" onclick="window.location.href='<?php echo get_permalink($this->checkout_page_id); ?>';" ><?php echo $content; ?></button>
+		<?php
+		$result = ob_get_contents();
+		ob_end_clean();
+		return $result;
+	}
+
+	function my_credits_btn_sc( $atts, $content = null ) {
+		extract( shortcode_atts( array(
+		'text' => __('My Classifieds Credits', $this->text_domain),
+		'view' => 'both', //loggedin, loggedout, both
+		), $atts ) );
+
+		$view = strtolower($view);
+		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
+		else if($view == 'loggedin') return '';
+
+		$content = (empty($content)) ? $text : $content;
+		ob_start();
+		?>
+		<button class="cf_button credits_btn" type="button" onclick="window.location.href='<?php echo get_permalink($this->my_credits_page_id); ?>';" ><?php echo $content; ?></button>
+		<?php
+		$result = ob_get_contents();
+		ob_end_clean();
+		return $result;
+	}
+
+	function my_classifieds_btn_sc( $atts, $content = null ) {
+		extract( shortcode_atts( array(
+		'text' => __('My Classifieds', $this->text_domain),
+		'view' => 'loggedin', //loggedin, loggedout, both
+		), $atts ) );
+
+		$view = strtolower($view);
+		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
+		else if($view == 'loggedin') return '';
+
+		$content = (empty($content)) ? $text : $content;
+		ob_start();
+		?>
+		<button class="cf_button my_classified_btn" type="button" onclick="window.location.href='<?php echo get_permalink($this->my_classifieds_page_id); ?>';" ><?php echo $content; ?></button>
+		<?php
+		$result = ob_get_contents();
+		ob_end_clean();
+		return $result;
+	}
+
+	function profile_btn_sc( $atts, $content = null ) {
+		extract( shortcode_atts( array(
+		'text' => __('Go to Profile', $this->text_domain),
+		'view' => 'both', //loggedin, loggedout, both
+		), $atts ) );
+
+		$view = strtolower($view);
+		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
+		else if($view == 'loggedin') return '';
+
+		$content = (empty($content)) ? $text : $content;
+		ob_start();
+		?>
+		<button class="cf_button profile_btn" type="button" onclick="window.location.href='<?php echo admin_url() . 'profile.php'; ?>';" ><?php echo $content; ?></button>
+		<?php
+		$result = ob_get_contents();
+		ob_end_clean();
+		return $result;
+	}
+
+	function signup_btn_sc( $atts, $content = null ) {
+		extract( shortcode_atts( array(
+		'text' => __('Signup', $this->text_domain),
+		'view' => 'loggedout', //loggedin, loggedout, both
+		), $atts ) );
+
+		$view = strtolower($view);
+		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
+		else if($view == 'loggedin') return '';
+
+		$content = (empty($content)) ? $text : $content;
+		ob_start();
+		?>
+		<button class="cf_button signup_btn" type="button" onclick="window.location.href='<?php echo get_permalink($this->signup_page_id); ?>';" ><?php echo $content; ?></button>
+		<?php
+		$result = ob_get_contents();
+		ob_end_clean();
+		return $result;
+	}
+
+	function signin_btn_sc( $atts, $content = null ) {
+		extract( shortcode_atts( array(
+		'text' => __('Signin', $this->text_domain),
+		'redirect' => '',
+		'view' => 'loggedout', //loggedin, loggedout, both
+		), $atts ) );
+
+		$view = strtolower($view);
+		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
+		else if($view == 'loggedin') return '';
+
+		$options = get_option( $this->options_name );
+		if(empty($redirect)) $redirect = ( empty($options['general_settings']['signin_url'])) ? home_url() : $options['general_settings']['signin_url'];
+
+		$content = (empty($content)) ? $text : $content;
+		ob_start();
+		?>
+		<button class="cf_button signin_btn" type="button" onclick="window.location.href='<?php echo get_permalink($this->signin_page_id) . '?redirect_to=' . urlencode($redirect); ?>';" ><?php echo $content; ?></button>
+		<?php
+		$result = ob_get_contents();
+		ob_end_clean();
+		return $result;
+	}
+
+	function logout_btn_sc( $atts, $content = null ) {
+		extract( shortcode_atts( array(
+		'text' => __('Logout', $this->text_domain),
+		'redirect' => '',
+		'view' => 'loggedin', //loggedin, loggedout, both
+		), $atts ) );
+
+		$view = strtolower($view);
+		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
+		else if($view == 'loggedin') return '';
+
+		$options = get_option( $this->options_name );
+		if(empty($redirect)) $redirect = ( empty($options['general_settings']['logout_url'])) ? home_url() : $options['general_settings']['logout_url'];
+
+		$content = (empty($content)) ? $text : $content;
+		ob_start();
+		?>
+		<button class="cf_button logout_btn" type="button" onclick="window.location.href='<?php echo wp_logout_url($redirect); ?>';" ><?php echo $content; ?></button>
+		<?php
+		$result = ob_get_contents();
+		ob_end_clean();
+		return $result;
+	}
+
+	function custom_fields_sc( $atts, $content = null ) {
+		extract( shortcode_atts( array(
+		'text' => __('Logout', $this->text_domain),
+		'redirect' => '',
+		'view' => 'loggedin', //loggedin, loggedout, both
+		), $atts ) );
+
+		$options = get_option( $this->options_name );
+		$content = (empty($content)) ? $text : $content;
+		ob_start();
+		$this->display_custom_fields_values();
+		$result = ob_get_contents();
+		ob_end_clean();
+		return $result;
+	}
+
+}
+
+endif;
+
+// Set flag on activation to trigger initial data
+add_action('activated_plugin', 'cf_flag_activation', 1);
+function cf_flag_activation($plugin=''){
+	//Flag we're activating
+	if($plugin == 'classifieds/loader.php') add_site_option('cf_activate', true);
+}
+
+//Decide whether to load Admin, Buddypress or Standard version
+add_action('plugins_loaded', 'cf_on_plugins_loaded');
+function cf_on_plugins_loaded(){
+	if(is_admin()){ 	//Are we admin
+		include_once CF_PLUGIN_DIR . 'core/admin.php';
+	}
+	elseif(defined('BP_VERSION')){ //Are we BuddyPress
+		include_once CF_PLUGIN_DIR . 'core/buddypress.php';
+	}
+	else {
+		include_once CF_PLUGIN_DIR . 'core/main.php';
+	}
+}

@@ -1,6 +1,9 @@
-<?php if (!defined('ABSPATH')) die('No direct access allowed!'); ?>
+<?php if (!defined('ABSPATH')) die('No direct access allowed!');
 
-<?php $options = $this->get_options( 'general' ); ?>
+global $wp_roles;
+$options = $this->get_options( 'general' );
+
+?>
 
 <div class="wrap">
 
@@ -10,7 +13,59 @@
 
 	<?php $this->render_admin( 'message' ); ?>
 
-	<form action="" method="post">
+	<form action="#" method="post">
+		<div class="postbox">
+			<h3 class='hndle'><span><?php _e( 'Classified Member Role', $this->text_domain ); ?></span></h3>
+			<div class="inside">
+				<table class="form-table">
+					<tr>
+						<th>
+							<label for="roles"><?php _e( 'Assign Member\'s Role', $this->text_domain ) ?></label>
+						</th>
+						<td>
+							<select id="member_role" name="member_role" style="width:200px;">
+								<?php foreach ( $wp_roles->role_names as $role => $name ): ?>
+								<option value="<?php echo $role; ?>" <?php selected(isset($options['member_role'] ) && $role == $options['member_role']); ?> ><?php echo $name; ?></option>
+								<?php endforeach; ?>
+							</select>
+							<br /><span class="description"><?php _e('Select the role to which you want to assign a Classifieds member on signup.', $this->text_domain); ?></span>
+							<br /><span class="description"><?php _e('If you are running multiple plugins that have signups use the same role for both.', $this->text_domain); ?></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label>Manage Member Roles</label>
+						</th>
+						<td>
+							<label>Add Role Name</label><br />
+							<input type="text" id="new_role" name="new_role" size="30"/>
+							<input type="submit" class="button" id="add_role" name="add_role" value="<?php _e( 'Add a Role', $this->text_domain ); ?>" />
+							<br /><span class="description"><?php _e('Add a new role. Alphanumerics only.', $this->text_domain); ?></span>
+							<br /><span class="description"><?php _e('When you add a new role you must add the appropriate capabilities to make it functional.', $this->text_domain); ?></span>
+							<br /><br />
+							<label>Custom Roles</label><br />
+							<select id="delete_role" name="delete_role"  style="width:200px;">
+								<?php 
+								$system_roles = array('administrator', 'editor', 'author', 'contributor', 'subscriber');
+								$role_names = $wp_roles->role_names;
+								foreach ( $role_names as $role => $name ): 
+								if(! in_array($role, $system_roles) ): //Don't delete system roles.
+								?>
+								<option value="<?php echo $role; ?>"><?php echo $name; ?></option>
+								<?php 
+								endif;
+								endforeach; 
+								?>
+							</select>
+							<input type="button" class="button" onclick="jQuery(this).hide(); jQuery('#remove_role').show();" value="<?php _e( 'Remove a Role', $this->text_domain ); ?>" />
+							<input type="submit" class="button-primary" id="remove_role" name="remove_role" value="<?php _e( 'Confirm Remove this Role', $this->text_domain ); ?>" style="display: none;" />
+
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
 		<div class="postbox">
 			<h3 class='hndle'><span><?php _e( 'Form Fields', $this->text_domain ); ?></span></h3>
 			<div class="inside">
