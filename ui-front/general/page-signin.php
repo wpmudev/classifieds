@@ -7,21 +7,20 @@ $register = (empty($_GET['register'])) ? '' : $_GET['register'];
 $reset = (empty($_GET['reset'])) ? '' : $_GET['reset'];
 $redirect = (empty($_GET['redirect_to'])) ? '' : $_GET['redirect_to'];
 
-//mail("abaileytn@gmail.com","Success","Thanks, that works", "From: abailey@webwrights.com\r\n");
 ?>
 
 <div id="login-register-password">
 
 	<?php if (! $user_ID): ?>
 
-	<ul class="tabs_login">
-		<li class="active_login"><a href="#tab1_login"><?php _e('Login', $this->text_domain); ?></a></li>
+	<ul class="cf_tabs">
+		<li class="cf_active"><a href="#tab1_login"><?php _e('Login', $this->text_domain); ?></a></li>
 		<li><a href="#tab2_login"><?php _e('New Account', $this->text_domain); ?></a></li>
 		<li><a href="#tab3_login"><?php _e('Forgot?', $this->text_domain); ?></a></li>
 	</ul>
-	<div class="tab_container_login">
+	<div class="cf_tab_container">
 
-		<div id="tab1_login" class="tab_content_login">
+		<div id="tab1_login" class="cf_tab_content">
 			<?php if ($register == true): ?>
 
 			<h3><?php _e('Success!', $this->text_domain); ?></h3>
@@ -63,7 +62,7 @@ $redirect = (empty($_GET['redirect_to'])) ? '' : $_GET['redirect_to'];
 			</form>
 		</div>
 
-		<div id="tab2_login" class="tab_content_login" style="display:none;">
+		<div id="tab2_login" class="cf_tab_content" style="display:none;">
 			<h3><?php _e('Register for this site!', $this->text_domain); ?></h3>
 			<p><?php _e('Sign up now for the good stuff.', $this->text_domain); ?></p>
 			
@@ -100,7 +99,7 @@ $redirect = (empty($_GET['redirect_to'])) ? '' : $_GET['redirect_to'];
 			</form>
 		</div>
 
-		<div id="tab3_login" class="tab_content_login" style="display:none;">
+		<div id="tab3_login" class="cf_tab_content" style="display:none;">
 			<h3>Lose something?</h3>
 			<p>Enter your username or email to reset your password.</p>
 			<form method="post" action="<?php echo site_url('wp-login.php?action=lostpassword', 'login_post') ?>" class="wp-user-form">
@@ -144,13 +143,13 @@ $redirect = (empty($_GET['redirect_to'])) ? '' : $_GET['redirect_to'];
 <script type="text/javascript">
 	(function($) {
 		$(document).ready(function() {
-			$(".tab_content_login").hide();
-			$("ul.tabs_login li:first").addClass("active_login").show();
-			$(".tab_content_login:first").show();
-			$("ul.tabs_login li").click(function() {
-				$("ul.tabs_login li").removeClass("active_login");
-				$(this).addClass("active_login");
-				$(".tab_content_login").hide();
+			$(".cf_tab_content").hide();
+			$("ul.cf_tabs li:first").addClass("cf_active").show();
+			$(".cf_tab_content:first").show();
+			$("ul.cf_tabs li").click(function() {
+				$("ul.cf_tabs li").removeClass("cf_active");
+				$(this).addClass("cf_active");
+				$(".cf_tab_content").hide();
 				var activeTab = $(this).find("a").attr("href");
 				$(activeTab).show();
 				return false;

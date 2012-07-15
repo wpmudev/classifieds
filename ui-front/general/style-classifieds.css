@@ -8,6 +8,7 @@ Description: You can override this file in your active theme.
 
 .error {
 	background: #FFEBE8;
+	padding:10px;
 }
 .submit {
 	margin: 10px 0;
@@ -68,9 +69,10 @@ width: 100%;
 
 .cf-ad{
 	width: 100%;
-	border: 1px solid #ddd;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
 	overflow: hidden;
-	margin: 0;
+	margin: 5px 0;
 }
 
 .cf-pad{
@@ -205,6 +207,11 @@ padding-bottom: 15px;
 	float: left;
 	margin-top: -25px;
 }
+
+.credits_btn{
+	float: right;
+}
+
 .av-credits {
 	float: right;
 	margin-top: -30px;
@@ -284,7 +291,7 @@ padding-bottom: 15px;
 
 /** Sigin Form **/
 /* tabbed list */
-ul.tabs_login {
+ul.cf_tabs {
 	padding-bottom: 0;
 	margin: 0;
 	position: relative;
@@ -292,7 +299,7 @@ ul.tabs_login {
 	z-index: 1000;
 	float: left;
 }
-ul.tabs_login li {
+ul.cf_tabs li {
 	background: #fff;
 	border: 1px solid #E7E9F6;
 	border-top-right-radius: 10px;
@@ -303,21 +310,21 @@ ul.tabs_login li {
 	overflow: hidden;
 	float: left;
 }
-ul.tabs_login li a {
+ul.cf_tabs li a {
 	text-decoration: none;
 	padding: 0 10px;
 	display: block;
 }
 
-ul.tabs_login li.active_login {
+ul.cf_tabs li.cf_active {
 	border-bottom: 1px solid #fff;
 }
-ul.tabs_login li.active_login a {
+ul.cf_tabs li.cf_active a {
 	font-weight: bold;
 	color: #333;
 }
 
-.tab_container_login {
+.cf_tab_container {
 	background: #fff;
 	position: relative;
 	margin: 0;
@@ -327,14 +334,14 @@ ul.tabs_login li.active_login a {
 	width: 100%;
 	top: -1px;
 }
-.tab_content_login {
+.cf_tab_content {
 	padding: 15px;
 }
-.tab_content_login ul {
+.cf_tab_content ul {
 	padding: 0;
 	margin: 0 0 0 15px;
 }
-.tab_content_login li {
+.cf_tab_content li {
 	margin: 5px 0;
 }
 

@@ -1,5 +1,4 @@
 <?php
-
 /*
 Plugin Name: Classifieds
 Plugin URI: http://premium.wpmudev.org/project/classifieds
@@ -8,8 +7,18 @@ Version: 2.2.2.3
 Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub)
 Author URI: http://premium.wpmudev.org
 License: GNU General Public License (Version 2 - GPLv2)
+Text Domain: classifieds
+Domain Path: /languages
 WDP ID: 158
 */
+
+$plugin_header_translate = array(    
+__('Classifieds - Add Classifieds to your blog, network or BuddyPress site. Create and manage ads, upload images, send emails, enable the credit system and charge your users for placing ads on your network or BuddyPress site.', 'classifieds'),    
+__('Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub)', 'classifieds'),    
+__('http://premium.wpmudev.org', 'classifieds'),    
+__('Classifieds', 'classifieds'),
+);
+
 
 /*
 Copyright 2007-2012 Incsub (http://incsub.com)

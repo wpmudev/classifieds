@@ -34,7 +34,7 @@ class Classifieds_Core {
 	/** @var string $custom_fields_prefix The custom fields DB prefix */
 	var $custom_fields_prefix = '_ct_';
 	/** @var string User role */
-	var $user_role = 'cf_member';
+	var $user_role = 'subscriber';
 	/** @var boolean True if submitted form is valid. */
 	var $form_valid = true;
 	/** @var boolean True if BuddyPress is active. */
@@ -87,7 +87,7 @@ class Classifieds_Core {
 
 	var $use_free = false;
 	var $use_annual = false;
-	var $use_one_time = false;
+	var $use_once = false;
 
 
 	/**
@@ -152,9 +152,8 @@ class Classifieds_Core {
 		/* Add template filter */
 		add_filter( 'taxonomy_template', array( &$this, 'get_taxonomy_template' ) ) ;
 
-
 		add_filter( 'parse_query', array( &$this, 'on_parse_query' ) ) ;
-
+		add_filter( 'wp_page_menu_args', array( &$this, 'hide_menu_pages' ), 99 );
 
 		/* template for cf-author page */
 		add_action( 'template_redirect', array( &$this, 'get_cf_author_template' ) );
@@ -195,7 +194,6 @@ class Classifieds_Core {
 		add_shortcode( 'cf_custom_fields', array( &$this, 'custom_fields_sc' ) );
 	}
 
-
 	function on_enqueue_scripts(){
 		wp_enqueue_style( 'jquery-taginput', $this->plugin_url . 'ui-front/css/jquery.tagsinput.css' );
 	}
@@ -217,11 +215,11 @@ class Classifieds_Core {
 		'label_count'               => _n_noop( 'Virtual <span class="count">(%s)</span>', 'Virtual <span class="count">(%s)</span>' ),
 		) );
 
-
 		/* Set Taxonomy objects and names */
 		$this->taxonomy_objects = get_object_taxonomies( $this->post_type, 'objects' );
 		$this->taxonomy_names   = get_object_taxonomies( $this->post_type, 'names' );
 		/* Get all custom fields values with their ID's as keys */
+
 		$custom_fields = get_site_option('ct_custom_fields');
 		if ( is_array( $custom_fields ) ) {
 			foreach ( $custom_fields as $key => $value ) {
@@ -229,40 +227,58 @@ class Classifieds_Core {
 				$this->custom_fields[$key] = $value;
 			}
 		}
+
 		/* Assign key 'duration' to predifined Custom Field ID */
 		$this->custom_fields['duration'] = '_ct_selectbox_4cf582bd61fa4';
+
 		/* Set current user */
 		$this->current_user = wp_get_current_user();
+
 		/* Set current user credits */
 		$this->user_credits = get_user_meta( $this->current_user->ID, 'cf_credits', true );
 
+
 		// Get pagination settings
 		$options = $this->get_options('general');
+
 		$this->cf_range = (isset($options['pagination_range'])) ? intval($options['pagination_range']) : 4;
 		$this->cf_ads_per_page = (isset($options['ads_per_page'])) ? intval($options['ads_per_page']) : 10;
 		$this->cf_pagination_top = ( ! empty($options['pagination_top']));
 		$this->cf_pagination_bottom = ( ! empty($options['pagination_bottom']));
 
+		/* Set the member role for classifieds */
+		$this->user_role = $options['member_role'];
+
 		//How do we sell stuff
 		$options = $this->get_options('payment_types');
-		$this->use_free = (! empty($options['free']));
+
+		$this->use_free = ( ! empty($options['use_free']));
 		if (! $this->use_free) { //Can't use gateways if it's free.
-			$this->use_paypal = (! empty($options['paypal']));
+			$this->use_paypal = ( ! empty($options['use_paypal']));
 			if ($this->use_paypal){ //make sure the api fields have something in them
-				$this->use_paypal = (! empty($options['api_username'])) && (! empty($options['api_password'])) && (! empty($options['api_signature']));
+				$this->use_paypal = (! empty($options['paypal']['api_username'])) && (! empty($options['paypal']['api_password'])) && (! empty($options['paypal']['api_signature']));
 			}
 
-			$this->use_authorizenet = (! empty($options['authorizenet']));
+			$this->use_authorizenet = (! empty($options['use_authorizenet']));
 
 			$options = $this->get_options('payments');
 
-			$this->use_credits = (! empty($options['enable_credits']));
-			$this->use_annual = (! empty($options['enable_annual']));
-			$this->use_once = (! empty($options['enable_once']));
+			$this->use_credits = ( ! empty($options['enable_credits']));
+			$this->use_annual = ( ! empty($options['enable_annual']));
+			$this->use_once = ( ! empty($options['enable_once']));
+		}
+
+		//Set a user capability based on users purchases
+		if( $this->use_free
+		|| ($this->use_credits && $this->user_credits > 0)
+		|| $this->is_full_access() ){
+			$this->current_user->add_cap('create_classifieds');
+		} else {
+			$this->current_user->remove_cap('create_classifieds');
 		}
 	}
 
-	/**
+		/**
 	* Create the default Directory member roles and capabilities.
 	*
 	* @return void
@@ -325,7 +341,6 @@ class Classifieds_Core {
 		global $wp_query;
 
 		if ( isset( $wp_query ) ) {
-
 			//Handle any security redirects
 
 			if( is_page($this->add_classified_page_id)
@@ -346,26 +361,21 @@ class Classifieds_Core {
 					wp_redirect( get_permalink($this->my_classifieds_page_id) );
 					exit;
 				}
-				//Are we adding a classified?
-				if (is_page($this->add_classified_page_id)) {
-					if(! current_user_can('publish_classifieds')){
-						wp_redirect( get_permalink($this->my_classifieds_page_id) );
-						exit;
-					}
-				}
+			}
 
-				//Or are we editing a classified?
-				if(is_page($this->edit_classified_page_id)){
-					//Can the user edit classifieds?
-					if ( ! $this->user_can_edit_classified( $_POST['post_id'] ) ) {
-						wp_redirect( get_permalink($this->my_classifieds_page_id) );
-						exit;
-					}
+			//Are we adding a classified?
+			if (is_page($this->add_classified_page_id)) {
+				if(! current_user_can(array('publish_classifieds', 'create_classifieds') ) ){
+					wp_redirect( get_permalink($this->my_classifieds_page_id) );
+					exit;
 				}
+			}
 
-				//Or are we listing classifieds?
-				if(is_page($this->classifieds_page_id)){
-					wp_redirect( get_post_type_archive_link('classifieds') );
+			//Or are we editing a classified?
+			if(is_page($this->edit_classified_page_id)){
+				//Can the user edit classifieds?
+				if ( ! current_user_can('edit_classified', $_REQUEST['post_id'] ) ) {
+					wp_redirect( get_permalink($this->my_classifieds_page_id) );
 					exit;
 				}
 			}
@@ -373,6 +383,27 @@ class Classifieds_Core {
 	}
 
 
+	/**
+	* Hide some menu pages
+	*/
+	function hide_menu_pages( $args ) {
+
+		$pages = (empty($args['exclude'])) ? '' : $args['exclude'];
+
+		//If free no need for checkout
+		if ( $this->use_free ) {
+			$pages .= ',' . $this->checkout_page_id;
+		}
+
+		//If nothing saleable no checkout
+		if ( ! $this->use_credits && ! $this->use_once && ! $this->use_annual ) {
+			$pages .= ',' . $this->checkout_page_id;
+		}
+
+		$args['exclude'] = trim($pages,',');
+
+		return $args;
+	}
 
 	/**
 	* filter for $wp_query on classifieds page - it is necessary that the other plug-ins have not changed it in these pages
@@ -423,6 +454,8 @@ class Classifieds_Core {
 	function create_default_pages() {
 		/* Create neccessary pages */
 
+		$post_content = __('Virtual page. Editing this page won\'t change anything.', $this->text_domain);
+
 		//Classifieds list
 		$classifieds_page = $this->get_page_by_meta( 'classifieds' );
 		$page_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
@@ -435,6 +468,7 @@ class Classifieds_Core {
 			'post_status'    => 'publish',
 			'post_author'    => $current_user->ID,
 			'post_type'      => 'page',
+			'post_content'   => $post_content,
 			'ping_status'    => 'closed',
 			'comment_status' => 'closed'
 			);
@@ -459,6 +493,7 @@ class Classifieds_Core {
 			'post_author'    => $current_user->ID,
 			'post_type'      => 'page',
 			'post_parent'    => $this->classifieds_page_id,
+			'post_content'   => $post_content,
 			'ping_status'    => 'closed',
 			'comment_status' => 'closed'
 			);
@@ -484,6 +519,7 @@ class Classifieds_Core {
 			'post_author'    => $current_user->ID,
 			'post_type'      => 'page',
 			'post_parent'    => $this->classifieds_page_id,
+			'post_content'   => $post_content,
 			'ping_status'    => 'closed',
 			'comment_status' => 'closed',
 			'menu_order'     => 1
@@ -508,6 +544,7 @@ class Classifieds_Core {
 			'post_author'    => $current_user->ID,
 			'post_parent'    => $this->classifieds_page_id,
 			'post_type'      => 'page',
+			'post_content'   => $post_content,
 			'ping_status'    => 'closed',
 			'comment_status' => 'closed'
 			);
@@ -531,6 +568,7 @@ class Classifieds_Core {
 			'post_author'    => $current_user->ID,
 			'post_parent'    => $this->classifieds_page_id,
 			'post_type'      => 'page',
+			'post_content'   => $post_content,
 			'ping_status'    => 'closed',
 			'comment_status' => 'closed'
 			);
@@ -555,6 +593,7 @@ class Classifieds_Core {
 			'post_author'    => $current_user->ID,
 			'post_parent'    => $this->classifieds_page_id,
 			'post_type'      => 'page',
+			'post_content'   => $post_content,
 			'ping_status'    => 'closed',
 			'comment_status' => 'closed',
 			);
@@ -577,6 +616,7 @@ class Classifieds_Core {
 			'post_author'    => $current_user->ID,
 			'post_parent'    => $this->classifieds_page_id,
 			'post_type'      => 'page',
+			'post_content'   => $post_content,
 			'ping_status'    => 'closed',
 			'comment_status' => 'closed'
 			);
@@ -600,6 +640,7 @@ class Classifieds_Core {
 			'post_author'    => $current_user->ID,
 			'post_parent'    => $this->classifieds_page_id,
 			'post_type'      => 'page',
+			'post_content'   => $post_content,
 			'ping_status'    => 'closed',
 			'comment_status' => 'closed'
 			);
@@ -642,40 +683,44 @@ class Classifieds_Core {
 	* @global $wp_roles
 	* @return void
 	**/
+
+	/*
 	function roles() {
-		global $wp_roles;
-		if ( $wp_roles ) {
-			/** @todo remove remove_role */
-			$wp_roles->remove_role( $this->user_role );
+	global $wp_roles;
 
-			$wp_roles->add_role( $this->user_role, 'Classifieds Member', array(
-			'publish_classifieds'       => true,
-			'edit_classified'          => true,
-			'edit_others_classifieds'   => false,
-			'delete_classifieds'        => true,
-			'delete_others_classifieds' => false,
-			'read_private_classifieds'  => false,
-			'edit_classified'           => true,
-			'delete_classified'         => true,
-			'read_classified'           => true,
-			'upload_files'              => true,
-			'assign_terms'              => true,
-			'read'                      => true
-			) );
+	// @todo remove remove_role
+	if ( $wp_roles ) {
+	$wp_roles->remove_role( $this->user_role );
 
-			/* Set administrator roles */
-			$wp_roles->add_cap( 'administrator', 'publish_classifieds' );
-			$wp_roles->add_cap( 'administrator', 'edit_classified' );
-			$wp_roles->add_cap( 'administrator', 'edit_others_classifieds' );
-			$wp_roles->add_cap( 'administrator', 'delete_classifieds' );
-			$wp_roles->add_cap( 'administrator', 'delete_others_classifieds' );
-			$wp_roles->add_cap( 'administrator', 'read_private_classifieds' );
-			$wp_roles->add_cap( 'administrator', 'edit_classified' );
-			$wp_roles->add_cap( 'administrator', 'delete_classified' );
-			$wp_roles->add_cap( 'administrator', 'read_classified' );
-			$wp_roles->add_cap( 'administrator', 'assign_terms' );
-		}
+	$wp_roles->add_role( $this->user_role, 'Classifieds Member', array(
+	'publish_classifieds'       => true,
+	'edit_classified'          => true,
+	'edit_others_classifieds'   => false,
+	'delete_classifieds'        => true,
+	'delete_others_classifieds' => false,
+	'read_private_classifieds'  => false,
+	'edit_classified'           => true,
+	'delete_classified'         => true,
+	'read_classified'           => true,
+	'upload_files'              => true,
+	'assign_terms'              => true,
+	'read'                      => true
+	) );
+
+	// Set administrator roles
+	$wp_roles->add_cap( 'administrator', 'publish_classifieds' );
+	$wp_roles->add_cap( 'administrator', 'edit_classified' );
+	$wp_roles->add_cap( 'administrator', 'edit_others_classifieds' );
+	$wp_roles->add_cap( 'administrator', 'delete_classifieds' );
+	$wp_roles->add_cap( 'administrator', 'delete_others_classifieds' );
+	$wp_roles->add_cap( 'administrator', 'read_private_classifieds' );
+	$wp_roles->add_cap( 'administrator', 'edit_classified' );
+	$wp_roles->add_cap( 'administrator', 'delete_classified' );
+	$wp_roles->add_cap( 'administrator', 'read_classified' );
+	$wp_roles->add_cap( 'administrator', 'assign_terms' );
 	}
+	}
+	*/
 
 	/**
 	* Show only current user classifieds on page of classifieds posttype page.
@@ -744,7 +789,7 @@ class Classifieds_Core {
 	}
 
 	/**
-	* Insert/Update User
+	* Update User
 	*
 	* @param string $email
 	* @param string $first_name
@@ -757,6 +802,7 @@ class Classifieds_Core {
 		/* If user logged update it */
 		if ( is_user_logged_in() ) {
 
+			// Set the user role for classifieds
 			wp_update_user( array( 'ID' => get_current_user_id(), 'role' => $this->user_role ) );
 
 			//saving information of transaction
@@ -764,6 +810,7 @@ class Classifieds_Core {
 			'billing'    => $billing,
 			'order_info' => $order_info
 			);
+
 			//set time of end annual - 1 year after now
 			if ( 'annual' == $billing ) {
 				$now =  time();
@@ -771,82 +818,10 @@ class Classifieds_Core {
 			}
 			update_user_meta( get_current_user_id(), 'cf_order', $cf_order );
 
-			//Update credits only for none 'annual' or  'one_time' users
+			//Update credits only for non 'annual' or  'one_time' users
 			if ( isset( $billing ) && 'credits' == $billing )
 			$this->update_user_credits( $credits, get_current_user_id() );
 
-			return;
-		}
-
-
-		/* If user exists update it */
-		if ( email_exists( $user_email ) || is_user_logged_in() ) {
-			$user = get_user_by( 'email', $user_email );
-			if ( $user ) {
-				wp_update_user( array( 'ID' => $user->ID, 'role' => $this->user_role ) );
-
-				//saving information of transaction
-				$cf_order = array(
-				'billing'    => $billing,
-				'order_info' => $order_info
-				);
-				//set time of end annual - 1 year after now
-				if ( 'annual' == $billing ) {
-					$now =  time();
-					$cf_order['time_end_annual'] = mktime( date( 'H', $now ) , date( 'i', $now ), date( 's', $now ), date( 'n', $now ), date( 'j', $now ), date( 'Y', $now ) + 1 ) ;
-				}
-				update_user_meta( $user->ID, 'cf_order', $cf_order );
-
-				//Update credits only for none 'annual' or  'one_time' users
-				if ( isset( $billing ) && 'credits' == $billing )
-				$this->update_user_credits( $credits, $user->ID );
-
-				$credentials = array( 'remember'=>true, 'user_login' => $user->user_login, 'user_password' => $user->user_pass );
-				wp_signon( $credentials );
-				return;
-			}
-		}
-
-		/* if user not exist create new */
-		/* Variables */
-		$user_login     = sanitize_user( strtolower( $first_name ));
-		$user_email     = $email;
-		$user_pass      = wp_generate_password();
-		if ( username_exists( $user_login ) )
-		$user_login .= '-' . sanitize_user( strtolower( $last_name ));
-		if ( username_exists( $user_login ) )
-		$user_login .= rand(1,9);
-
-		$user_id = wp_insert_user( array(
-		'user_login'   => $user_login,
-		'user_pass'    => $user_pass,
-		'user_email'   => $email,
-		'display_name' => $first_name . ' ' . $last_name,
-		'first_name'   => $first_name,
-		'last_name'    => $last_name,
-		'role'         => $this->user_role
-		) ) ;
-		if ( $user_id ) {
-
-			//saving information of transaction
-			$cf_order = array(
-			'billing'    => $billing,
-			'order_info' => $order_info
-			);
-			//set time of end annual - 1 year after now
-			if ( 'annual' == $billing ) {
-				$now =  time();
-				$cf_order['time_end_annual'] = mktime( date( 'H', $now ) , date( 'i', $now ), date( 's', $now ), date( 'n', $now ), date( 'j', $now ), date( 'Y', $now ) + 1 ) ;
-			}
-			update_user_meta( $user_id, 'cf_order', $cf_order );
-
-			//Update credits only for none 'annual' or  'one_time' users
-			if ( isset( $billing ) && 'credits' == $billing )
-			$this->update_user_credits( $credits, $user_id );
-
-			wp_new_user_notification( $user_id, $user_pass );
-			$credentials = array( 'remember'=> true, 'user_login' => $user_login, 'user_password' => $user_pass );
-			wp_signon( $credentials );
 		}
 	}
 
@@ -854,50 +829,65 @@ class Classifieds_Core {
 	* Update or insert ad if no ID is passed.
 	*
 	* @param array $params Array of $_POST data
-	* @param array|NULL $file Array of $_FILES data
 	* @return int $post_id
 	**/
-	function update_ad( $params, $file = NULL ) {
+	function update_ad( $params ) {
 
 		$current_user = wp_get_current_user();
 		/* Construct args for the new post */
 		$args = array(
 		/* If empty ID insert Ad insetad of updating it */
-		'ID'             => ( isset( $params['post_id'] ) ) ? $params['post_id'] : '',
-		'post_title'     => $params['title'],
-		'post_content'   => $params['description'],
-		'post_status'    => $params['status'],
-		'post_author'    => $current_user->ID,
+		'ID'             => ( isset( $params['classified_data']['ID'] ) ) ?  $params['classified_data']['ID'] : '',
+		'post_title'     => wp_strip_all_tags($params['classified_data']['post_title']),
+		'post_name'      => '',
+		'post_content'   => $params['classified_data']['post_content'],
+		'post_excerpt'   => (isset($params['classified_data']['post_excerpt'])) ? $params['classified_data']['post_excerpt'] : '',
+		'post_status'    => $params['classified_data']['post_status'],
+		'post_author'    => get_current_user_id(),
 		'post_type'      => $this->post_type,
 		'ping_status'    => 'closed',
-		'comment_status' => 'open'
+		//'comment_status' => 'open'
 		);
+
 		/* Insert page and get the ID */
+		if(empty($args['ID']) )
 		$post_id = wp_insert_post( $args );
-		if ( $post_id ) {
-			/* Set object terms */
-			foreach ( $params['terms'] as $taxonomy => $terms  )
-			wp_set_object_terms( $post_id, $terms, $taxonomy );
-			/* Set custom fields data */
-			if ( is_array( $params['custom_fields'] ) ) {
-				foreach ( $params['custom_fields'] as $key => $value )
-				update_post_meta( $post_id, $key, $value );
+		else
+		$post_id = wp_update_post( $args );
+
+		if ( ! empty($post_id) ) {
+			//Save custom tags
+			if(is_array($params['tag_input'])){
+				foreach($params['tag_input'] as $key => $tags){
+					wp_set_post_terms($post_id, $params['tag_input'][$key], $key);
+				}
 			}
-			/* Require WordPress utility functions for handling media uploads */
-			require_once( ABSPATH . '/wp-admin/includes/media.php' );
-			require_once( ABSPATH . '/wp-admin/includes/image.php' );
-			require_once( ABSPATH . '/wp-admin/includes/file.php' );
-			/* Upload the image ( handles creation of thumbnails etc. ), set featured image  */
-			if ( empty( $file['image']['error'] )) {
-				$thumbnail_id = media_handle_upload( 'image', $post_id );
-				update_post_meta( $post_id, '_thumbnail_id', $thumbnail_id );
+
+			//Save categories
+			if(is_array($params['post_category'])){
+				wp_set_post_terms($post_id, $params['post_category'], 'category');
 			}
+
+			//Save custom terms
+			if(is_array($params['tax_input'])){
+				foreach($params['tax_input'] as $key => $term_ids){
+					if ( is_array( $params['tax_input'][$key] ) ) {
+						wp_set_post_terms($post_id, $params['tax_input'][$key], $key);
+					}
+				}
+			}
+
+			if ( class_exists( 'CustomPress_Core' ) ) {
+				global $CustomPress_Core;
+				$CustomPress_Core->save_custom_fields( $post_id );
+			}
+
 			return $post_id;
 		}
 	}
 
 	/**
-	* Checking that curent user has full access for add ads without credits.
+	* Checking that current user has full access to add ads without credits.
 	*
 	* @return boolean
 	**/
@@ -908,331 +898,24 @@ class Classifieds_Core {
 		if ( current_user_can('manage_options') )
 		return true;
 
-		if ( isset( $this->current_user->ID ) && 0 < $this->current_user->ID )
-		$user_id = $this->current_user->ID;
-		elseif ( function_exists( 'get_current_user_id' ) && 0 < get_current_user_id() )
 		$user_id = get_current_user_id();
-		else
-		$user_id = 0;
 
 		//for paid users
 		$cf_order = get_user_meta( $user_id, 'cf_order', true );
-		if ( isset( $cf_order['billing'] ) ) {
+		if ( ! empty( $cf_order['billing'] ) ) {
 			if ( 'one_time' == $cf_order['billing'] && 'success' == $cf_order['order_info']['status'] ) {
 				return true;
-			} elseif ( 'annual' == $cf_order['billing'] && 'success' == $cf_order['order_info']['status'] && time() < $cf_order['time_end_annual'] ) {
-				return true;
+			}
+
+			if ( 'annual' == $cf_order['billing'] && 'success' == $cf_order['order_info']['status']) {
+				if(time() < $cf_order['time_end_annual'] ) {
+					return true;
+				} else {
+					delete_user_meta($user_id, 'cf_order');
+				}
 			}
 		}
-
 		return false;
-	}
-
-
-
-	/**
-	* Handle user login.
-	*
-	* @return void
-	**/
-	function handle_login_requests() {
-
-		if ( isset( $_POST['login_submit'] ) )
-		$this->login_error = $this->login( $_POST['username'], $_POST['password'] );
-	}
-
-	/**
-	* Handle all checkout requests.
-	*
-	* @uses session_start() We need to keep track of some session variables for the checkout
-	* @return NULL If the payment gateway options are not configured.
-	**/
-	function handle_checkout_requests() {
-
-		/* Only handle request if on the proper page */
-		if ( is_page('checkout') ) {
-			/* Start session */
-			if ( !session_id() )
-			session_start();
-			/* Get site options */
-			$options = $this->get_options();
-			/* Redirect if user is logged in */
-			if ( is_user_logged_in() ) {
-				/** @todo Set redirect */
-				//wp_redirect( get_bloginfo('url') );
-			}
-			/* If no Payment type setup, disable the checkout process */
-			if ( ! ($this->use_free || $this->use_paypal || $this->use_authorizenet) ) {
-				/* Set the proper step which will be loaded by "page-checkout.php" */
-				set_query_var( 'cf_step', 'disabled' );
-				return;
-			}
-
-			/* If Terms and Costs step is submitted */
-			if ( isset( $_POST['terms_submit'] ) ) {
-
-				if($this->use_free){
-					set_query_var( 'cf_step', 'cc_details' );
-					return;
-				}
-				/* Validate fields */
-				if ( empty( $_POST['tos_agree'] ) || empty( $_POST['billing'] ) ) {
-					if ( empty( $_POST['tos_agree'] ))
-					add_action( 'tos_invalid', create_function('', 'echo "class=\"error\"";') );
-					if ( empty( $_POST['billing'] ))
-					add_action( 'billing_invalid', create_function('', 'echo "class=\"error\"";') );
-					/* Set the proper step which will be loaded by "page-checkout.php" */
-					set_query_var( 'cf_step', 'terms' );
-				} else {
-					/* Set the proper step which will be loaded by "page-checkout.php" */
-					set_query_var( 'cf_step', 'payment_method' );
-				}
-			}
-			/* If login attempt is made */
-			elseif ( isset( $_POST['login_submit'] ) ) {
-				if ( isset( $this->login_error )) {
-					add_action( 'login_invalid', create_function('', 'echo "class=\"error\"";') );
-					/* Set the proper step which will be loaded by "page-checkout.php" */
-					set_query_var( 'cf_step', 'pre_login' );
-					/* Pass error params to "page-checkout.php" */
-					set_query_var( 'cf_error', $this->login_error );
-				} else {
-					set_query_var( 'cf_step', 'terms' );
-				}
-			}
-			/* If payment method is selected and submitted */
-			elseif ( isset( $_POST['payment_method_submit'] )) {
-				if ( $_POST['payment_method'] == 'paypal' ) {
-					/* Initiate paypal class */
-					$checkout = new Classifieds_Core_PayPal();
-					/* Make API call */
-					$result = $checkout->call_shortcut_express_checkout( $_POST['cost'] );
-					/* Handle Success and Error scenarios */
-					if ( $result['status'] == 'error' ) {
-						/* Set the proper step which will be loaded by "page-checkout.php" */
-						set_query_var( 'cf_step', 'api_call_error' );
-						/* Pass error params to "page-checkout.php" */
-						set_query_var( 'cf_error', $result );
-					} else {
-						/* Set billing and credits so we can update the user account later */
-						$_SESSION['billing'] = $_POST['billing'];
-						$_SESSION['credits'] = $_POST['credits'];
-					}
-				} elseif ( $_POST['payment_method'] == 'cc' ) {
-					/* Set the proper step which will be loaded by "page-checkout.php" */
-					set_query_var( 'cf_step', 'cc_details' );
-				}
-			}
-			/* If direct CC payment is submitted */
-			elseif ( isset( $_POST['direct_payment_submit'] ) ) {
-
-				if($this->use_free){
-					$this->update_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'], 0, $result );
-					/* Set the proper step which will be loaded by "page-checkout.php" */
-					set_query_var( 'cf_step', 'success' );
-					return;
-				}
-
-				/* Initiate paypal class */
-				$checkout = new Classifieds_Core_PayPal();
-				/* Make API call */
-				$result = $checkout->direct_payment( $_POST['total_amount'], $_POST['cc_type'], $_POST['cc_number'], $_POST['exp_date'], $_POST['cvv2'], $_POST['first_name'], $_POST['last_name'], $_POST['street'], $_POST['city'], $_POST['state'], $_POST['zip'], $_POST['country_code'] );
-				/* Handle Success and Error scenarios */
-				if ( $result['status'] == 'success' ) {
-					/* Set the proper step which will be loaded by "page-checkout.php" */
-					set_query_var( 'cf_step', 'direct_payment' );
-				} else {
-					/* Set the proper step which will be loaded by "page-checkout.php" */
-					set_query_var( 'cf_step', 'api_call_error' );
-					/* Pass error params to "page-checkout.php" */
-					set_query_var( 'cf_error', $result );
-				}
-			}
-			/* If PayPal has redirected us back with the proper TOKEN */
-			elseif ( isset( $_REQUEST['token'] ) && !isset( $_POST['confirm_payment_submit'] ) && !isset( $_POST['redirect_my_classifieds'] ) ) {
-				/* Initiate paypal class */
-				$checkout = new Classifieds_Core_PayPal();
-				/* Make API call */
-				$result = $checkout->get_shipping_details();
-				/* Handle Success and Error scenarios */
-				if ( $result['status'] == 'success' ) {
-					/* Set the proper step which will be loaded by "page-checkout.php" */
-					set_query_var( 'cf_step', 'confirm_payment' );
-					/* Pass transaction details params to "page-checkout.php" */
-					set_query_var( 'cf_transaction_details', $result );
-				} else {
-					/* Set the proper step which will be loaded by "page-checkout.php" */
-					set_query_var( 'cf_step', 'api_call_error' );
-					/* Pass error params to "page-checkout.php" */
-					set_query_var( 'cf_error', $result );
-				}
-			}
-			/* If payment confirmation is submitted */
-			elseif ( isset( $_POST['confirm_payment_submit'] ) ) {
-				/* Initiate paypal class */
-				$checkout = new Classifieds_Core_PayPal();
-				/* Make API call */
-				$result = $checkout->confirm_payment( $_POST['total_amount'] );
-				/* Handle Success and Error scenarios */
-				if ( $result['status'] == 'success' ) {
-					/* Insert/Update User */
-					$this->update_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'], $_POST['credits'], $result );
-					/* Set the proper step which will be loaded by "page-checkout.php" */
-					set_query_var( 'cf_step', 'success' );
-				} else {
-					/* Set the proper step which will be loaded by "page-checkout.php" */
-					set_query_var( 'cf_step', 'api_call_error' );
-					/* Pass error params to "page-checkout.php" */
-					set_query_var( 'cf_error', $result );
-				}
-			}
-			/* If transaction processed successfully, redirect to my-classifieds */
-			elseif( isset( $_POST['redirect_my_classifieds'] ) ) {
-				wp_redirect( get_permalink($this->my_classifieds_page_id) );
-			}
-			/* If no requests are made load default step */
-			else {
-				if ( is_user_logged_in() || isset( $_POST['new_account'] ) ) {
-					/* Set the proper step which will be loaded by "page-checkout.php" */
-					set_query_var( 'cf_step', 'terms' );
-				} else {
-					/* Set the proper step which will be loaded by "page-checkout.php" */
-					set_query_var( 'cf_step', 'pre_login' );
-				}
-			}
-		}
-	}
-
-	/**
-	* Handles the request for the contact form on the single{}.php template
-	**/
-	function handle_contact_form_requests() {
-
-		/* Only handle request if on single{}.php template and our post type */
-		if ( get_post_type() == $this->post_type && is_single() ) {
-
-			if ( isset( $_POST['contact_form_send'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'send_message' ) ) {
-				if ( isset( $_POST['name'] ) && '' != $_POST['name'] &&
-				isset( $_POST['email'] ) && '' != $_POST['email'] &&
-				isset( $_POST['subject'] ) && '' != $_POST['subject'] &&
-				isset( $_POST['message'] ) && '' != $_POST['message'] ) {
-
-					global $post;
-
-					$user_info  = get_userdata( $post->post_author );
-
-					$body       = 'Hi %s, you have received message from:<br />
-					<br />
-					Name: %s <br />
-					Email: %s <br />
-					Subject: %s <br />
-					Message: <br />
-					%s
-					<br />
-					<br />
-					<br />
-					Classifieds link: %s
-					';
-
-					$tm_subject =  'Contact Request: %s [ %s ]';
-
-					$to         = $user_info->user_email;
-					$subject    = sprintf( __( $tm_subject, 'classifieds' ), $_POST['subject'], $post->post_title );
-					$message    = sprintf( __( $body, 'classifieds' ), $user_info->user_nicename, $_POST['name'], $_POST['email'], $_POST['subject'], $_POST['message'], get_permalink( $post->ID ) );
-					$headers    = "MIME-Version: 1.0\n" . "From: " . $_POST['name'] .  " <{$_POST['email']}>\n" . "Content-Type: text/html; charset=\"" . get_option( 'blog_charset' ) . "\"\n";
-
-					wp_mail( $to, $subject, $message, $headers );
-					wp_redirect( get_permalink( $post->ID ) . '?sent=1' );
-				}
-			}
-		}
-	}
-
-	/**
-	* Save custom fields data
-	*
-	* @param int $post_id The post id of the post being edited
-	* @return NULL If there is autosave attempt
-	**/
-	function save_expiration_date( $post_id ) {
-		/* prevent autosave from deleting the custom fields */
-		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
-		return;
-		/* Update  */
-		if ( isset( $_POST[$this->custom_fields['duration']] ) ) {
-			$date = $this->calculate_expiration_date( $post_id, $_POST[$this->custom_fields['duration']] );
-			update_post_meta( $post_id, '_expiration_date', $date );
-		} if ( isset( $_POST['custom_fields'][$this->custom_fields['duration']] ) ) {
-			$date = $this->calculate_expiration_date( $post_id, $_POST['custom_fields'][$this->custom_fields['duration']] );
-			update_post_meta( $post_id, '_expiration_date', $date );
-		} elseif ( isset( $_POST['duration'] ) ) {
-			$date = $this->calculate_expiration_date( $post_id, $_POST['duration'] );
-			update_post_meta( $post_id, '_expiration_date', $date );
-		}
-	}
-
-	/**
-	* Get formated expiration date.
-	*
-	* @param int|string $post_id
-	* @return string Date/Time formated string
-	**/
-	function get_expiration_date( $post_id ) {
-		$date = get_post_meta( $post_id, '_expiration_date', true );
-		if ( !empty( $date ) )
-		return date( get_option('date_format'), $date );
-		else
-		return __( 'No expiration date set.', 'classifieds' );
-	}
-
-	/**
-	* Calculate the Unix time stamp of the modified posts
-	*
-	* @param int|string $post_id
-	* @param string $duration Valid value: "1 Week", "2 Weeks" ... etc
-	* @return int Unix timestamp
-	**/
-	function calculate_expiration_date( $post_id, $duration ) {
-		/** @todo Remove ugly hack { Update Content Types so they can have empty default values and required fields }*/
-		if ( $duration == '----------' ) {
-			$expiration_date = get_post_meta( $post_id, '_expiration_date', true );
-			return $expiration_date;
-		}
-		/* Process normal request */
-		$post = get_post( $post_id );
-		$expiration_date = get_post_meta( $post_id, '_expiration_date', true );
-		if ( empty( $expiration_date ) || $expiration_date < time() )
-		$expiration_date = time();
-		$date = strtotime( "+{$duration}", $expiration_date );
-		return $date;
-	}
-
-	/**
-	* Schedule expiration check for twice daily.
-	*
-	* @return void
-	**/
-	function schedule_expiration_check() {
-		if ( !wp_next_scheduled( 'check_expiration_dates' ) ) {
-			wp_schedule_event( time(), 'twicedaily', 'check_expiration_dates' );
-		}
-	}
-
-	/**
-	* Check each post from the used post type and compare the expiration date/time
-	* with the current date/time. If the post is expired update it's status.
-	*
-	* @return void
-	**/
-	function check_expiration_dates_callback() {
-		$posts = get_posts( array( 'post_type' => $this->post_type, 'numberposts' => 0 ) );
-		foreach ( $posts as $post ) {
-			$expiration_date = get_post_meta( $post->ID, '_expiration_date', true );
-			if ( empty( $expiration_date ) )
-			$this->process_status( $post->ID, 'draft' );
-			elseif ( $expiration_date < time() )
-			$this->process_status( $post->ID, 'private' );
-		}
 	}
 
 	/**
@@ -1315,16 +998,390 @@ class Classifieds_Core {
 
 		if ( !isset( $options['credits_per_week'] ) || $this->use_free)
 		$options['credits_per_week'] = 0;
+		
+		$weeks = $duration + 0; //convert to leading number. Allows use of things like 1.5 weeks.
 
-		switch ( $duration ) {
-			case '1 Week':
-			return 1 * $options['credits_per_week'];
-			case '2 Weeks':
-			return 2 * $options['credits_per_week'];
-			case '3 Weeks':
-			return 3 * $options['credits_per_week'];
-			case '4 Weeks':
-			return 4 * $options['credits_per_week'];
+		return round($weeks * $options['credits_per_week']);
+	}
+
+	/**
+	* Handle user login.
+	*
+	* @return void
+	**/
+	function handle_login_requests() {
+
+		if ( isset( $_POST['login_submit'] ) )
+		$this->login_error = $this->login( $_POST['username'], $_POST['password'] );
+	}
+
+	/**
+	* Handle all checkout requests.
+	*
+	* @uses session_start() We need to keep track of some session variables for the checkout
+	* @return NULL If the payment gateway options are not configured.
+	**/
+	function handle_checkout_requests() {
+
+		/* Only handle request if on the proper page */
+		if ( is_page($this->checkout_page_id) ) {
+			/* Start session */
+			if ( !session_id() )
+			session_start();
+			/* Get site options */
+			$options = $this->get_options();
+			/* Redirect if user is logged in */
+			if ( is_user_logged_in() ) {
+				/** @todo Set redirect */
+				//wp_redirect( get_bloginfo('url') );
+			}
+			/* If no Payment type setup, disable the checkout process */
+			if ( ! ($this->use_free || $this->use_paypal || $this->use_authorizenet) ) {
+				/* Set the proper step which will be loaded by "page-checkout.php" */
+				set_query_var( 'cf_step', 'disabled' );
+				return;
+			}
+
+			/* If Terms and Costs step is submitted */
+			if ( isset( $_POST['terms_submit'] ) ) {
+
+				if($this->use_free){
+					set_query_var( 'cf_step', 'cc_details' );
+					return;
+				}
+				/* Validate fields */
+				if ( empty( $_POST['tos_agree'] ) || empty( $_POST['billing'] ) ) {
+					if ( empty( $_POST['tos_agree'] ))
+					add_action( 'tos_invalid', create_function('', 'echo "class=\"error\"";') );
+					if ( empty( $_POST['billing'] ))
+					add_action( 'billing_invalid', create_function('', 'echo "class=\"error\"";') );
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'terms' );
+				} else {
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'payment_method' );
+				}
+			}
+			/* If login attempt is made */
+			elseif ( isset( $_POST['login_submit'] ) ) {
+				if ( isset( $this->login_error )) {
+					add_action( 'login_invalid', create_function('', 'echo "class=\"error\"";') );
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'pre_login' );
+					/* Pass error params to "page-checkout.php" */
+					set_query_var( 'cf_error', $this->login_error );
+				} else {
+					set_query_var( 'cf_step', 'terms' );
+				}
+			}
+			/* If payment method is selected and submitted */
+			elseif ( isset( $_POST['payment_method_submit'] )) {
+				/* Set billing and credits so we can update the user account later */
+				$_SESSION['billing'] = $_POST['billing'];
+				$_SESSION['credits'] = $_POST['credits'];
+				$_SESSION['payment_method'] = $_POST['payment_method'];
+
+				if ( $_POST['payment_method'] == 'paypal' ) {
+					/* Initiate paypal class */
+					$checkout = new Classifieds_Core_PayPal();
+					/* Make API call */
+					$result = $checkout->call_shortcut_express_checkout( $_POST['cost'] );
+					/* Handle Success and Error scenarios */
+					if ( $result['status'] == 'error' ) {
+						/* Set the proper step which will be loaded by "page-checkout.php" */
+						set_query_var( 'cf_step', 'api_call_error' );
+						/* Pass error params to "page-checkout.php" */
+						set_query_var( 'cf_error', $result );
+					}
+				} elseif ( $_POST['payment_method'] == 'cc' ) {
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'cc_details' );
+				}
+			}
+			/* If direct CC payment is submitted */
+			elseif ( isset( $_POST['direct_payment_submit'] ) ) {
+
+				if($this->use_free){
+					$this->update_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'], 0, $result );
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'success' );
+					return;
+				}
+
+				if($_SESSION['payment_method'] == 'cc'){
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'confirm_payment' );
+					return;
+				}
+
+				/* Initiate paypal class */
+				$checkout = new Classifieds_Core_PayPal();
+				/* Make API call */
+				$result = $checkout->direct_payment( $_POST['total_amount'], $_POST['cc_type'], $_POST['cc_number'], $_POST['exp_date'], $_POST['cvv2'], $_POST['first_name'], $_POST['last_name'], $_POST['street'], $_POST['city'], $_POST['state'], $_POST['zip'], $_POST['country_code'] );
+				/* Handle Success and Error scenarios */
+				if ( $result['status'] == 'success' ) {
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'direct_payment' );
+				} else {
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'api_call_error' );
+					/* Pass error params to "page-checkout.php" */
+					set_query_var( 'cf_error', $result );
+				}
+			}
+			/* If PayPal has redirected us back with the proper TOKEN */
+			elseif ( isset( $_REQUEST['token'] ) && !isset( $_POST['confirm_payment_submit'] ) && !isset( $_POST['redirect_my_classifieds'] ) ) {
+				/* Initiate paypal class */
+				$checkout = new Classifieds_Core_PayPal();
+				/* Make API call */
+				$result = $checkout->get_shipping_details();
+				/* Handle Success and Error scenarios */
+				if ( $result['status'] == 'success' ) {
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'confirm_payment' );
+					/* Pass transaction details params to "page-checkout.php" */
+					set_query_var( 'cf_transaction_details', $result );
+				} else {
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'api_call_error' );
+					/* Pass error params to "page-checkout.php" */
+					set_query_var( 'cf_error', $result );
+				}
+			}
+			/* If payment confirmation is submitted */
+			elseif ( isset( $_POST['confirm_payment_submit'] ) ) {
+
+
+				if($_SESSION['payment_method'] == 'cc'){
+
+					include $this->plugin_dir . 'core/authorizenet.php';
+					$authorizenet = $this->get_options('payment_types');
+					$authorizenet = $authorizenet['authorizenet'];
+
+					define("AUTHORIZENET_API_LOGIN_ID",$authorizenet['api_user']);    // Add your API LOGIN ID
+					define("AUTHORIZENET_TRANSACTION_KEY",$authorizenet['api_key']); // Add your API transaction key
+					define('AUTHORIZENET_SANDBOX', $authorizenet['mode'] != 'live'); // Set Sandbox
+					define("AUTHORIZENET_MD5_SETTING",$authorizenet['md5_hash']);    // Add your MD5 Setting.
+
+					$current_user = wp_get_current_user();
+
+					$sale = new AuthorizeNetAIM();
+					$sale->setFields(
+					array(
+					'cust_id'    => get_current_user_id(),
+					'amount'     => $_POST['total_amount'],
+					'card_num'   => $_POST['cc_number'],
+					'card_code'  => $_POST['cvv2'],
+					'exp_date'   => $_POST['exp_date'],
+					'email'      => $_POST['email'],
+					'first_name' => $_POST['first_name'],
+					'last_name'  => $_POST['last_name'],
+					'address'    => $_POST['street'],
+					'city'       => $_POST['city'],
+					'state'      => $_POST['state'],
+					'zip'        => $_POST['zip'],
+					'country'    => $_POST['country_code'],
+					'line_item'  => '',
+
+					'delim_char' => $authorizenet['delim_char'],
+					'encap_char' => $authorizenet['encap_char'],
+					'delim_data' => strtoupper($authorizenet['delim_data']),
+					'email_customer' => strtoupper($authorizenet['email_customer']),
+					'header_email_receipt' => $authorizenet['header_email_receipt'],
+					'footer_email_receipt' => $authorizenet['footer_email_receipt'],
+					)
+					);
+
+					$response = $sale->authorizeAndCapture();
+					if($response->approved){
+						$result['status'] = 'success';
+						$this->update_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_SESSION['billing'], $_SESSION['credits'], $result );
+						/* Set the proper step which will be loaded by "page-checkout.php" */
+						set_query_var( 'cf_step', 'success' );
+
+					} else {
+
+						/* Set the proper step which will be loaded by "page-checkout.php" */
+						set_query_var( 'cf_step', 'api_call_error' );
+						/* Pass error params to "page-checkout.php" */
+						$result = array(
+						'status'          => 'error',
+						'error_call' 			=> 'Authorizenet',
+						'error_long_msg'  => $response->response_reason_text,
+						'error_short_msg' => $response->response_reason_code,
+						'error_code' => $response->response_code,
+						'error_severity_code' => $response->response_subcode,
+						);
+						set_query_var( 'cf_error', $result );
+					}
+					return;
+				}
+				/* Initiate paypal class */
+				$checkout = new Classifieds_Core_PayPal();
+				/* Make API call */
+				$result = $checkout->confirm_payment( $_POST['total_amount'] );
+				/* Handle Success and Error scenarios */
+				if ( $result['status'] == 'success' ) {
+					/* Insert/Update User */
+					$this->update_user( $_POST['email'], $_POST['first_name'], $_POST['last_name'], $_POST['billing'], $_POST['credits'], $result );
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'success' );
+				} else {
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'api_call_error' );
+					/* Pass error params to "page-checkout.php" */
+					set_query_var( 'cf_error', $result );
+				}
+
+			}
+			/* If transaction processed successfully, redirect to my-classifieds */
+			elseif( isset( $_POST['redirect_my_classifieds'] ) ) {
+				wp_redirect( get_permalink($this->my_classifieds_page_id) );
+			}
+			/* If no requests are made load default step */
+			else {
+				if ( is_user_logged_in() || isset( $_POST['new_account'] ) ) {
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'terms' );
+				} else {
+					/* Set the proper step which will be loaded by "page-checkout.php" */
+					set_query_var( 'cf_step', 'pre_login' );
+				}
+			}
+		}
+	}
+
+	/**
+	* Handles the request for the contact form on the single{}.php template
+	**/
+	function handle_contact_form_requests() {
+
+		/* Only handle request if on single{}.php template and our post type */
+		if ( get_post_type() == $this->post_type && is_single() ) {
+
+			if ( isset( $_POST['contact_form_send'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'send_message' ) ) {
+				if ( isset( $_POST['name'] ) && '' != $_POST['name'] &&
+				isset( $_POST['email'] ) && '' != $_POST['email'] &&
+				isset( $_POST['subject'] ) && '' != $_POST['subject'] &&
+				isset( $_POST['message'] ) && '' != $_POST['message'] ) {
+
+					global $post;
+
+					$user_info  = get_userdata( $post->post_author );
+
+					$body       = 'Hi %s, you have received message from:<br />
+					<br />
+					Name: %s <br />
+					Email: %s <br />
+					Subject: %s <br />
+					Message: <br />
+					%s
+					<br />
+					<br />
+					<br />
+					Classifieds link: %s
+					';
+
+					$tm_subject =  'Contact Request: %s [ %s ]';
+
+					$to         = $user_info->user_email;
+					$subject    = sprintf( __( $tm_subject, $this->text_domain ), $_POST['subject'], $post->post_title );
+					$message    = sprintf( __( $body, $this->text_domain ), $user_info->user_nicename, $_POST['name'], $_POST['email'], $_POST['subject'], $_POST['message'], get_permalink( $post->ID ) );
+					$headers    = "MIME-Version: 1.0\n" . "From: " . $_POST['name'] .  " <{$_POST['email']}>\n" . "Content-Type: text/html; charset=\"" . get_option( 'blog_charset' ) . "\"\n";
+
+					wp_mail( $to, $subject, $message, $headers );
+					wp_redirect( get_permalink( $post->ID ) . '?sent=1' );
+				}
+			}
+		}
+	}
+
+	/**
+	* Save custom fields data
+	*
+	* @param int $post_id The post id of the post being edited
+	* @return NULL If there is autosave attempt
+	**/
+	function save_expiration_date( $post_id ) {
+		/* prevent autosave from deleting the custom fields */
+		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
+		return;
+		/* Update  */
+		if ( isset( $_POST[$this->custom_fields['duration']] ) ) {
+			$date = $this->calculate_expiration_date( $post_id, $_POST[$this->custom_fields['duration']] );
+			update_post_meta( $post_id, '_expiration_date', $date );
+		} if ( isset( $_POST['custom_fields'][$this->custom_fields['duration']] ) ) {
+			$date = $this->calculate_expiration_date( $post_id, $_POST['custom_fields'][$this->custom_fields['duration']] );
+			update_post_meta( $post_id, '_expiration_date', $date );
+		} elseif ( isset( $_POST['duration'] ) ) {
+			$date = $this->calculate_expiration_date( $post_id, $_POST['duration'] );
+			update_post_meta( $post_id, '_expiration_date', $date );
+		}
+	}
+
+	/**
+	* Get formated expiration date.
+	*
+	* @param int|string $post_id
+	* @return string Date/Time formated string
+	**/
+	function get_expiration_date( $post_id ) {
+		$date = get_post_meta( $post_id, '_expiration_date', true );
+		if ( !empty( $date ) )
+		return date( get_option('date_format'), $date );
+		else
+		return __( 'No expiration date set.', $this->text_domain );
+	}
+
+	/**
+	* Calculate the Unix time stamp of the modified posts
+	*
+	* @param int|string $post_id
+	* @param string $duration Valid value: "1 Week", "2 Weeks" ... etc
+	* @return int Unix timestamp
+	**/
+	function calculate_expiration_date( $post_id, $duration ) {
+
+		$duration = trim(str_replace('-','',$duration)); //Remove old place holder
+
+		if ( empty($duration) ) {
+			$expiration_date = get_post_meta( $post_id, '_expiration_date', true );
+			return $expiration_date;
+		}
+		/* Process normal request */
+		$post = get_post( $post_id );
+		$expiration_date = get_post_meta( $post_id, '_expiration_date', true );
+		if ( empty( $expiration_date ) || $expiration_date < time() )
+		$expiration_date = time();
+		$date = strtotime( "+{$duration}", $expiration_date );
+		return $date;
+	}
+
+	/**
+	* Schedule expiration check for twice daily.
+	*
+	* @return void
+	**/
+	function schedule_expiration_check() {
+		if ( !wp_next_scheduled( 'check_expiration_dates' ) ) {
+			wp_schedule_event( time(), 'twicedaily', 'check_expiration_dates' );
+		}
+	}
+
+	/**
+	* Check each post from the used post type and compare the expiration date/time
+	* with the current date/time. If the post is expired update it's status.
+	*
+	* @return void
+	**/
+	function check_expiration_dates_callback() {
+		$posts = get_posts( array( 'post_type' => $this->post_type, 'numberposts' => 0 ) );
+		foreach ( $posts as $post ) {
+			$expiration_date = get_post_meta( $post->ID, '_expiration_date', true );
+			if ( empty( $expiration_date ) )
+			$this->process_status( $post->ID, 'draft' );
+			elseif ( $expiration_date < time() )
+			$this->process_status( $post->ID, 'private' );
 		}
 	}
 
@@ -1678,7 +1735,14 @@ class Classifieds_Core {
 			<div class="inside">
 				<?php
 
-				$html = '<p><a class="thickbox" href="' . esc_attr(admin_url() . "/media-upload.php?post_id={$post_id}&type=image&TB_iframe=1&width=640&height=510") . '" id="set-post-thumbnail" >' . esc_html__( 'Set Featured Image') . '</a></p>';
+				$tb_url = esc_attr(admin_url("/media-upload.php?post_id={$post_id}&type=image&TB_iframe=1&width=640&height=510") );
+				$html = '<p>';
+
+				$options = $this->get_options( 'general' );
+				if( empty($options['field_image_req']) ){
+				$html .= '<input type="text" style="visibility: hidden;" value="" class="required" />';
+				}
+				$html .= '<a class="thickbox" href="' . $tb_url . '" id="set-post-thumbnail" >' . esc_html__( 'Set Featured Image') . '</a></p>';
 
 				if(has_post_thumbnail($post_id)){
 					$html = get_the_post_thumbnail($post_id, array(226,100));
@@ -1743,6 +1807,8 @@ class Classifieds_Core {
 		'view' => 'both', //loggedin, loggedout, both
 		), $atts ) );
 
+		if( ! current_user_can('create_classifieds') ) return '';
+
 		$view = strtolower($view);
 		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
 		else if($view == 'loggedin') return '';
@@ -1750,7 +1816,7 @@ class Classifieds_Core {
 		$content = (empty($content)) ? $text : $content;
 		ob_start();
 		?>
-		<button class="cf_button add_classified_btn" type="button" onclick="window.location.href='<?php echo get_permalink($this->add_classified_page_id); ?>';" ><?php echo $content; ?></button>
+		<button class="cf_button create-new-btn add_classified_btn" type="button" onclick="window.location.href='<?php echo get_permalink($this->add_classified_page_id); ?>';" ><?php echo $content; ?></button>
 		<?php
 		$result = ob_get_contents();
 		ob_end_clean();
@@ -1803,6 +1869,8 @@ class Classifieds_Core {
 		'text' => __('My Classifieds Credits', $this->text_domain),
 		'view' => 'both', //loggedin, loggedout, both
 		), $atts ) );
+
+		if(! $this->use_credits) return '';
 
 		$view = strtolower($view);
 		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
@@ -1889,8 +1957,8 @@ class Classifieds_Core {
 		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
 		else if($view == 'loggedin') return '';
 
-		$options = get_option( $this->options_name );
-		if(empty($redirect)) $redirect = ( empty($options['general_settings']['signin_url'])) ? home_url() : $options['general_settings']['signin_url'];
+		$options = $this->get_options( 'general' );
+		if(empty($redirect)) $redirect = ( empty($options['signin_url'])) ? home_url() : $options['signin_url'];
 
 		$content = (empty($content)) ? $text : $content;
 		ob_start();
@@ -1913,8 +1981,8 @@ class Classifieds_Core {
 		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
 		else if($view == 'loggedin') return '';
 
-		$options = get_option( $this->options_name );
-		if(empty($redirect)) $redirect = ( empty($options['general_settings']['logout_url'])) ? home_url() : $options['general_settings']['logout_url'];
+		$options = $this->get_options( 'general' );
+		if(empty($redirect)) $redirect = ( empty($options['logout_url'])) ? home_url() : $options['logout_url'];
 
 		$content = (empty($content)) ? $text : $content;
 		ob_start();

@@ -30,15 +30,16 @@ class Classifieds_Core_Data {
 
 			$classifieds_default =
 			array (
+			'can_export' => true,
 			'capability_type' => 'classified',
-			'map_meta_cap' => true,
 			'description' => 'Classifieds post type.',
+			'has_archive' => 'classifieds',
+			'hierarchical' => false,
+			'map_meta_cap' => true,
 			'menu_position' => '',
 			'public' => true,
-			'hierarchical' => false,
-			'rewrite' => array ( 'slug' => 'classified', 'with_front' => false),
 			'query_var' => true,
-			'can_export' => true,
+			'rewrite' => array ( 'slug' => 'classified', 'with_front' => false),
 
 			'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments', 'revisions', /*'post-formats'*/ ),
 
@@ -68,7 +69,7 @@ class Classifieds_Core_Data {
 			}
 
 			// Update post types and delete tmp options
-			update_site_option( 'ct_flush_rewrite_rules', true );
+			flush_network_rewrite_rules();
 		}
 
 		/* Check whether taxonomies data is loaded */
@@ -112,7 +113,7 @@ class Classifieds_Core_Data {
 			}
 
 			// Update post types and delete tmp options
-			update_site_option( 'ct_flush_rewrite_rules', true );
+			flush_network_rewrite_rules();
 
 		}
 
@@ -159,8 +160,7 @@ class Classifieds_Core_Data {
 				update_option( 'ct_custom_taxonomies', $ct_custom_taxonomies );
 			}
 
-			// Update post types and delete tmp options
-			update_site_option( 'ct_flush_rewrite_rules', true );
+			flush_network_rewrite_rules();
 		}
 
 
@@ -178,7 +178,7 @@ class Classifieds_Core_Data {
 			'field_sort_order' => 'default',
 			'field_options' =>
 			array (
-			1 => '----------',
+			1 => '',
 			2 => '1 Week',
 			3 => '2 Weeks',
 			4 => '3 Weeks',

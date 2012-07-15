@@ -10,6 +10,7 @@
 	<?php $this->render_admin( 'message' ); ?>
 
 	<form action="#" method="post">
+	<h1><?php _e( 'Classifieds Checkout', $this->text_domain ); ?></h1>
 
 		<table class="form-table">
 			<tr>

@@ -64,13 +64,14 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
 		/* Get PayPal options defined in the admin area */
 
 		$options = $this->get_options('payment_types');
+		$paypal = (empty($options['paypal']) ) ? array() : $options['paypal'];
 
-		if ( !empty( $options ) ) {
+		if ( !empty( $paypal ) ) {
 
 			/* PayPal API Credentials */
-			$this->api_username  = $options['api_username'];
-			$this->api_password  = $options['api_password'];
-			$this->api_signature = $options['api_signature'];
+			$this->api_username  = $paypal['api_username'];
+			$this->api_password  = $paypal['api_password'];
+			$this->api_signature = $paypal['api_signature'];
 
 			/*
 			* Define the PayPal Redirect URLs.
@@ -82,7 +83,7 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
 			* For the live site, the URL is:
 			* https://www.paypal.com/webscr&cmd=_express-checkout&token=
 			*/
-			if ( $options['api_url'] == 'live' ) {
+			if ( $paypal['api_url'] == 'live' ) {
 				$this->api_endpoint = 'https://api-3t.paypal.com/nvp';
 				$this->paypal_url   = 'https://www.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=';
 			} else  {
@@ -94,7 +95,7 @@ class Classifieds_Core_PayPal extends Classifieds_Core {
 			* The currencyCodeType and paymentType are set to the selections
 			* made on the Integration Assistant.
 			*/
-			$this->currency_code_type = $options['currency'];
+			$this->currency_code_type = $paypal['currency'];
 
 			/*
 			* The returnURL is the location where buyers return to when a payment

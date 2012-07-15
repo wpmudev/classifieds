@@ -7,11 +7,10 @@ $options = $this->get_options( 'general' );
 
 <div class="wrap">
 
-	<?php screen_icon('options-general'); ?>
-
 	<?php $this->render_admin( 'navigation', array( 'page' => 'classifieds_settings', 'tab' => 'general' ) ); ?>
-
 	<?php $this->render_admin( 'message' ); ?>
+
+	<h1><?php _e( 'General Settings', $this->text_domain ); ?></h1>
 
 	<form action="#" method="post">
 		<div class="postbox">
@@ -24,7 +23,9 @@ $options = $this->get_options( 'general' );
 						</th>
 						<td>
 							<select id="member_role" name="member_role" style="width:200px;">
-								<?php foreach ( $wp_roles->role_names as $role => $name ): ?>
+								<?php
+								$roles = array_reverse($wp_roles->role_names);
+								foreach ( $roles as $role => $name ): ?>
 								<option value="<?php echo $role; ?>" <?php selected(isset($options['member_role'] ) && $role == $options['member_role']); ?> ><?php echo $name; ?></option>
 								<?php endforeach; ?>
 							</select>
@@ -45,16 +46,16 @@ $options = $this->get_options( 'general' );
 							<br /><br />
 							<label>Custom Roles</label><br />
 							<select id="delete_role" name="delete_role"  style="width:200px;">
-								<?php 
+								<?php
 								$system_roles = array('administrator', 'editor', 'author', 'contributor', 'subscriber');
 								$role_names = $wp_roles->role_names;
-								foreach ( $role_names as $role => $name ): 
+								foreach ( $role_names as $role => $name ):
 								if(! in_array($role, $system_roles) ): //Don't delete system roles.
 								?>
 								<option value="<?php echo $role; ?>"><?php echo $name; ?></option>
-								<?php 
+								<?php
 								endif;
-								endforeach; 
+								endforeach;
 								?>
 							</select>
 							<input type="button" class="button" onclick="jQuery(this).hide(); jQuery('#remove_role').show();" value="<?php _e( 'Remove a Role', $this->text_domain ); ?>" />
@@ -65,6 +66,28 @@ $options = $this->get_options( 'general' );
 				</table>
 			</div>
 		</div>
+
+		<div class="postbox">
+			<h3 class='hndle'><span><?php _e( 'Classifieds Status Options', $this->text_domain ) ?></span></h3>
+			<div class="inside">
+				<table class="form-table">
+					<tr>
+						<th>
+							<label for="moderation"><?php _e('Available Classified Status Options', $this->text_domain ) ?></label>
+						</th>
+						<td>
+							<label><input type="checkbox" name="moderation[publish]" value="1" <?php checked( ! empty($options['moderation']['publish']) ) ?> /> <?php _e('Published', $this->text_domain); ?></label>
+							<br /><span class="description"><?php _e('Allow members to Publish Classifieds themselves.', $this->text_domain); ?></span>
+							<br /><label><input type="checkbox" name="moderation[pending]" value="1" <?php checked( ! empty($options['moderation']['pending']) ) ?> /> <?php _e('Pending Review', $this->text_domain); ?></label>
+							<br /><span class="description"><?php _e('Classified is pending review by an administrator.', $this->text_domain ); ?></span>
+							<br /><label><input type="checkbox" name="moderation[draft]" value="1" <?php checked( ! empty($options['moderation']['draft']) ) ?> /> <?php _e('Draft', $this->text_domain); ?></label>
+							<br /><span class="description"><?php _e('Allow members to save Drafts.', $this->text_domain); ?></span>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
 
 		<div class="postbox">
 			<h3 class='hndle'><span><?php _e( 'Form Fields', $this->text_domain ); ?></span></h3>

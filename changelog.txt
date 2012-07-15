@@ -4,6 +4,18 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+==2.3==
+* New classifieds front end entry screen.
+* Added control of the post status a member can save a classified as.
+* Expanded capabilites list
+* Added control of member roles for classifieds
+* Added Authorizenet support.
+* New checkout work flow. Users can register before purchasing.
+* Field regex validation and required fields.
+* Control post statuses so you can setup moderation
+* One time payment was not working at all. Now treating it as a per post payment.
+
+
 = 2.2.2.3 =
 * Changed BuddyPress styling for pagination
 * CustomPress 1.2.2.3 updated

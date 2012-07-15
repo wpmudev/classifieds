@@ -27,6 +27,7 @@ class CustomPress_Core {
 
 	function __construct(){
 		add_action( 'plugins_loaded', array( &$this, 'on_plugins_loaded' ), 0 );
+	
 		add_filter( 'pre_get_posts', array( &$this, 'display_custom_post_types' ) );
 		add_action( 'wp_ajax_cp_get_post_types', array( &$this, 'ajax_action_callback' ) );
 
@@ -85,6 +86,10 @@ class CustomPress_Core {
 
 	}
 	
+	function on_init(){
+		
+	}
+
 	function on_wp_enqueue_scripts(){
 		
 		$this->enqueue_datepicker();

@@ -61,6 +61,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 		add_action( 'init', array( &$this, 'handle_taxonomy_requests' ), 0 );
 		add_action( 'init', array( &$this, 'register_taxonomies' ), 1 );
 		add_action( 'init', array( &$this, 'handle_custom_field_requests' ), 0 );
+		add_action( 'init', array( &$this, 'flush_rewrite_rules' ), 3 );
 
 		//Add custom terms and fields on media page
 		add_filter( 'attachment_fields_to_edit', array( &$this, 'add_custom_for_attachment' ), 111, 2 );
@@ -88,7 +89,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	function init_vars() {
 
 		$this->display_network_content = get_site_option('display_network_content_types');
-		
+
 		$this->enable_subsite_content_types = apply_filters( 'enable_subsite_content_types', false );
 
 		if ( is_multisite() ) {
@@ -109,11 +110,11 @@ class CustomPress_Content_Types extends CustomPress_Core {
 			$this->taxonomies    = get_site_option( 'ct_custom_taxonomies' );
 			$this->custom_fields = get_site_option( 'ct_custom_fields' );
 		}
-		
+
 		$this->post_types = (empty($this->post_types)) ? array() : $this->post_types;
 		$this->taxonomies = (empty($this->taxonomies)) ? array() : $this->taxonomies;
 		$this->custom_fields = (empty($this->custom_fields)) ? array() : $this->custom_fields;
-		
+
 		$this->all_post_types    = array_merge( $this->network_post_types, $this->post_types );
 		$this->all_taxonomies    = array_merge( $this->network_taxonomies, $this->taxonomies );
 		$this->all_custom_fields = array_merge( $this->network_custom_fields, $this->custom_fields );
@@ -236,11 +237,10 @@ class CustomPress_Content_Types extends CustomPress_Core {
 					update_option( 'ct_custom_post_types', $post_types );
 				} else {
 					update_site_option( 'ct_custom_post_types', $post_types );
-					// Set flag for flush rewrite rules network-wide
-					if ( $this->flush_rewrite_rules ) {
-						update_site_option( 'ct_frr_id', uniqid('') );
-					}
 				}
+
+				// Set flag for flush rewrite rules network-wide
+				if ( $this->flush_rewrite_rules ) flush_network_rewrite_rules();
 
 				// Redirect to post types page
 				wp_redirect( self_admin_url( 'admin.php?page=ct_content_types&ct_content_type=post_type&updated&frr=' . $this->flush_rewrite_rules ) );
@@ -259,6 +259,9 @@ class CustomPress_Content_Types extends CustomPress_Core {
 			else
 			update_site_option( 'ct_custom_post_types', $post_types );
 			// Redirect to post types page
+
+			flush_network_rewrite_rules();
+
 			wp_redirect( self_admin_url( 'admin.php?page=ct_content_types&ct_content_type=post_type&updated' ));
 		}
 		elseif ( isset( $params['redirect_add_post_type'] ) ) {
@@ -293,8 +296,6 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				}
 			}
 		}
-		$this->flush_rewrite_rules();
-
 	}
 
 	/**
@@ -401,7 +402,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 
 					// Set flag for flush rewrite rules network-wide
 					if ( $this->flush_rewrite_rules == true ) {
-						update_site_option( 'ct_frr_id', uniqid('') );
+						flush_network_rewrite_rules();
 					}
 				}
 
@@ -424,6 +425,8 @@ class CustomPress_Content_Types extends CustomPress_Core {
 			update_option( 'ct_custom_taxonomies', $taxonomies );
 			else
 			update_site_option( 'ct_custom_taxonomies', $taxonomies );
+			
+			if($this->flush_rewrite_rules) flush_network_rewrite_rules();
 
 			// Redirect back to the taxonomies page
 			wp_redirect( self_admin_url( 'admin.php?page=ct_content_types&ct_content_type=taxonomy&updated' ) );
@@ -840,24 +843,31 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	}
 	/**
 	* Flush rewrite rules based on boolean check
-	*
+	*  Setting 'ct_flush_rewrite_rules' site_option to a unique triggers across network
 	* @return void
 	*/
 	function flush_rewrite_rules() {
 		// Mechanisum for detecting changes in sub-site content types for flushing rewrite rules
-		if ( is_multisite() && !is_main_site() && $this->enable_subsite_content_types == 0 ) {
-			$global_frr_id = get_site_option('ct_frr_id');
-			$local_frr_id = get_option('ct_frr_id');
+
+		$global_frr_id = get_site_option('ct_flush_rewrite_rules');
+		$hard = (1 == $global_frr_id + 0); //Convert to number
+
+		if ( is_multisite() ) {
+			$local_frr_id = get_option('ct_flush_rewrite_rules');
 			if ( $global_frr_id != $local_frr_id ) {
 				$this->flush_rewrite_rules = true;
-				update_option('ct_frr_id', $global_frr_id );
-				$this->add_admin_capabilities();
+				update_option('ct_flush_rewrite_rules', $global_frr_id );
+			}
+		} else {
+			if(! empty($global_frr_id) ) {
+				$this->flush_rewrite_rules = true;
+				delete_site_option('ct_flush_rewrite_rules');
 			}
 		}
 
 		// flush rewrite rules
 		if ( $this->flush_rewrite_rules || !empty( $_GET['frr'] ) ) {
-			flush_rewrite_rules(false);
+			flush_rewrite_rules($hard);
 			$this->flush_rewrite_rules = false;
 			$this->add_admin_capabilities();
 		}

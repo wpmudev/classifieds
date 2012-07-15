@@ -3,11 +3,11 @@
 <?php $options = $this->get_options('checkout'); ?>
 
 <div class="wrap">
-	<?php screen_icon('options-general'); ?>
 
 	<?php $this->render_admin( 'navigation', array( 'page' => 'classifieds_credits','tab' => 'my-credits' ) ); ?>
-
 	<?php $this->render_admin( 'message' ); ?>
+	<h1><?php _e( 'My Classifieds Credits', $this->text_domain ); ?></h1>
+
 	<form action="#" method="post">
 
 		<h3><?php _e( 'Available Credits', $this->text_domain ); ?></h3>

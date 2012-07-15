@@ -7,26 +7,33 @@
 */
 if (!defined('ABSPATH')) die('No direct access allowed!');
 
-global $wp_query, $post_ID, $wp_taxonomies;
+global $wp_query, $wp_taxonomies;
 
 $classified_data   = '';
 $selected_cats  = '';
 $error = get_query_var('cf_error');
+$post_statuses = get_post_statuses(); // get the wp post status list
+$allowed_statuses = $this->get_options('general'); // Get the ones we allow
+$allowed_statuses = array_reverse(array_intersect_key($post_statuses, $allowed_statuses['moderation']) ); //return the reduced list
 
 //Are we adding a Classified?
 if ( is_page($this->add_classified_page_id) ) {
 	//Make an auto-draft so we have a post id to connect attachments to. Set global $post_ID so media editor can hook up.
-	$post_ID = wp_insert_post( array( 'post_title' => '', 'post_type' => 'classifieds', 'post_status' => 'auto-draft' ) );
-	$classified_data = get_object_vars(get_post( $post_ID ));
+	$post_id = wp_insert_post( array( 'post_title' => __( 'Auto Draft' ), 'post_type' => 'classifieds', 'post_status' => 'auto-draft'), true );
+	$classified_data = get_post($post_id, ARRAY_A );
+	$classified_data['post_title'] = ''; //Have to have a title to insert the auto-save but we don't want it as final.
+	$editing = false;
 }
 
 //Or are we editing a Classified?
 if ( is_page($this->edit_classified_page_id) ){
 	$classified_data = get_post(  $_REQUEST['post_id'], ARRAY_A );
-	$post_ID = $classified_data['ID'];
+	$post_id = $classified_data['ID'];
+	$editing = true;
 }
 
 if ( isset( $_POST['classified_data'] ) ) $classified_data = $_POST['classified_data'];
+
 
 require_once(ABSPATH . 'wp-admin/includes/template.php');
 
@@ -37,14 +44,14 @@ $editor_settings =   array(
 'textarea_rows' => 10, //get_option('default_post_edit_rows', 10), // rows="..."
 'tabindex' => '',
 'editor_css' => '', // intended for extra styles for both visual and HTML editors buttons, needs to include the <style> tags, can use "scoped".
-'editor_class' => '', // add extra class(es) to the editor textarea
+'editor_class' => 'required', // add extra class(es) to the editor textarea
 'teeny' => false, // output the minimal editor config used in Press This
 'dfw' => false, // replace the default fullscreen with DFW (needs specific css)
 'tinymce' => true, // load TinyMCE, can be used to pass settings directly to TinyMCE using an array()
 'quicktags' => true // load Quicktags, can be used to pass settings directly to Quicktags using an array()
 );
 
-$classified_content = (isset( $classified_data['post_content'] ) ) ? $classified_data['post_content'] : '';
+$classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $classified_data['post_content'];
 
 ?>
 
@@ -66,20 +73,17 @@ $classified_content = (isset( $classified_data['post_content'] ) ) ? $classified
 	<?php endif; ?>
 
 	<form class="standard-form base" method="post" action="#" enctype="multipart/form-data" id="cf_update_form" >
-		<input type="hidden" id="post_id" name="classified_data[ID]" value="<?php echo ( isset( $classified_data['ID'] ) ) ? $classified_data['ID'] : ''; ?>" />
-		<input type="hidden" name="post_id" value="<?php echo ( isset( $classified_data['ID'] ) ) ? $classified_data['ID'] : ''; ?>" />
+		<input type="hidden" id="post_id" name="classified_data[ID]" value="<?php echo ( empty( $classified_data['ID'] ) ) ? '' : $classified_data['ID']; ?>" />
+		<input type="hidden" name="post_id" value="<?php echo ( empty( $classified_data['ID'] ) ) ? '' : $classified_data['ID']; ?>" />
 
 		<div class="editfield">
 			<label for="title"><?php _e( 'Title', $this->text_domain ); ?></label><br />
-			<input class="required" type="text" id="title" name="classified_data[post_title]" value="<?php echo ( isset( $classified_data['post_title'] ) ) ? $classified_data['post_title'] : ''; ?>" />
+			<input class="required" type="text" id="title" name="classified_data[post_title]" value="<?php echo ( empty( $classified_data['post_title'] ) ) ? '' : esc_attr($classified_data['post_title']); ?>" />
 			<p class="description"><?php _e( 'Enter title here.', $this->text_domain ); ?></p>
 		</div>
 
 		<div class="editfield">
-
-			<?php
-			echo $this->get_post_image_link($post_ID);
-			?>
+			<?php echo $this->get_post_image_link($post_id); ?>
 		</div>
 
 		<div class="editfield alt">
@@ -100,22 +104,20 @@ $classified_content = (isset( $classified_data['post_content'] ) ) ? $classified
 
 		<div class="editfield alt">
 			<label for="excerpt"><?php _e( 'Excerpt', $this->text_domain ); ?></label>
-			<textarea id="excerpt" name="classified_data[post_excerpt]" rows="2" ><?php echo (isset( $classified_data['post_excerpt'] ) ) ? esc_textarea($classified_data['post_excerpt']) : ''; ?></textarea>
+			<textarea id="excerpt" name="classified_data[post_excerpt]" rows="2" ><?php echo (empty( $classified_data['post_excerpt'] ) ) ? '' : esc_textarea($classified_data['post_excerpt']); ?></textarea>
 			<p class="description"><?php _e( 'A short excerpt of your classified.', $this->text_domain ); ?></p>
 		</div>
 
 		<?php
 		//get related hierarchical taxonomies
-		$taxonomies = get_taxonomies(array( 'public' => true, 'hierarchical' => true ), 'objects');
+		$taxonomies = get_object_taxonomies('classifieds', 'objects');
 		//Loop through the taxonomies that apply
 		foreach($taxonomies as $taxonomy):
-
+		if( ! $taxonomy->hierarchical) continue;
 		$tax_name = $taxonomy->name;
 		$labels = $taxonomy->labels;
 		//Get this Taxonomies terms
 		$selected_cats = array_values( wp_get_post_terms($classified_data['ID'], $tax_name, array('fields' => 'ids') ) );
-
-		if( ! cf_supports_taxonomy($tax_name)) continue;
 
 		?>
 
@@ -138,11 +140,9 @@ $classified_content = (isset( $classified_data['post_content'] ) ) ? $classified
 		<div class="clear"></div>
 
 		<?php
-		//get related non-hierarchical taxonomies
-		$tags = get_taxonomies(array( 'public' => true, 'hierarchical' => false ), 'objects');
-
 		//Loop through the taxonomies that apply
-		foreach($tags as $tag):
+		foreach($taxonomies as $tag):
+		if( $tag->hierarchical) continue;
 
 		$tag_name = $tag->name;
 		$labels = $tag->labels;
@@ -150,7 +150,6 @@ $classified_content = (isset( $classified_data['post_content'] ) ) ? $classified
 		//Get this Taxonomies terms
 		$tag_list = strip_tags(get_the_term_list( $classified_data['ID'], $tag_name, '', ',', '' ));
 
-		if( ! cf_supports_taxonomy($tag_name)) continue;
 		?>
 
 		<div class="editfield">
@@ -169,8 +168,12 @@ $classified_content = (isset( $classified_data['post_content'] ) ) ? $classified
 			<label for="title"><?php _e( 'Status', $this->text_domain ); ?></label>
 			<div id="status-box">
 				<select name="classified_data[post_status]" id="classified_data[post_status]">
-					<option value="publish" <?php selected( isset( $classified_data['post_status'] ) && 'publish' == $classified_data['post_status'] ); ?>><?php _e( 'Published', $this->text_domain ); ?></option>
-					<option value="draft" <?php selected( isset( $classified_data['post_status'] ) && 'draft' == $classified_data['post_status'] ); ?>><?php _e( 'Draft', $this->text_domain ); ?></option>
+					<?php
+					foreach($allowed_statuses as $key => $value): ?>
+
+					<option value="<?php echo $key; ?>" <?php selected( ! empty($classified_data['post_status'] ) && $key == $classified_data['post_status'] ); ?> ><?php echo $value; ?></option>
+
+					<?php endforeach; ?>
 				</select>
 			</div>
 			<p class="description"><?php _e( 'Select a status for your classified.', $this->text_domain ); ?></p>
@@ -187,6 +190,10 @@ $classified_content = (isset( $classified_data['post_content'] ) ) ? $classified
 		</div>
 		<?php endif; ?>
 
+		<?php if ( !empty( $error ) ): ?>
+		<br /><div class="error"><?php echo $error . '<br />'; ?></div>
+		<?php endif; ?>
+
 		<div class="submit">
 			<?php wp_nonce_field( 'verify' ); ?>
 			<input type="submit" value="<?php _e( 'Save Changes', $this->text_domain ); ?>" name="update_classified">
@@ -194,7 +201,10 @@ $classified_content = (isset( $classified_data['post_content'] ) ) ? $classified
 			<input type="button" value="<?php _e( 'Cancel', $this->text_domain ); ?>" onclick="location.href='<?php echo get_permalink($this->my_classifieds_page_id); ?>'">
 		</div>
 	</form>
-
-	<script type="text/javascript">jQuery('#cf_update_form').validate();</script>
+	<?php if($editing): // disable duration ?>
+	<script type="text/javascript">
+		jQuery("#<?php echo $this->custom_fields['duration']; ?>" ).val(0);
+	</script>
+	<?php endif; ?>
 </div><!-- .cf_update_form -->
 <!-- End Update Classifieds -->

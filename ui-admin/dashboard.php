@@ -105,12 +105,23 @@
 					<form action="#" method="post" id="form-<?php the_ID(); ?>" class="cf-form">
 						<input type="hidden" name="action" value="" />
 						<input type="hidden" name="post_id" value="<?php the_ID(); ?>" />
-						<select name="duration">
-							<option value="1 Week"><?php _e( '1 Week',  $this->text_domain ); ?></option>
-							<option value="2 Weeks"><?php _e( '2 Weeks', $this->text_domain ); ?></option>
-							<option value="3 Weeks"><?php _e( '3 Weeks', $this->text_domain ); ?></option>
-							<option value="4 Weeks"><?php _e( '4 Weeks', $this->text_domain ); ?></option>
-						</select>
+
+					<?php
+					//Get the duration options
+					global $CustomPress_Core;
+					if(isset($CustomPress_Core)){
+						$durations = $CustomPress_Core->all_custom_fields['selectbox_4cf582bd61fa4']['field_options'];
+					}
+					?>
+					<select name="duration">
+						<?php 
+						//make duration options
+						foreach ( $durations as $key => $field_option ):
+						if( empty($field_option ) ) continue;
+						?>
+						<option value="<?php echo $field_option; ?>"><?php  echo sprintf(__('%s', $this->text_domain), $field_option); ?></option>
+						<?php endforeach; ?>
+					</select>
 						<input type="submit" class="button confirm" value="<?php _e( 'Confirm', $this->text_domain ); ?>" name="confirm" />
 						<input type="submit" class="button cancel"  value="<?php _e( 'Cancel', $this->text_domain ); ?>" onclick="javascript:classifieds.cancel('<?php the_ID(); ?>'); return false;" />
 					</form>
@@ -164,12 +175,22 @@
 					<form action="#" method="post" id="form-<?php the_ID(); ?>" class="cf-form">
 						<input type="hidden" name="action" value="" />
 						<input type="hidden" name="post_id" value="<?php the_ID(); ?>" />
-						<select name="duration">
-							<option value="1 Week"><?php _e( '1 Week',  $this->text_domain ); ?></option>
-							<option value="2 Weeks"><?php _e( '2 Weeks', $this->text_domain ); ?></option>
-							<option value="3 Weeks"><?php _e( '3 Weeks', $this->text_domain ); ?></option>
-							<option value="4 Weeks"><?php _e( '4 Weeks', $this->text_domain ); ?></option>
-						</select>
+					<?php
+					//Get the duration options
+					global $CustomPress_Core;
+					if(isset($CustomPress_Core)){
+						$durations = $CustomPress_Core->all_custom_fields['selectbox_4cf582bd61fa4']['field_options'];
+					}
+					?>
+					<select name="duration">
+						<?php 
+						//make duration options
+						foreach ( $durations as $key => $field_option ):
+						if( empty($field_option ) ) continue;
+						?>
+						<option value="<?php echo $field_option; ?>"><?php  echo sprintf(__('%s', $this->text_domain), $field_option); ?></option>
+						<?php endforeach; ?>
+					</select>
 						<input type="submit" class="button confirm" value="<?php _e( 'Confirm', $this->text_domain ); ?>" name="confirm" />
 						<input type="submit" class="button cancel"  value="<?php _e( 'Cancel', $this->text_domain ); ?>" onclick="javascript:classifieds.cancel('<?php the_ID(); ?>'); return false;" />
 					</form>

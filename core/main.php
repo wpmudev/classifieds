@@ -30,8 +30,6 @@ class Classifieds_Core_Main extends Classifieds_Core {
 		add_action( 'wp_print_styles', array( &$this, 'enqueue_styles' ) );
 		/* Enqueue scripts */
 		add_action( 'wp_print_scripts', array( &$this, 'enqueue_scripts' ) );
-		/* Print scripts */
-		add_action( 'wp_head', array( &$this, 'print_scripts' ) );
 	}
 
 	function custom_classifieds_template( $template ) {
@@ -51,7 +49,6 @@ class Classifieds_Core_Main extends Classifieds_Core {
 
 		if ( is_page($this->classifieds_page_id) ) {
 			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-			//			set_query_var( 'cf_action', 'my-classifieds' );
 			$templates = array( 'page-classifieds.php' );
 			if ( $this->classifieds_template = locate_template( $templates ) ) {
 				add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
@@ -59,14 +56,6 @@ class Classifieds_Core_Main extends Classifieds_Core {
 				add_filter('the_content', array(&$this, 'content_classifieds'));
 			}
 
-
-		}elseif(is_page($this->add_classified_page_id) || is_page($this->edit_classified_page_id)){
-			$templates = array( 'page-update-classified.php' );
-			if ( $this->classifieds_template = locate_template( $templates ) ) {
-				add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
-			} else {
-				add_filter('the_content', array(&$this, 'content_update_classified'));
-			}
 		}elseif(is_single() && 'classifieds' == get_query_var('post_type')){
 			$templates = array( 'single-classifieds.php' );
 			if ( $this->classifieds_template = locate_template( $templates ) ) {
@@ -95,9 +84,9 @@ class Classifieds_Core_Main extends Classifieds_Core {
 			} else {
 				add_filter('the_content', array(&$this, 'content_signin'));
 			}
-		}
 
-		if (is_page($this->my_classifieds_page_id) ){
+			//My Classifieds page
+		}elseif (is_page($this->my_classifieds_page_id) ){
 			$templates = array( 'page-my-classifieds.php' );
 			if ( $this->classifieds_template = locate_template( $templates ) ) {
 				add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
@@ -105,60 +94,20 @@ class Classifieds_Core_Main extends Classifieds_Core {
 				add_filter('the_content', array(&$this, 'content_my_classifieds'));
 			}
 
-			/* If edit button is pressed */
-			if ( isset( $_POST['edit'] ) ) {
-				/* Verify _wpnonce field */
-				if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) ) {
-					/* Set the post ID which will be used by "page-my-classifieds.php" */
-					set_query_var( 'cf_post_id', $_POST['post_id'] );
-					/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-					set_query_var( 'cf_action', 'edit' );
-				} else {
-					die( __( 'Security check failed!', $this->text_domain ) );
-				}
-			}
-			/* If update button is pressed */
-			elseif ( isset( $_POST['update_classified'] ) ) {
-				/* The credits required to renew the classified for the selected period */
-				$credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
-				/* If user have more credits of the required credits proceed with renewing the ad */
-				if ( $this->is_full_access() || $this->user_credits >= $credits_required ) {
-					/* Update ad */
-					$this->update_ad( $_POST, $_FILES );
-					/* Save the expiration date */
-					$this->save_expiration_date( $_POST['post_id'] );
-					/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-					set_query_var( 'cf_action', 'my-classifieds' );
-
-					if ( ! $this->is_full_access() ) {
-						/* Update new credits amount */
-						$credits = $this->user_credits - $credits_required;
-						update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
-					}
-				} else {
-					set_query_var( 'cf_post_id', $_POST['post_id'] );
-					/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-					set_query_var( 'cf_action', 'edit' );
-					$error = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.', $this->text_domain );
-					set_query_var( 'cf_error', $error );
-				}
-			}
 			/* If confirm button is pressed */
-			elseif ( isset( $_POST['confirm'] ) ) {
+			if ( isset( $_POST['confirm'] ) ) {
 				/* Verify _wpnonce field */
 				if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) ) {
 					/* Process posts based on the action variables. End action */
 					if ( $_POST['action'] == 'end' ) {
 						$this->process_status( (int) $_POST['post_id'], 'private' );
-						/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-						set_query_var( 'cf_action', 'my-classifieds' );
 					}
 					/* Renew action */
 					elseif ( $_POST['action'] == 'renew' ) {
 						/* The credits required to renew the classified for the selected period */
 						$credits_required = $this->get_credits_from_duration( $_POST['duration'] );
 						/* If user have more credits of the required credits proceed with renewing the ad */
-						if ( $this->is_full_access() || $this->user_credits >= $credits_required ) {
+						if ( $this->is_full_access() || ($credits_required && $this->user_credits >= $credits_required ) ){
 							/* Process the status of the post */
 							$this->process_status( (int) $_POST['post_id'], 'publish' );
 							/* Save the expiration date */
@@ -168,12 +117,15 @@ class Classifieds_Core_Main extends Classifieds_Core {
 								/* Update new credits amount */
 								$credits = $this->user_credits - $credits_required;
 								update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+							} else {
+								//Check one_time
+								$cf_order = get_user_meta( $this->current_user->ID, 'cf_order', true );
+								if ( 'one_time' == $cf_order['billing'] && 'success' == $cf_order['order_info']['status'] ) {
+									delete_user_meta($this->current_user->ID, 'cf_order');
+								}
 							}
-							/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-							set_query_var( 'cf_action', 'my-classifieds' );
 						} else {
-							set_query_var( 'cf_action', 'my-classifieds' );
-							$error = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.', $this->text_domain );
+							$error = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.<br />Your Ad has been saved as a Draft.', $this->text_domain );
 							set_query_var( 'cf_error', $error );
 						}
 						//$this->process_credits()
@@ -188,69 +140,65 @@ class Classifieds_Core_Main extends Classifieds_Core {
 					die( __( 'Security check failed!', $this->text_domain ) );
 				}
 			}
-			/* If create new button is pressed */
-			elseif ( isset( $_POST['create_new'] ) ) {
-				/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-				set_query_var( 'cf_action', 'create-new' );
-			}            /* If create new button is pressed */
-			elseif ( isset( $_POST['my_credits'] ) ) {
-				/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-				set_query_var( 'cf_action', 'my-credits' );
-			}
-			/* If save new button is pressed */
-			elseif ( isset( $_POST['save_new'] ) ) {
-				/* Validate form fields */
-				$this->validate_fields( $_POST, $_FILES );
-				if ( $this->form_valid ) {
-					/* The credits required to create the classified for the selected period */
-					$credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
-					/* If user have more credits of the required credits proceed with create the ad */
-					if ( $this->is_full_access() || $this->user_credits >= $credits_required ) {
-						/* Create ad */
-						$post_id = $this->update_ad( $_POST, $_FILES );
-						/* Save the expiration date */
-						$this->save_expiration_date( $post_id );
 
-						if ( ! $this->is_full_access() ) {
-							/* Update new credits amount */
-							$credits = $this->user_credits - $credits_required;
-							update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
-						}
-						/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-						set_query_var( 'cf_action', 'my-classifieds' );
+			//Classifieds update pages
+		}elseif(is_page($this->add_classified_page_id) || is_page($this->edit_classified_page_id)){
+			$templates = array( 'page-update-classified.php' );
+			if ( $this->classifieds_template = locate_template( $templates ) ) {
+				add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			} else {
+				add_filter('the_content', array(&$this, 'content_update_classified'));
+			}
+
+			if ( isset( $_POST['update_classified'] ) ) {
+				/* The credits required to renew the classified for the selected period */
+
+				$credits_required = $this->get_credits_from_duration( $_POST[$this->custom_fields['duration'] ] );
+				/* If user have more credits of the required credits proceed with renewing the ad */
+				if ( $this->is_full_access() || ($credits_required && $this->user_credits >= $credits_required ) ){
+					/* Update ad */
+					$this->update_ad( $_POST);
+					/* Save the expiration date */
+					$this->save_expiration_date( $_POST['post_id'] );
+					/* Set the proper step which will be loaded by "page-my-classifieds.php" */
+					set_query_var( 'cf_action', 'my-classifieds' );
+
+					if ( ! $this->is_full_access() ) {
+						/* Update new credits amount */
+						$credits = $this->user_credits - $credits_required;
+						update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
 					} else {
-						//save ad if have not credits but select draft
-						if ( isset( $_POST['status'] ) && 'draft' == $_POST['status'] ) {
-							/* Create ad */
-							$post_id = $this->update_ad( $_POST, $_FILES );
-							set_query_var( 'cf_action', 'my-classifieds' );
-						} else {
-							set_query_var( 'cf_action', 'create-new' );
-							$error = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or save this ad with status as "draft" and after purchase more credits you will can edit this ad.', $this->text_domain );
-							set_query_var( 'cf_error', $error );
+						//Check one_time
+						$cf_order = get_user_meta( $this->current_user->ID, 'cf_order', true );
+						if ( 'one_time' == $cf_order['billing'] && 'success' == $cf_order['order_info']['status'] ) {
+							delete_user_meta($this->current_user->ID, 'cf_order');
 						}
 					}
+					wp_redirect(get_permalink($_POST['post_id']) ); exit;
 				} else {
-					set_query_var( 'cf_action', 'create-new' );
-					$error = __( 'Please make sure you fill all fields marked with (required)', $this->text_domain );
+					//save ad if have no credits
+					$_POST['classified_data']['post_status'] = 'draft';
+					/* Create ad */
+					$post_id = $this->update_ad( $_POST );
+					set_query_var( 'cf_post_id', $_POST['post_id'] );
+					/* Set the proper step which will be loaded by "page-my-classifieds.php" */
+					set_query_var( 'cf_action', 'edit' );
+					$error = __( 'You do not have enough credits to publish your classified for the selected time period. Please select lower period if available or purchase more credits.<br />Your Ad has been saved as a Draft.', $this->text_domain );
 					set_query_var( 'cf_error', $error );
+					//wp_redirect(get_permalink($this->edit_classified_page_id) ); exit;
 				}
 			}
-			/* If user wants to go to My Classifieds main page  */
-			elseif ( isset( $_POST['new_account'] ) ) {
-				wp_redirect( get_permalink($this->checkout_page_id) . '?cf_step=terms' );
-			}
-			/* If user wants to go to My Classifieds main page  */
-			elseif ( isset( $_POST['go_my_classifieds'] ) ) {
-				wp_redirect( get_permalink($this->my_classifieds_page_id) );
-			}
-			/* If user wants to go to My Classifieds main page  */
-			elseif ( isset( $_POST['purchase'] ) ) {
-				wp_redirect(  get_permalink($this->checkout_page_id)  );
-			} else {
-				/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-				set_query_var( 'cf_action', 'my-classifieds' );
-			}
+		}
+		/* If user wants to go to My Classifieds main page  */
+		elseif ( isset( $_POST['go_my_classifieds'] ) ) {
+			wp_redirect( get_permalink($this->my_classifieds_page_id) );
+		}
+		/* If user wants to go to My Classifieds main page  */
+		elseif ( isset( $_POST['purchase'] ) ) {
+			wp_redirect(  get_permalink($this->checkout_page_id)  );
+		} else {
+			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
+			set_query_var( 'cf_action', 'my-classifieds' );
 		}
 	}
 
@@ -324,7 +272,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 		return $new_content;
 	}
 
-/**
+	/**
 	* My Classifieds Credits.
 	*
 	* @return void
@@ -332,7 +280,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	function content_my_credits($content = null){
 		if(! in_the_loop()) return $content;
 		ob_start();
-		require($this->plugin_dir . 'ui-front/general/page-my-classifieds-credits.php');
+		require($this->plugin_dir . 'ui-front/general/page-my-credits.php');
 		$new_content = ob_get_contents();
 		ob_end_clean();
 		return $new_content;
@@ -381,7 +329,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 					wp_set_post_terms($post_id, $params['tag_input'][$key], $key);
 				}
 			}
-			
+
 			//Save categories
 			if(is_array($params['post_category'])){
 				wp_set_post_terms($post_id, $params['post_category'], 'category');
@@ -426,57 +374,6 @@ class Classifieds_Core_Main extends Classifieds_Core {
 		wp_enqueue_script('jquery');
 	}
 
-	/**
-	* Print scripts for BuddyPress pages
-	*
-	* @global object $bp
-	* @return void
-	**/
-	function print_scripts() {
-		?>
-		<script type="text/javascript">
-			-			//<![CDATA[
-			jQuery(document).ready(function($) {
-				$('form.confirm-form').hide();
-				$('form.cf-contact-form').hide();
-			});
-			var classifieds = {
-				toggle_end: function(key) {
-					jQuery('#confirm-form-'+key).show();
-					jQuery('#action-form-'+key).hide();
-					jQuery('input[name="action"]').val('end');
-				},
-				toggle_renew: function(key) {
-					jQuery('#confirm-form-'+key).show();
-					jQuery('#confirm-form-'+key+' select[name="duration"]' ).show();
-					jQuery('#action-form-'+key).hide();
-					jQuery('input[name="action"]').val('renew');
-				},
-				toggle_delete: function(key) {
-					jQuery('#confirm-form-'+key).show();
-					jQuery('#confirm-form-'+key+' select[name="duration"]' ).hide();
-					jQuery('#action-form-'+key).hide();
-					jQuery('input[name="action"]').val('delete');
-				},
-				toggle_contact_form: function() {
-					jQuery('.cf-ad-info').hide();
-					jQuery('#action-form').hide();
-					jQuery('#confirm-form').show();
-				},
-				cancel_contact_form: function() {
-					jQuery('#confirm-form').hide();
-					jQuery('.cf-ad-info').show();
-					jQuery('#action-form').show();
-				},
-				cancel: function(key) {
-					jQuery('#confirm-form-'+key).hide();
-					jQuery('#action-form-'+key).show();
-				}
-			};
-			//]]>
-		</script>
-		<?php
-	}
 }
 
 /* Initiate Class */

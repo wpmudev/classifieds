@@ -18,6 +18,9 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 */
 ?>
 
+<script type="text/javascript" src="<?php echo $this->plugin_url . 'ui-front/js/ui-front.js'; ?>" >
+</script>
+
 <?php if ( isset( $_POST['_wpnonce'] ) ): ?>
 <br clear="all" />
 <div id="cf-message-error">

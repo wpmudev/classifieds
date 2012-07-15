@@ -59,12 +59,12 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	function admin_menu() {
 		//add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
 		add_submenu_page( 'edit.php?post_type=classifieds', __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
-		$settings_page = add_submenu_page( 'edit.php?post_type=classifieds', __( 'Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', 'classifieds_settings', array( &$this, 'handle_admin_requests' ) );
+		$settings_page = add_submenu_page( 'edit.php?post_type=classifieds', __( 'Classifieds Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', 'classifieds_settings', array( &$this, 'handle_admin_requests' ) );
 
 		add_action( 'admin_print_scripts-' .  $settings_page, array( &$this, 'enqueue_scripts' ) );
 
 		if($this->use_credits){
-			add_submenu_page( 'edit.php?post_type=classifieds', __( 'Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
+			add_submenu_page( 'edit.php?post_type=classifieds', __( 'Classifieds Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
 		}
 	}
 
@@ -95,10 +95,9 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	* @return void
 	**/
 	function handle_admin_requests() {
-		$valid_tabs = array('general', 'capabilities', 'payments', 'payment-types','shortcodes');
+		$valid_tabs = array('general', 'capabilities', 'payments', 'payment-types','shortcodes', 'my-credits', 'send-credits');
 
 		$page = (empty($_GET['page'])) ? '' : $_GET['page'] ;
-		$tab = (empty($_GET['tab'])) ? 'general' : $_GET['tab']; //default tab
 
 		if ( $page == $this->menu_slug ) {
 			if ( isset( $_POST['confirm'] ) ) {
@@ -121,28 +120,30 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 			}
 		}
 		elseif ( $page == 'classifieds_settings' ) {
+			$tab = (empty($_GET['tab'])) ? 'general' : $_GET['tab']; //default tab
 			if ( in_array( $tab, $valid_tabs)) {
-
 				/* Save options */
 				if ( isset( $_POST['add_role'] ) ) {
 					check_admin_referer('verify');
-					$name = $_POST['new_role'];
-					$slug = strtolower(str_replace(' ','_',$name) );
+					$name = sanitize_user($_POST['new_role']);
+					$slug = sanitize_key(preg_replace('/\W+/','_',$name) );
 					$result = add_role($slug, $name, array('read' => true) );
 					if (empty($result) ) $this->message = __('ROLE ALREADY EXISTS' , $this->text_domain);
-					else $this->message = __('New Role Added' , $this->text_domain);
+					else $this->message = sprintf(__('New Role "%s" Added' , $this->text_domain), $name);
 				}
 				if ( isset( $_POST['remove_role'] ) ) {
 					check_admin_referer('verify');
 					$name = $_POST['delete_role'];
 					remove_role($name);
-					$this->message = __('Role Removed' , $this->text_domain);
+					$this->message = sprintf(__('Role "%s" Removed' , $this->text_domain), $name);
 				}
 				if ( isset( $_POST['save'] ) ) {
 					check_admin_referer('verify');
-					unset($_POST['new_role']);
-					unset($_POST['delete_role']);
-					unset($_POST['save']);
+					unset($_POST['new_role'],
+					$_POST['add_role'],
+					$_POST['delete_role'],
+					$_POST['save']
+					);
 
 					$this->save_options( $_POST );
 					$this->message = __( 'Settings Saved.', $this->text_domain );
@@ -154,43 +155,44 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 		}
 		//Send credits to other users.
 		elseif ( $page == 'classifieds_credits' ) {
+			$tab = (empty($_GET['tab'])) ? 'my-credits' : $_GET['tab']; //default tab
+			if ( in_array( $tab, $valid_tabs)) {
 
-			if ( $tab == 'send-credits' ) {
-				if(!empty($_POST)) check_admin_referer('verify');
-				$send_to = ( empty($_POST['manage_credits'])) ? '' : $_POST['manage_credits'];
-				$send_to_user = ( empty($_POST['manage_credits_user'])) ? '' : $_POST['manage_credits_user'];
-				$send_to_count = ( empty($_POST['manage_credits_count'])) ? '' : $_POST['manage_credits_count'];
+				if ( $tab == 'send-credits' ) {
+					if(!empty($_POST)) check_admin_referer('verify');
+					$send_to = ( empty($_POST['manage_credits'])) ? '' : $_POST['manage_credits'];
+					$send_to_user = ( empty($_POST['manage_credits_user'])) ? '' : $_POST['manage_credits_user'];
+					$send_to_count = ( empty($_POST['manage_credits_count'])) ? '' : $_POST['manage_credits_count'];
 
-				$credits = (is_numeric($send_to_count)) ? abs(intval($send_to_count)) : 0;
+					$credits = (is_numeric($send_to_count)) ? abs(intval($send_to_count)) : 0;
 
-				if ($send_to == 'send_single'){
-					$user = get_user_by('login', $send_to_user);
-					if($user){
-						$this->update_user_credits($credits, $user->ID);
-					} else {
-						$this->message = sprintf(__('User "%s" not found or not a Classifieds member',$this-text_domain), $send_to_user);
+					if ($send_to == 'send_single'){
+						$user = get_user_by('login', $send_to_user);
+						if($user){
+							$this->update_user_credits($credits, $user->ID);
+						} else {
+							$this->message = sprintf(__('User "%s" not found or not a Classifieds member',$this-text_domain), $send_to_user);
+						}
 					}
-				}
 
-				if ($send_to == 'send_all'){
-					$search = array();
-					if(is_multisite()) $search['blog_id'] = get_current_blog_id();
-					$users = get_users($search);
-					foreach($users as $user){
-						$this->update_user_credits($credits, $user->ID);
+					if ($send_to == 'send_all'){
+						$search = array();
+						if(is_multisite()) $search['blog_id'] = get_current_blog_id();
+						$users = get_users($search);
+						foreach($users as $user){
+							$this->update_user_credits($credits, $user->ID);
+						}
+						$this->message = sprintf(__('All users have had "%s" credits added to their accounts.',$this-text_domain), $credits);
+
 					}
-					$this->message = sprintf(__('All users have had "%s" credits added to their accounts.',$this-text_domain), $credits);
 
-				}
 
-				$this->render_admin( "settings-{$tab}" );
-
-			} else {
-				if ( isset( $_POST['purchase'] ) ) {
-					$this->js_redirect( get_permalink($this->checkout_page_id) );
 				} else {
-					$this->render_admin( 'credits-my-credits' );
+					if ( isset( $_POST['purchase'] ) ) {
+						$this->js_redirect( get_permalink($this->checkout_page_id) );
+					}
 				}
+				$this->render_admin( "credits-{$tab}" );
 			}
 		}
 	}
