@@ -1,11 +1,15 @@
-<?php if (!defined('ABSPATH')) die('No direct access allowed!'); ?>
+<?php if (!defined('ABSPATH')) die('No direct access allowed!');
 
-<?php $options = $this->get_options('checkout'); ?>
+$options = $this->get_options('checkout');
+$options = (empty($options) ) ? array() : $options;
+$transactions = new CF_Transactions;
+?>
 
 <div class="wrap">
 
 	<?php $this->render_admin( 'navigation', array( 'page' => 'classifieds_credits','tab' => 'my-credits' ) ); ?>
 	<?php $this->render_admin( 'message' ); ?>
+
 	<h1><?php _e( 'My Classifieds Credits', $this->text_domain ); ?></h1>
 
 	<form action="#" method="post">
@@ -17,7 +21,7 @@
 					<label for="available_credits"><?php _e('Available Credits', $this->text_domain ) ?></label>
 				</th>
 				<td>
-					<input type="text" id="available_credits" class="small-text" name="available_credits" value="<?php echo $this->get_user_credits(); ?>" disabled="disabled" />
+					<input type="text" id="available_credits" class="small-text" name="available_credits" value="<?php echo $transactions->credits; ?>" disabled="disabled" />
 					<span class="description"><?php _e( 'All of your currently available credits.', $this->text_domain ); ?></span>
 				</td>
 			</tr>
@@ -43,18 +47,22 @@
 
 	</form>
 
-	<?php $credits_log = $this->get_user_credits_log(); ?>
+	<?php $credits_log = $transactions->credits_log; ?>
 	<h3><?php _e( 'Purchase History', $this->text_domain ); ?></h3>
 	<table class="form-table">
 		<?php if ( is_array( $credits_log ) ): ?>
 		<?php foreach ( $credits_log as $log ): ?>
 		<tr>
 			<th>
-				<label for="available_credits"><?php _e('Purchase Date:', $this->text_domain ) ?> <?php echo $this->format_date( $log['date'] ); ?></label>
+				<label for="available_credits"><?php _e('Date:', $this->text_domain ) ?> <?php echo $this->format_date( $log['date'] ); ?></label>
 			</th>
 			<td>
 				<input type="text" id="available_credits" class="small-text" name="available_credits" value="<?php echo $log['credits']; ?>" disabled="disabled" />
-				<span class="description"><?php _e( 'Credits purchased.', $this->text_domain ); ?></span>
+				<?php if($log['credits'] < 0): ?> 
+				<span class="description"><?php _e( 'Classifieds Credits spent.', $this->text_domain ); ?></span>
+				<?php else: ?>
+				<span class="description"><?php _e( 'Classifieds Credits purchased.', $this->text_domain ); ?></span>
+				<?php endif; ?>
 			</td>
 		</tr>
 		<?php endforeach; ?>

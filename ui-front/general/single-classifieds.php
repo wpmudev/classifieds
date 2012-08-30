@@ -158,36 +158,7 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 				</tbody>
 			</table>
 
-			<table class="cf-custom-fields" >
-				<?php $prefix = '_ct_'; $i = 1; ?>
-				<?php $custom_fields = get_site_option('ct_custom_fields'); ?>
-				<?php foreach ( $custom_fields as $custom_field ):
-				$output = false;
-				foreach ( $custom_field['object_type'] as $custom_field_object_type ){
-					if ( $custom_field_object_type == 'classifieds' ){
-						$output = true; break;
-					}
-				}
-
-				if($output){ ?>
-
-					<?php $field_value = get_post_meta( get_the_ID(), $prefix . $custom_field['field_id'], true ); ?>
-					<tr class="<?php if ( $i % 2 == 0 ) echo 'alt' ?>">
-						<th><?php echo $custom_field['field_title']; ?></th>
-						<td>
-							<?php
-							if ( is_array( $field_value ) ) {
-								foreach ( $field_value as $value )
-								echo $value  . ' ';
-							} else {
-								echo $field_value;
-							} ?>
-						</td>
-					</tr>
-					<?php $i++;
-				}
-				endforeach; ?>
-			</table>
+			<?php echo do_shortcode('[custom_fields_block wrap="table"]'); ?>
 
 		</div>
 	</div>

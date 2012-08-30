@@ -1,7 +1,7 @@
 
 <?php
 /**
-* The template for displaying Classifieds page.
+* The template for displaying Classifieds Archive page.
 * You can override this file in your active theme.
 *
 * @package Classifieds
@@ -9,7 +9,7 @@
 * @since Classifieds 2.0
 */
 
-global $post,$wp_query, $paged;
+global $bp, $post, $wp_query, $paged;
 
 $options = $this->get_options( 'general' );
 $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-front/general/images/blank.gif' : $options['field_image_def'];
@@ -17,25 +17,33 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 
 $query_args = array(
-'posts_per_page' => $this->cf_ads_per_page,
 'paged' => $paged,
 'post_status' => 'publish',
 'post_type' => 'classifieds');
 
 query_posts($query_args);
 
+remove_filter('the_title', array(&$this,'no_title') ); // Turn titles back on.
+
 ?>
 
-<?php if ( !have_posts() ): ?>
-<br />
+<?php if ( have_posts() ): ?>
+<header class="page-header">
+	<h1 class="page-title">
+		<?php post_type_archive_title() ?>
+	</h1>
+</header>
+
+<?php else: ?>
 <div class="info" id="message">
 	<p><?php _e( 'No Classifieds found.', $this->text_domain ); ?></p>
 </div>
 <?php endif; ?>
 
-<?php /* Display navigation to next/previous pages when applicable */ ?>
-<?php $this->cf_display_pagination( 'top' ); ?>
+<?php // Display navigation to next/previous pages when applicable ?>
 <div class="clear"></div>
+
+<?php echo $this->pagination( $this->pagination_top ); ?>
 
 <?php while( have_posts() ): the_post(); ?>
 
@@ -58,7 +66,7 @@ query_posts($query_args);
 					<tr>
 						<th><?php _e( 'Title', $this->text_domain ); ?></th>
 						<td>
-							<a href="<?php the_permalink(); ?>"><?php echo the_title(); ?></a>
+							<a href="<?php the_permalink(); ?>"><?php echo get_the_title(); ?></a>
 						</td>
 					</tr>
 					<tr>
@@ -97,10 +105,13 @@ query_posts($query_args);
 	</div>
 </div>
 
-<?php endwhile; ?>
+<?php 
+endwhile;
 
-<?php /* Display navigation to next/previous pages when applicable */ ?>
-<?php $this->cf_display_pagination( 'bottom' ); ?>
+// Display navigation to next/previous pages when applicable 
+echo $this->pagination( $this->pagination_bottom );
+add_filter( 'comments_open', array( &$this, 'close_comments' ), 10 ,2 );
 
-<?php wp_reset_query(); ?>
+wp_reset_query(); 
+?>
 

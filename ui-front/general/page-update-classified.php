@@ -7,7 +7,8 @@
 */
 if (!defined('ABSPATH')) die('No direct access allowed!');
 
-global $wp_query, $wp_taxonomies;
+global $wp_query, $wp_taxonomies, $post, $CustomPress_Core;
+
 
 $classified_data   = '';
 $selected_cats  = '';
@@ -76,20 +77,21 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 		<input type="hidden" id="post_id" name="classified_data[ID]" value="<?php echo ( empty( $classified_data['ID'] ) ) ? '' : $classified_data['ID']; ?>" />
 		<input type="hidden" name="post_id" value="<?php echo ( empty( $classified_data['ID'] ) ) ? '' : $classified_data['ID']; ?>" />
 
+		<?php if(post_type_supports('classifieds','title') ): ?>
 		<div class="editfield">
 			<label for="title"><?php _e( 'Title', $this->text_domain ); ?></label><br />
 			<input class="required" type="text" id="title" name="classified_data[post_title]" value="<?php echo ( empty( $classified_data['post_title'] ) ) ? '' : esc_attr($classified_data['post_title']); ?>" />
 			<p class="description"><?php _e( 'Enter title here.', $this->text_domain ); ?></p>
 		</div>
+		<?php endif; ?>
 
-		<div class="editfield">
-			<?php echo $this->get_post_image_link($post_id); ?>
-		</div>
+		<div class="editfield"><?php echo $this->get_post_image_link($post_id); ?></div>
 
+		<?php if(post_type_supports('classifieds','editor') ): ?>
 		<div class="editfield alt">
 			<label for="classifiedcontent"><?php _e( 'Content', $this->text_domain ); ?></label>
 
-			<?php if(intval(get_bloginfo('version') >= 3.3)): ?>
+			<?php if(version_compare(get_bloginfo('version'), 3.3, '>=') ): ?>
 
 			<?php wp_editor( $classified_content, 'classifiedcontent', $editor_settings); ?>
 
@@ -101,12 +103,15 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 
 			<p class="description"><?php _e( 'The content of your classified.', $this->text_domain ); ?></p>
 		</div>
+		<?php endif; ?>
 
+		<?php if(post_type_supports('classifieds','excerpt') ): ?>
 		<div class="editfield alt">
 			<label for="excerpt"><?php _e( 'Excerpt', $this->text_domain ); ?></label>
 			<textarea id="excerpt" name="classified_data[post_excerpt]" rows="2" ><?php echo (empty( $classified_data['post_excerpt'] ) ) ? '' : esc_textarea($classified_data['post_excerpt']); ?></textarea>
 			<p class="description"><?php _e( 'A short excerpt of your classified.', $this->text_domain ); ?></p>
 		</div>
+		<?php endif; ?>
 
 		<?php
 		//get related hierarchical taxonomies
@@ -179,10 +184,9 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 			<p class="description"><?php _e( 'Select a status for your classified.', $this->text_domain ); ?></p>
 		</div>
 
-		<?php if ( class_exists( 'CustomPress_Core' ) ) : ?>
+		<?php if ( isset( $CustomPress_Core ) ) : ?>
 		<div class="editfield">
 			<?php
-			global $post, $CustomPress_Core;
 			$post->post_type    = 'classifieds';
 			$post->ID           = $classified_data['ID'];
 			$CustomPress_Core->display_custom_fields();

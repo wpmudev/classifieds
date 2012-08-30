@@ -9,6 +9,7 @@ Description: You can override this file in your active theme.
 .error {
 	background: #FFEBE8;
 	padding:10px;
+	border:1px solid red;
 }
 .submit {
 	margin: 10px 0;
@@ -20,21 +21,56 @@ Description: You can override this file in your active theme.
 	color:#888888;
 	font-size:12px;
 }
+
+.clear{
+	clear: both;
+	width:auto;
+	height: auto;
+}
+
+.clear_left{
+	clear: left;
+}
+
+.clear_right{
+	clear: right;
+}
+
 .editfield label, .editfield .label {
 	font-size:14px;
 	color: #333;
 	display: block;
 	font-family:"Helvetica Neue",Arial,Helvetica,"Nimbus Sans L",sans-serif;
 }
-.entry-content .editfield input {
-	margin: 0;
+
+.editfield input, 
+.editfield textarea,
+.editfield select {
+  -webkit-box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  box-sizing:border-box;
+  width:95%;
 }
-.entry-content .editfield textarea {
-	margin: 0;
+
+.tax_panel{
+	overflow: auto;
+	height:160px;
+	font-size: .8em;
+	border:1px solid #ddd;
 }
-.entry-content .editfield select, .entry-content .confirm-form select, .entry-content .cf-checkout select {
-	margin: 0;
+
+.tax_panel ul{
+	padding: 0;
+	list-style: none outside none;
 }
+.taxonomydiv{
+	float: left;
+	display: block;
+	width:47%;
+	margin-right: 3%;
+}
+
+
 .entry-content .cf-ad input {
 	margin: 0;
 }
@@ -131,6 +167,7 @@ table.cf-ad-info th {
 	text-align: right;
 	width:50px;
 }
+
 ul.button-nav li {
 	float: left;
 	list-style: none;
@@ -291,7 +328,7 @@ padding-bottom: 15px;
 
 /** Sigin Form **/
 /* tabbed list */
-ul.cf_tabs {
+#login-register-password ul.cf_tabs {
 	padding-bottom: 0;
 	margin: 0;
 	position: relative;

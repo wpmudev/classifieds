@@ -38,7 +38,7 @@ $cf_options = $cf->get_options( 'general' );
 ?>
 
 <?php /* Display navigation to next/previous pages when applicable */ ?>
-<?php $cf->cf_display_pagination( 'top' ); ?>
+<?php $cf->pagination( $cf->pagination_top ); ?>
 
 
 <?php /* If there are no posts to display, such as an empty archive page */ ?>
@@ -129,4 +129,4 @@ $cf_options = $cf->get_options( 'general' );
 <?php endwhile; // End the loop. Whew. ?>
 
 <?php /* Display navigation to next/previous pages when applicable */ ?>
-<?php $cf->cf_display_pagination( 'bottom' ); ?>
+<?php $cf->pagination( $cf->pagination_bottom ); ?>

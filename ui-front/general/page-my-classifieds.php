@@ -17,7 +17,6 @@ $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 $options_general = $this->get_options( 'general' );
 
 $query_args = array(
-'posts_per_page' => $this->cf_ads_per_page,
 'paged' => $paged,
 'post_type' => 'classifieds',
 'author' => $current_user->ID,
@@ -46,7 +45,7 @@ $cf_path = get_permalink($this->my_classifieds_page_id);
 <?php if ( $this->is_full_access() ): ?>
 <div class="av-credits"><?php _e( 'You have access to create new ads', $this->text_domain ); ?></div>
 <?php elseif($this->use_credits): ?>
-<div class="av-credits"><?php _e( 'Available Credits:', $this->text_domain ); ?> <?php $user_credits = ( get_user_meta( get_current_user_id(), 'cf_credits', true ) ) ? get_user_meta( get_current_user_id(), 'cf_credits', true ) : 0; echo $user_credits; ?></div>
+<div class="av-credits"><?php _e( 'Available Credits:', $this->text_domain ); ?> <?php echo $this->transactions->credits; ?></div>
 <?php endif; ?>
 
 <div>
@@ -77,7 +76,7 @@ $cf_path = get_permalink($this->my_classifieds_page_id);
 <div class="clear"></div>
 <div class="cf_tab_container">
 	<?php /* Display navigation to next/previous pages when applicable */ ?>
-	<?php $this->cf_display_pagination( 'top' ); ?>
+	<?php $this->pagination( $this->pagination_top ); ?>
 
 	<?php while ( have_posts() ) : the_post(); ?>
 	<?php // cf_debug( $wp_query ); ?>
@@ -175,7 +174,7 @@ $cf_path = get_permalink($this->my_classifieds_page_id);
 
 	<?php endwhile; ?>
 	<?php /* Display navigation to next/previous pages when applicable */ ?>
-	<?php $this->cf_display_pagination( 'bottom' ); ?>
+	<?php $this->pagination( $this->pagination_bottom ); ?>
 </div><!-- .cf_tab_container -->
 <?php wp_reset_query(); ?>
 <!-- End my Classifieds -->

@@ -127,6 +127,7 @@ $options = $this->get_options( 'general' );
 							<span class="description"><?php _e( 'display at bottom of page.', $this->text_domain ); ?></span>
 						</td>
 					</tr>
+<!--
 					<tr>
 						<th><label for="ads_per_page"><?php _e( 'Ads per Page:', $this->text_domain ); ?></label></th>
 						<td>
@@ -135,6 +136,7 @@ $options = $this->get_options( 'general' );
 							<span class="description"><?php _e( 'Number of ads displayed on each page.', $this->text_domain ); ?></span>
 						</td>
 					</tr>
+-->
 					<tr>
 						<th><label for="pagination_range"><?php _e( 'Pagination Range:', $this->text_domain ); ?></label></th>
 						<td>

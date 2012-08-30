@@ -19,17 +19,44 @@ Description: You can override this file in your active theme.
 	font-size:12px;
 }
 
+.clear{
+  clear:both;	
+}
+
 ul.button-nav li {
 	float: left;
 	list-style: none;
 	padding-right: 15px;
 }
+
+.create-new-btn {
+	float: right;
+}
+
+.credits_btn{
+	float: right;
+}
+
+.av-credits {
+	float: right;
+	margin-top: 0px;
+	color: green;
+}
+
 #content .classifieds ul {
 	overflow: hidden;
 	margin: 0;
 	padding-bottom: 15px;
 }
 
+.editfield input, 
+.editfield textarea,
+.editfield select {
+  -webkit-box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  box-sizing:border-box;
+  width:95%;
+}
 
 .editfield .wp-post-image {
 	border: 1px solid #ddd;
@@ -61,15 +88,74 @@ ul.button-nav li {
 
 /* =Styles for BuddyPress profile pages and taxonomy pages
 -------------------------------------------------------------- */
-.cf-ad {
-	border: 1px solid #ddd;
-	padding: 10px;
-	display: block;
+
+.cf-ad{
+	width: 100%;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
 	overflow: hidden;
-	/*    float: left; */
-	margin: 0 15px 15px 0;
-	width: 445px;
+	margin: 5px 0;
 }
+
+.cf-pad{
+	padding:1em;
+}
+
+.cf-image {
+	float: left;
+	background-color: #fafafa;
+}
+
+
+.cf-info {
+	margin-left: 160px;
+}
+
+.cf-info table{
+	width: 100%;
+	height: 150px;
+	border-collapse: collapse;
+	margin:0;
+}
+
+.cf-info table th {
+	text-align: right;
+	width: 50px;
+}
+
+.cf-info table th,
+.cf-info table td {
+	padding: 0 1em;
+	vertical-align: middle;
+	border: 1px solid #ddd;
+}
+
+.cf-ad form {
+	padding-right: 7px;
+	overflow: hidden;
+	float: right;
+}
+
+.cf-ad form.del-form {
+	padding-right: 7px;
+}
+
+.cf-ad-info{
+	border-collapse: collapse;
+}
+
+table.cf-ad-info th,
+table.cf-ad-info td {
+	border: 1px solid #ddd;
+	padding: 0 1em;
+}
+
+table.cf-ad-info th {
+	text-align: right;
+	width:50px;
+}
+
+/*
 .cf-ad table {
 	margin: 0 0 0 15px;
 	width: 280px;
@@ -85,6 +171,7 @@ ul.button-nav li {
 	border-style: inset;
 	border-color: #ddd;
 }
+
 .cf-ad form {
 	float: right;
 	overflow: hidden;
@@ -96,7 +183,7 @@ ul.button-nav li {
 	float: left;
 }
 
-
+*/
 /* =Styles for BuddyPress normal pages
 -------------------------------------------------------------- */
 .cf-ad-info {
@@ -229,4 +316,126 @@ ul.button-nav li {
 	padding:6px 9px 5px 9px;
 	background: #3279BB;
 	color:#fff;
+}
+
+
+/** Sigin Form **/
+/* tabbed list */
+#login-register-password ul.cf_tabs {
+	padding-bottom: 0;
+	margin: 0;
+	position: relative;
+	list-style: none;
+	z-index: 1000;
+	float: left;
+}
+ul.cf_tabs li {
+	position: relative;
+	background: #fff;
+	border: 1px solid #E7E9F6;
+	border-top-right-radius: 10px;
+	border-top-left-radius: 10px;
+	line-height: 3em;
+	padding: 0;
+	margin-right: 5px;
+	overflow: hidden;
+	float: left;
+	z-index: 99;
+}
+ul.cf_tabs li a {
+	text-decoration: none;
+	padding: 0 10px;
+	display: block;
+}
+
+ul.cf_tabs li.cf_active {
+	border-bottom: 1px solid #fff;
+}
+ul.cf_tabs li.cf_active a {
+	font-weight: bold;
+	color: #333;
+}
+
+.cf_tab_container {
+	background: #fff;
+	position: relative;
+	margin: 0;
+	border: 1px solid #E7E9F6;
+	float: left;
+	width: 100%;
+	top: -1px;
+}
+
+.cf_tab_content {
+	padding: 15px;
+}
+.cf_tab_content ul {
+	padding: 0;
+	margin: 0 0 0 15px;
+}
+.cf_tab_content li {
+	margin: 5px 0;
+}
+
+/* global styles */
+#login-register-password {}
+#login-register-password h3 {
+	border: 0 none;
+	margin: 10px 0;
+	padding: 0;
+}
+#login-register-password p {
+	margin: 0 0 15px 0;
+	padding: 0;
+}
+/* form elements */
+.wp-user-form {}
+.username,
+.password,
+.login_fields {
+	margin: 7px 0 0 0;
+	overflow: hidden;
+	width: 100%;
+}
+.username label,
+.password label {
+	float: left;
+	width: 25%;
+}
+.username input,
+.password input {
+	float: left;
+	width: 200px;
+	padding: 2px 3px;
+	color: #777;
+}
+.rememberme {
+	overflow: hidden;
+	width: 100%;
+	margin-bottom: 7px;
+}
+#rememberme {
+	float: left;
+	margin: 4px 4px -4px 0;
+}
+.user-submit {
+	padding: 5px 10px;
+	margin: 5px 0;
+}
+.userinfo { 
+	float: left;
+	width: 75%;
+margin-bottom: 10px; 
+}
+.userinfo p {
+	margin-left: 10px;
+}
+.usericon {
+	float: left;
+	width: 15%;
+	margin: 0 0 10px 22px;
+}
+.usericon img {
+	border: 1px solid #F4950E;
+	padding: 1px;
 }

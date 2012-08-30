@@ -13,7 +13,8 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 * New checkout work flow. Users can register before purchasing.
 * Field regex validation and required fields.
 * Control post statuses so you can setup moderation
-* One time payment was not working at all. Now treating it as a per post payment.
+* Weeks are now editable. You can add other options as long as they are number Weeks (8 Weeks).
+
 
 
 = 2.2.2.3 =

@@ -57,10 +57,10 @@ class CustomPress_Content_Types extends CustomPress_Core {
 		parent::__construct();
 
 		add_action( 'init', array( &$this, 'handle_post_type_requests' ), 0 );
-		add_action( 'init', array( &$this, 'register_post_types' ), 2 );
 		add_action( 'init', array( &$this, 'handle_taxonomy_requests' ), 0 );
-		add_action( 'init', array( &$this, 'register_taxonomies' ), 1 );
 		add_action( 'init', array( &$this, 'handle_custom_field_requests' ), 0 );
+		add_action( 'init', array( &$this, 'register_taxonomies' ), 1 );
+		add_action( 'init', array( &$this, 'register_post_types' ), 2 );
 		add_action( 'init', array( &$this, 'flush_rewrite_rules' ), 3 );
 
 		//Add custom terms and fields on media page
@@ -167,7 +167,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				'capability_type'     => ( isset( $params['capability_type'] ) ) ? $params['capability_type'] : 'post',
 				'map_meta_cap'        => (bool) $params['map_meta_cap'],
 				'description'         => $params['description'],
-				'menu_position'       => (int)  $params['menu_position'],
+				'menu_position'       => (empty($params['menu_position']) ) ? '' : (int)  $params['menu_position'],
 				'public'              => (bool) $params['public'] ,
 				'show_ui'             => ( isset( $params['show_ui'] ) ) ? (bool) $params['show_ui'] : null,
 				'show_in_nav_menus'   => ( isset( $params['show_in_nav_menus'] ) ) ? (bool) $params['show_in_nav_menus'] : null,
@@ -344,8 +344,8 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				'show_in_nav_menus'   => ( isset( $params['show_in_nav_menus'] ) ) ? (bool) $params['show_in_nav_menus'] : null,
 				'hierarchical'        => (bool) $params['hierarchical'],
 				'rewrite'             => (bool) $params['rewrite'],
-				'query_var'           => (bool) $params['query_var']
-				//  'capabilities'        => array () /** TODO implement advanced capabilities */
+				'query_var'           => (bool) $params['query_var'],
+				//'capabilities'        => array ('manage_terms' => 'manage_categories'), // TODO implement advanced capabilities
 				);
 
 				// Remove empty values from labels so we can use the defaults
@@ -425,7 +425,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 			update_option( 'ct_custom_taxonomies', $taxonomies );
 			else
 			update_site_option( 'ct_custom_taxonomies', $taxonomies );
-			
+
 			if($this->flush_rewrite_rules) flush_network_rewrite_rules();
 
 			// Redirect back to the taxonomies page
@@ -658,7 +658,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 							return ($a['field_order'] < $b['field_order']) ? -1 : 1;
 						}
 
-						if (uasort(&$custom_fields, 'ct_cmp')){
+						if (uasort($custom_fields, 'ct_cmp')){
 							// Update the available custom fields
 							if ( $this->enable_subsite_content_types == 1 && !is_network_admin() )
 							update_option( 'ct_custom_fields', $custom_fields );
@@ -818,8 +818,8 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	function add_admin_capabilities(){
 		global $wp_roles;
 
-		//if ( $this->display_network_content == 1 )
-		{
+		if ( ! is_object($wp_roles) ) return;
+ 		{
 			$post_types = $this->network_post_types;
 			if(is_array($post_types)){
 				foreach($post_types as $key => $pt){
@@ -880,7 +880,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	* @return void
 	*/
 	function set_user_registration_rewrite_rules() {
-		$this->flush_rewrite_rules = true;
+		flush_network_rewrite_rules();
 	}
 
 	/**
@@ -935,7 +935,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 	}
 
 
-	//Add terms and custome fields on media page
+	//Add terms and custom fields on media page
 	function add_custom_for_attachment( $form_fields, $post ) {
 		if ( $form_fields ) {
 
@@ -1174,7 +1174,7 @@ class CustomPress_Content_Types extends CustomPress_Core {
 		return $checkbox;
 	}
 
-	//Save custom feilds value from media page
+	//Save custom fields value from media page
 	function save_custom_for_attachment( $post, $attachment ) {
 
 		//Save custom fields for Attachment post type

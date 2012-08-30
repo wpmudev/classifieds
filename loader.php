@@ -3,12 +3,13 @@
 Plugin Name: Classifieds
 Plugin URI: http://premium.wpmudev.org/project/classifieds
 Description: Add Classifieds to your blog, network or BuddyPress site. Create and manage ads, upload images, send emails, enable the credit system and charge your users for placing ads on your network or BuddyPress site.
-Version: 2.2.2.3
+Version: 2.3
 Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub)
 Author URI: http://premium.wpmudev.org
 License: GNU General Public License (Version 2 - GPLv2)
 Text Domain: classifieds
 Domain Path: /languages
+Network: false
 WDP ID: 158
 */
 
@@ -39,7 +40,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /* Define plugin version */
-define ( 'CF_VERSION', '2.2.2.3' );
+define ( 'CF_VERSION', '2.3' );
 define ( 'CF_DB_VERSION', '2.0' );
 
 /* define the plugin folder url */
@@ -54,9 +55,10 @@ define( 'CF_OPTIONS_NAME', 'classifieds_options' );
 // include core files
 include_once 'core/wpmudev-dash-notification.php';
 //If another version of CustomPress not loaded, load ours.
-if(!class_exists('CustomPress_Core')) include_once 'custompress/loader.php';
+if(!class_exists('CustomPress_Core')) include_once 'core/custompress/loader.php';
 
 /* Load plugin files */
 include_once 'core/core.php';
-include_once 'core/paypal.php';
+include_once 'core/payments.php';
+include_once 'core/paypal-express-gateway.php';
 include_once 'core/functions.php';

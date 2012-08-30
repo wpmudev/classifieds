@@ -5,14 +5,17 @@
 */
 if ( !class_exists('Classifieds_Core_Data') ):
 class Classifieds_Core_Data {
-
+	
 	/**
 	* Constructor.
 	*
 	* @return void
 	**/
-	function Classifieds_Core_Data() {
+	function Classifieds_Core_Data() { $this->__construct(); }
+	
+	function __construct() {
 		add_action( 'init', array( &$this, 'load_data' ) );
+		add_action( 'init', array( &$this, 'load_payment_data' ) );
 	}
 
 	/**
@@ -84,21 +87,21 @@ class Classifieds_Core_Data {
 			'hierarchical' => false,
 			'rewrite' => array ( 'slug' => 'cf-tags', 'with_front' => false, 'hierarchical' => false ),
 			'query_var' => true,
-			'capabilities' => array ('assign_terms' => 'assign_terms'),
+			'capabilities' => array ('assign_terms' => 'edit_classifieds'),
 
 			'labels' => array (
-			'name'          => __( 'Classified Tags', $this->text_domain ),
-			'singular_name' => __( 'Classified Tag', $this->text_domain ),
-			'search_items'  => __( 'Search Classified Tags', $this->text_domain ),
-			'popular_items' => __( 'Popular Classified Tags', $this->text_domain ),
-			'all_items'     => __( 'All Classified Tags', $this->text_domain ),
-			'edit_item'     => __( 'Edit Classified Tag', $this->text_domain ),
-			'update_item'   => __( 'Update Classified Tag', $this->text_domain ),
-			'add_new_item'  => __( 'Add New Classified Tag', $this->text_domain ),
-			'new_item_name' => __( 'New Classified Tag Name', $this->text_domain ),
-			'separate_items_with_commas' => __( 'Separate Classified tags with commas', $this->text_domain ),
-			'add_or_remove_items'        => __( 'Add or remove Classified tags', $this->text_domain ),
-			'choose_from_most_used'      => __( 'Choose from the most used Classified tags', $this->text_domain ),
+			'name'          => __( 'Classified Tags', CF_TEXT_DOMAIN ),
+			'singular_name' => __( 'Classified Tag', CF_TEXT_DOMAIN ),
+			'search_items'  => __( 'Search Classified Tags', CF_TEXT_DOMAIN ),
+			'popular_items' => __( 'Popular Classified Tags', CF_TEXT_DOMAIN ),
+			'all_items'     => __( 'All Classified Tags', CF_TEXT_DOMAIN ),
+			'edit_item'     => __( 'Edit Classified Tag', CF_TEXT_DOMAIN ),
+			'update_item'   => __( 'Update Classified Tag', CF_TEXT_DOMAIN ),
+			'add_new_item'  => __( 'Add New Classified Tag', CF_TEXT_DOMAIN ),
+			'new_item_name' => __( 'New Classified Tag Name', CF_TEXT_DOMAIN ),
+			'add_or_remove_items' => __( 'Add or remove Classified tags', CF_TEXT_DOMAIN ),
+			'choose_from_most_used' => __( 'Choose from the most used Classified tags', CF_TEXT_DOMAIN ),
+			'separate_items_with_commas' => __( 'Separate Classified tags with commas', CF_TEXT_DOMAIN ),
 			),
 			);
 
@@ -132,21 +135,21 @@ class Classifieds_Core_Data {
 			'hierarchical'  => true,
 			'rewrite' => array ('slug' => 'cf-categories', 'with_front' => false, 'hierarchical' => true),
 			'query_var' => true,
-			'capabilities' => array ( 'assign_terms' => 'assign_terms' ),
+			'capabilities' => array ( 'assign_terms' => 'edit_classifieds' ),
 
 			'labels' => array (
-			'name'          => __( 'Classified Categories', $this->text_domain ),
-			'singular_name' => __( 'Classified Category', $this->text_domain ),
-			'search_items'  => __( 'Search Classified Categories', $this->text_domain ),
-			'popular_items' => __( 'Popular Classified Categories', $this->text_domain ),
-			'all_items'     => __( 'All Classified Categories', $this->text_domain ),
-			'parent_item'   => __( 'Parent Category', $this->text_domain ),
-			'edit_item'     => __( 'Edit Classified Category', $this->text_domain ),
-			'update_item'   => __( 'Update Classified Category', $this->text_domain ),
-			'add_new_item'  => __( 'Add New Classified Category', $this->text_domain ),
-			'new_item_name' => __( 'New Classified Category', $this->text_domain ),
-			'parent_item_colon'   => __( 'Parent Category:', $this->text_domain ),
-			'add_or_remove_items' => __( 'Add or remove Classified categories', $this->text_domain ),
+			'name'          => __( 'Classified Categories', CF_TEXT_DOMAIN ),
+			'singular_name' => __( 'Classified Category', CF_TEXT_DOMAIN ),
+			'search_items'  => __( 'Search Classified Categories', CF_TEXT_DOMAIN ),
+			'popular_items' => __( 'Popular Classified Categories', CF_TEXT_DOMAIN ),
+			'all_items'     => __( 'All Classified Categories', CF_TEXT_DOMAIN ),
+			'parent_item'   => __( 'Parent Category', CF_TEXT_DOMAIN ),
+			'edit_item'     => __( 'Edit Classified Category', CF_TEXT_DOMAIN ),
+			'update_item'   => __( 'Update Classified Category', CF_TEXT_DOMAIN ),
+			'add_new_item'  => __( 'Add New Classified Category', CF_TEXT_DOMAIN ),
+			'new_item_name' => __( 'New Classified Category', CF_TEXT_DOMAIN ),
+			'parent_item_colon'   => __( 'Parent Category:', CF_TEXT_DOMAIN ),
+			'add_or_remove_items' => __( 'Add or remove Classified categories', CF_TEXT_DOMAIN ),
 			),
 			);
 
@@ -252,9 +255,81 @@ class Classifieds_Core_Data {
 			if ( ! isset( $rules['cf-author/(.+?)(/page/(.+?))?/?$'] ) )
 			$wp_rewrite->flush_rules();
 		}
+		
+		//Custompress specfic
+		if(is_multisite()){
+			update_site_option( 'allow_per_site_content_types', true );
+			update_site_option( 'display_network_content_types', true );
+			
+		}
+	}
+	
+	function load_payment_data() {
+
+		$options = ( get_option( CF_OPTIONS_NAME ) ) ? get_option( CF_OPTIONS_NAME ) : array();
+		$options = ( is_array($options) ) ? $options : array();
+
+		//General default
+		if(empty($options['general']) ){
+			$options['general'] = array(
+			'member_role'             => 'subscriber',
+			'moderation'              => array('publish' => 1, 'pending' => 1, 'draft' => 1 ),
+			'custom_fields_structure' => 'table',
+			'welcome_redirect'        => 'true',
+			'key'                     => 'general'
+			);
+		}
+
+		//Update from older version
+		if (! empty($options['general_settings']) ) {
+			$options['general'] = array_replace($options['general_settings']);
+			unset($options['general_settings']);
+		}
+
+		//Default Payments settings
+		if ( empty( $options['payments'] ) ) {
+			$options['payments'] = array(
+			'enable_recurring'    => '1',
+			'recurring_cost'      => '9.99',
+			'recurring_name'      => 'Subscription',
+			'billing_period'      => 'Month',
+			'billing_frequency'   => '1',
+			'billing_agreement'   => 'Customer will be billed at &ldquo;9.99 per month for 2 years&rdquo;',
+			'enable_one_time'     => '1',
+			'one_time_cost'       => '99.99',
+			'one_time_name'       => 'One Time Only',
+			'enable_credits'      => '1',
+			'cost_credit'         => '.99',
+			'credits_per_week' => 1,
+			'signup_credits'       => 0,
+			'credits_description' => '',
+			'tos_txt'       => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at sem libero. Pellentesque accumsan consequat porttitor. Curabitur ut lorem sed ipsum laoreet tempus at vel erat. In sed tempus arcu. Quisque ut luctus leo. Nulla facilisi. Sed sodales lectus ut tellus venenatis ac convallis metus suscipit. Vestibulum nec orci ut erat ultrices ullamcorper nec in lorem. Vivamus mauris velit, vulputate eget adipiscing elementum, mollis ac sem. Aliquam faucibus scelerisque orci, ut venenatis massa lacinia nec. Phasellus hendrerit lorem ornare orci congue elementum. Nam faucibus urna a purus hendrerit sit amet pulvinar sapien suscipit. Phasellus adipiscing molestie imperdiet. Mauris sit amet justo massa, in pellentesque nibh. Sed congue, dolor eleifend egestas egestas, erat ligula malesuada nulla, sit amet venenatis massa libero ac lacus. Vestibulum interdum vehicula leo et iaculis.',
+			'key'               => 'payments'
+			);
+		}
+
+		if (! empty($options['payment_settings']) ) {
+			$options['payments'] = array_replace($options['payment_settings']);
+			unset($options['payment_settings']);
+		}
+
+		if(empty($options['payment_types']) ) {
+			$options['payment_types'] = array(
+			'use_free'         => 1,
+			'use_paypal'       => 0,
+			'use_authorizenet' => 0,
+			'paypal'           => array('api_url' => 'sandbox', 'api_username' => '', 'api_password' => '', 'api_signature' => '', 'currency' => 'USD'),
+			'authorizenet'     => array('mode' => 'sandbox', 'delim_char' => ',', 'encap_char' => '', 'email_customer' => 'yes', 'header_email_receipt' => 'Thanks for your payment!', 'delim_data' => 'yes'),
+			);
+		}
+
+		if ( ! empty($options['paypal']) ){
+			$options['payment_types']['paypal'] = array_replace($options['paypal']);
+			unset($options['paypal']);
+		}
+
+		update_option( CF_OPTIONS_NAME, $options );
 	}
 }
 
 endif;
-
-?>

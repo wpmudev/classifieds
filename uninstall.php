@@ -46,4 +46,6 @@ $ct_custom_fields = ( get_option( 'ct_custom_fields' ) );
 unset($ct_custom_fields['selectbox_4cf582bd61fa4'], $ct_custom_fields['text_4cfeb3eac6f1f']);
 update_option( 'ct_custom_fields', $ct_custom_fields );
 
+//Remove Virtual pages @todo
+
 flush_rewrite_rules();

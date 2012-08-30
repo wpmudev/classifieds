@@ -34,17 +34,14 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 
 		/* Enqueue styles */
 		add_action( 'wp_print_styles', array( &$this, 'enqueue_styles' ) );
-		add_action( 'wp_head', array( &$this, 'print_scripts' ) );
-		add_action( 'bp_template_content', array( &$this, 'handle_template_requests' ) );
+
+		add_action( 'bp_template_content', array( &$this, 'process_page_requests' ) );
 
 		/* template for  page */
-		add_action( 'template_redirect', array( &$this, 'handle_nav' ) );
+		//add_action( 'template_redirect', array( &$this, 'handle_nav' ) );
+		add_action( 'template_redirect', array( &$this, 'handle_page_requests' ) );
 
 	}
-
-
-
-
 
 	/**
 	* Add BuddyPress navigation.
@@ -56,6 +53,10 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 
 		/* Set up classifieds as a sudo-component for identification and nav selection */
 		$classifieds_page = get_page($this->classifieds_page_id);
+
+		if (! @is_object($bp->classifieds) ){
+			$bp->classifieds = new stdClass;
+		}
 
 		$bp->classifieds->slug = $classifieds_page->post_name;
 		/* Construct URL to the BuddyPress profile URL */
@@ -76,7 +77,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		'slug'                    => $bp->classifieds->slug,
 		'position'                => 100,
 		'show_for_displayed_user' => true,
-		'screen_function'         => array( &$this, 'load_template' )
+		'screen_function'         => array( &$this, 'load_template' ),
 		));
 
 		if ( bp_is_my_profile() ) {
@@ -147,21 +148,6 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		bp_core_load_template( 'members/single/plugins', true );
 	}
 
-	function handle_nav(){
-
-		global $bp, $post;
-
-		/* Handles request for classifieds page */
-		if ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == 'all' ) {
-			$this->js_redirect( trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug .'/' . $this->my_classifieds_page_slug . '/active', true);
-
-		}
-		elseif( $post->ID == $this->my_classifieds_page_id ) {
-			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-			$this->js_redirect( trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug .'/' . $this->my_classifieds_page_slug . '/active', true);
-		}
-	}
-
 
 	/**
 	* Load the content for the specific classifieds component and handle requests
@@ -169,20 +155,21 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	* @global object $bp
 	* @return void
 	**/
-	function handle_template_requests() {
+	function process_page_requests() {
 		global $bp;
+
 
 		//Component my-classifieds page
 		if ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == $this->my_classifieds_page_slug ) {
 
 			if ( isset( $_POST['edit'] ) ) {
 				if ( wp_verify_nonce( $_POST['_wpnonce'], 'verify' ) )
-				$this->render_front('edit-ad', array( 'post_id' => (int) $_POST['post_id'] ));
+				$this->render_front('update_classified', array( 'post_id' => (int) $_POST['post_id'] ));
 				else
 				die( __( 'Security check failed!', $this->text_domain ) );
 			}
 
-			elseif ( isset( $_POST['update'] ) ) {
+			elseif ( isset( $_POST['update_classified'] ) ) {
 				/* The credits required to renew the classified for the selected period */
 				$credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
 				/* If user have more credits of the required credits proceed with renewing the ad */
@@ -194,8 +181,10 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 
 					if ( ! $this->is_full_access() ) {
 						/* Update new credits amount */
-						$credits = $this->user_credits - $credits_required;
-						update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
+						$this->transactions->credits -= $credits_required;
+					} else {
+						//Check one_time
+						if($this->transactions->billing_type == 'one_time') $this->transactions->status = 'used';
 					}
 
 					$this->render_front('my-classifieds', array( 'action' => 'edit', 'post_title' => $_POST['post_title'] ));
@@ -220,11 +209,12 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 
 							if ( ! $this->is_full_access() ) {
 								/* Update new credits amount */
-								$credits = $this->user_credits - $credits_required;
-								update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
-								/* Set the proper step which will be loaded by "page-my-classifieds.php" */
+								$this->transactions->credits -= $credits_required;
+							} else {
+								//Check one_time
+								if($this->transactions->billing_type == 'one_time') $this->transactions->status = 'used';
 							}
-
+							/* Set the proper step which will be loaded by "page-my-classifieds.php" */
 							$this->render_front('my-classifieds', array( 'action' => 'renew', 'post_title' => $_POST['post_title'] ));
 						} else {
 							$this->render_front('my-classifieds', array( 'cl_credits_error' => '1' ));
@@ -243,48 +233,40 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		//Component create-new page
 		elseif ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == 'create-new' ) {
 
-			if ( isset( $_POST['save'] ) ) {
+			if ( isset( $_POST['update_classified'] ) ) {
 
-				$this->validate_fields( $_POST, $_FILES );
-				if ( $this->form_valid ) {
-					/* The credits required to create the classified for the selected period */
-					$credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
-					/* If user have more credits of the required credits proceed with create the ad */
-					if ( $this->is_full_access() || $this->user_credits >= $credits_required ) {
-						global $bp;
+				// The credits required to create the classified for the selected period
+				$credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
+				// If user have more credits of the required credits proceed with create the ad
+				if ( $this->is_full_access() || $this->user_credits >= $credits_required ) {
+					global $bp;
+					/* Create ad */
+					$post_id = $this->update_ad( $_POST );
+					/* Save the expiration date */
+					$this->save_expiration_date( $post_id );
+
+					if ( ! $this->is_full_access() ) {
+						/* Update new credits amount */
+						$this->transactions->credits -= $credits_required;
+					} else {
+						//Check one_time
+						if($this->transactions->billing_type == 'one_time') $this->transactions->status = 'used';
+					}
+
+					$this->js_redirect( trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
+
+				} else {
+					//save ad if have not credits but select draft
+					if ( isset( $_POST['status'] ) && 'draft' == $_POST['status'] ) {
 						/* Create ad */
-						$post_id = $this->update_ad( $_POST, $_FILES );
-						/* Save the expiration date */
-						$this->save_expiration_date( $post_id );
-
-						if ( ! $this->is_full_access() ) {
-							/* Update new credits amount */
-							$credits = $this->user_credits - $credits_required;
-							update_user_meta( $this->current_user->ID, 'cf_credits', $credits );
-						}
-
-						//						if ( "" != $bp->loggedin_user->userdata->user_url )
-						//						$this->js_redirect( trailingslashit($bp->loggedin_user->userdata->user_url) . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
-						//						else
+						$post_id = $this->update_ad( $_POST);
 						$this->js_redirect( trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
 					} else {
-						//save ad if have not credits but select draft
-						if ( isset( $_POST['status'] ) && 'draft' == $_POST['status'] ) {
-							/* Create ad */
-							$post_id = $this->update_ad( $_POST, $_FILES );
-							//							if ( "" != $bp->loggedin_user->userdata->user_url )
-							//							$this->js_redirect( trailingslashit($bp->loggedin_user->userdata->user_url) . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
-							//							else
-							$this->js_redirect( trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug . '/' . $this->my_classifieds_page_slug );
-						} else {
-							$this->render_front('create-new', array( 'cl_credits_error' => '1' ));
-						}
+						$this->render_front('update-classified', array( 'cl_credits_error' => '1' ));
 					}
-				} else {
-					$this->render_front('create-new');
 				}
 			} else {
-				$this->render_front('create-new');
+				$this->render_front('update-classified', array() );
 			}
 
 		}
@@ -300,7 +282,6 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		}
 		//Component Author classifieds page (classifieds/all)
 		elseif ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == 'all' ) {
-
 			//show author classifieds page
 			$this->render_front('my-classifieds');
 		}
@@ -315,6 +296,200 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	}
 
 	/**
+	* Handle $_REQUEST for main pages.
+	*
+	* @uses set_query_var() For passing variables to pages
+	* @return void|die() if "_wpnonce" is not verified
+	**/
+	function handle_page_requests() {
+		global $bp, $wp_query;
+
+		/* Handles request for classifieds page */
+
+		$templates = array();
+		$page_template = locate_template( array('page.php' ) );
+
+		$logged_url = trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug . '/';
+
+
+		if ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == 'all' ) {
+			$this->js_redirect( $logged_url . $this->my_classifieds_page_slug . '/active', true);
+		}
+
+		elseif( is_page($this->my_classifieds_page_id ) ){
+			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
+			$this->js_redirect( $logged_url . $this->my_classifieds_page_slug . '/active', true);
+		}
+
+		//		elseif ( is_page($this->classifieds_page_id) ) {
+		elseif ( is_post_type_archive('classifieds') ) {
+			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
+			$templates = array( 'page-classifieds.php' );
+			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
+				$this->classifieds_template = $page_template;
+				$wp_query->post_count = 1;
+				add_filter('the_title', array(&$this,'no_title') );
+				add_filter('the_content', array(&$this, 'classifieds_content'));
+			}
+			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+		}
+
+		elseif(is_single() && 'classifieds' == get_query_var('post_type')){
+			$templates = array( 'single-classifieds.php' );
+			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
+				$this->classifieds_template = $page_template;
+				add_filter('the_content', array(&$this, 'single_content'));
+			}
+
+			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+		}
+
+		elseif(is_page($this->my_credits_page_id) ){
+			wp_redirect($logged_url . 'my-credits'); exit;
+			$templates = array( 'page-my-credits.php' );
+			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
+				$this->classifieds_template = $page_template;
+				add_filter('the_content', array(&$this, 'my_credits_content'));
+			}
+			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+		}
+
+		elseif(is_page($this->checkout_page_id) ){
+			$templates = array( 'page-checkout.php' );
+			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
+				$this->classifieds_template = $page_template;
+				add_filter('the_content', array(&$this, 'checkout_content'));
+			}
+			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+
+		}
+
+		elseif(is_page($this->signin_page_id) ){
+			$templates = array( 'page-signin.php' );
+			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
+				$this->classifieds_template = $page_template;
+				add_filter( 'the_title', array( &$this, 'delete_post_title' ), 11 ); //after wpautop
+				add_filter('the_content', array(&$this, 'signin_content'));
+			}
+			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+		}
+		//Classifieds update pages
+		elseif(is_page($this->add_classified_page_id) || is_page($this->edit_classified_page_id)){
+			wp_redirect($logged_url . 'create-new'); exit;
+		}
+		/* If user wants to go to My Classifieds main page  */
+		elseif ( isset( $_POST['go_my_classifieds'] ) ) {
+			wp_redirect( get_permalink($this->my_classifieds_page_id) );
+		}
+		/* If user wants to go to My Classifieds main page  */
+		elseif ( isset( $_POST['purchase'] ) ) {
+			wp_redirect(  get_permalink($this->checkout_page_id)  );
+		} else {
+			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
+			set_query_var( 'cf_action', 'my-classifieds' );
+		}
+	}
+
+	/**
+	* Classifieds Content.
+	*
+	* @return void
+	**/
+	function classifieds_content($content = null){
+		if(! in_the_loop()) return $content;
+		ob_start();
+		require($this->template_file('classifieds'));
+		$new_content = ob_get_contents();
+		ob_end_clean();
+		return $new_content;
+	}
+
+	/**
+	* Update Classifieds.
+	*
+	* @return void
+	**/
+	function update_classified_content($content = null){
+		if(! in_the_loop()) return $content;
+		ob_start();
+		$this->render_front('update-classified', array('post_id' => $_POST['post_id']) );
+		//require($this->template_file('update-classified'));
+		$new_content = ob_get_contents();
+		ob_end_clean();
+		return $new_content;
+	}
+
+	/**
+	* My Classifieds.
+	*
+	* @return void
+	**/
+	function my_classifieds_content($content = null){
+		if(! in_the_loop()) return $content;
+		ob_start();
+		require($this->template_file('my-classifieds'));
+		$new_content = ob_get_contents();
+		ob_end_clean();
+		return $new_content;
+	}
+
+	/**
+	* My Classifieds.
+	*
+	* @return void
+	**/
+	function checkout_content($content = null){
+		if(! in_the_loop()) return $content;
+		ob_start();
+		require($this->template_file('checkout'));
+		$new_content = ob_get_contents();
+		ob_end_clean();
+		return $new_content;
+	}
+
+	/**
+	* Signin.
+	*
+	* @return void
+	**/
+	function signin_content($content = null){
+		if(! in_the_loop()) return $content;
+		ob_start();
+		require($this->template_file('signin'));
+		$new_content = ob_get_contents();
+		ob_end_clean();
+		return $new_content;
+	}
+
+	/**
+	* My Classifieds Credits.
+	*
+	* @return void
+	**/
+	function my_credits_content($content = null){
+		if(! in_the_loop()) return $content;
+		ob_start();
+		require($this->plugin_dir . 'ui-front/general/page-my-credits.php');
+		$new_content = ob_get_contents();
+		ob_end_clean();
+		return $new_content;
+	}
+
+	/**
+	* Single Classifieds.
+	*
+	* @return void
+	**/
+	function single_content($content = null){
+		if(! in_the_loop()) return $content;
+		ob_start();
+		require($this->plugin_dir . 'ui-front/general/single-classifieds.php');
+		$new_content = ob_get_contents();
+		ob_end_clean();
+		return $new_content;
+	}
+
+	/**
 	* Enqueue styles.
 	*
 	* @return void
@@ -326,60 +501,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		wp_enqueue_style( 'style-classifieds', $this->plugin_url . 'ui-front/buddypress/style-bp-classifieds.css' );
 	}
 
-	/**
-	* Print scripts for BuddyPress pages
-	*
-	* @global object $bp
-	* @return void
-	**/
-	function print_scripts() {
-		global $bp;
-		if ( $bp->current_component == $this->classifieds_page_slug || is_single() ) {
-			?>
-			<script type="text/javascript">
-				//<![CDATA[
-				jQuery(document).ready(function($) {
-					$('form.confirm-form').hide();
-					$('form.cf-contact-form').hide();
-				});
-				var classifieds = {
-					toggle_end: function(key) {
-						jQuery('#confirm-form-'+key).show();
-						jQuery('#action-form-'+key).hide();
-						jQuery('input[name="action"]').val('end');
-					},
-					toggle_renew: function(key) {
-						jQuery('#confirm-form-'+key).show();
-						jQuery('#duration-'+key).show();
-						jQuery('#action-form-'+key).hide();
-						jQuery('input[name="action"]').val('renew');
-					},
-					toggle_delete: function(key) {
-						jQuery('#confirm-form-'+key).show();
-						jQuery('#action-form-'+key).hide();
-						jQuery('#duration-'+key).hide();
-						jQuery('input[name="action"]').val('delete');
-					},
-					toggle_contact_form: function() {
-						jQuery('.cf-ad-info').hide();
-						jQuery('#action-form').hide();
-						jQuery('#confirm-form').show();
-					},
-					cancel_contact_form: function() {
-						jQuery('#confirm-form').hide();
-						jQuery('.cf-ad-info').show();
-						jQuery('#action-form').show();
-					},
-					cancel: function(key) {
-						jQuery('#confirm-form-'+key).hide();
-						jQuery('#action-form-'+key).show();
-					}
-				};
-				//]]>
-			</script>
-			<?php
-		}
-	}
+
 }
 
 /* Initiate Class */
@@ -388,4 +510,3 @@ global $Classifieds_Core;
 $Classifieds_Core = new Classifieds_Core_BuddyPress();
 
 endif;
-?>

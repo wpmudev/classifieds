@@ -1,7 +1,7 @@
 <?php if (!defined('ABSPATH')) die('No direct access allowed!'); ?>
 
 <?php screen_icon('options-general'); ?>
-<h2><?php _e('Classifieds Settings ', $this->text_domain); echo CF_VERSION;?></h2>
+<h2><?php echo sprintf( __('Classifieds Settings %s', $this->text_domain), CF_VERSION);?></h2>
 
 <h2>
 

@@ -48,6 +48,14 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 			add_action( 'wp_ajax_cf_get_caps', array( &$this, 'ajax_get_caps' ) );
 			add_action( 'wp_ajax_cf_save', array( &$this, 'ajax_save' ) );
 
+			//IPN script for Paypal
+			add_action( 'wp_ajax_nopriv_classifieds_ipn', array( &$this, 'ajax_classifieds_ipn' ) );
+			add_action( 'wp_ajax_classifieds_ipn', array( &$this, 'ajax_classifieds_ipn' ) );
+
+			//Sil;ent Post script for Authorizenet
+			add_action( 'wp_ajax_nopriv_classifieds_sp', array( &$this, 'ajax_classifieds_silent_post' ) );
+			add_action( 'wp_ajax_classifieds_sp', array( &$this, 'ajax_classifieds_silent_post' ) );
+
 		}
 	}
 
@@ -57,18 +65,32 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	* @return void
 	**/
 	function admin_menu() {
+
+		if ( ! current_user_can('unfiltered_html') ) {
+			remove_submenu_page('edit.php?post_type=classifieds', 'post-new.php?post_type=classifieds' );
+			add_submenu_page( 'edit.php?post_type=classifieds', __( 'Add New', $this->text_domain ), __( 'Add New', $this->text_domain ), 'create_classifieds', 'classifieds_add', array( &$this, 'redirect_add' ) );
+		}
+
 		//add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
 		add_submenu_page( 'edit.php?post_type=classifieds', __( 'Dashboard', $this->text_domain ), __( 'Dashboard', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
 		$settings_page = add_submenu_page( 'edit.php?post_type=classifieds', __( 'Classifieds Settings', $this->text_domain ), __( 'Settings', $this->text_domain ), 'edit_users', 'classifieds_settings', array( &$this, 'handle_admin_requests' ) );
 
-		add_action( 'admin_print_scripts-' .  $settings_page, array( &$this, 'enqueue_scripts' ) );
+		add_action( 'admin_print_styles-' .  $settings_page, array( &$this, 'enqueue_scripts' ) );
 
 		if($this->use_credits){
-			add_submenu_page( 'edit.php?post_type=classifieds', __( 'Classifieds Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
+			$settings_page = add_submenu_page( 'edit.php?post_type=classifieds', __( 'Classifieds Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
+			add_action( 'admin_print_styles-' .  $settings_page, array( &$this, 'enqueue_scripts' ) );
 		}
 	}
 
+	function redirect_add(){
+		echo '<script>window.location = "' . get_permalink($this->add_classified_page_id) . '";</script>';
+		//wp_redirect(get_permalink($this->my_classifieds_page_id) ); exit;
+	}
+
+
 	function enqueue_scripts(){
+		wp_enqueue_style( 'cf-admin-styles', $this->plugin_url . 'ui-admin/css/ui-styles.css');
 		wp_enqueue_script( 'cf-admin-scripts', $this->plugin_url . 'ui-admin/js/ui-scripts.js', array( 'jquery' ) );
 	}
 
@@ -95,7 +117,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	* @return void
 	**/
 	function handle_admin_requests() {
-		$valid_tabs = array('general', 'capabilities', 'payments', 'payment-types','shortcodes', 'my-credits', 'send-credits');
+		$valid_tabs = array('general', 'capabilities', 'payments', 'payment-types' ,'shortcodes', 'my-credits', 'send-credits');
 
 		$page = (empty($_GET['page'])) ? '' : $_GET['page'] ;
 
@@ -209,7 +231,6 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 		$this->hook = get_plugin_page_hook( $_GET['page'], $this->menu_slug );
 		/* Add actions for printing the styles and scripts of the document */
 		add_action( 'admin_print_scripts-' . $this->hook, array( &$this, 'admin_enqueue_scripts' ) );
-		add_action( 'admin_head-' . $this->hook, array( &$this, 'admin_print_styles' ) );
 		add_action( 'admin_head-' . $this->hook, array( &$this, 'admin_print_scripts' ) );
 	}
 
@@ -220,15 +241,6 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	**/
 	function admin_enqueue_scripts() {
 		wp_enqueue_script('jquery');
-		wp_enqueue_style( 'cf-admin-styles', $this->plugin_url . 'ui-admin/css/ui-styles.css');
-	}
-
-	/**
-	* Print document styles.
-	*/
-	function admin_print_styles() {
-		?>
-		<?php
 	}
 
 	/**
@@ -329,6 +341,179 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 		}
 
 		die(1);
+	}
+
+
+	function write_to_log($error, $log = 'error') {
+
+		//create filename for each month
+		$filename = $this->plugin_dir . "{$log}_" . date('Y_m') . '.log';
+
+		//add timestamp to error
+		$message = gmdate('[Y-m-d H:i:s] ') . $error;
+
+		//write to file
+		file_put_contents($filename, $message . "\n", FILE_APPEND);
+	}
+
+
+	/**
+	* IPN script for change user role when Paypal Recurring Payment changed status
+	*
+	* @return void
+	*/
+	function ajax_classifieds_ipn() {
+		// debug mode for IPN script (please open plugin dir (classifieds) for writing)
+		$debug_ipn = 1;
+		if ( 1 == $debug_sp ) {
+			$this->write_to_log(
+			' - 01 -' . " POST\r\n" .
+			print_r( $_SERVER, true ) . "\r\n" .
+			print_r( $_POST, true ),
+			'debug_ipn' );
+		}
+
+		$postdata = http_build_query($_POST);
+		$postdata .= "&cmd=_notify-validate";
+
+		$options = $this->get_options( 'payment_types' );
+		$options = $options['paypal'];
+
+		if ( 'live' == $options['api_url'] )
+		$url = "https://www.paypal.com/cgi-bin/webscr";
+		else
+		$url = "https://www.sandbox.paypal.com/cgi-bin/webscr";
+
+		$args =  array(
+		'timeout' => 90,
+		'sslverify' => false
+		);
+
+		$response = wp_remote_get( $url . "?" . $postdata, $args );
+
+		if( is_wp_error( $response ) ) {
+			if ( 1 == $debug_sp ) {
+				$this->write_to_log(
+				' - 02 -' . " error with send post\r\n" .
+				print_r( "url: " . $url . "\r\n", true ) .
+				print_r( $response, true ),
+				'debug_ipn' );
+			}
+			die('error with send post');
+		} else {
+			$response = $response["body"];
+		}
+
+
+		if ( $response != "VERIFIED" ) {
+			if ( 1 == $debug_sp ) {
+				$this->write_to_log(
+				' - 03 -' . " not VERIFIED\r\n" .
+				print_r( $response, true ),
+				'debug_ipn' );
+			}
+			die( 'not VERIFIED' );
+		}
+
+		if ( $_POST['subscr_id'] ) {
+
+			if( is_numeric($_POST['custom']) ) { //old style
+				$user_id = $_POST['custom'];
+			} else {
+				parse_str($_POST['custom'], $custom);
+				$user_id = $custom['uid'];
+				$blogid = $custom['bid'];
+			}
+
+			$transactions = new CF_Transactions($user_id, $blogid);
+
+			if ( "subscr_payment" == $_POST['txn_type'] ) {
+
+				$key = md5( $_POST['mc_currency'] . "classifieds_123" . $_POST['mc_gross'] );
+
+				//checking hash keys
+				if ( $key != $transactions->paypal['key']) {
+					if ( 1 == $debug_sp ) {
+						$this->write_to_log(
+						' - 04 -' . " Conflict Keys:\r\n" .
+						print_r( " key from site: " . $transactions->paypal['key'], true ) .
+						print_r( "key from Paypal: " . $key, true ),
+						print_r($transactions->paypal, true),
+						'debug_ipn' );
+					}
+					die("conflict key");
+				}
+
+				if ( 1 == $debug_sp ) {
+					$this->write_to_log(
+					' - 05 -' . " subscr_payment OK\r\n",
+					'debug_ipn' );
+				}
+				//write subscr_id (profile_id) to user meta
+				$transactions->paypal = $_POST;
+
+				//for affiliate subscription
+				$affiliate_settings = $this->get_options( 'affiliate_settings' );
+				do_action( 'classifieds_set_paid_member', $affiliate_settings, $user_id, 'recurring' );
+
+
+			} elseif( in_array( $_POST['txn_type'], array("subscr_cancel", "subscr_failed", "subscr_eot") ) ) {
+
+				if ( 1 == $debug_sp ) {
+					$this->write_to_log(
+					' - 05 -' . " subscr_payment OK\r\n",
+					'debug_ipn' );
+				}
+
+				$transactions->paypal = $_POST;
+
+			}
+		}
+		die("ok");
+	}
+
+	/**
+	* Script for change user role when Authorizenet Recurring Payment changed status
+	*
+	* @return void
+	*/
+	function ajax_classifieds_silent_post() {
+
+		// debug mode for Silent Post script (please open plugin dir (classifieds) for writing)
+		$debug_sp = 1;
+		if ( 1 == $debug_sp ) {
+			$this->write_to_log(
+			print_r( date( "H:i:s m.d.y" ) . ' - 01 -' . " POST\r\n", true ) .
+			print_r( $_POST, true ),
+			'debug_sp' );
+		}
+
+		//silent doesn't do any handshaking
+		if ( ! empty($_POST['x_invoice_num']) ) {
+			$blogid = explode('-', $_POST['x_invoice_num']); //Format CLS-4-87sd8si222ldff
+			if($blogid[0] == 'CLS' && is_numeric($blogid[1])){
+				$blogid = intval($blogid[1]);
+				$user_id = $_POST['x_cust_id'];
+
+				$transactions = new CF_Transactions($user_id, $blogid);
+
+				$this->write_to_log(print_r($transactions->transactions, true), 'debug_sp');
+
+				if(! empty($_POST['x_subscription_id'])
+				&& $_POST['x_subscription_id'] == $transactions->authorizenet['profile_id'] ){
+
+					$transactions->authorizenet = $_POST;
+				} else {
+
+					if ( 1 == $debug_sp ) $this->write_to_log('Subscription ID mismatch Post: ' . $_POST['x_subscription_id'] . ' Key: ' . $transactions->authorizenet['profile_id'] , 'debug_sp');
+
+				}
+			} else{
+				if ( 1 == $debug_sp ) $this->write_to_log('Bad x-invoice_num Post: ' . $_POST['x_subscription_id'] . ' Key: ' . $transactions->authorizenet['key'], 'debug_sp' );
+			}
+
+		}
+		die("ok");
 	}
 
 }

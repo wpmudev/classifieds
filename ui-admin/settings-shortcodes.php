@@ -92,11 +92,11 @@
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><?php _e( 'Signup Button:', $this->text_domain ) ?></th>
+					<th scope="row"><?php _e( 'Checkout Button:', $this->text_domain ) ?></th>
 					<td>
-						<code><strong>[cf_signup_btn text="<?php _e('Signup', $this->text_domain);?>" view="loggedin | loggedout | always"]</strong></code> or
-						<br /><code><strong>[cf_signup_btn view="loggedin | loggedout | always"]&lt;img src="<?php _e('someimage.jpg', $this->text_domain); ?>" /&gt;<?php _e('Signup', $this->text_domain);?>[/cf_signup_btn]</strong></code>
-						<br /><span class="description"><?php _e( 'Links to the Signup Page. Generates a &lt;button&gt; &lt;/button&gt; with the contents you define.', $this->text_domain ) ?></span>
+						<code><strong>[cf_checkout_btn text="<?php _e('Checkout', $this->text_domain);?>" view="loggedin | loggedout | always"]</strong></code> or
+						<br /><code><strong>[cf_checkout_btn view="loggedin | loggedout | always"]&lt;img src="<?php _e('someimage.jpg', $this->text_domain); ?>" /&gt;<?php _e('Signup', $this->text_domain);?>[/cf_checkout_btn]</strong></code>
+						<br /><span class="description"><?php _e( 'Links to the Checkout Page. Generates a &lt;button&gt; &lt;/button&gt; with the contents you define.', $this->text_domain ) ?></span>
 					</td>
 				</tr>
 				<tr>
