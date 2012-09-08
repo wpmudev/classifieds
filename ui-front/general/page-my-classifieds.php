@@ -11,6 +11,7 @@
 global $current_user;
 
 $current_user = wp_get_current_user();
+$error = get_query_var('cf_error');
 
 $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 
@@ -20,6 +21,7 @@ $query_args = array(
 'paged' => $paged,
 'post_type' => 'classifieds',
 'author' => $current_user->ID,
+//'posts_per_page' => 1000,
 );
 
 if(isset($_GET['saved']) ) {
@@ -37,11 +39,19 @@ query_posts($query_args);
 
 $cf_path = get_permalink($this->my_classifieds_page_id);
 
+remove_filter('the_content', array(&$this, 'my_classifieds_content'));
+
 ?>
 
 <script type="text/javascript" src="<?php echo $this->plugin_url . 'ui-front/js/ui-front.js'; ?>" >
 </script>
 
+
+<?php if ( !empty( $error ) ): ?>
+<br /><div class="error"><?php echo $error . '<br />'; ?></div>
+<?php endif; ?>
+
+<div class="clear"></div>
 <?php if ( $this->is_full_access() ): ?>
 <div class="av-credits"><?php _e( 'You have access to create new ads', $this->text_domain ); ?></div>
 <?php elseif($this->use_credits): ?>
@@ -59,24 +69,17 @@ $cf_path = get_permalink($this->my_classifieds_page_id);
 	<li class="<?php if (  $sub == 'ended') echo 'cf_active'; ?>"><a href="<?php echo $cf_path . '/?ended'; ?>"><?php _e( 'Ended Ads', $this->text_domain ); ?></a></li>
 </ul>
 <div class="clear"></div>
+	<?php if ( !have_posts() ): ?>
+	<br /><br />
+	<div class="info" id="message">
+		<p><?php _e( 'No Classifieds found.', $this->text_domain ); ?></p>
+	</div>
+	<?php endif; ?>
 
-<?php $error = get_query_var('cf_error'); ?>
-
-<?php if ( !have_posts() ): ?>
-<br /><br />
-<div class="info" id="message">
-	<p><?php _e( 'No Classifieds found.', $this->text_domain ); ?></p>
-</div>
-<?php endif; ?>
-
-<?php if ( !empty( $error ) ): ?>
-<br /><div class="error"><?php echo $error . '<br />'; ?></div>
-<?php endif; ?>
-
-<div class="clear"></div>
 <div class="cf_tab_container">
+
 	<?php /* Display navigation to next/previous pages when applicable */ ?>
-	<?php $this->pagination( $this->pagination_top ); ?>
+	<?php echo $this->pagination( $this->pagination_top ); ?>
 
 	<?php while ( have_posts() ) : the_post(); ?>
 	<?php // cf_debug( $wp_query ); ?>
@@ -155,7 +158,7 @@ $cf_path = get_permalink($this->my_classifieds_page_id);
 					}
 					?>
 					<select name="duration">
-						<?php 
+						<?php
 						//make duration options
 						foreach ( $durations as $key => $field_option ):
 						if( empty($field_option ) ) continue;
@@ -174,7 +177,7 @@ $cf_path = get_permalink($this->my_classifieds_page_id);
 
 	<?php endwhile; ?>
 	<?php /* Display navigation to next/previous pages when applicable */ ?>
-	<?php $this->pagination( $this->pagination_bottom ); ?>
+	<?php echo $this->pagination( $this->pagination_bottom ); ?>
 </div><!-- .cf_tab_container -->
 <?php wp_reset_query(); ?>
 <!-- End my Classifieds -->

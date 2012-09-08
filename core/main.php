@@ -135,7 +135,6 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	function handle_page_requests() {
 		global $wp_query;
 
-		//print_r($wp_query); exit;
 
 
 		/* Handles request for classifieds page */
@@ -149,12 +148,16 @@ class Classifieds_Core_Main extends Classifieds_Core {
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
 				$this->classifieds_template = $page_template;
 				$wp_query->post_count = 1;
-				add_filter('the_title', array(&$this,'no_title') );
+				add_filter( 'the_title', array( &$this, 'page_title_output' ), 10 , 2 );
 				add_filter('the_content', array(&$this, 'classifieds_content'));
 			}
 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			$this->is_classifieds_page = true;
 		}
 
+		elseif ( is_archive() ) {
+			add_filter( 'the_title', array( &$this, 'page_title_output' ), 10 , 2 );
+		}
 		elseif(is_single() && 'classifieds' == get_query_var('post_type')){
 			$templates = array( 'single-classifieds.php' );
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
@@ -162,6 +165,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 				add_filter('the_content', array(&$this, 'single_content'));
 			}
 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			$this->is_classifieds_page = true;
 		}
 
 		elseif(is_page($this->my_credits_page_id) ){
@@ -171,6 +175,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 				add_filter('the_content', array(&$this, 'my_credits_content'));
 			}
 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			$this->is_classifieds_page = true;
 		}
 
 		elseif(is_page($this->checkout_page_id) ){
@@ -180,6 +185,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 				add_filter('the_content', array(&$this, 'checkout_content'));
 			}
 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			$this->is_classifieds_page = true;
 		}
 
 		elseif(is_page($this->signin_page_id) ){
@@ -190,6 +196,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 				add_filter('the_content', array(&$this, 'signin_content'));
 			}
 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			$this->is_classifieds_page = true;
 		}
 		//My Classifieds page
 		elseif (is_page($this->my_classifieds_page_id) ){
@@ -199,6 +206,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 				add_filter('the_content', array(&$this, 'my_classifieds_content'));
 			}
 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			$this->is_classifieds_page = true;
 		}
 		//Classifieds update pages
 		elseif(is_page($this->add_classified_page_id) || is_page($this->edit_classified_page_id)){
@@ -208,6 +216,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 				add_filter('the_content', array(&$this, 'update_classified_content'));
 			}
 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			$this->is_classifieds_page = true;
 		}
 		/* If user wants to go to My Classifieds main page  */
 		elseif ( isset( $_POST['go_my_classifieds'] ) ) {
@@ -220,6 +229,12 @@ class Classifieds_Core_Main extends Classifieds_Core {
 			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
 			set_query_var( 'cf_action', 'my-classifieds' );
 		}
+		
+				//load  specific items
+		if ( $this->is_classifieds_page ) {
+			add_filter( 'edit_post_link', array( &$this, 'delete_edit_post_link' ) );
+		}
+
 	}
 
 
@@ -231,8 +246,9 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	function enqueue_scripts() {
 		if ( file_exists( get_template_directory() . '/style-classifieds.css' ) )
 		wp_enqueue_style( 'style-classifieds', get_template_directory() . '/style-classifieds.css' );
-		elseif ( file_exists( $this->plugin_dir . 'ui-front/general/style-classifieds.css' ) )
+		elseif ( file_exists( $this->plugin_dir . 'ui-front/general/style-classifieds.css' ) ) {
 		wp_enqueue_style( 'style-classifieds', $this->plugin_url . 'ui-front/general/style-classifieds.css' );
+	}
 	}
 }
 

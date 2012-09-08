@@ -21,10 +21,9 @@ $cf_path = $bp->displayed_user->domain . $this->classifieds_page_slug .'/' . $th
 
 $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 
-if(isset($bp)) $paged = $bp->action_variables[array_search('page',$bp->action_variables) + 1]; //find /page/x
+//if(isset($bp)) $paged = $bp->action_variables[array_search('page',$bp->action_variables) + 1]; //find /page/x
 
 $query_args = array(
-'posts_per_page' => $this->cf_ads_per_page,
 'paged' => $paged,
 'post_type' => 'classifieds',
 'author' => bp_displayed_user_id(),
@@ -104,8 +103,8 @@ query_posts($query_args);
 	<div class="cf_tab_container">
 
 		<?php /* Display navigation to next/previous pages when applicable */ ?>
-		<?php $this->pagination( $this->pagination_bottom ); ?>
-		<br />
+		<?php echo $this->pagination( $this->pagination_bottom ); ?>
+		<br clear="both" />
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
 		<div id="post-<?php the_ID(); ?>" <?php post_class(); ?> >
@@ -211,7 +210,7 @@ query_posts($query_args);
 
 		<?php endwhile; ?>
 		<?php /* Display navigation to next/previous pages when applicable */ ?>
-		<?php $this->pagination( $this->pagination_bottom ); ?>
+		<?php echo $this->pagination( $this->pagination_bottom ); ?>
 	</div><!-- .cf_tab_container -->
 	<?php wp_reset_query(); ?>
 	<!-- End my Classifieds -->

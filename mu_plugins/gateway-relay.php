@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /*
 Plugin Name: Gateway Relay
 Plugin URI: http://premium.wpmudev.org/project/classifieds
@@ -105,13 +105,7 @@ class Gateway_Relay{
 		for($i=0;$i <= count($this->queue); $i++){
 			$this->process_queue();
 		}
-		/*
-		echo '<pre>';
-		print_r($this->queue);
-		echo '</pre>';
-		*/
 		exit;
-
 	}
 
 	function add_to_queue($source, $postdata, $retries = 5 ){

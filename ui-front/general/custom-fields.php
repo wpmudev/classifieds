@@ -9,15 +9,17 @@
 * @since Classifieds 2.0
 */
 
-$prefix = '_ct_';
-$custom_fields = get_site_option('ct_custom_fields'); ?>
+global $post_ID;
 
-<?php
+$prefix = 'ct_';
+$custom_fields = get_option('ct_custom_fields');
+
+print_r($custom_fields);
+
 if ( !isset( $post->ID ) )
-$post->ID = 0
-?>
+$post->ID = 0;
 
-<?php foreach ( $custom_fields as $custom_field ):
+foreach ( $custom_fields as $custom_field ):
 
 $output = false;
 

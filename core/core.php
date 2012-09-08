@@ -275,7 +275,7 @@ class Classifieds_Core {
 		}
 
 		//Set a user capability based on users purchases
-		if(is_blog_user() ) {
+		if(! is_multisite() || is_user_member_of_blog(get_current_user_id(), $blog_id) ) {
 			if( $this->use_free
 			|| ($this->use_credits && $this->user_credits > 0)
 			|| $this->is_full_access() ){
@@ -284,6 +284,12 @@ class Classifieds_Core {
 				$this->current_user->remove_cap('create_classifieds');
 			}
 		}
+		
+		// Rewrite rules
+		add_rewrite_rule( 'classifieds/author/(.+?)(/page/(.+?))?/?$', 'index.php?post_type=classifieds&author_name=$matches[1]&paged=$matches[3]', 'top' );
+		//flush_rewrite_rules();
+
+
 	}
 
 	/**
@@ -875,7 +881,7 @@ class Classifieds_Core {
 		'post_title'     => wp_strip_all_tags($params['classified_data']['post_title']),
 		'post_name'      => '',
 		'post_content'   => $params['classified_data']['post_content'],
-		'post_excerpt'   => (isset($params['classified_data']['post_excerpt'])) ? $params['classified_data']['post_excerpt'] : '',
+		'post_excerpt'   => (empty($params['classified_data']['post_excerpt'])) ? '' : $params['classified_data']['post_excerpt'],
 		'post_status'    => $params['classified_data']['post_status'],
 		'post_author'    => get_current_user_id(),
 		'post_type'      => $this->post_type,
@@ -1176,6 +1182,40 @@ class Classifieds_Core {
 		$wpdb->update( $wpdb->posts, array( 'post_status' => $status ), array( 'ID' => $post_id ), array( '%s' ), array( '%d' ) );
 	}
 
+
+	function comments_closed_text( $text ) {
+		return '';
+	}
+
+	//filters the edit post button
+	function delete_edit_post_link( $text ) {
+		return '';
+	}
+
+	//filters the titles for our custom pages
+	function page_title_output( $title, $id = false ) {
+		global $wp_query, $post;
+
+		//filter out nav titles
+		if ($post->ID != $id )
+		return $title;
+
+		//taxonomy pages
+		$tax_key = (empty($wp_query->query_vars['taxonomy']) ) ? '' : $wp_query->query_vars['taxonomy'];
+
+		$taxonomies = get_object_taxonomies('classifieds', 'objects');
+		if ( array_key_exists($tax_key, $taxonomies ) ){
+			$term = get_term_by( 'slug', get_query_var( $tax_key ), $tax_key );
+			return $taxonomies[$tax_key]->labels->singular_name . ': ' . $term->name;
+		}
+
+		//title for listings page
+		if ( is_post_type_archive('classifieds' ) ){
+			return post_type_archive_title();
+		}
+		return $title;
+	}
+	
 	/**
 	* Format date.
 	*
@@ -1290,7 +1330,6 @@ class Classifieds_Core {
 		global $wp_query;
 
 		if ( '' != get_query_var( 'cf_author_name' ) || isset( $_REQUEST['cf_author'] ) && '' != $_REQUEST['cf_author'] )  {
-
 			if ( file_exists(get_template_directory() . '/author.php')){
 				load_template( get_template_directory() . '/author.php' );
 			} else {
@@ -1432,7 +1471,7 @@ class Classifieds_Core {
 				$html .= '<a class="thickbox" href="' . $tb_url . '" id="set-post-thumbnail" >' . esc_html__( 'Set Featured Image') . '</a></p>';
 
 				if(has_post_thumbnail($post_id)){
-					$html = get_the_post_thumbnail($post_id, array(226,100));
+					$html = get_the_post_thumbnail($post_id, array(200,150));
 					$ajax_nonce = wp_create_nonce( "set_post_thumbnail-{$post_id}" );
 					$html .= '<p class="hide-if-no-js"><a href="#" id="remove-post-thumbnail" onclick="WPRemoveThumbnail(\'' . $ajax_nonce . '\');return false;">' . esc_html__( 'Remove featured image' ) . '</a></p>';
 				}
@@ -1699,7 +1738,11 @@ class Classifieds_Core {
 	function classifieds_content($content = null){
 		if(! in_the_loop()) return $content;
 		ob_start();
+		remove_filter( 'the_title', array( &$this, 'page_title_output' ), 10 , 2 );
+		remove_filter('the_content', array(&$this, 'classifieds_content'));
 		require($this->template_file('classifieds'));
+		wp_reset_query();
+
 		$new_content = ob_get_contents();
 		ob_end_clean();
 		return $new_content;
@@ -1740,6 +1783,7 @@ class Classifieds_Core {
 	**/
 	function checkout_content($content = null){
 		if(! in_the_loop()) return $content;
+		remove_filter('the_content', array(&$this, 'checkout_content'));
 		ob_start();
 		require($this->template_file('checkout'));
 		$new_content = ob_get_contents();
@@ -1754,6 +1798,8 @@ class Classifieds_Core {
 	**/
 	function signin_content($content = null){
 		if(! in_the_loop()) return $content;
+				remove_filter( 'the_title', array( &$this, 'delete_post_title' ) ); //after wpautop
+				remove_filter('the_content', array(&$this, 'signin_content'));
 		ob_start();
 		require($this->template_file('signin'));
 		$new_content = ob_get_contents();
@@ -1768,6 +1814,8 @@ class Classifieds_Core {
 	**/
 	function my_credits_content($content = null){
 		if(! in_the_loop()) return $content;
+
+		remove_filter('the_content', array(&$this, 'my_credits_content'));
 		ob_start();
 		require($this->plugin_dir . 'ui-front/general/page-my-credits.php');
 		$new_content = ob_get_contents();
@@ -1782,6 +1830,8 @@ class Classifieds_Core {
 	**/
 	function single_content($content = null){
 		if(! in_the_loop()) return $content;
+		remove_filter('the_content', array(&$this, 'single_content'));
+
 		ob_start();
 		require($this->plugin_dir . 'ui-front/general/single-classifieds.php');
 		$new_content = ob_get_contents();
@@ -1793,7 +1843,6 @@ class Classifieds_Core {
 		if(! in_the_loop()) return $content;
 		return '';
 	}
-
 
 	function update_classified($params){
 		/* Construct args for the new post */

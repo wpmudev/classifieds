@@ -1,4 +1,3 @@
-
 <?php
 /**
 * The template for displaying Classifieds Archive page.
@@ -12,106 +11,22 @@
 global $bp, $post, $wp_query, $paged;
 
 $options = $this->get_options( 'general' );
-$field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-front/general/images/blank.gif' : $options['field_image_def'];
 
 $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+
+remove_filter( 'the_title', array( &$this, 'page_title_output' ), 10 , 2 );
+remove_filter('the_content', array(&$this, 'classifieds_content'));
+
 
 $query_args = array(
 'paged' => $paged,
 'post_status' => 'publish',
-'post_type' => 'classifieds');
+'post_type' => 'classifieds',
+//'author' => get_query_var('author'),
+);
 
 query_posts($query_args);
 
-remove_filter('the_title', array(&$this,'no_title') ); // Turn titles back on.
+load_template( CF_PLUGIN_DIR . 'ui-front/general/loop-taxonomy.php' );
 
-?>
-
-<?php if ( have_posts() ): ?>
-<header class="page-header">
-	<h1 class="page-title">
-		<?php post_type_archive_title() ?>
-	</h1>
-</header>
-
-<?php else: ?>
-<div class="info" id="message">
-	<p><?php _e( 'No Classifieds found.', $this->text_domain ); ?></p>
-</div>
-<?php endif; ?>
-
-<?php // Display navigation to next/previous pages when applicable ?>
-<div class="clear"></div>
-
-<?php echo $this->pagination( $this->pagination_top ); ?>
-
-<?php while( have_posts() ): the_post(); ?>
-
-<div id="post-<?php the_ID(); ?>" <?php post_class(); ?> >
-	<div class="cf-ad">
-		<div class="cf-pad">
-			<div class="cf-image">
-				<?php
-				if(has_post_thumbnail()){
-					$thumbnail = get_the_post_thumbnail( $post->ID, array( 150, 150 ) );
-				} else {
-					$thumbnail = '<img width="150" height="150" title="no image" alt="no image" class="cf-no-image wp-post-image" src="' . $field_image . '">';
-				}
-				?>
-				<a href="<?php the_permalink(); ?>" ><?php echo $thumbnail; ?></a>
-			</div>
-
-			<div class="cf-info">
-				<table>
-					<tr>
-						<th><?php _e( 'Title', $this->text_domain ); ?></th>
-						<td>
-							<a href="<?php the_permalink(); ?>"><?php echo get_the_title(); ?></a>
-						</td>
-					</tr>
-					<tr>
-						<th><?php _e( 'Posted By', $this->text_domain ); ?></th>
-						<td>
-							<?php
-							$user = get_userdata( get_the_author_meta('ID') );
-
-							if ( '' == get_option( 'permalink_structure' ) )
-							$cf_author_url = '?cf_author=' . $user->user_login;
-							else
-							$cf_author_url = '/cf-author/'. $user->user_login .'/';
-
-							/* For BuddyPress compatibility */
-							$alink = ( isset( $bp ) ) ? bp_core_get_user_domain( get_the_author_meta('ID') ) . 'classifieds/' : get_option( 'siteurl' ) . $cf_author_url;
-							?>
-							<a href="<?php echo $alink;?>" ><?php echo $user->display_name; ?></a>
-						</td>
-					</tr>
-					<tr>
-						<th><?php _e( 'Categories', $this->text_domain ); ?></th>
-						<td>
-							<?php $taxonomies = get_object_taxonomies( 'classifieds', 'names' ); ?>
-							<?php foreach ( $taxonomies as $taxonomy ): ?>
-							<?php echo get_the_term_list( get_the_ID(), $taxonomy, '', ', ', '' ) . ' '; ?>
-							<?php endforeach; ?>
-						</td>
-					</tr>
-					<tr>
-						<th><?php _e( 'Expires', $this->text_domain ); ?></th>
-						<td><?php echo $this->get_expiration_date( get_the_ID() ); ?></td>
-					</tr>
-				</table>
-			</div>
-		</div>
-	</div>
-</div>
-
-<?php 
-endwhile;
-
-// Display navigation to next/previous pages when applicable 
-echo $this->pagination( $this->pagination_bottom );
-add_filter( 'comments_open', array( &$this, 'close_comments' ), 10 ,2 );
-
-wp_reset_query(); 
-?>
-
+wp_reset_query();

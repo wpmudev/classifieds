@@ -20,7 +20,7 @@ Description: You can override this file in your active theme.
 }
 
 .clear{
-  clear:both;	
+	clear:both;
 }
 
 ul.button-nav li {
@@ -49,21 +49,21 @@ ul.button-nav li {
 	padding-bottom: 15px;
 }
 
-.editfield input, 
+.editfield input,
 .editfield textarea,
 .editfield select {
-  -webkit-box-sizing:border-box;
-  -moz-box-sizing:border-box;
-  box-sizing:border-box;
-  width:95%;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	box-sizing:border-box;
+	width:95%;
 }
 
 .editfield .wp-post-image {
-	border: 1px solid #ddd;
+	border: 1px solid #eaeaea;
 	padding: 15px;
 }
 .single-classifieds #content img.wp-post-image {
-	border: 1px solid #ddd;
+	border: 1px solid #eaeaea;
 	padding: 15px;
 	margin: 0 15px 10px 0;
 }
@@ -71,7 +71,7 @@ ul.button-nav li {
 	background: #F6F6F6;
 }
 #content .cf-custom-fields tr th {
-	border-top:1px solid #E7E7E7;
+	border-top:1px solid #eaeaea;
 }
 .action-form, .confirm-form {
 	margin-top: 10px;
@@ -79,7 +79,7 @@ ul.button-nav li {
 .cf-padder {
 	-moz-border-radius-bottomleft: 6px;
 	-moz-border-radius-topleft: 6px;
-	border-right: 1px solid #DDDDDD;
+	border-right: 1px solid #eaeaea;
 	margin-right: 225px;
 	overflow: hidden;
 	padding: 19px;
@@ -90,11 +90,11 @@ ul.button-nav li {
 -------------------------------------------------------------- */
 
 .cf-ad{
-	width: 100%;
-	border-top: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
+	width: 96%;
 	overflow: hidden;
-	margin: 5px 0;
+	margin: 0 5px 5px 0;
+	border:1px solid #eaeaea;
+	padding: 1em;
 }
 
 .cf-pad{
@@ -103,9 +103,31 @@ ul.button-nav li {
 
 .cf-image {
 	float: left;
-	background-color: #fafafa;
+
 }
 
+.cf-title{
+	font-size: 1.2em;
+	font-weight: bold;
+
+}
+
+.cf-price{
+	float: right;
+	font-size: 1.2em;
+	font-weight: bold;
+	color: #3279BB;
+}
+
+.cf-author{
+	font-weight: bold;
+}
+.cf-terms{
+	font-weight: bold;
+}
+.cf-expires{
+	font-weight: bold;
+}
 
 .cf-info {
 	margin-left: 160px;
@@ -115,7 +137,7 @@ ul.button-nav li {
 	width: 100%;
 	height: 150px;
 	border-collapse: collapse;
-	margin:0;
+	margin:0 !important;
 }
 
 .cf-info table th {
@@ -127,7 +149,7 @@ ul.button-nav li {
 .cf-info table td {
 	padding: 0 1em;
 	vertical-align: middle;
-	border: 1px solid #ddd;
+	border: 1px solid #eaeaea;
 }
 
 .cf-ad form {
@@ -140,85 +162,42 @@ ul.button-nav li {
 	padding-right: 7px;
 }
 
-.cf-ad-info{
-	border-collapse: collapse;
-}
-
-table.cf-ad-info th,
-table.cf-ad-info td {
-	border: 1px solid #ddd;
-	padding: 0 1em;
-}
-
-table.cf-ad-info th {
-	text-align: right;
-	width:50px;
-}
-
-/*
-.cf-ad table {
-	margin: 0 0 0 15px;
-	width: 280px;
-	border: 1px solid #ddd;
-	border-collapse: collapse;
-}
-.cf-ad table th {
-	text-align: right;
-	width: 50px;
-}
-.cf-ad table th, .bp-cf-ad table td {
-	border-width: 1px;
-	border-style: inset;
-	border-color: #ddd;
-}
-
-.cf-ad form {
-	float: right;
-	overflow: hidden;
-}
-.cf-image {
-	float: left;
-}
-.cf-info {
-	float: left;
-}
-
-*/
 /* =Styles for BuddyPress normal pages
 -------------------------------------------------------------- */
 .cf-ad-info {
 	float: left;
 	width: 500px;
-	border:1px solid #EAEAEA;
 }
+.cf-ad-info td{
+padding: 0 1em;	
+}
+
 .cf-ad-info th {
-	width: 100px;
+	width: 20%;
 	vertical-align: top;
 	text-align: right;
-	border:1px solid #EAEAEA;
+	border:1px solid #eaeaea;
+	padding: 0 1em;	
 }
 .cf-description {
 	text-align: left;
-	border:1px solid #EAEAEA;
+	border:1px solid #eaeaea;
 }
 .cf-description thead tr {
 	background: none;
 }
 .cf-description td {
-	border-top:1px solid #EAEAEA;
+	border-top:1px solid #eaeaea;
 }
 .cf-custom-fields {
 	text-align: left;
 	margin-top: 20px;
-	border:1px solid #EAEAEA;
+	border:1px solid #eaeaea;
 }
 .cf-custom-fields td {
-	border:1px solid #EAEAEA;
+	border:1px solid #eaeaea;
 }
-.contact-user-btn {
-	padding-top: 165px;
-	margin-left: 10px;
-}
+
 .cf-contact-form {
 	width: 500px;
 	float: left;
@@ -226,6 +205,9 @@ table.cf-ad-info th {
 	margin-left: 15px;
 }
 
+.contact-user-btn{
+	margin-bottom: 1em;
+}
 
 /* =Styles for BuddyPress checkout page
 -------------------------------------------------------------- */
@@ -422,10 +404,10 @@ ul.cf_tabs li.cf_active a {
 	padding: 5px 10px;
 	margin: 5px 0;
 }
-.userinfo { 
+.userinfo {
 	float: left;
 	width: 75%;
-margin-bottom: 10px; 
+	margin-bottom: 10px;
 }
 .userinfo p {
 	margin-left: 10px;
@@ -439,3 +421,34 @@ margin-bottom: 10px;
 	border: 1px solid #F4950E;
 	padding: 1px;
 }
+
+/* Update page*/
+.cf_tax_panel{
+	overflow: auto;
+	height:160px;
+	border:1px solid #ddd;
+}
+
+.cf_tax_panel label{
+	margin: 0;
+	padding:0;
+	
+}
+.cf_tax_panel ul{
+	list-style: none outside none;
+	padding: 0;
+	margin: 0;
+}
+
+.cf_tax_panel ul.children{
+	font-size: .8em;
+	margin-left: 1.6em;
+}
+
+.cf_taxonomydiv{
+	float: left;
+	display: block;
+	width:47%;
+	margin-right: 3%;
+}
+

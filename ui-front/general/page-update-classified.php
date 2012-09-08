@@ -18,16 +18,17 @@ $allowed_statuses = $this->get_options('general'); // Get the ones we allow
 $allowed_statuses = array_reverse(array_intersect_key($post_statuses, $allowed_statuses['moderation']) ); //return the reduced list
 
 //Are we adding a Classified?
-if ( is_page($this->add_classified_page_id) ) {
+
+if(! isset($_REQUEST['post_id']) ){
+
 	//Make an auto-draft so we have a post id to connect attachments to. Set global $post_ID so media editor can hook up.
 	$post_id = wp_insert_post( array( 'post_title' => __( 'Auto Draft' ), 'post_type' => 'classifieds', 'post_status' => 'auto-draft'), true );
 	$classified_data = get_post($post_id, ARRAY_A );
 	$classified_data['post_title'] = ''; //Have to have a title to insert the auto-save but we don't want it as final.
 	$editing = false;
 }
-
 //Or are we editing a Classified?
-if ( is_page($this->edit_classified_page_id) ){
+elseif( isset($_REQUEST['post_id']) ) {
 	$classified_data = get_post(  $_REQUEST['post_id'], ARRAY_A );
 	$post_id = $classified_data['ID'];
 	$editing = true;
@@ -79,7 +80,7 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 
 		<?php if(post_type_supports('classifieds','title') ): ?>
 		<div class="editfield">
-			<label for="title"><?php _e( 'Title', $this->text_domain ); ?></label><br />
+			<label for="title"><?php _e( 'Title', $this->text_domain ); ?></label>
 			<input class="required" type="text" id="title" name="classified_data[post_title]" value="<?php echo ( empty( $classified_data['post_title'] ) ) ? '' : esc_attr($classified_data['post_title']); ?>" />
 			<p class="description"><?php _e( 'Enter title here.', $this->text_domain ); ?></p>
 		</div>
@@ -88,21 +89,19 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 		<div class="editfield"><?php echo $this->get_post_image_link($post_id); ?></div>
 
 		<?php if(post_type_supports('classifieds','editor') ): ?>
-		<div class="editfield alt">
-			<label for="classifiedcontent"><?php _e( 'Content', $this->text_domain ); ?></label>
+		<label for="classifiedcontent"><?php _e( 'Content', $this->text_domain ); ?></label>
 
-			<?php if(version_compare(get_bloginfo('version'), 3.3, '>=') ): ?>
+		<?php if(version_compare(get_bloginfo('version'), 3.3, '>=') ): ?>
 
-			<?php wp_editor( $classified_content, 'classifiedcontent', $editor_settings); ?>
+		<?php wp_editor( $classified_content, 'classifiedcontent', $editor_settings); ?>
 
-			<?php else: ?>
+		<?php else: ?>
 
-			<textarea id="classifiedcontent" name="classified_data[post_content]" cols="40" rows="5"><?php echo esc_textarea($classified_content); ?></textarea>
+		<textarea id="classifiedcontent" name="classified_data[post_content]" cols="40" rows="5"><?php echo esc_textarea($classified_content); ?></textarea>
 
-			<?php endif; ?>
+		<?php endif; ?>
 
-			<p class="description"><?php _e( 'The content of your classified.', $this->text_domain ); ?></p>
-		</div>
+		<p class="description"><?php _e( 'The content of your classified.', $this->text_domain ); ?></p>
 		<?php endif; ?>
 
 		<?php if(post_type_supports('classifieds','excerpt') ): ?>
@@ -126,10 +125,10 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 
 		?>
 
-		<div id="taxonomy-<?php echo $tax_name; ?>" class="taxonomydiv">
+		<div id="taxonomy-<?php echo $tax_name; ?>" class="cf_taxonomydiv">
 			<label><?php echo $labels->all_items; ?></label>
 
-			<div id="<?php echo $tax_name; ?>_all" class="tax_panel">
+			<div id="<?php echo $tax_name; ?>_all" class="cf_tax_panel">
 				<?php
 				$name = ( $tax_name == 'category' ) ? 'post_category' : 'tax_input[' . $tax_name . ']';
 				echo "<input type='hidden' name='{$name}[]' value='0' />"; 		// Allows for an empty term set to be sent. 0 is an invalid Term ID and will be ignored by empty() checks.
@@ -138,11 +137,9 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 					<?php wp_terms_checklist( 0, array( 'taxonomy' => $tax_name, 'selected_cats' => $selected_cats, 'checked_ontop' => false ) ) ?>
 				</ul>
 			</div>
-			<br />
+			<span class="description"><?php echo $labels->add_or_remove_items; ?></span>
 		</div>
 		<?php endforeach; ?>
-
-		<div class="clear"></div>
 
 		<?php
 		//Loop through the taxonomies that apply
@@ -157,17 +154,19 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 
 		?>
 
-		<div class="editfield">
+		<div class="cf_taxonomy">
 			<div id="<?php echo $tag_name; ?>-checklist" class="tagchecklist">
-				<label><?php echo $labels->name . ': ' . $labels->add_or_remove_items; ?>
+				<label><?php echo $labels->name; ?>
 					<input id="tag_<?php echo $tag_name; ?>" name="tag_input[<?php echo $tag_name; ?>]" type="text" value="<?php echo $tag_list?>" />
 				</label>
+				<span class="description"><?php echo $labels->add_or_remove_items; ?></span>
 			</div>
-			<br />
+
+			<script type="text/javascript" > jQuery('#tag_<?php echo $tag_name; ?>').tagsInput({width:'auto',height:'150px'}); </script>
 		</div>
-		<script type="text/javascript" > jQuery('#tag_<?php echo $tag_name; ?>').tagsInput({width:'auto'}); </script>
 		<?php endforeach; ?>
 
+		<div class="clear"><br /></div>
 
 		<div class="editfield" >
 			<label for="title"><?php _e( 'Status', $this->text_domain ); ?></label>
@@ -187,9 +186,7 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 		<?php if ( isset( $CustomPress_Core ) ) : ?>
 		<div class="editfield">
 			<?php
-			$post->post_type    = 'classifieds';
-			$post->ID           = $classified_data['ID'];
-			$CustomPress_Core->display_custom_fields();
+			echo do_shortcode('[custom_fields_input id="' . $classified_data['ID'] . '"][/custom_fields_input]');
 			?>
 		</div>
 		<?php endif; ?>

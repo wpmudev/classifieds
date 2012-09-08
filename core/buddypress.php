@@ -40,6 +40,10 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		/* template for  page */
 		//add_action( 'template_redirect', array( &$this, 'handle_nav' ) );
 		add_action( 'template_redirect', array( &$this, 'handle_page_requests' ) );
+		
+		// Rewrite rules
+		//add_rewrite_rule( 'members/(.+?)/classifieds(/page/(.+?))?/?$', 'index.php?post_type=classifieds&author_name=$matches[1]&paged=$matches[3]', 'top' );
+
 
 	}
 
@@ -157,7 +161,6 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	**/
 	function process_page_requests() {
 		global $bp;
-
 
 		//Component my-classifieds page
 		if ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == $this->my_classifieds_page_slug ) {
@@ -328,10 +331,11 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
 				$this->classifieds_template = $page_template;
 				$wp_query->post_count = 1;
-				add_filter('the_title', array(&$this,'no_title') );
+				add_filter( 'the_title', array( &$this, 'page_title_output' ), 10 , 2 );
 				add_filter('the_content', array(&$this, 'classifieds_content'));
 			}
 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			$this->is_classifieds_page = true;
 		}
 
 		elseif(is_single() && 'classifieds' == get_query_var('post_type')){
@@ -340,8 +344,8 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 				$this->classifieds_template = $page_template;
 				add_filter('the_content', array(&$this, 'single_content'));
 			}
-
 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			$this->is_classifieds_page = true;
 		}
 
 		elseif(is_page($this->my_credits_page_id) ){
@@ -352,6 +356,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 				add_filter('the_content', array(&$this, 'my_credits_content'));
 			}
 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			$this->is_classifieds_page = true;
 		}
 
 		elseif(is_page($this->checkout_page_id) ){
@@ -361,17 +366,18 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 				add_filter('the_content', array(&$this, 'checkout_content'));
 			}
 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
-
+			$this->is_classifieds_page = true;
 		}
 
 		elseif(is_page($this->signin_page_id) ){
 			$templates = array( 'page-signin.php' );
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
 				$this->classifieds_template = $page_template;
-				add_filter( 'the_title', array( &$this, 'delete_post_title' ), 11 ); //after wpautop
+				add_filter( 'the_title', array( &$this, 'delete_post_title' ) ); //after wpautop
 				add_filter('the_content', array(&$this, 'signin_content'));
 			}
 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			$this->is_classifieds_page = true;
 		}
 		//Classifieds update pages
 		elseif(is_page($this->add_classified_page_id) || is_page($this->edit_classified_page_id)){
@@ -388,6 +394,12 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
 			set_query_var( 'cf_action', 'my-classifieds' );
 		}
+		
+						//load  specific items
+		if ( $this->is_classifieds_page ) {
+			add_filter( 'edit_post_link', array( &$this, 'delete_edit_post_link' ) );
+		}
+
 	}
 
 	/**

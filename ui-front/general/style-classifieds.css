@@ -49,21 +49,28 @@ Description: You can override this file in your active theme.
   -webkit-box-sizing:border-box;
   -moz-box-sizing:border-box;
   box-sizing:border-box;
-  width:95%;
+  width:100%;
 }
 
-.tax_panel{
+/* Update page*/
+.cf-tax_panel{
 	overflow: auto;
 	height:160px;
-	font-size: .8em;
 	border:1px solid #ddd;
 }
 
-.tax_panel ul{
+.cf-tax_panel ul{
 	padding: 0;
 	list-style: none outside none;
+	margin-left: 1em;
 }
-.taxonomydiv{
+
+.cf_tax_panel ul.children{
+	font-size: .8em;
+	margin-left: 1.6em;
+}
+
+.cf-taxonomydiv{
 	float: left;
 	display: block;
 	width:47%;
@@ -82,12 +89,13 @@ Description: You can override this file in your active theme.
 	margin: 0;
 }
 
+/*
 #content .editfield table {
 	border:0;
 	width: inherit;
 	margin: 0;
 }
-/*
+
 #content .editfield tr td {
 border-top:0;
 padding:0 15px 0 0;
@@ -105,23 +113,35 @@ width: 100%;
 
 .cf-ad{
 	width: 100%;
-	border-top: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
 	overflow: hidden;
-	margin: 5px 0;
+}
+
+.cf-excerpt{
+	font-size: .8em;
+	line-height: 1.2em;
 }
 
 .cf-pad{
-	padding:1em;
+	margin: .5em;
+	border: 1px solid #ddd;
 }
 
 .cf-image {
 	float: left;
 	background-color: #fafafa;
+	margin: 5px;
+}
+
+.cf-image h3{
+	float: right;
 }
 
 .cf-info {
-	margin-left: 160px;
+	margin: 5px 5px 5px 160px;
+}
+
+.cf-post .cf-info {
+	margin: 5px 5px 5px 360px;
 }
 
 .cf-info table{
@@ -155,7 +175,9 @@ width: 100%;
 
 .cf-ad-info{
 	border-collapse: collapse;
+	font-size: .8em;
 }
+
 
 table.cf-ad-info th,
 table.cf-ad-info td {
@@ -240,9 +262,8 @@ padding-bottom: 15px;
 	margin-top: 10px;
 }
 .cf-contact-form {
-	width: 290px;
+	width: 300px;
 	float: left;
-	margin-top: -25px;
 }
 
 .credits_btn{
@@ -328,14 +349,15 @@ padding-bottom: 15px;
 
 /** Sigin Form **/
 /* tabbed list */
-#login-register-password ul.cf_tabs {
+#login-register-password, ul.cf_tabs {
 	padding-bottom: 0;
-	margin: 0;
+	margin: 0 !important;
 	position: relative;
 	list-style: none;
 	z-index: 1000;
 	float: left;
 }
+
 ul.cf_tabs li {
 	background: #fff;
 	border: 1px solid #E7E9F6;
@@ -370,6 +392,8 @@ ul.cf_tabs li.cf_active a {
 	float: left;
 	width: 100%;
 	top: -1px;
+	z-index: 999;
+
 }
 .cf_tab_content {
 	padding: 15px;
@@ -443,4 +467,22 @@ margin-bottom: 10px;
 .usericon img {
 	border: 1px solid #F4950E;
 	padding: 1px;
+}
+
+/* custom input field styles */
+.ct-form-field table{
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.ct-form-field label{
+	border:none;
+	font-family: inherit;
+}
+.ct-form-field td{
+	border:none;
+}
+
+.ct-form-field p{
+	font-size: .8em;
 }

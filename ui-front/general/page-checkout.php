@@ -22,14 +22,8 @@ $step = (empty($_GET['step'])) ? $step : $_GET['step'];
 $error = get_query_var('checkout_error');
 $error = (empty($error)) ? '' : $error;
 
-?>
-<pre><?php print_r($_SESSION); ?></pre>
-<pre><?php print_r($_POST); ?></pre>
-
-
-<?php
 if ( $this->is_full_access() && $step != 'success' && $step != 'api_call_error' ) {
-	_e( 'You already have access to add ads.', $this->text_domain );
+	_e( 'You already have access to create ads.', $this->text_domain );
 	$step = '';
 }
 
@@ -38,12 +32,12 @@ if ( $step == 'disabled' ): ?>
 _e( 'This feature is currently disabled by the system administrator.', $this->text_domain );
 elseif ( !empty($error) ): ?>
 <div class="invalid-login"><?php echo $error; ?></div>
-<?php endif; ?>
+<?php endif; 
 
 
-<?php
 //STEP = TERMS
 if ( $step == 'terms'): ?>
+
 <!-- Begin Terms -->
 <form action="#" method="post"  class="checkout">
 

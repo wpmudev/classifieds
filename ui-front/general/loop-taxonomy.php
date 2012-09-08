@@ -24,11 +24,13 @@ $cf = $Classifieds_Core; //shorthand
 
 $cf_options = $cf->get_options( 'general' );
 
+$field_image = (empty($cf_options['field_image_def'])) ? $cf->plugin_url . 'ui-front/general/images/blank.gif' : $cf_options['field_image_def'];
+
 ?>
 
 <?php /* Display navigation to next/previous pages when applicable */ ?>
-<?php $cf->pagination( $cf->pagination_top ); ?>
-
+<?php echo $cf->pagination( $cf->pagination_top ); ?>
+<div class="clear"></div>
 <?php /* If there are no posts to display, such as an empty archive page */ ?>
 <?php if ( ! have_posts() ) : ?>
 <div id="post-0" class="post error404 not-found">
@@ -54,9 +56,13 @@ $cf_options = $cf->get_options( 'general' );
 * the rest of the loop that is shared.
 *
 * Without further ado, the loop:
-*/ ?>
+*/  ?>
 <?php while ( have_posts() ) : the_post(); ?>
 
+<?php
+$cost = do_shortcode('[ct id="_ct_text_4cfeb3eac6f1f"]');
+$cost = is_numeric($cost) ? sprintf(__('$%01.2f',CF_TEXT_DOMAIN), $cost) : '';
+?>
 <div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
 	<div class="entry-content">
@@ -66,10 +72,11 @@ $cf_options = $cf->get_options( 'general' );
 				<?php
 				if ( '' == get_post_meta( get_the_ID(), '_thumbnail_id', true ) ) {
 					if ( isset( $cf_options['field_image_def'] ) && '' != $cf_options['field_image_def'] )
-					echo '<img width="150" height="150" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $cf_options['field_image_def'] . '">';
+					echo '<img width="200" height="150" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $field_image . '">';
 				} else {
 					echo get_the_post_thumbnail( get_the_ID(), array( 200, 150 ) );
 				}
+
 				?>
 			</div>
 			<div class="cf-info">
@@ -77,7 +84,8 @@ $cf_options = $cf->get_options( 'general' );
 					<tr>
 						<th><?php _e( 'Title', 'classifieds' ); ?></th>
 						<td>
-							<a href="<?php the_permalink(); ?>"><?php echo $post->post_title; ?></a>
+							<span class="cf-title"><a href="<?php the_permalink(); ?>"><?php echo $post->post_title; ?></a></span>
+							<span class="cf-price"><?php echo $cost; ?></span>
 						</td>
 					</tr>
 					<tr>
@@ -88,45 +96,47 @@ $cf_options = $cf->get_options( 'general' );
 							$user = get_userdata( get_the_author_meta('ID') );
 
 							if ( '' == get_option( 'permalink_structure' ) )
-							$cf_author_url = '?cf_author=' . $user->user_login;
+							$cf_author_url = '?author_name=' . $user->user_login;
 							else
-							$cf_author_url = '/cf-author/'. $user->user_login .'/';
+							$cf_author_url = '/classifieds/author/'. $user->user_login .'/';
 
 							/* For BuddyPress compatibility */
 							global $bp;
-							if ( isset( $bp ) ): ?>
-							<a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" >
-								<?php else: ?>
-								<a href="<?php echo get_option( 'siteurl' ) . $cf_author_url; ?>" alt="<?php echo $user->display_name; ?> Profile" >
-									<?php endif; ?>
+							if ( isset( $bp ) ):
+							?>
+						<span class="cf-author"><a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" ><?php echo $user->display_name; ?></a></span>
+							<?php else: ?>
+							<span class="cf-author"><a href="<?php echo get_option( 'siteurl' ) . $cf_author_url; ?>" alt="<?php echo $user->display_name; ?> Profile" ><?php echo $user->display_name; ?></a></span>
+							<?php endif; ?>
 
-									<?php echo $user->display_name; ?>
-
-								</a>
-							</td>
-						</tr>
-						<tr>
-							<th><?php _e( 'Categories', 'classifieds' ); ?></th>
-							<td>
-								<?php $taxonomies = get_object_taxonomies( 'classifieds', 'names' ); ?>
-								<?php foreach ( $taxonomies as $taxonomy ): ?>
-								<?php echo get_the_term_list( get_the_ID(), $taxonomy, '', ', ', '' ) . ' '; ?>
-								<?php endforeach; ?>
-							</td>
-						</tr>
-						<tr>
-							<th><?php _e( 'Expires', 'classifieds' ); ?></th>
-							<td><?php echo $cf->get_expiration_date( get_the_ID() ); ?></td>
-						</tr>
-					</table>
-				</div>
-
+						</td>
+					</tr>
+					<tr>
+						<th><?php _e( 'Categories', 'classifieds' ); ?></th>
+						<td><span class="cf-terms">
+							<?php $taxonomies = get_object_taxonomies( 'classifieds', 'names' ); ?>
+							<?php foreach ( $taxonomies as $taxonomy ): ?>
+							<?php echo get_the_term_list( get_the_ID(), $taxonomy, '', ', ', '' ) . ' '; ?>
+							<?php endforeach; ?>
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<th><?php _e( 'Expires', 'classifieds' ); ?></th>
+						<td><span class="cf-expires"><?php echo $cf->get_expiration_date( get_the_ID() ); ?></span></td>
+					</tr>
+					<tr>
+						<td colspan="2"><span class="cf-excerpt"><?php the_excerpt(); ?></span></td>
+					</tr>
+				</table>
 			</div>
-		</div><!-- .entry-content -->
 
-	</div><!-- #post-## -->
+		</div>
+	</div><!-- .entry-content -->
 
-	<?php endwhile; // End the loop. Whew. ?>
+</div><!-- #post-## -->
 
-	<?php /* Display navigation to next/previous pages when applicable */ ?>
-	<?php $cf->pagination( $cf->pagination_bottom ); ?>
+<?php endwhile; // End the loop. Whew. ?>
+
+<?php /* Display navigation to next/previous pages when applicable */ ?>
+<?php echo $cf->pagination( $cf->pagination_bottom ); ?>

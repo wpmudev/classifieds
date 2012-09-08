@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 if(! class_exists('CF_Meta')) {
 	class CF_Meta{
