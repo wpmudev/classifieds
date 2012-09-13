@@ -162,7 +162,7 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 			</div>
 			<span class="description"><?php echo $labels->add_or_remove_items; ?></span>
 		</div>
-		<script type="text/javascript" > jQuery('#tag_<?php echo $tag_name; ?>').tagsInput({width:'auto'; height: '150'}); </script>
+		<script type="text/javascript" > jQuery('#tag_<?php echo $tag_name; ?>').tagsInput({width:'auto', height: '150px'}); </script>
 		<?php endforeach; ?>
 
 		<div class="clear"><br /></div>

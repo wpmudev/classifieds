@@ -284,11 +284,6 @@ class Classifieds_Core {
 				$this->current_user->remove_cap('create_classifieds');
 			}
 		}
-		
-		// Rewrite rules
-		add_rewrite_rule( 'classifieds/author/(.+?)(/page/(.+?))?/?$', 'index.php?post_type=classifieds&author_name=$matches[1]&paged=$matches[3]', 'top' );
-		//flush_rewrite_rules();
-
 
 	}
 
@@ -1215,7 +1210,7 @@ class Classifieds_Core {
 		}
 		return $title;
 	}
-	
+
 	/**
 	* Format date.
 	*
@@ -1798,8 +1793,8 @@ class Classifieds_Core {
 	**/
 	function signin_content($content = null){
 		if(! in_the_loop()) return $content;
-				remove_filter( 'the_title', array( &$this, 'delete_post_title' ) ); //after wpautop
-				remove_filter('the_content', array(&$this, 'signin_content'));
+		remove_filter( 'the_title', array( &$this, 'delete_post_title' ) ); //after wpautop
+		remove_filter('the_content', array(&$this, 'signin_content'));
 		ob_start();
 		require($this->template_file('signin'));
 		$new_content = ob_get_contents();
@@ -1895,6 +1890,10 @@ class Classifieds_Core {
 
 			return $post_id;
 		}
+	}
+	
+	function hide_duration($content=''){
+		return str_replace('_ct_selectbox_4cf582bd61fa4','',$content);
 	}
 
 }

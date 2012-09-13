@@ -18,14 +18,41 @@ class Classifieds_Core_Main extends Classifieds_Core {
 
 		parent::__construct(); //Get the inheritance right
 
+		add_action( 'init', array(&$this, 'init'));
+
 		/* Handle requests for plugin pages */
+
 		add_action( 'template_redirect', array( &$this, 'process_page_requests' ) );
 
 		add_action( 'template_redirect', array( &$this, 'handle_page_requests' ) );
 
 		/* Enqueue scripts */
 		add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
+
+		add_filter( 'author_link', array( &$this, 'on_author_link' ) );
+
 	}
+
+	function init(){
+		global $wp, $wp_rewrite;
+
+		parent::init();
+
+		//Listing author rewrite rule
+		$wp->add_query_var( 'cf_author_name' );
+		$wp->add_query_var( 'cf_author_page' );
+
+		$result = add_query_arg(  array(
+		'cf_author_name' => '$matches[1]',
+		'cf_author_page' => '$matches[3]',
+		), 'index.php' );
+
+		add_rewrite_rule( 'cf-author/(.+?)(/page/(.+?))?/?$', $result, 'top' );
+		$rules = get_option( 'rewrite_rules' );
+		if ( ! isset( $rules['cf-author/(.+?)(/page/(.+?))?/?$'] ) ) $wp_rewrite->flush_rules();
+
+	}
+
 
 	/**
 	* Process $_REQUEST for main pages.
@@ -229,14 +256,12 @@ class Classifieds_Core_Main extends Classifieds_Core {
 			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
 			set_query_var( 'cf_action', 'my-classifieds' );
 		}
-		
-				//load  specific items
+
+		//load  specific items
 		if ( $this->is_classifieds_page ) {
 			add_filter( 'edit_post_link', array( &$this, 'delete_edit_post_link' ) );
 		}
-
 	}
-
 
 	/**
 	* Enqueue scripts.
@@ -244,12 +269,23 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	* @return void
 	**/
 	function enqueue_scripts() {
-		if ( file_exists( get_template_directory() . '/style-classifieds.css' ) )
-		wp_enqueue_style( 'style-classifieds', get_template_directory() . '/style-classifieds.css' );
+		if ( file_exists( get_template_directory() . '/style-classifieds.css' ) ) {
+			wp_enqueue_style( 'style-classifieds', get_template_directory() . '/style-classifieds.css' );
+		}
 		elseif ( file_exists( $this->plugin_dir . 'ui-front/general/style-classifieds.css' ) ) {
-		wp_enqueue_style( 'style-classifieds', $this->plugin_url . 'ui-front/general/style-classifieds.css' );
+			wp_enqueue_style( 'style-classifieds', $this->plugin_url . 'ui-front/general/style-classifieds.css' );
+		}
 	}
+
+	function on_author_link($link=''){
+		global $post;
+
+		if($post->post_type == 'classifieds'){
+			$link = str_replace('/author/', '/cf-author/', $link);
+		}
+		return $link;
 	}
+
 }
 
 /* Initiate Class */

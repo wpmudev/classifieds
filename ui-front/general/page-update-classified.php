@@ -18,7 +18,6 @@ $allowed_statuses = $this->get_options('general'); // Get the ones we allow
 $allowed_statuses = array_reverse(array_intersect_key($post_statuses, $allowed_statuses['moderation']) ); //return the reduced list
 
 //Are we adding a Classified?
-
 if(! isset($_REQUEST['post_id']) ){
 
 	//Make an auto-draft so we have a post id to connect attachments to. Set global $post_ID so media editor can hook up.
@@ -91,15 +90,7 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 		<?php if(post_type_supports('classifieds','editor') ): ?>
 		<label for="classifiedcontent"><?php _e( 'Content', $this->text_domain ); ?></label>
 
-		<?php if(version_compare(get_bloginfo('version'), 3.3, '>=') ): ?>
-
 		<?php wp_editor( $classified_content, 'classifiedcontent', $editor_settings); ?>
-
-		<?php else: ?>
-
-		<textarea id="classifiedcontent" name="classified_data[post_content]" cols="40" rows="5"><?php echo esc_textarea($classified_content); ?></textarea>
-
-		<?php endif; ?>
 
 		<p class="description"><?php _e( 'The content of your classified.', $this->text_domain ); ?></p>
 		<?php endif; ?>
@@ -162,7 +153,7 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 				<span class="description"><?php echo $labels->add_or_remove_items; ?></span>
 			</div>
 
-			<script type="text/javascript" > jQuery('#tag_<?php echo $tag_name; ?>').tagsInput({width:'auto',height:'150px'}); </script>
+			<script type="text/javascript" > jQuery('#tag_<?php echo $tag_name; ?>').tagsInput({width:'auto', height:'150px'}); </script>
 		</div>
 		<?php endforeach; ?>
 

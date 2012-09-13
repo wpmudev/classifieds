@@ -227,35 +227,6 @@ class Classifieds_Core_Data {
 			}
 		}
 
-		//add rule for show cf-author page
-		global $wp, $wp_rewrite;
-
-		if ( class_exists( 'BP_Core' ) ) {
-			$wp->add_query_var( 'cf_author_page' );
-			$wp->add_query_var( 'cf_current_component' );
-			$result = add_query_arg(  array(
-			'cf_author_page'        => '$matches[3]',
-			'cf_current_component'  => 'classifieds'
-			), 'index.php' );
-			//            add_rewrite_rule( 'members/admin/classifieds(/page/(.+?))?/?$', $result, 'top' );
-			add_rewrite_rule( 'members/(.+?)/classifieds(/page/(.+?))?/?$', $result, 'top' );
-			$rules = get_option( 'rewrite_rules' );
-			if ( ! isset( $rules['members/(.+?)/classifieds(/page/(.+?))?/?$'] ) )
-			//            if ( ! isset( $rules['members/admin/classifieds(/page/(.+?))?/?$'] ) )
-			$wp_rewrite->flush_rules();
-		} else {
-			$wp->add_query_var( 'cf_author_name' );
-			$wp->add_query_var( 'cf_author_page' );
-			$result = add_query_arg(  array(
-			'cf_author_name' => '$matches[1]',
-			'cf_author_page' => '$matches[3]',
-			), 'index.php' );
-			add_rewrite_rule( 'cf-author/(.+?)(/page/(.+?))?/?$', $result, 'top' );
-			$rules = get_option( 'rewrite_rules' );
-			if ( ! isset( $rules['cf-author/(.+?)(/page/(.+?))?/?$'] ) )
-			$wp_rewrite->flush_rules();
-		}
-		
 		//Custompress specfic
 		if(is_multisite()){
 			update_site_option( 'allow_per_site_content_types', true );

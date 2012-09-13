@@ -19,7 +19,7 @@
 * @since Classifieds 2.0
 */
 
-global $Classifieds_Core;
+global $bp, $Classifieds_Core;
 $cf = $Classifieds_Core; //shorthand
 
 $cf_options = $cf->get_options( 'general' );
@@ -93,20 +93,13 @@ $cost = is_numeric($cost) ? sprintf(__('$%01.2f',CF_TEXT_DOMAIN), $cost) : '';
 
 						<td>
 							<?php
-							$user = get_userdata( get_the_author_meta('ID') );
-
-							if ( '' == get_option( 'permalink_structure' ) )
-							$cf_author_url = '?author_name=' . $user->user_login;
-							else
-							$cf_author_url = '/classifieds/author/'. $user->user_login .'/';
-
 							/* For BuddyPress compatibility */
 							global $bp;
 							if ( isset( $bp ) ):
 							?>
-						<span class="cf-author"><a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" ><?php echo $user->display_name; ?></a></span>
+							<span class="cf-author"><a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" ><?php the_author(); ?></a></span>
 							<?php else: ?>
-							<span class="cf-author"><a href="<?php echo get_option( 'siteurl' ) . $cf_author_url; ?>" alt="<?php echo $user->display_name; ?> Profile" ><?php echo $user->display_name; ?></a></span>
+							<span class="cf-author"><?php the_author_posts_link(); ?></a></span>
 							<?php endif; ?>
 
 						</td>
@@ -118,21 +111,21 @@ $cost = is_numeric($cost) ? sprintf(__('$%01.2f',CF_TEXT_DOMAIN), $cost) : '';
 							<?php foreach ( $taxonomies as $taxonomy ): ?>
 							<?php echo get_the_term_list( get_the_ID(), $taxonomy, '', ', ', '' ) . ' '; ?>
 							<?php endforeach; ?>
-							</span>
-						</td>
-					</tr>
-					<tr>
-						<th><?php _e( 'Expires', 'classifieds' ); ?></th>
-						<td><span class="cf-expires"><?php echo $cf->get_expiration_date( get_the_ID() ); ?></span></td>
-					</tr>
-					<tr>
-						<td colspan="2"><span class="cf-excerpt"><?php the_excerpt(); ?></span></td>
-					</tr>
-				</table>
-			</div>
-
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<th><?php _e( 'Expires', 'classifieds' ); ?></th>
+					<td><span class="cf-expires"><?php echo $cf->get_expiration_date( get_the_ID() ); ?></span></td>
+				</tr>
+				<tr>
+					<td colspan="2"><span class="cf-excerpt"><?php the_excerpt(); ?></span></td>
+				</tr>
+			</table>
 		</div>
-	</div><!-- .entry-content -->
+
+	</div>
+</div><!-- .entry-content -->
 
 </div><!-- #post-## -->
 

@@ -105,7 +105,13 @@ class Gateway_Relay{
 		for($i=0;$i <= count($this->queue); $i++){
 			$this->process_queue();
 		}
+		/*
+		echo '<pre>';
+		print_r($this->queue);
+		echo '</pre>';
+		*/
 		exit;
+
 	}
 
 	function add_to_queue($source, $postdata, $retries = 5 ){
@@ -178,7 +184,6 @@ class Gateway_Relay{
 
 }
 
-new Gateway_Relay;
 
 function register_gateway_relay($prefix = '', $url='', $password=''){
 	$settings = get_site_option(GATEWAY_RELAY_SETTINGS_NAME);
@@ -206,5 +211,7 @@ function unregister_gateway_relay($prefix = '', $url='', $password=''){
 	}
 	return false;
 }
+
+new Gateway_Relay;
 
 endif;

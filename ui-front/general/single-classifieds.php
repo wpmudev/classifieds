@@ -54,18 +54,12 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 				<td>
 
 					<?php
-					$user = get_userdata( get_the_author_meta('ID') );
-
-					if ( '' == get_option( 'permalink_structure' ) )
-					$cf_author_url = '?cf_author=' . $user->user_login;
-					else
-					$cf_author_url = '/cf-author/'. $user->user_login .'/';
-
 					/* For BuddyPress compatibility */
 					if ( isset( $bp ) ):?>
 					<a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" ><?php echo $user->display_name; ?></a>
 					<?php else: ?>
-					<a href="<?php echo get_option( 'siteurl' ) . $cf_author_url; ?>" alt="<?php echo $user->display_name; ?> Profile" ><?php echo $user->display_name; ?></a>
+					
+					<?php the_author_posts_link(); ?>
 
 					<?php endif; ?>
 
@@ -92,7 +86,13 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 		</table>
 		<div class="clear"></div>
 	<div class="cf-custom-block">
-		<?php echo do_shortcode('[custom_fields_block wrap="table"]_ct_text_4cfeb3eac6f1f[/custom_fields_block]'); ?>
+		
+		<?php 
+		//filter the duration field from the output
+		add_filter('custom_field_filter', array(&$this, 'hide_duration') );
+		echo do_shortcode('[custom_fields_block wrap="table"][/custom_fields_block]');
+		remove_filter('custom_field_filter', array(&$this, 'hide_duration') ); 
+		?>
 	</div>
 	</div>
 	<div class="clear"></div>

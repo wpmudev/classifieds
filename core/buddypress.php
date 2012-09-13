@@ -20,6 +20,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	}
 
 	function init(){
+		global $wp, $wp_rewrite;
 
 		parent::init(); //Inheritance
 
@@ -40,10 +41,6 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		/* template for  page */
 		//add_action( 'template_redirect', array( &$this, 'handle_nav' ) );
 		add_action( 'template_redirect', array( &$this, 'handle_page_requests' ) );
-		
-		// Rewrite rules
-		//add_rewrite_rule( 'members/(.+?)/classifieds(/page/(.+?))?/?$', 'index.php?post_type=classifieds&author_name=$matches[1]&paged=$matches[3]', 'top' );
-
 
 	}
 
@@ -381,7 +378,8 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		}
 		//Classifieds update pages
 		elseif(is_page($this->add_classified_page_id) || is_page($this->edit_classified_page_id)){
-			wp_redirect($logged_url . 'create-new'); exit;
+			wp_redirect($logged_url . 'create-new/?' . http_build_query($_GET) ); 
+			exit;
 		}
 		/* If user wants to go to My Classifieds main page  */
 		elseif ( isset( $_POST['go_my_classifieds'] ) ) {
