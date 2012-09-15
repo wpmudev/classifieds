@@ -14,8 +14,6 @@ global $post_ID;
 $prefix = 'ct_';
 $custom_fields = get_option('ct_custom_fields');
 
-print_r($custom_fields);
-
 if ( !isset( $post->ID ) )
 $post->ID = 0;
 

@@ -16,6 +16,7 @@ class Classifieds_Core_Data {
 	function __construct() {
 		add_action( 'init', array( &$this, 'load_data' ) );
 		add_action( 'init', array( &$this, 'load_payment_data' ) );
+		add_action( 'init', array( &$this, 'load_mu_plugins' ) );
 	}
 
 	/**
@@ -271,11 +272,11 @@ class Classifieds_Core_Data {
 			'one_time_name'       => 'One Time Only',
 			'enable_credits'      => '1',
 			'cost_credit'         => '.99',
-			'credits_per_week' => 1,
-			'signup_credits'       => 0,
+			'credits_per_week'    => 1,
+			'signup_credits'      => 0,
 			'credits_description' => '',
-			'tos_txt'       => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at sem libero. Pellentesque accumsan consequat porttitor. Curabitur ut lorem sed ipsum laoreet tempus at vel erat. In sed tempus arcu. Quisque ut luctus leo. Nulla facilisi. Sed sodales lectus ut tellus venenatis ac convallis metus suscipit. Vestibulum nec orci ut erat ultrices ullamcorper nec in lorem. Vivamus mauris velit, vulputate eget adipiscing elementum, mollis ac sem. Aliquam faucibus scelerisque orci, ut venenatis massa lacinia nec. Phasellus hendrerit lorem ornare orci congue elementum. Nam faucibus urna a purus hendrerit sit amet pulvinar sapien suscipit. Phasellus adipiscing molestie imperdiet. Mauris sit amet justo massa, in pellentesque nibh. Sed congue, dolor eleifend egestas egestas, erat ligula malesuada nulla, sit amet venenatis massa libero ac lacus. Vestibulum interdum vehicula leo et iaculis.',
-			'key'               => 'payments'
+			'tos_txt'             => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec at sem libero. Pellentesque accumsan consequat porttitor. Curabitur ut lorem sed ipsum laoreet tempus at vel erat. In sed tempus arcu. Quisque ut luctus leo. Nulla facilisi. Sed sodales lectus ut tellus venenatis ac convallis metus suscipit. Vestibulum nec orci ut erat ultrices ullamcorper nec in lorem. Vivamus mauris velit, vulputate eget adipiscing elementum, mollis ac sem. Aliquam faucibus scelerisque orci, ut venenatis massa lacinia nec. Phasellus hendrerit lorem ornare orci congue elementum. Nam faucibus urna a purus hendrerit sit amet pulvinar sapien suscipit. Phasellus adipiscing molestie imperdiet. Mauris sit amet justo massa, in pellentesque nibh. Sed congue, dolor eleifend egestas egestas, erat ligula malesuada nulla, sit amet venenatis massa libero ac lacus. Vestibulum interdum vehicula leo et iaculis.',
+			'key'                 => 'payments'
 			);
 		}
 
@@ -300,6 +301,17 @@ class Classifieds_Core_Data {
 		}
 
 		update_option( CF_OPTIONS_NAME, $options );
+	}
+	
+	function load_mu_plugins(){
+
+	if(!is_dir(WPMU_PLUGIN_DIR . '/logs')):
+		mkdir(WPMU_PLUGIN_DIR . '/logs', 0755, true);
+	endif;
+		
+	copy(	CF_PLUGIN_DIR . 'mu-plugins/gateway-relay.php', WPMU_PLUGIN_DIR .'/gateway-relay.php');
+	copy(	CF_PLUGIN_DIR . 'mu-plugins/wpmu-assist.php', WPMU_PLUGIN_DIR .'/wpmu-assist.php');
+		
 	}
 }
 
