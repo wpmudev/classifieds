@@ -218,6 +218,10 @@ class CF_Transactions{
 			if($this->_transactions['order']['status'] == 'success') {
 				$this->_transactions['order']['order_info'] = $value;
 				$this->_transactions['order']['payment_method'] = 'paypal';
+
+				//for affiliate subscription
+				$affiliate_settings = $this->get_options( 'affiliate_settings' );
+				do_action( 'classifieds_set_paid_member', $affiliate_settings, $user_id, $this->_transactions['order']['billing_type'] );
 			}
 
 			if(! empty($value['txn_type']) && in_array( $value['txn_type'], array("subscr_cancel", "subscr_failed", "subscr_eot") ) ) {
@@ -241,6 +245,9 @@ class CF_Transactions{
 
 //						print_r($this->_transactions['order']['expires']);
 					}
+				//for affiliate subscription
+				$affiliate_settings = $this->get_options( 'affiliate_settings' );
+				do_action( 'classifieds_set_paid_member', $affiliate_settings, $user_id, $this->_transactions['order']['billing_type'] );
 				}
 			}
 
@@ -258,6 +265,10 @@ class CF_Transactions{
 						$this->_transactions['order']['payment_method'] = 'authorizenet';
 						$this->_transactions['authorizenet']['transactions'][] = (string)$value->transactionResponse->transId;
 						$this->_transactions['authorizenet']['key'] = (string)$value->refId; //Invoice number
+
+				//for affiliate subscription
+				$affiliate_settings = $this->get_options( 'affiliate_settings' );
+				do_action( 'classifieds_set_paid_member', $affiliate_settings, $user_id, $this->_transactions['order']['billing_type'] );
 
 					}
 

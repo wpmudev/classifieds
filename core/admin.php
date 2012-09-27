@@ -117,7 +117,16 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	* @return void
 	**/
 	function handle_admin_requests() {
-		$valid_tabs = array('general', 'capabilities', 'payments', 'payment-types' ,'shortcodes', 'my-credits', 'send-credits');
+		$valid_tabs = array(
+		'general', 
+		'capabilities', 
+		'payments', 
+		'payment-types',
+		'affiliate', 
+		'shortcodes', 
+		'my-credits', 
+		'send-credits',
+		);
 
 		$page = (empty($_GET['page'])) ? '' : $_GET['page'] ;
 
@@ -364,7 +373,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	*/
 	function ajax_classifieds_ipn() {
 		// debug mode for IPN script (please open plugin dir (classifieds) for writing)
-		$debug_ipn = 1;
+		$debug_ipn = 0;
 		if ( 1 == $debug_sp ) {
 			$this->write_to_log(
 			' - 01 -' . " POST\r\n" .
@@ -452,11 +461,6 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 				//write subscr_id (profile_id) to user meta
 				$transactions->paypal = $_POST;
 
-				//for affiliate subscription
-				$affiliate_settings = $this->get_options( 'affiliate_settings' );
-				do_action( 'classifieds_set_paid_member', $affiliate_settings, $user_id, 'recurring' );
-
-
 			} elseif( in_array( $_POST['txn_type'], array("subscr_cancel", "subscr_failed", "subscr_eot") ) ) {
 
 				if ( 1 == $debug_sp ) {
@@ -480,7 +484,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	function ajax_classifieds_silent_post() {
 
 		// debug mode for Silent Post script (please open plugin dir (classifieds) for writing)
-		$debug_sp = 1;
+		$debug_sp = 0;
 		if ( 1 == $debug_sp ) {
 			$this->write_to_log(
 			print_r( date( "H:i:s m.d.y" ) . ' - 01 -' . " POST\r\n", true ) .

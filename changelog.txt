@@ -5,7 +5,7 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 == Changelog ==
 
 ==2.3==
-* New classifieds front end entry screen.
+* New classifieds front end WYSIWYG entry screen.
 * Added control of the post status a member can save a classified as.
 * Expanded capabilites list
 * Added control of member roles for classifieds
@@ -14,8 +14,13 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 * Field regex validation and required fields.
 * Control post statuses so you can setup moderation
 * Weeks are now editable. You can add other options as long as they are number Weeks (8 Weeks).
-
-
+* CustomPress 1.3
+* Multisite support.
+* BuddyPress support fixes.
+* Plugin to automatically join member with the subsite they signup on in Multisite.
+* Member role and capabilities editor.
+* MU plugins to handle recurring payments on Multisite.
+* Added uninstall to remove directory custom types if plugin is deleted.
 
 = 2.2.2.3 =
 * Changed BuddyPress styling for pagination
