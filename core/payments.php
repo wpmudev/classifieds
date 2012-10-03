@@ -68,7 +68,7 @@ class CF_Payments{
 		$current_user = wp_get_current_user();
 
 		$options = $this->get_options();
-		$this->user_role = (empty($options['general']['member_role']) ) ? 'subscriber' :$options['general']['member_role'] ;
+		$this->user_role = (empty($options['general']['member_role']) ) ? get_option('default_role') :$options['general']['member_role'] ;
 
 		//How do we sell stuff
 		$options = (empty($options['payment_types'] ) ) ? array() : $options['payment_types'] ;
@@ -687,7 +687,7 @@ class CF_Payments{
 				$form .= '<input type="hidden" name="cmd" value="_xclick-subscriptions">';
 				$form .= '<input type="hidden" name="item_name" value="' . esc_attr($options['payments']['recurring_name']) . '">';
 				$form .= '<input type="hidden" name="item_number" value="a" >';
-				$form .= '<input type="hidden" name="invoice" value="' . uniqid("CLS-{$blogid}-") . '">'; // 'CLS' is the prefix for Gateway Relay
+				$form .= '<input type="hidden" name="invoice" value="' . uniqid("CLS-{$blog_id}-") . '">'; // 'CLS' is the prefix for Gateway Relay
 				$form .= '<input type="hidden" name="currency_code" value="' . $options['payment_types']['paypal']['currency'] .'">';
 				$form .= '<input type="hidden" name="a3" value="' . $options['payments']['recurring_cost'] . '">';
 				$form .= '<input type="hidden" name="p3" value="' . $options['payments']['billing_frequency'] . '">';

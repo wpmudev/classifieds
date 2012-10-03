@@ -156,7 +156,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 				/* Save options */
 				if ( isset( $_POST['add_role'] ) ) {
 					check_admin_referer('verify');
-					$name = sanitize_user($_POST['new_role']);
+					$name = sanitize_file_name($_POST['new_role']);
 					$slug = sanitize_key(preg_replace('/\W+/','_',$name) );
 					$result = add_role($slug, $name, array('read' => true) );
 					if (empty($result) ) $this->message = __('ROLE ALREADY EXISTS' , $this->text_domain);
@@ -374,7 +374,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	function ajax_classifieds_ipn() {
 		// debug mode for IPN script (please open plugin dir (classifieds) for writing)
 		$debug_ipn = 0;
-		if ( 1 == $debug_sp ) {
+		if ( 1 == $debug_ipn ) {
 			$this->write_to_log(
 			' - 01 -' . " POST\r\n" .
 			print_r( $_SERVER, true ) . "\r\n" .
@@ -401,7 +401,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 		$response = wp_remote_get( $url . "?" . $postdata, $args );
 
 		if( is_wp_error( $response ) ) {
-			if ( 1 == $debug_sp ) {
+			if ( 1 == $debug_ipn ) {
 				$this->write_to_log(
 				' - 02 -' . " error with send post\r\n" .
 				print_r( "url: " . $url . "\r\n", true ) .
@@ -415,7 +415,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 
 
 		if ( $response != "VERIFIED" ) {
-			if ( 1 == $debug_sp ) {
+			if ( 1 == $debug_ipn ) {
 				$this->write_to_log(
 				' - 03 -' . " not VERIFIED\r\n" .
 				print_r( $response, true ),
@@ -442,35 +442,37 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 
 				//checking hash keys
 				if ( $key != $transactions->paypal['key']) {
-					if ( 1 == $debug_sp ) {
+					if ( 1 == $debug_ipn ) {
 						$this->write_to_log(
 						' - 04 -' . " Conflict Keys:\r\n" .
-						print_r( " key from site: " . $transactions->paypal['key'], true ) .
-						print_r( "key from Paypal: " . $key, true ),
+						print_r( " key from site: " . $transactions->paypal['key'], true ) . "\r\n" .
+						print_r( "key from Paypal: " . $key, true ) . "\r\n" .
 						print_r($transactions->paypal, true),
 						'debug_ipn' );
 					}
 					die("conflict key");
 				}
 
-				if ( 1 == $debug_sp ) {
-					$this->write_to_log(
-					' - 05 -' . " subscr_payment OK\r\n",
-					'debug_ipn' );
-				}
 				//write subscr_id (profile_id) to user meta
 				$transactions->paypal = $_POST;
 
-			} elseif( in_array( $_POST['txn_type'], array("subscr_cancel", "subscr_failed", "subscr_eot") ) ) {
-
-				if ( 1 == $debug_sp ) {
+				if ( 1 == $debug_ipn ) {
 					$this->write_to_log(
-					' - 05 -' . " subscr_payment OK\r\n",
+					' - 05 -' . " subscr_payment OK\r\n" .
+					print_r($transactions, true) . "\r\n",
 					'debug_ipn' );
 				}
 
+			} elseif( in_array( $_POST['txn_type'], array("subscr_cancel", "subscr_failed", "subscr_eot") ) ) {
+
 				$transactions->paypal = $_POST;
 
+				if ( 1 == $debug_ipn ) {
+					$this->write_to_log(
+					' - 05 -' . " subscr_payment OK\r\n" .
+					print_r($transactions, true) . "\r\n",
+					'debug_ipn' );
+				}
 			}
 		}
 		die("ok");
@@ -507,6 +509,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 				&& $_POST['x_subscription_id'] == $transactions->authorizenet['profile_id'] ){
 
 					$transactions->authorizenet = $_POST;
+
 				} else {
 
 					if ( 1 == $debug_sp ) $this->write_to_log('Subscription ID mismatch Post: ' . $_POST['x_subscription_id'] . ' Key: ' . $transactions->authorizenet['profile_id'] , 'debug_sp');

@@ -393,7 +393,12 @@ class Classifieds_Core {
 				|| @is_page($this->my_credits_page_id)
 				|| @is_page($this->checkout_page_id)
 				){
-					wp_redirect( get_permalink($this->signin_page_id) . '?redirect_to=' . urlencode(get_permalink($query->queried_object_id)) );
+					
+					$args = array('redirect_to' => urlencode(get_permalink($query->queried_object_id)));
+					if(!empty($_REQUEST['register'])) $args['register'] = $_REQUEST['register'];
+					if(!empty($_REQUEST['reset'])) $args['reset'] = $_REQUEST['reset'];
+					
+					wp_redirect( add_query_arg($args, get_permalink($this->signin_page_id) )  );
 					exit;
 				}
 			}
