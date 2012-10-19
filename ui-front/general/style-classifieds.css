@@ -70,7 +70,7 @@ Description: You can override this file in your active theme.
 	margin-left: 1.6em;
 }
 
-.cf-taxonomydiv{
+.cf_taxonomydiv{
 	float: left;
 	display: block;
 	width:47%;
@@ -126,6 +126,15 @@ width: 100%;
 	border: 1px solid #ddd;
 }
 
+.cf-title {
+	font-weight: bold;
+	
+}
+
+.cf-price {
+	float: right;
+	font-weight: bold;
+}
 .cf-image {
 	float: left;
 	background-color: #fafafa;
@@ -292,9 +301,9 @@ padding-bottom: 15px;
 }
 
 #cf-message-error {
-	background-color: #EF0E0E;
+	background-color: #FFEBE8;
 	color: #000;
-	border: 1px solid #4C0000;
+	border: 1px solid #CC0000;
 }
 
 .my-credits h3 {
@@ -485,4 +494,21 @@ margin-bottom: 10px;
 
 .ct-form-field p{
 	font-size: .8em;
+}
+
+/** Thickbox layer adjustment */
+#TB_overlay {
+	z-index:10000;
+}
+
+#TB_window {
+	z-index: 10002;
+}
+
+#TB_load{
+	z-index:10003;
+}
+
+#TB_HideSelect{
+	z-index:9999;
 }

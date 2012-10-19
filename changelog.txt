@@ -21,6 +21,7 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 * Member role and capabilities editor.
 * MU plugins to handle recurring payments on Multisite.
 * Added uninstall to remove directory custom types if plugin is deleted.
+* Added captcha to the contact form.
 
 = 2.2.2.3 =
 * Changed BuddyPress styling for pagination

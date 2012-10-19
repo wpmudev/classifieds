@@ -16,6 +16,10 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	/** @var string $message Return message after save settings operation */
 	var $message  = '';
 
+	var $tutorial_id = 0;
+
+	var $tutorial_script = '';
+
 	/**
 	* Constructor. Hooks the whole module to the "init" hook.
 	*
@@ -56,7 +60,33 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 			add_action( 'wp_ajax_nopriv_classifieds_sp', array( &$this, 'ajax_classifieds_silent_post' ) );
 			add_action( 'wp_ajax_classifieds_sp', array( &$this, 'ajax_classifieds_silent_post' ) );
 
+			add_action('admin_init', array($this, 'tutorial_script') );
+			add_action('admin_print_footer_scripts', array($this, 'print_tutorial_script') );
 		}
+	}
+
+	function print_tutorial_script(){
+		echo $this->tutorial_script;
+	}
+
+	function tutorial_script(){
+
+		if(file_exists($this->plugin_dir . 'tutorial/classifieds-tutorial.js') ){
+			$this->tutorial_script = file_get_contents($this->plugin_dir . 'tutorial/classifieds-tutorial.js');
+
+			preg_match('/data-kera-tutorial="(.+)">/', $this->tutorial_script, $matches);
+
+			$this->tutorial_id = $matches[1];
+
+			$this->tutorial_script = strstr($this->tutorial_script, '<script');
+		}
+	}
+
+	function launch_tutorial(){
+		?>
+		<h2>Classifieds Tutorial</h2>
+		<a href="#" data-kera-tutorial="<?php echo $this->tutorial_id; ?>">Launch Tutorial</a>
+		<?php
 	}
 
 	/**
@@ -81,7 +111,12 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 			$settings_page = add_submenu_page( 'edit.php?post_type=classifieds', __( 'Classifieds Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
 			add_action( 'admin_print_styles-' .  $settings_page, array( &$this, 'enqueue_scripts' ) );
 		}
+
+		if(file_exists($this->plugin_dir . 'tutorial/classifieds-tutorial.js') ){
+			add_submenu_page( 'edit.php?post_type=classifieds', __( 'Tutorial', $this->text_domain ), __( 'Tutorial', $this->text_domain ), 'read', 'classifieds_tutorial', array( &$this, 'launch_tutorial' ) );
+		}
 	}
+
 
 	function redirect_add(){
 		echo '<script>window.location = "' . get_permalink($this->add_classified_page_id) . '";</script>';
@@ -118,13 +153,13 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	**/
 	function handle_admin_requests() {
 		$valid_tabs = array(
-		'general', 
-		'capabilities', 
-		'payments', 
+		'general',
+		'capabilities',
+		'payments',
 		'payment-types',
-		'affiliate', 
-		'shortcodes', 
-		'my-credits', 
+		'affiliate',
+		'shortcodes',
+		'my-credits',
 		'send-credits',
 		);
 

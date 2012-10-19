@@ -171,6 +171,9 @@ class Classifieds_Core {
 		add_action( 'check_expiration_dates', array( &$this, 'check_expiration_dates_callback' ) );
 		/* Set signup credits for new users */
 		add_action( 'user_register', array( &$this, 'set_signup_user_credits' ) );
+		add_action('pre_get_posts', array(&$this, 'on_pre_get_posts') );
+
+
 		/** Map meta capabilities */
 		add_filter( 'map_meta_cap', array( &$this, 'map_meta_cap' ), 11, 4 );
 		/** Show only user's classifieds on classifieds posttype page*/
@@ -195,6 +198,7 @@ class Classifieds_Core {
 		add_shortcode( 'cf_signin_btn', array( &$this, 'signin_btn_sc' ) );
 		add_shortcode( 'cf_custom_fields', array( &$this, 'custom_fields_sc' ) );
 	}
+
 
 	function on_enqueue_scripts(){
 		wp_enqueue_style( 'jquery-taginput', $this->plugin_url . 'ui-front/css/jquery.tagsinput.css' );
@@ -393,11 +397,11 @@ class Classifieds_Core {
 				|| @is_page($this->my_credits_page_id)
 				|| @is_page($this->checkout_page_id)
 				){
-					
+
 					$args = array('redirect_to' => urlencode(get_permalink($query->queried_object_id)));
 					if(!empty($_REQUEST['register'])) $args['register'] = $_REQUEST['register'];
 					if(!empty($_REQUEST['reset'])) $args['reset'] = $_REQUEST['reset'];
-					
+
 					wp_redirect( add_query_arg($args, get_permalink($this->signin_page_id) )  );
 					exit;
 				}
@@ -430,6 +434,25 @@ class Classifieds_Core {
 		}
 		return $query;
 	}
+
+	/**
+	* Restrict Media library to current user's files
+	*
+	*/
+	function on_pre_get_posts($wp_query_obj) {
+
+		global $current_user, $pagenow;
+
+		if( !is_a( $current_user, 'WP_User') ) return;
+
+		if( 'media-upload.php' != $pagenow ) return;
+
+		if( !current_user_can('administrator') &&  !current_user_can('edit_others_classifieds') ) $wp_query_obj->set('author', $current_user->id );
+
+		return;
+	}
+
+
 
 
 	//filters the titles for our custom pages
@@ -1006,13 +1029,18 @@ class Classifieds_Core {
 	function handle_contact_form_requests() {
 
 		/* Only handle request if on single{}.php template and our post type */
-		if ( get_post_type() == $this->post_type && is_single() ) {
-
-			if ( isset( $_POST['contact_form_send'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'send_message' ) ) {
-				if ( isset( $_POST['name'] ) && '' != $_POST['name'] &&
-				isset( $_POST['email'] ) && '' != $_POST['email'] &&
-				isset( $_POST['subject'] ) && '' != $_POST['subject'] &&
-				isset( $_POST['message'] ) && '' != $_POST['message'] ) {
+		if ( get_post_type() == $this->post_type && is_single($_SESSION['cf_random_value']) ) {
+			
+			if(! session_id() ) session_start();
+			
+			if (isset( $_POST['contact_form_send'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'send_message' ) ){
+				if ( isset( $_POST['name'] ) && '' != $_POST['name'] 
+				&& isset( $_POST['email'] ) && '' != $_POST['email'] 
+				&& isset( $_POST['subject'] ) && '' != $_POST['subject'] 
+				&& isset( $_POST['message'] ) && '' != $_POST['message'] 
+				&& isset( $_POST['cf_random_value'] ) && (md5(strtoupper($_POST['cf_random_value']) )  == $_SESSION['cf_random_value'] ) 
+				
+				) {
 
 					global $post;
 
@@ -1038,8 +1066,9 @@ class Classifieds_Core {
 					$message    = sprintf( __( $body, $this->text_domain ), $user_info->user_nicename, $_POST['name'], $_POST['email'], $_POST['subject'], $_POST['message'], get_permalink( $post->ID ) );
 					$headers    = "MIME-Version: 1.0\n" . "From: " . $_POST['name'] .  " <{$_POST['email']}>\n" . "Content-Type: text/html; charset=\"" . get_option( 'blog_charset' ) . "\"\n";
 
-					wp_mail( $to, $subject, $message, $headers );
-					wp_redirect( get_permalink( $post->ID ) . '?sent=1' );
+					$sent = (wp_mail( $to, $subject, $message, $headers ) ) ? '1' : '0';
+					wp_redirect( get_permalink( $post->ID ) . '?sent=' . $sent );
+					exit;
 				}
 			}
 		}
@@ -1896,7 +1925,7 @@ class Classifieds_Core {
 			return $post_id;
 		}
 	}
-	
+
 	function hide_duration($content=''){
 		return str_replace('_ct_selectbox_4cf582bd61fa4','',$content);
 	}

@@ -253,9 +253,9 @@ padding: 0 1em;
 }
 
 #cf-message-error {
-	background-color: #EF0E0E;
+	background-color: #FFEBE8;
 	color: #000;
-	border: 1px solid #4C0000;
+	border: 1px solid #CC0000;
 }
 
 .my-credits h3 {

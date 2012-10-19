@@ -24,7 +24,7 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 <?php if ( isset( $_POST['_wpnonce'] ) ): ?>
 <br clear="all" />
 <div id="cf-message-error">
-	<?php _e( "Send message failed: you didn't filled all required fields in contact form!", $this->text_domain ); ?>
+	<?php _e( "Send message failed: you didn't fill all required fields correctly in contact form!", $this->text_domain ); ?>
 </div>
 <br clear="all" />
 <?php elseif ( isset( $_GET['sent'] ) && 1 == $_GET['sent'] ): ?>
@@ -58,7 +58,7 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 					if ( isset( $bp ) ):?>
 					<a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" ><?php echo $user->display_name; ?></a>
 					<?php else: ?>
-					
+
 					<?php the_author_posts_link(); ?>
 
 					<?php endif; ?>
@@ -85,15 +85,15 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 			</tr>
 		</table>
 		<div class="clear"></div>
-	<div class="cf-custom-block">
-		
-		<?php 
-		//filter the duration field from the output
-		add_filter('custom_field_filter', array(&$this, 'hide_duration') );
-		echo do_shortcode('[custom_fields_block wrap="table"][/custom_fields_block]');
-		remove_filter('custom_field_filter', array(&$this, 'hide_duration') ); 
-		?>
-	</div>
+		<div class="cf-custom-block">
+
+			<?php
+			//filter the duration field from the output
+			add_filter('custom_field_filter', array(&$this, 'hide_duration') );
+			echo do_shortcode('[custom_fields_block wrap="table"][/custom_fields_block]');
+			remove_filter('custom_field_filter', array(&$this, 'hide_duration') );
+			?>
+		</div>
 	</div>
 	<div class="clear"></div>
 
@@ -129,6 +129,13 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 			<label for="message"><?php _e( 'Message', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
 			<textarea id="message" name="message"><?php echo ( isset( $_POST['message'] ) ) ? $_POST['message'] : ''; ?></textarea>
 			<p class="description"><?php _e( 'Enter the content of your inquire here.', $this->text_domain ); ?></p>
+		</div>
+
+		<div class="editfield">
+			<label for="cf_random_value"><?php _e( 'Security image', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
+			<img src="<?php echo $this->plugin_url; ?>ui-front/general/cf-captcha-image.php" />
+			<input type="text" id="cf_random_value" name ="cf_random_value" value="" size="8" />
+			<p class="description"><?php _e( 'Enter the characters from the image.', $this->text_domain ); ?></p>
 		</div>
 
 		<div class="submit">

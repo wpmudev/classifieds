@@ -78,7 +78,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 						// The credits required to renew the classified for the selected period
 						$credits_required = $this->get_credits_from_duration( $_POST['duration'] );
 						// If user have more credits of the required credits proceed with renewing the ad
-						if ( $this->is_full_access() || ($credits_required && $this->user_credits >= $credits_required ) ){
+						if ( $this->is_full_access() || ($this->user_credits >= $credits_required ) ){
 							// Process the status of the post
 							$this->process_status( (int) $_POST['post_id'], 'publish' );
 							// Save the expiration date
@@ -118,7 +118,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 
 				$credits_required = $this->get_credits_from_duration( $_POST[$this->custom_fields['duration'] ] );
 				// If user have more credits of the required credits proceed with renewing the ad
-				if ( $this->is_full_access() || ($credits_required && $this->user_credits >= $credits_required ) ){
+				if ( $this->is_full_access() || ($this->user_credits >= $credits_required ) ){
 					// Update ad
 					$this->update_ad( $_POST);
 					// Save the expiration date
@@ -161,8 +161,6 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	**/
 	function handle_page_requests() {
 		global $wp_query;
-
-
 
 		/* Handles request for classifieds page */
 		$page_template = locate_template( array('page.php' ) );
@@ -269,6 +267,11 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	* @return void
 	**/
 	function enqueue_scripts() {
+		if(is_page($this->add_classified_page_id) || is_page($this->edit_classified_page_id)) {
+			wp_enqueue_script('thickbox');
+			wp_enqueue_style('thickbox');
+		}
+
 		if ( file_exists( get_template_directory() . '/style-classifieds.css' ) ) {
 			wp_enqueue_style( 'style-classifieds', get_template_directory() . '/style-classifieds.css' );
 		}

@@ -10,3 +10,5 @@ function cf_supports_taxonomy($taxonomy=''){
 	if(empty($taxonomy)) return false;
 	return (is_array($wp_taxonomies[$taxonomy]->object_type)) ? in_array('classifieds', $wp_taxonomies[$taxonomy]->object_type) : false;
 }
+
+

@@ -56,6 +56,8 @@ class CF_Transactions{
 
 		if(! $cf_transactions ){
 			$cf_transactions = $this->struc;
+			$options = $this->get_options('payments');
+			$dr_transactions['credits'] = (empty($options['credits_per_week']) ) ? 0 : $options['credits_per_week'];
 			update_user_option($this->user_id, 'cf_transactions', $cf_transactions);
 		}
 

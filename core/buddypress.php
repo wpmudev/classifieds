@@ -34,7 +34,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		add_action( 'admin_menu', array( &$this, 'add_navigation' ), 2 );
 
 		/* Enqueue styles */
-		add_action( 'wp_print_styles', array( &$this, 'enqueue_styles' ) );
+		add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
 
 		add_action( 'bp_template_content', array( &$this, 'process_page_requests' ) );
 
@@ -378,7 +378,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		}
 		//Classifieds update pages
 		elseif(is_page($this->add_classified_page_id) || is_page($this->edit_classified_page_id)){
-			wp_redirect($logged_url . 'create-new/?' . http_build_query($_GET) ); 
+			wp_redirect($logged_url . 'create-new/?' . http_build_query($_GET) );
 			exit;
 		}
 		/* If user wants to go to My Classifieds main page  */
@@ -392,8 +392,8 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
 			set_query_var( 'cf_action', 'my-classifieds' );
 		}
-		
-						//load  specific items
+
+		//load  specific items
 		if ( $this->is_classifieds_page ) {
 			add_filter( 'edit_post_link', array( &$this, 'delete_edit_post_link' ) );
 		}
@@ -504,7 +504,11 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	*
 	* @return void
 	**/
-	function enqueue_styles() {
+	function enqueue_scripts() {
+		if(is_page($this->add_classified_page_id) || is_page($this->edit_classified_page_id)) {
+			wp_enqueue_script('thickbox');
+			wp_enqueue_style('thickbox');
+		}
 		if ( file_exists( get_template_directory() . '/style-bp-classifieds.css' ) )
 		wp_enqueue_style( 'style-classifieds', get_template_directory() . '/style-bp-classifieds.css' );
 		elseif ( file_exists( $this->plugin_dir . 'ui-front/buddypress/style-bp-classifieds.css' ) )
