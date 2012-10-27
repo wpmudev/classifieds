@@ -29,11 +29,10 @@
 			<?php query_posts( array( 'author' => $current_user->ID, 'post_type' => array( $this->post_type ), 'post_status' => 'publish' ) ); ?>
 			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
-			<?php $terms = wp_get_object_terms( get_the_ID(), $taxonomies ); ?>
 			<tr>
 				<td><?php the_ID(); ?></td>
 				<td><?php the_title(); ?></td>
-				<td><?php foreach ( $terms as $term ) echo $term->name . ' '; ?> </td>
+				<td><?php echo strip_tags(get_the_term_list(get_the_ID(), 'classifieds_categories', '',', ','') ); ?> </td>
 				<td><?php echo $this->get_expiration_date( get_the_ID() ); ?></td>
 				<td>
 					<?php
@@ -82,11 +81,10 @@
 			<?php query_posts( array( 'author' => $current_user->ID, 'post_type' => array( $this->post_type ), 'post_status' => 'draft' ) ); ?>
 			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
-			<?php $terms = wp_get_object_terms( get_the_ID(), $taxonomies ); ?>
 			<tr>
 				<td><?php the_ID(); ?></td>
 				<td><?php the_title(); ?></td>
-				<td><?php foreach ( $terms as $term ) echo $term->name . ' '; ?> </td>
+				<td><?php echo strip_tags(get_the_term_list(get_the_ID(), 'classifieds_categories', '',', ','') ); ?> </td>
 				<td><?php echo $this->get_expiration_date( get_the_ID() ); ?></td>
 				<td>
 					<?php
@@ -152,11 +150,10 @@
 			<?php query_posts( array( 'author' => $current_user->ID, 'post_type' => array( $this->post_type ), 'post_status' => 'private' ) ); ?>
 			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
-			<?php $terms = wp_get_object_terms( get_the_ID(), $taxonomies ); ?>
 			<tr>
 				<td><?php the_ID(); ?></td>
 				<td><?php the_title(); ?></td>
-				<td><?php foreach ( $terms as $term ) echo $term->name . ' '; ?> </td>
+				<td><?php echo strip_tags(get_the_term_list(get_the_ID(), 'classifieds_categories', '',', ','') ); ?> </td>
 				<td><?php echo $this->get_expiration_date( get_the_ID() ); ?></td>
 				<td>
 					<?php

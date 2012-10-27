@@ -4,7 +4,7 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
-==2.3==
+= 2.3 Arnold Bailey 2012-10-27 =
 * New classifieds front end WYSIWYG entry screen.
 * Added control of the post status a member can save a classified as.
 * Expanded capabilites list
@@ -22,6 +22,7 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 * MU plugins to handle recurring payments on Multisite.
 * Added uninstall to remove directory custom types if plugin is deleted.
 * Added captcha to the contact form.
+* Category display in Dashboard.
 
 = 2.2.2.3 =
 * Changed BuddyPress styling for pagination
