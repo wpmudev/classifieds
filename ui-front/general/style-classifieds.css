@@ -53,13 +53,13 @@ Description: You can override this file in your active theme.
 }
 
 /* Update page*/
-.cf-tax_panel{
+.cf_tax_panel{
 	overflow: auto;
 	height:160px;
 	border:1px solid #ddd;
 }
 
-.cf-tax_panel ul{
+.cf_tax_panel ul{
 	padding: 0;
 	list-style: none outside none;
 	margin-left: 1em;

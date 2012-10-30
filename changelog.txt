@@ -4,6 +4,13 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.0.2 Arnold Bailey =
+* Fixed improper credit of sigup credits.
+
+= 2.3.0.1 Arnold Bailey =
+* Added default classifieds statuses if left blank.
+* Added 'classifieds_full_access' filter. If the filter returns true it gives the user the right to enter classifieds without further payment.
+
 = 2.3 Arnold Bailey 2012-10-27 =
 * New classifieds front end WYSIWYG entry screen.
 * Added control of the post status a member can save a classified as.

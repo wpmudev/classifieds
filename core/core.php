@@ -169,10 +169,8 @@ class Classifieds_Core {
 
 		/* Check expiration dates */
 		add_action( 'check_expiration_dates', array( &$this, 'check_expiration_dates_callback' ) );
-		/* Set signup credits for new users */
-		add_action( 'user_register', array( &$this, 'set_signup_user_credits' ) );
-		add_action('pre_get_posts', array(&$this, 'on_pre_get_posts') );
 
+		add_action('pre_get_posts', array(&$this, 'on_pre_get_posts') );
 
 		/** Map meta capabilities */
 		add_filter( 'map_meta_cap', array( &$this, 'map_meta_cap' ), 11, 4 );
@@ -957,42 +955,24 @@ class Classifieds_Core {
 	function is_full_access() {
 		global $blog_id;
 
+		$result = false;
+		
 		//for admin
-		if ( current_user_can('manage_options') )
-		return true;
+		if ( current_user_can('manage_options') )	$result = true;
 
 		//for paid users
 		if ( $this->transactions->billing_type ) {
 			if ( 'one_time' == $this->transactions->billing_type && 'success' == $this->transactions->status ) {
-				return true;
-			}
-
-			if ( 'recurring' == $this->transactions->billing_type && 'success' == $this->transactions->status) {
+				$result = true;
+			}elseif ( 'recurring' == $this->transactions->billing_type && 'success' == $this->transactions->status) {
 				if(time() < $this->transactions->expires ) {
-					return true;
+					$result = true;
 				} else {
 					$this->transactions->status = 'expired';
 				}
 			}
 		}
-		return false;
-	}
-
-	/**
-	* Sets initial credits amount.
-	*
-	* @param int $user_id
-	* @return void
-	**/
-	function set_signup_user_credits( $user_id ) {
-		$options = $this->get_options('payments');
-		if ( $options['enable_credits'] == true ) {
-			if ( !empty( $options['signup_credits'] ) ){
-				$this->transactions = $this->get_classifieds_transactions($user_id );
-				$this->transactions['credits'] = $options['signup_credits'];
-				$this->update_classifieds_transactions( $user_id, $this->transactions );
-			}
-		}
+		return apply_filters('classifieds_full_access', $result);
 	}
 
 	/**

@@ -54,10 +54,10 @@ class CF_Transactions{
 		//Blog specfic version
 		$cf_transactions = get_user_option( 'cf_transactions', $this->user_id );
 
-		if(! $cf_transactions ){
+		if(! $cf_transactions ){ //First time transactions
 			$cf_transactions = $this->struc;
 			$options = $this->get_options('payments');
-			$dr_transactions['credits'] = (empty($options['credits_per_week']) ) ? 0 : $options['credits_per_week'];
+			$dr_transactions['credits'] = (empty($options['signup_credits']) ) ? 0 : $options['signup_credits'];
 			update_user_option($this->user_id, 'cf_transactions', $cf_transactions);
 		}
 
