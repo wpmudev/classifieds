@@ -279,7 +279,7 @@ class Classifieds_Core {
 		//Set a user capability based on users purchases
 		if(! is_multisite() || is_user_member_of_blog(get_current_user_id(), $blog_id) ) {
 			if( $this->use_free
-			|| ($this->use_credits && $this->user_credits > 0)
+			|| ($this->use_credits && $this->user_credits >= $options['credits_per_week'])
 			|| $this->is_full_access() ){
 				$this->current_user->add_cap('create_classifieds');
 			} else {

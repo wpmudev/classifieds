@@ -4,8 +4,11 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.0.3 Arnold Bailey =
+* Updated Custompress.
+
 = 2.3.0.2 Arnold Bailey =
-* Fixed improper credit of sigup credits.
+* Fixed improper credit of signup credits.
 
 = 2.3.0.1 Arnold Bailey =
 * Added default classifieds statuses if left blank.
