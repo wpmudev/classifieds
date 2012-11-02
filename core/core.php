@@ -184,7 +184,7 @@ class Classifieds_Core {
 
 
 		//Shortcodes
-		add_shortcode( 'cf_classifieds_categories', array( &$this, 'classifieds_categories_sc' ) );
+		add_shortcode( 'cf_list_categories', array( &$this, 'classifieds_categories_sc' ) );
 		add_shortcode( 'cf_classifieds_btn', array( &$this, 'classifieds_btn_sc' ) );
 		add_shortcode( 'cf_add_classified_btn', array( &$this, 'add_classified_btn_sc' ) );
 		add_shortcode( 'cf_edit_classified_btn', array( &$this, 'edit_classified_btn_sc' ) );
@@ -1505,14 +1505,15 @@ class Classifieds_Core {
 		extract( shortcode_atts( array(
 		'style' => '', //list, grid
 		), $atts ) );
-
-		if($style == 'grid') $result = '<div class="cf_list_grid">' .PHP_EOL;
-		elseif($style == 'list') $result = '<div class="cf_list">' .PHP_EOL;
-		else $result = "<div>\n";
+		$result = '<div id="cf_list_categories">' . PHP_EOL;
+		if($style == 'grid') $result .= '<ul class="cf_list_grid">' .PHP_EOL;
+		elseif($style == 'list') $result .= '<ul class="cf_list">' .PHP_EOL;
+		else $result .= "<ul>\n";
 
 		$result .= the_cf_categories_home( false, $atts );
 
-		$result .= "</div><!--.cf_list-->\n";
+		$result .= "</ul><!--.cf_list-->\n";
+		$result .= "</div><!--.cf_list_categories-->\n";
 		return $result;
 	}
 

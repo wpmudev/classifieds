@@ -4,8 +4,14 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.0.4 Arnold Bailey =
+* Updated Custompress.
+* Fixed cf_list_catagories shortcode.
+
+* Fixed Buddypress redirection
 = 2.3.0.3 Arnold Bailey =
 * Updated Custompress.
+* Fixed Buddypress redirection
 
 = 2.3.0.2 Arnold Bailey =
 * Fixed improper credit of signup credits.

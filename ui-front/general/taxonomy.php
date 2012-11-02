@@ -28,7 +28,7 @@ get_header(); ?>
 			*/
 			if ( have_posts() ) the_post(); ?>
 
-			<h1 class="page-title"><?php _e( 'Classifieds', 'classifieds' ); ?> / <?php echo get_query_var('taxonomy'); ?> / <?php echo get_query_var('term'); ?></h1>
+			<h1 class="page-title"><?php _e( 'Classifieds', CF_TEXT_DOMAIN ); ?> / <?php echo get_query_var('taxonomy'); ?> / <?php echo get_query_var('term'); ?></h1>
 
 			<?php
 			/* Since we called the_post() above, we need to

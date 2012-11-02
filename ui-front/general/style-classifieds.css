@@ -43,13 +43,13 @@ Description: You can override this file in your active theme.
 	font-family:"Helvetica Neue",Arial,Helvetica,"Nimbus Sans L",sans-serif;
 }
 
-.editfield input, 
+.editfield input,
 .editfield textarea,
 .editfield select {
-  -webkit-box-sizing:border-box;
-  -moz-box-sizing:border-box;
-  box-sizing:border-box;
-  width:100%;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	box-sizing:border-box;
+	width:100%;
 }
 
 /* Update page*/
@@ -65,7 +65,7 @@ Description: You can override this file in your active theme.
 	margin-left: 1em;
 }
 
-.cf_tax_panel ul.children{
+.cf_tax_panel ul.chilcfen{
 	font-size: .8em;
 	margin-left: 1.6em;
 }
@@ -91,9 +91,9 @@ Description: You can override this file in your active theme.
 
 /*
 #content .editfield table {
-	border:0;
-	width: inherit;
-	margin: 0;
+border:0;
+width: inherit;
+margin: 0;
 }
 
 #content .editfield tr td {
@@ -128,7 +128,7 @@ width: 100%;
 
 .cf-title {
 	font-weight: bold;
-	
+
 }
 
 .cf-price {
@@ -460,10 +460,10 @@ ul.cf_tabs li.cf_active a {
 	padding: 5px 10px;
 	margin: 5px 0;
 }
-.userinfo { 
+.userinfo {
 	float: left;
 	width: 75%;
-margin-bottom: 10px; 
+	margin-bottom: 10px;
 }
 .userinfo p {
 	margin-left: 10px;
@@ -511,4 +511,82 @@ margin-bottom: 10px;
 
 #TB_HideSelect{
 	z-index:9999;
+}
+
+/* #cf_listing_list */
+
+#cf_listing_list .entry-title{
+	float: left;
+}
+
+#cf_listing_list .entry-meta{
+	clear: none;
+	float: right !important;
+	width: 230px;
+	border-left: 1px solid #ddd;
+	padding: 0 5px;
+	margin-left: 5px;
+}
+
+#cf_listing_list .entry-post{
+	border: 1px solid #ddd;
+	margin-bottom: 1em;
+	padding: 1em;
+}
+
+#cf_listing_list .entry-summary{
+	clear: left;
+	padding:0;
+}
+
+/*Categories list grid css*/
+
+#cf_list_categories ul{
+	padding:0;
+	margin:0;
+}
+
+.cf_list_grid h2{
+	background-color: #eee;
+	padding: .2em 1em;
+	border-radius: .3em;
+	text-align: center;
+	font-size: 1em;
+}
+
+.cf_list_grid li{
+	float: left;
+	list-style: none outside none;
+	min-height: 11em;
+	padding: .5em;
+	width: 19%;
+	margin: 0 2% 2% 0;
+	border: medium solid #eee;
+	border-radius: .4em;
+	font-size: small;
+}
+
+#cf_list_categories span{
+}
+
+/*Categories list css*/
+.cf_list h2{
+	background-color: #eee;
+	padding: .2em 1em;
+	border-radius: .3em;
+	text-shadow: 1px 1px #fff;
+}
+
+.cf_list ul{
+	min-width:50%;
+}
+
+.cf_list li{
+	list-style: none outside none;
+	margin: .6em;
+}
+
+.cf_list div{
+	float:left;
+	margin: 0 1em;
 }

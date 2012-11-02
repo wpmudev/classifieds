@@ -680,7 +680,7 @@ $countries = array (
 	<input type="hidden" name="credits" value="<?php echo empty($_SESSION['credits']) ? 0 : $_SESSION['credits']; ?>" />
 
 
-	<strong><?php _e( 'Confirm Payment', 'classifieds' ); ?></strong>
+	<strong><?php _e( 'Confirm Payment', $this->text_domain ); ?></strong>
 	<table>
 		<tr>
 			<td><label><?php _e( 'Email Address', $this->text_domain ); ?>:</label></td>

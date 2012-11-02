@@ -34,9 +34,9 @@ $field_image = (empty($cf_options['field_image_def'])) ? $cf->plugin_url . 'ui-f
 <?php /* If there are no posts to display, such as an empty archive page */ ?>
 <?php if ( ! have_posts() ) : ?>
 <div id="post-0" class="post error404 not-found">
-	<h1 class="entry-title"><?php _e( 'Not Found', 'classifieds' ); ?></h1>
+	<h1 class="entry-title"><?php _e( 'Not Found', CF_TEXT_DOMAIN ); ?></h1>
 	<div class="entry-content">
-		<p><?php _e( 'Apologies, but no results were found for the requested classifieds. Perhaps searching will help find a related classified.', 'classifieds' ); ?></p>
+		<p><?php _e( 'Apologies, but no results were found for the requested classifieds. Perhaps searching will help find a related classified.', CF_TEXT_DOMAIN ); ?></p>
 		<?php get_search_form(); ?>
 	</div><!-- .entry-content -->
 </div><!-- #post-0 -->
@@ -82,14 +82,14 @@ $cost = is_numeric($cost) ? sprintf(__('$%01.2f',CF_TEXT_DOMAIN), $cost) : '';
 			<div class="cf-info">
 				<table>
 					<tr>
-						<th><?php _e( 'Title', 'classifieds' ); ?></th>
+						<th><?php _e( 'Title', CF_TEXT_DOMAIN ); ?></th>
 						<td>
 							<span class="cf-title"><a href="<?php the_permalink(); ?>"><?php echo $post->post_title; ?></a></span>
 							<span class="cf-price"><?php echo $cost; ?></span>
 						</td>
 					</tr>
 					<tr>
-						<th><?php _e( 'Posted By', 'classifieds' ); ?></th>
+						<th><?php _e( 'Posted By', CF_TEXT_DOMAIN ); ?></th>
 
 						<td>
 							<?php
@@ -105,7 +105,7 @@ $cost = is_numeric($cost) ? sprintf(__('$%01.2f',CF_TEXT_DOMAIN), $cost) : '';
 						</td>
 					</tr>
 					<tr>
-						<th><?php _e( 'Categories', 'classifieds' ); ?></th>
+						<th><?php _e( 'Categories', CF_TEXT_DOMAIN ); ?></th>
 						<td><span class="cf-terms">
 							<?php $taxonomies = get_object_taxonomies( 'classifieds', 'names' ); ?>
 							<?php foreach ( $taxonomies as $taxonomy ): ?>
@@ -115,7 +115,7 @@ $cost = is_numeric($cost) ? sprintf(__('$%01.2f',CF_TEXT_DOMAIN), $cost) : '';
 					</td>
 				</tr>
 				<tr>
-					<th><?php _e( 'Expires', 'classifieds' ); ?></th>
+					<th><?php _e( 'Expires', CF_TEXT_DOMAIN ); ?></th>
 					<td><span class="cf-expires"><?php echo $cf->get_expiration_date( get_the_ID() ); ?></span></td>
 				</tr>
 				<tr>

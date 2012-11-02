@@ -39,7 +39,7 @@ get_header(); ?>
 		*/
 		if ( have_posts() ) the_post();
 		?>
-		<h1 class="page-title author"><?php printf( __( 'Classifieds By: %s', 'classifieds' ), "<span class='vcard'><a class='url fn n' href='" . get_option( 'siteurl' ) . $cf_author_url . "' title='" . esc_attr( $user_data->display_name ) . "' rel='me'>" . $user_data->display_name . "</a></span>" ); ?></h1>
+		<h1 class="page-title author"><?php printf( __( 'Classifieds By: %s', CF_TEXT_DOMAIN ), "<span class='vcard'><a class='url fn n' href='" . get_option( 'siteurl' ) . $cf_author_url . "' title='" . esc_attr( $user_data->display_name ) . "' rel='me'>" . $user_data->display_name . "</a></span>" ); ?></h1>
 
 		<?php
 		/* Since we called the_post() above, we need to
