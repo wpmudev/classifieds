@@ -20,7 +20,7 @@ function the_cf_categories_home( $echo = true ){
 	$sub_cat_num            = ( isset( $options['general']['count_sub_cat'] ) && is_numeric( $options['general']['count_sub_cat'] ) && 0 < $options['general']['count_sub_cat'] ) ? $options['general']['count_sub_cat'] : 5;
 	$hide_empty_sub_cat     = ( isset( $options['general']['hide_empty_sub_cat'] ) && is_numeric( $options['general']['hide_empty_sub_cat'] ) && 0 < $options['general']['hide_empty_sub_cat'] ) ? $options['general']['hide_empty_sub_cat'] : 0;
 	
-	$taxonomies = array_values(get_taxonomies(array('object_type' => array('directory_listing'), 'hierarchical' => 1)));
+	$taxonomies = array_values(get_taxonomies(array('object_type' => array('classifieds'), 'hierarchical' => 1)));
 
 	$args = array(
 	'parent'       => 0,
@@ -75,7 +75,18 @@ function the_cf_categories_home( $echo = true ){
 	}
 
 	$output .= "</ul>\n";
-	$output .= "</div>\n";
+	$output .= "</div><!-- .cf_list_categories -->\n";
 
 	return $output;
 }
+
+
+function allow_classifieds_filter($allow = false){
+
+  //Whatever logic to decide whether they should have access.
+  if(false ) $allow = true;
+
+  return $allow;
+}
+//add_filter('classifieds_full_access', 'allow_classifieds_filter');
+

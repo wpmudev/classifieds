@@ -163,8 +163,14 @@ class Classifieds_Core_Main extends Classifieds_Core {
 		global $wp_query;
 
 		/* Handles request for classifieds page */
-		$page_template = locate_template( array('page.php' ) );
 		$templates = array();
+
+		//Check if a custom template is selected, if not or not a page, default to the one selected for the directory_listing virtual page. 
+		$id = get_queried_object_id();
+		if(empty($id) ) $id = $this->classifieds_page_id;
+		$slug = get_page_template_slug($id);
+		if(empty($slug) ) $page_template = get_page_template();
+		else $page_template = locate_template(array($slug, 'page.php') );
 
 
 		if ( is_post_type_archive('classifieds') ) {

@@ -111,17 +111,17 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 				'user_has_access' => true
 				));
 			}
-
-			bp_core_new_subnav_item( array(
-			'name'            => __( 'Create New Ad', $this->text_domain ),
-			'slug'            => 'create-new',
-			'parent_url'      => $parent_url,
-			'parent_slug'     => $bp->classifieds->slug,
-			'screen_function' => array( &$this, 'load_template' ),
-			'position'        => 10,
-			'user_has_access' => true
-			));
-
+			if(current_user_can('create_classifieds') ){
+				bp_core_new_subnav_item( array(
+				'name'            => __( 'Create New Ad', $this->text_domain ),
+				'slug'            => 'create-new',
+				'parent_url'      => $parent_url,
+				'parent_slug'     => $bp->classifieds->slug,
+				'screen_function' => array( &$this, 'load_template' ),
+				'position'        => 10,
+				'user_has_access' => true
+				));
+			}
 		} else {
 			//display author classifids page
 			bp_core_new_subnav_item( array(

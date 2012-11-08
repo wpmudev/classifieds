@@ -323,11 +323,11 @@ padding-bottom: 15px;
 
 /* Pagination styles */
 
-.navigation{
+.cf-navigation{
 	float:right;
 }
 
-.pagination {
+.cf-pagination {
 	clear:both;
 	padding:0;
 	position: relative;
@@ -336,7 +336,7 @@ padding-bottom: 15px;
 	z-index:99;
 }
 
-.pagination span, .pagination a {
+.cf-pagination span, .cf-pagination a {
 	display:block;
 	float:left;
 	margin: 2px 2px 2px 0;
@@ -346,11 +346,11 @@ padding-bottom: 15px;
 	color:#fff;
 	background: #555;
 }
-.pagination a:hover{
+.cf-pagination a:hover{
 	color:#fff;
 	background: #3279BB;
 }
-.pagination .current{
+.cf-pagination .current{
 	padding:6px 9px 5px 9px;
 	background: #3279BB;
 	color:#fff;

@@ -1505,15 +1505,13 @@ class Classifieds_Core {
 		extract( shortcode_atts( array(
 		'style' => '', //list, grid
 		), $atts ) );
-		$result = '<div id="cf_list_categories">' . PHP_EOL;
-		if($style == 'grid') $result .= '<ul class="cf_list_grid">' .PHP_EOL;
-		elseif($style == 'list') $result .= '<ul class="cf_list">' .PHP_EOL;
+		if($style == 'grid') $result = PHP_EOL . '<div class="cf_list_grid">' .PHP_EOL;
+		elseif($style == 'list') $result .= '<div class="cf_list">' .PHP_EOL;
 		else $result .= "<ul>\n";
 
 		$result .= the_cf_categories_home( false, $atts );
 
-		$result .= "</ul><!--.cf_list-->\n";
-		$result .= "</div><!--.cf_list_categories-->\n";
+		$result .= "</div><!--.cf_list-->\n";
 		return $result;
 	}
 

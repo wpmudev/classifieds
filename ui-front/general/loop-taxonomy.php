@@ -61,7 +61,7 @@ $field_image = (empty($cf_options['field_image_def'])) ? $cf->plugin_url . 'ui-f
 
 <?php
 $cost = do_shortcode('[ct id="_ct_text_4cfeb3eac6f1f"]');
-$cost = is_numeric($cost) ? sprintf(__('$%01.2f',CF_TEXT_DOMAIN), $cost) : '';
+$cost = is_numeric($cost) ? sprintf(__('%01.2f',CF_TEXT_DOMAIN), $cost) : $cost;
 ?>
 <div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
