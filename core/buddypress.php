@@ -307,7 +307,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		/* Handles request for classifieds page */
 
 		$templates = array();
-		$page_template = locate_template( array('page.php' ) );
+		$page_template = locate_template( array('page.php', 'index.php' ) );
 
 		$logged_url = trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug . '/';
 

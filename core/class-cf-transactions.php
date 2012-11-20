@@ -54,6 +54,23 @@ class CF_Transactions{
 		//Blog specfic version
 		$cf_transactions = get_user_option( 'cf_transactions', $this->user_id );
 
+		// $cf_blog has entire transaction array
+		if(! empty($cf_order) || ! empty($cf_credits) || ! empty($cf_credits_log) ) { // Need to convert
+			$cf_transactions = $this->struc;
+			$cf_transactions['credits'] = (empty($cf_credits) ) ? 0 : $cf_credits;
+			$status = (empty($cf_order['order_info']['status']) ) ? '' : $cf_order['order_info']['status'];
+			$expires = (empty($cf_order['time_end_annual']) ) ? 0 : $cf_order['time_end_annual'];
+			$billing = (empty($cf_order['billing']) ) ? '' : $cf_order['billing'];
+			$cf_transactions['order']['status'] = $status;
+			$cf_transactions['order']['expires'] = $expires;
+			$cf_transactions['order']['billing_type'] = $billing;
+			update_user_option($this->user_id, 'cf_transactions', $cf_transactions);
+
+			delete_user_meta($this->user_id, 'cf_order');
+			delete_user_meta($this->user_id, 'cf_credits');
+			delete_user_meta($this->user_id, 'cf_credits_log');
+		}
+
 		if(! $cf_transactions ){ //First time transactions
 			$cf_transactions = $this->struc;
 			$options = $this->get_options('payments');
@@ -61,20 +78,6 @@ class CF_Transactions{
 			update_user_option($this->user_id, 'cf_transactions', $cf_transactions);
 		}
 
-		// $cf_blog has entire transaction array
-		if(! empty($cf_order) || ! empty($cf_credits) || ! empty($cf_credits_log) ) { // Need to convert
-			$cf_transactions = $cf_struc;
-			$status = $cf_order['order_info']['status'];
-			$expires = $cf_order['time_end_annual'];
-			$cf_transactions['order']['status'] = $status;
-			$cf_transactions['order']['billing_type'] = $cf_order['billing'];
-			$cf_transactions['order']['expires'] = $expiration;
-			update_user_option($this->user_id, 'cf_transactions', $cf_transactions);
-
-			delete_user_meta($this->user_id, 'cf_order');
-			delete_user_meta($this->user_id, 'cf_credits');
-			delete_user_meta($this->user_id, 'cf_credits_log');
-		}
 	}
 
 	/**

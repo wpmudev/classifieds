@@ -277,6 +277,8 @@ class Classifieds_Core {
 		}
 
 		//Set a user capability based on users purchases
+		global $blog_id;
+
 		if(! is_multisite() || is_user_member_of_blog(get_current_user_id(), $blog_id) ) {
 			if( $this->use_free
 			|| ($this->use_credits && $this->user_credits >= $options['credits_per_week'])
@@ -956,7 +958,7 @@ class Classifieds_Core {
 		global $blog_id;
 
 		$result = false;
-		
+
 		//for admin
 		if ( current_user_can('manage_options') )	$result = true;
 
@@ -1010,16 +1012,16 @@ class Classifieds_Core {
 
 		/* Only handle request if on single{}.php template and our post type */
 		if ( get_post_type() == $this->post_type && is_single($_SESSION['cf_random_value']) ) {
-			
+
 			if(! session_id() ) session_start();
-			
+
 			if (isset( $_POST['contact_form_send'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'send_message' ) ){
-				if ( isset( $_POST['name'] ) && '' != $_POST['name'] 
-				&& isset( $_POST['email'] ) && '' != $_POST['email'] 
-				&& isset( $_POST['subject'] ) && '' != $_POST['subject'] 
-				&& isset( $_POST['message'] ) && '' != $_POST['message'] 
-				&& isset( $_POST['cf_random_value'] ) && (md5(strtoupper($_POST['cf_random_value']) )  == $_SESSION['cf_random_value'] ) 
-				
+				if ( isset( $_POST['name'] ) && '' != $_POST['name']
+				&& isset( $_POST['email'] ) && '' != $_POST['email']
+				&& isset( $_POST['subject'] ) && '' != $_POST['subject']
+				&& isset( $_POST['message'] ) && '' != $_POST['message']
+				&& isset( $_POST['cf_random_value'] ) && (md5(strtoupper($_POST['cf_random_value']) )  == $_SESSION['cf_random_value'] )
+
 				) {
 
 					global $post;

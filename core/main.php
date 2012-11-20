@@ -170,7 +170,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 		if(empty($id) ) $id = $this->classifieds_page_id;
 		$slug = get_page_template_slug($id);
 		if(empty($slug) ) $page_template = get_page_template();
-		else $page_template = locate_template(array($slug, 'page.php') );
+		else $page_template = locate_template(array($slug, 'page.php', 'index.php' ) );
 
 
 		if ( is_post_type_archive('classifieds') ) {

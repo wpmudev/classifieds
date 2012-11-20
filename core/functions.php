@@ -81,12 +81,12 @@ function the_cf_categories_home( $echo = true ){
 }
 
 
-function allow_classifieds_filter($allow = false){
-
-  //Whatever logic to decide whether they should have access.
-  if(false ) $allow = true;
-
-  return $allow;
-}
+//function allow_classifieds_filter($allow = false){
+//
+//  //Whatever logic to decide whether they should have access.
+//  if(false ) $allow = true;
+//
+//  return $allow;
+//}
 //add_filter('classifieds_full_access', 'allow_classifieds_filter');
 
