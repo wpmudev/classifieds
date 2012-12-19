@@ -48,6 +48,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 			add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
 			add_action( 'admin_init', array( &$this, 'admin_head' ) );
 			add_action( 'save_post',  array( &$this, 'save_expiration_date' ), 1, 1 );
+			add_action( 'restrict_manage_posts', array($this,'on_restrict_manage_posts') );
 
 			add_action( 'wp_ajax_cf_get_caps', array( &$this, 'ajax_get_caps' ) );
 			add_action( 'wp_ajax_cf_save', array( &$this, 'ajax_save' ) );
@@ -56,7 +57,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 			add_action( 'wp_ajax_nopriv_classifieds_ipn', array( &$this, 'ajax_classifieds_ipn' ) );
 			add_action( 'wp_ajax_classifieds_ipn', array( &$this, 'ajax_classifieds_ipn' ) );
 
-			//Sil;ent Post script for Authorizenet
+			//Silent Post script for Authorizenet
 			add_action( 'wp_ajax_nopriv_classifieds_sp', array( &$this, 'ajax_classifieds_silent_post' ) );
 			add_action( 'wp_ajax_classifieds_sp', array( &$this, 'ajax_classifieds_silent_post' ) );
 
@@ -557,6 +558,25 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 		}
 		die("ok");
 	}
+
+	function on_restrict_manage_posts() {
+		global $typenow;
+		$taxonomy = 'classifieds_categories';
+		if( $typenow == "classifieds" ){
+
+			$filters = array($taxonomy);
+			foreach ($filters as $tax_slug) {
+				$tax_obj = get_taxonomy($tax_slug);
+				$tax_name = $tax_obj->labels->name;
+				$terms = get_terms($tax_slug);
+				echo "<select name='$tax_slug' id='$tax_slug' class='postform'>";
+				echo "<option value=''>{$tax_obj->labels->all_items}&nbsp;</option>";
+				foreach ($terms as $term) { echo '<option value='. $term->slug, $_GET[$tax_slug] == $term->slug ? ' selected="selected"' : '','>' . $term->name .' (' . $term->count .')</option>'; }
+				echo "</select>";
+			}
+		}
+	}
+
 
 }
 

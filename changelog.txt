@@ -4,6 +4,10 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.0.7 Arnold Bailey =
+* Fixed some problems in the language file
+* Fixed some missing text domains.
+
 = 2.3.0.6 Arnold Bailey =
 * Fixed old data (pre 2.3) conversion problem.
 * Fixed duplicate signup emails on BuddyPress.
