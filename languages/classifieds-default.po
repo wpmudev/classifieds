@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Classifieds\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-18 13:19-0500\n"
+"POT-Creation-Date: 2012-12-23 14:19-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arnold Bailey <abaileytn@gmail.com>\n"
 "Language-Team: Arnold Bailey <arnold@incsub.com>\n"
@@ -504,7 +504,7 @@ msgstr ""
 #: ../ui-front/general/loop-author.php:90
 #: ../ui-front/general/loop-taxonomy.php:85
 #: ../ui-front/general/page-my-classifieds.php:103
-#: ../ui-front/general/page-update-classified.php:83
+#: ../ui-front/general/page-update-classified.php:90
 msgid "Title"
 msgstr ""
 
@@ -567,7 +567,7 @@ msgstr ""
 #: ../ui-front/buddypress/members/single/classifieds/my-classifieds.php:200
 #: ../ui-front/buddypress/members/single/classifieds/update-classified.php:202
 #: ../ui-front/general/page-my-classifieds.php:171
-#: ../ui-front/general/page-update-classified.php:194
+#: ../ui-front/general/page-update-classified.php:210
 #: ../ui-front/general/single-classifieds.php:145
 msgid "Cancel"
 msgstr ""
@@ -724,7 +724,7 @@ msgstr ""
 #: ../ui-admin/settings-payment-types.php:327
 #: ../ui-admin/settings-payments.php:181
 #: ../ui-front/buddypress/members/single/classifieds/update-classified.php:200
-#: ../ui-front/general/page-update-classified.php:192
+#: ../ui-front/general/page-update-classified.php:208
 msgid "Save Changes"
 msgstr ""
 
@@ -1593,42 +1593,42 @@ msgid "Purchase Date:"
 msgstr ""
 
 #: ../ui-front/buddypress/members/single/classifieds/update-classified.php:26
-#: ../ui-front/general/page-update-classified.php:25
+#: ../ui-front/general/page-update-classified.php:24
 msgid "Auto Draft"
 msgstr ""
 
 #: ../ui-front/buddypress/members/single/classifieds/update-classified.php:86
-#: ../ui-front/general/page-update-classified.php:85
+#: ../ui-front/general/page-update-classified.php:92
 msgid "Enter title here."
 msgstr ""
 
 #: ../ui-front/buddypress/members/single/classifieds/update-classified.php:93
-#: ../ui-front/general/page-update-classified.php:92
+#: ../ui-front/general/page-update-classified.php:108
 msgid "Content"
 msgstr ""
 
 #: ../ui-front/buddypress/members/single/classifieds/update-classified.php:105
-#: ../ui-front/general/page-update-classified.php:96
+#: ../ui-front/general/page-update-classified.php:112
 msgid "The content of your classified."
 msgstr ""
 
 #: ../ui-front/buddypress/members/single/classifieds/update-classified.php:110
-#: ../ui-front/general/page-update-classified.php:101
+#: ../ui-front/general/page-update-classified.php:117
 msgid "Excerpt"
 msgstr ""
 
 #: ../ui-front/buddypress/members/single/classifieds/update-classified.php:112
-#: ../ui-front/general/page-update-classified.php:103
+#: ../ui-front/general/page-update-classified.php:119
 msgid "A short excerpt of your classified."
 msgstr ""
 
 #: ../ui-front/buddypress/members/single/classifieds/update-classified.php:172
-#: ../ui-front/general/page-update-classified.php:164
+#: ../ui-front/general/page-update-classified.php:180
 msgid "Status"
 msgstr ""
 
 #: ../ui-front/buddypress/members/single/classifieds/update-classified.php:183
-#: ../ui-front/general/page-update-classified.php:175
+#: ../ui-front/general/page-update-classified.php:191
 msgid "Select a status for your classified."
 msgstr ""
 
@@ -1994,7 +1994,7 @@ msgstr ""
 msgid "Please accept the Terms of Service"
 msgstr ""
 
-#: ../ui-front/general/page-update-classified.php:157
+#: ../ui-front/general/page-update-classified.php:173
 msgid "add a tag"
 msgstr ""
 
