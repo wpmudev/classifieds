@@ -165,12 +165,11 @@ class Classifieds_Core {
 		add_action( 'template_redirect', array( &$this, 'handle_contact_form_requests' ) );
 
 		add_action('wp_enqueue_scripts', array(&$this, 'on_enqueue_scripts'));
+		add_action('pre_get_posts', array(&$this,'on_pre_get_posts') );
 
 
 		/* Check expiration dates */
 		add_action( 'check_expiration_dates', array( &$this, 'check_expiration_dates_callback' ) );
-
-		add_action('pre_get_posts', array(&$this, 'on_pre_get_posts') );
 
 		/** Map meta capabilities */
 		add_filter( 'map_meta_cap', array( &$this, 'map_meta_cap' ), 11, 4 );
@@ -434,26 +433,6 @@ class Classifieds_Core {
 		}
 		return $query;
 	}
-
-	/**
-	* Restrict Media library to current user's files
-	*
-	*/
-	function on_pre_get_posts($wp_query_obj) {
-
-		global $current_user, $pagenow;
-
-		if( !is_a( $current_user, 'WP_User') ) return;
-
-		if( 'media-upload.php' != $pagenow ) return;
-
-		if( !current_user_can('administrator') &&  !current_user_can('edit_others_classifieds') ) $wp_query_obj->set('author', $current_user->id );
-
-		return;
-	}
-
-
-
 
 	//filters the titles for our custom pages
 	function delete_post_title( $title, $id = false ) {
@@ -1910,6 +1889,23 @@ class Classifieds_Core {
 	function hide_duration($content=''){
 		return str_replace('_ct_selectbox_4cf582bd61fa4','',$content);
 	}
+
+	/**
+	* Restrict Media library to current user's files
+	*
+	*/
+
+	function on_pre_get_posts($wp_query_obj) {
+		global $current_user;
+
+		if( $current_user->ID == 0 ) return;
+
+		if($_POST['action'] == 'query-attachments' 
+		&& !current_user_can('administrator') 
+		&& !current_user_can('edit_others_classifieds') ) 
+		$wp_query_obj->set('author', $current_user->ID );
+	}
+
 
 }
 

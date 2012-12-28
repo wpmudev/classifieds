@@ -7,7 +7,7 @@
 */
 if (!defined('ABSPATH')) die('No direct access allowed!');
 
-global $bp, $wp_query, $wp_taxonomies, $post, $CustomPress_Core;
+global $bp,$post, $post_ID, $CustomPress_Core;
 
 
 $classified_data   = '';
@@ -23,22 +23,26 @@ $allowed_statuses = array_reverse(array_intersect_key($post_statuses, $allowed_s
 if(! isset($_REQUEST['post_id']) ){
 
 	//Make an auto-draft so we have a post id to connect attachments to. Set global $post_ID so media editor can hook up.
-	$post_id = wp_insert_post( array( 'post_title' => __( 'Auto Draft' ), 'post_type' => 'classifieds', 'post_status' => 'auto-draft'), true );
-	$classified_data = get_post($post_id, ARRAY_A );
+	$post_ID = wp_insert_post( array( 'post_title' => __( 'Auto Draft' ), 'post_type' => 'classifieds', 'post_status' => 'auto-draft'), true );
+	$classified_data = get_post($post_ID, ARRAY_A );
 	$classified_data['post_title'] = ''; //Have to have a title to insert the auto-save but we don't want it as final.
 	$editing = false;
 }
 //Or are we editing a Classified?
 elseif( isset($_REQUEST['post_id']) ) {
 	$classified_data = get_post(  $_REQUEST['post_id'], ARRAY_A );
-	$post_id = $classified_data['ID'];
+	$post_ID = $classified_data['ID'];
 	$editing = true;
 }
+$post = get_post($post_ID);
+
 
 if ( isset( $_POST['classified_data'] ) ) $classified_data = $_POST['classified_data'];
 
 
 require_once(ABSPATH . 'wp-admin/includes/template.php');
+require_once(ABSPATH . 'wp-admin/includes/media.php');
+require_once(ABSPATH . 'wp-admin/includes/post.php');
 
 $editor_settings =   array(
 'wpautop' => true, // use wpautop?
@@ -76,7 +80,7 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 	<?php endif; ?>
 
 	<form class="standard-form base" method="post" action="#" enctype="multipart/form-data" id="cf_update_form" >
-		<input type="hidden" id="post_id" name="classified_data[ID]" value="<?php echo ( empty( $classified_data['ID'] ) ) ? '' : $classified_data['ID']; ?>" />
+		<input type="hidden" id="post_ID" name="classified_data[ID]" value="<?php echo ( empty( $classified_data['ID'] ) ) ? '' : $classified_data['ID']; ?>" />
 		<input type="hidden" name="post_id" value="<?php echo ( empty( $classified_data['ID'] ) ) ? '' : $classified_data['ID']; ?>" />
 
 		<?php if(post_type_supports('classifieds','title') ): ?>
@@ -87,7 +91,16 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 		</div>
 		<?php endif; ?>
 
-		<div class="editfield"><?php echo $this->get_post_image_link($post_id); ?></div>
+		<div class="editfield" style="width:300px;">
+			<div id="postimagediv">
+				<div class="inside">
+					<?php
+					$thumbnail_id = get_post_meta( $post_ID, '_thumbnail_id', true );
+					echo _wp_post_thumbnail_html($thumbnail_id, $post_ID);
+					?>
+				</div>
+			</div>
+		</div>
 
 		<?php if(post_type_supports('classifieds','editor') ): ?>
 		<label for="classifiedcontent"><?php _e( 'Content', $this->text_domain ); ?></label>
