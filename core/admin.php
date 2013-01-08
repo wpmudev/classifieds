@@ -109,7 +109,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 		add_action( 'admin_print_styles-' .  $settings_page, array( &$this, 'enqueue_scripts' ) );
 
 		if($this->use_credits){
-			$settings_page = add_submenu_page( 'edit.php?post_type=classifieds', __( 'Classifieds Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_admin_requests' ) );
+			$settings_page = add_submenu_page( 'edit.php?post_type=classifieds', __( 'Classifieds Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_credits_requests' ) );
 			add_action( 'admin_print_styles-' .  $settings_page, array( &$this, 'enqueue_scripts' ) );
 		}
 
@@ -160,8 +160,6 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 		'payment-types',
 		'affiliate',
 		'shortcodes',
-		'my-credits',
-		'send-credits',
 		);
 
 		$page = (empty($_GET['page'])) ? '' : $_GET['page'] ;
@@ -220,49 +218,70 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 
 			}
 		}
-		//Send credits to other users.
-		elseif ( $page == 'classifieds_credits' ) {
-			$tab = (empty($_GET['tab'])) ? 'my-credits' : $_GET['tab']; //default tab
-			if ( in_array( $tab, $valid_tabs)) {
+	}
 
-				if ( $tab == 'send-credits' ) {
-					if(!empty($_POST)) check_admin_referer('verify');
-					$send_to = ( empty($_POST['manage_credits'])) ? '' : $_POST['manage_credits'];
-					$send_to_user = ( empty($_POST['manage_credits_user'])) ? '' : $_POST['manage_credits_user'];
-					$send_to_count = ( empty($_POST['manage_credits_count'])) ? '' : $_POST['manage_credits_count'];
+	/**
+	* Handles $_GET and $_POST requests for the credits page.
+	*
+	* @return void
+	*/
+	function handle_credits_requests(){
+		$valid_tabs = array(
+		'my-credits',
+		'send-credits',
+		);
 
-					$credits = (is_numeric($send_to_count)) ? abs(intval($send_to_count)) : 0;
+		$page = (empty($_GET['page'])) ? '' : $_GET['page'] ;
+		$tab = (empty($_GET['tab'])) ? 'my-credits' : $_GET['tab']; //default tab
 
-					if ($send_to == 'send_single'){
-						$user = get_user_by('login', $send_to_user);
-						if($user){
-							$this->update_user_credits($credits, $user->ID);
-						} else {
-							$this->message = sprintf(__('User "%s" not found or not a Classifieds member',$this-text_domain), $send_to_user);
-						}
-					}
+		if($page == 'classifieds_credits' && in_array($tab, $valid_tabs) ) {
+			if ( $tab == 'send-credits' ) {
+				if(!empty($_POST)) check_admin_referer('verify');
+				$send_to = ( empty($_POST['manage_credits'])) ? '' : $_POST['manage_credits'];
+				$send_to_user = ( empty($_POST['manage_credits_user'])) ? '' : $_POST['manage_credits_user'];
+				$send_to_count = ( empty($_POST['manage_credits_count'])) ? '' : $_POST['manage_credits_count'];
 
-					if ($send_to == 'send_all'){
-						$search = array();
-						if(is_multisite()) $search['blog_id'] = get_current_blog_id();
-						$users = get_users($search);
-						foreach($users as $user){
-							$this->update_user_credits($credits, $user->ID);
-						}
-						$this->message = sprintf(__('All users have had "%s" credits added to their accounts.',$this-text_domain), $credits);
+				$credits = (is_numeric($send_to_count)) ? (intval($send_to_count)) : 0;
 
-					}
+				if(is_multisite()) $blog_id = get_current_blog_id();
 
+				if ($send_to == 'send_single'){
+					$user = get_user_by('login', $send_to_user);
+					if($user){
+						$transaction = new CF_Transactions($user->ID, $blog_id);
+						$transaction->credits += $credits;
+						unset($transaction);
+						$this->message = sprintf(__('User "%s" received %s credits to member\'s Classifieds account',$this-text_domain), $send_to_user, $credits);
 
-				} else {
-					if ( isset( $_POST['purchase'] ) ) {
-						$this->js_redirect( get_permalink($this->checkout_page_id) );
+					} else {
+						$this->message = sprintf(__('User "%s" not found or not a Classifieds member',$this-text_domain), $send_to_user);
 					}
 				}
-				$this->render_admin( "credits-{$tab}" );
+
+				if ($send_to == 'send_all'){
+					$search = array();
+					if(is_multisite()) $search['blog_id'] = get_current_blog_id();
+					$users = get_users($search);
+					foreach($users as $user){
+						$transaction = new CF_Transactions($user->ID, $blog_id);
+						$transaction->credits += $credits;
+						unset($transaction);
+					}
+					$this->message = sprintf(__('All users have had "%s" credits added to their accounts.',$this-text_domain), $credits);
+
+				}
+			} else {
+				if ( isset( $_POST['purchase'] ) ) {
+					$this->js_redirect( get_permalink($this->checkout_page_id) );
+				}
 			}
 		}
+
+		$this->render_admin( "credits-{$tab}" );
+
+		do_action( 'cf_handle_credits_requests' );
 	}
+
 
 	/**
 	* Hook styles and scripts into plugin admin head
