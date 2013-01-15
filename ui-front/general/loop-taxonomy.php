@@ -28,6 +28,8 @@ $field_image = (empty($cf_options['field_image_def'])) ? $cf->plugin_url . 'ui-f
 
 ?>
 
+<?php if(! is_post_type_archive('classifieds') ) the_cf_breadcrumbs(); ?>
+
 <?php /* Display navigation to next/previous pages when applicable */ ?>
 <?php echo $cf->pagination( $cf->pagination_top ); ?>
 <div class="clear"></div>

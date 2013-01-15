@@ -9,7 +9,9 @@
 * @since Classifieds 2.0
 */
 
-get_header(); ?>
+get_header(); 
+
+?>
 
 <div id="container">
 	<div id="content" role="main">

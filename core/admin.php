@@ -108,7 +108,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 
 		add_action( 'admin_print_styles-' .  $settings_page, array( &$this, 'enqueue_scripts' ) );
 
-		if($this->use_credits){
+		if($this->use_credits	&& (current_user_can('manage_options') || $this->use_paypal || $this->authorizenet ) ){
 			$settings_page = add_submenu_page( 'edit.php?post_type=classifieds', __( 'Classifieds Credits', $this->text_domain ), __( 'Credits', $this->text_domain ), 'read', 'classifieds_credits' , array( &$this, 'handle_credits_requests' ) );
 			add_action( 'admin_print_styles-' .  $settings_page, array( &$this, 'enqueue_scripts' ) );
 		}

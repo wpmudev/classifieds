@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Classifieds\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-23 14:19-0500\n"
+"POT-Creation-Date: 2013-01-15 14:37-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arnold Bailey <abaileytn@gmail.com>\n"
 "Language-Team: Arnold Bailey <arnold@incsub.com>\n"
@@ -36,9 +36,9 @@ msgstr ""
 msgid "http://premium.wpmudev.org"
 msgstr ""
 
-#: ../loader.php:20 ../core/core.php:1522 ../core/data.php:51
+#: ../loader.php:20 ../core/core.php:1501 ../core/data.php:51
 #: ../ui-admin/settings-shortcodes.php:33
-#: ../ui-admin/settings-shortcodes.php:34 ../ui-front/general/taxonomy.php:31
+#: ../ui-admin/settings-shortcodes.php:34 ../ui-front/general/taxonomy.php:33
 msgid "Classifieds"
 msgstr ""
 
@@ -70,30 +70,35 @@ msgstr ""
 msgid "Tutorial"
 msgstr ""
 
-#: ../core/admin.php:198
+#: ../core/admin.php:196
 msgid "ROLE ALREADY EXISTS"
 msgstr ""
 
-#: ../core/admin.php:199
+#: ../core/admin.php:197
 #, php-format
 msgid "New Role \"%s\" Added"
 msgstr ""
 
-#: ../core/admin.php:205
+#: ../core/admin.php:203
 #, php-format
 msgid "Role \"%s\" Removed"
 msgstr ""
 
-#: ../core/admin.php:216 ../ui-admin/message.php:3
+#: ../core/admin.php:214 ../ui-admin/message.php:3
 msgid "Settings Saved."
 msgstr ""
 
-#: ../core/admin.php:241
+#: ../core/admin.php:254
+#, php-format
+msgid "User \"%s\" received %s credits to member's Classifieds account"
+msgstr ""
+
+#: ../core/admin.php:257
 #, php-format
 msgid "User \"%s\" not found or not a Classifieds member"
 msgstr ""
 
-#: ../core/admin.php:252
+#: ../core/admin.php:270
 #, php-format
 msgid "All users have had \"%s\" credits added to their accounts."
 msgstr ""
@@ -110,7 +115,7 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: ../core/buddypress.php:169 ../core/buddypress.php:227 ../core/core.php:1163
+#: ../core/buddypress.php:169 ../core/buddypress.php:227 ../core/core.php:1142
 #: ../core/main.php:109
 msgid "Security check failed!"
 msgstr ""
@@ -163,94 +168,94 @@ msgstr ""
 msgid "Upload files."
 msgstr ""
 
-#: ../core/core.php:214
+#: ../core/core.php:213
 msgid "Virtual"
 msgstr ""
 
-#: ../core/core.php:303
+#: ../core/core.php:302
 msgid "CC Email"
 msgstr ""
 
-#: ../core/core.php:304
+#: ../core/core.php:303
 msgid "CC First Name"
 msgstr ""
 
-#: ../core/core.php:305
+#: ../core/core.php:304
 msgid "CC Last Name"
 msgstr ""
 
-#: ../core/core.php:306
+#: ../core/core.php:305
 msgid "CC Street"
 msgstr ""
 
-#: ../core/core.php:307
+#: ../core/core.php:306
 msgid "CC City"
 msgstr ""
 
-#: ../core/core.php:308
+#: ../core/core.php:307
 msgid "CC State"
 msgstr ""
 
-#: ../core/core.php:309
+#: ../core/core.php:308
 msgid "CC Zip"
 msgstr ""
 
-#: ../core/core.php:310
+#: ../core/core.php:309
 msgid "CC Country Code"
 msgstr ""
 
-#: ../core/core.php:538
+#: ../core/core.php:517
 msgid "Virtual page. Editing this page won't change anything."
 msgstr ""
 
-#: ../core/core.php:767
+#: ../core/core.php:746
 msgid "Please fill in the required fields."
 msgstr ""
 
-#: ../core/core.php:1093
+#: ../core/core.php:1072
 msgid "No expiration date set."
 msgstr ""
 
-#: ../core/core.php:1432 ../core/core.php:1433
+#: ../core/core.php:1411 ../core/core.php:1412
 msgid "You are being redirected. Please wait."
 msgstr ""
 
-#: ../core/core.php:1542 ../ui-admin/settings-shortcodes.php:65
+#: ../core/core.php:1521 ../ui-admin/settings-shortcodes.php:65
 #: ../ui-admin/settings-shortcodes.php:66
 msgid "Add Classified"
 msgstr ""
 
-#: ../core/core.php:1564 ../core/data.php:55
+#: ../core/core.php:1543 ../core/data.php:55
 #: ../ui-admin/settings-shortcodes.php:50
 #: ../ui-admin/settings-shortcodes.php:73
 #: ../ui-admin/settings-shortcodes.php:74
 msgid "Edit Classified"
 msgstr ""
 
-#: ../core/core.php:1585 ../ui-admin/settings-checkout.php:13
+#: ../core/core.php:1564 ../ui-admin/settings-checkout.php:13
 msgid "Classifieds Checkout"
 msgstr ""
 
-#: ../core/core.php:1605 ../ui-admin/credits-my-credits.php:13
+#: ../core/core.php:1584 ../ui-admin/credits-my-credits.php:13
 msgid "My Classifieds Credits"
 msgstr ""
 
-#: ../core/core.php:1627 ../ui-admin/settings-shortcodes.php:41
+#: ../core/core.php:1606 ../ui-admin/settings-shortcodes.php:41
 #: ../ui-admin/settings-shortcodes.php:42
 msgid "My Classifieds"
 msgstr ""
 
-#: ../core/core.php:1647 ../ui-admin/settings-shortcodes.php:81
+#: ../core/core.php:1626 ../ui-admin/settings-shortcodes.php:81
 #: ../ui-admin/settings-shortcodes.php:82
 msgid "Go to Profile"
 msgstr ""
 
-#: ../core/core.php:1667 ../ui-admin/settings-shortcodes.php:89
+#: ../core/core.php:1646 ../ui-admin/settings-shortcodes.php:89
 #: ../ui-admin/settings-shortcodes.php:90
 msgid "Signin"
 msgstr ""
 
-#: ../core/core.php:1691 ../core/core.php:1715
+#: ../core/core.php:1670 ../core/core.php:1694
 #: ../ui-admin/settings-shortcodes.php:105
 #: ../ui-admin/settings-shortcodes.php:106
 msgid "Logout"
@@ -388,6 +393,11 @@ msgstr ""
 msgid "No categories"
 msgstr ""
 
+#: ../core/functions.php:100 ../core/functions.php:103
+#, php-format
+msgid "View all posts in %s"
+msgstr ""
+
 #: ../core/main.php:96
 msgid ""
 "You do not have enough credits to publish your classified for the selected "
@@ -500,9 +510,9 @@ msgstr ""
 #: ../ui-admin/dashboard.php:19 ../ui-admin/dashboard.php:71
 #: ../ui-admin/dashboard.php:140
 #: ../ui-front/buddypress/members/single/classifieds/my-classifieds.php:126
-#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:84
+#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:88
 #: ../ui-front/general/loop-author.php:90
-#: ../ui-front/general/loop-taxonomy.php:85
+#: ../ui-front/general/loop-taxonomy.php:87
 #: ../ui-front/general/page-my-classifieds.php:103
 #: ../ui-front/general/page-update-classified.php:90
 msgid "Title"
@@ -512,7 +522,7 @@ msgstr ""
 #: ../ui-admin/dashboard.php:141
 #: ../ui-front/buddypress/members/single/classifieds/my-classifieds.php:132
 #: ../ui-front/general/loop-author.php:109
-#: ../ui-front/general/loop-taxonomy.php:108
+#: ../ui-front/general/loop-taxonomy.php:110
 #: ../ui-front/general/page-my-classifieds.php:109
 #: ../ui-front/general/single-classifieds.php:70
 msgid "Categories"
@@ -565,7 +575,7 @@ msgstr ""
 #: ../ui-admin/dashboard.php:55 ../ui-admin/dashboard.php:124
 #: ../ui-admin/dashboard.php:192
 #: ../ui-front/buddypress/members/single/classifieds/my-classifieds.php:200
-#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:202
+#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:215
 #: ../ui-front/general/page-my-classifieds.php:171
 #: ../ui-front/general/page-update-classified.php:210
 #: ../ui-front/general/single-classifieds.php:145
@@ -723,7 +733,7 @@ msgstr ""
 #: ../ui-admin/settings-checkout.php:55 ../ui-admin/settings-general.php:202
 #: ../ui-admin/settings-payment-types.php:327
 #: ../ui-admin/settings-payments.php:181
-#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:200
+#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:213
 #: ../ui-front/general/page-update-classified.php:208
 msgid "Save Changes"
 msgstr ""
@@ -1560,7 +1570,7 @@ msgstr ""
 
 #: ../ui-front/buddypress/members/single/classifieds/my-classifieds.php:141
 #: ../ui-front/general/loop-author.php:118
-#: ../ui-front/general/loop-taxonomy.php:118
+#: ../ui-front/general/loop-taxonomy.php:120
 #: ../ui-front/general/page-my-classifieds.php:118
 msgid "Expires"
 msgstr ""
@@ -1597,37 +1607,37 @@ msgstr ""
 msgid "Auto Draft"
 msgstr ""
 
-#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:86
+#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:90
 #: ../ui-front/general/page-update-classified.php:92
 msgid "Enter title here."
 msgstr ""
 
-#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:93
+#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:106
 #: ../ui-front/general/page-update-classified.php:108
 msgid "Content"
 msgstr ""
 
-#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:105
+#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:118
 #: ../ui-front/general/page-update-classified.php:112
 msgid "The content of your classified."
 msgstr ""
 
-#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:110
+#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:123
 #: ../ui-front/general/page-update-classified.php:117
 msgid "Excerpt"
 msgstr ""
 
-#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:112
+#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:125
 #: ../ui-front/general/page-update-classified.php:119
 msgid "A short excerpt of your classified."
 msgstr ""
 
-#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:172
+#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:185
 #: ../ui-front/general/page-update-classified.php:180
 msgid "Status"
 msgstr ""
 
-#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:183
+#: ../ui-front/buddypress/members/single/classifieds/update-classified.php:196
 #: ../ui-front/general/page-update-classified.php:191
 msgid "Select a status for your classified."
 msgstr ""
@@ -1638,24 +1648,24 @@ msgid "Classifieds By: %s"
 msgstr ""
 
 #: ../ui-front/general/loop-author.php:47
-#: ../ui-front/general/loop-taxonomy.php:37
+#: ../ui-front/general/loop-taxonomy.php:39
 msgid "Not Found"
 msgstr ""
 
 #: ../ui-front/general/loop-author.php:49
-#: ../ui-front/general/loop-taxonomy.php:39
+#: ../ui-front/general/loop-taxonomy.php:41
 msgid ""
 "Apologies, but no results were found for the requested classifieds. Perhaps "
 "searching will help find a related classified."
 msgstr ""
 
 #: ../ui-front/general/loop-author.php:96
-#: ../ui-front/general/loop-taxonomy.php:92
+#: ../ui-front/general/loop-taxonomy.php:94
 #: ../ui-front/general/single-classifieds.php:53
 msgid "Posted By"
 msgstr ""
 
-#: ../ui-front/general/loop-taxonomy.php:64
+#: ../ui-front/general/loop-taxonomy.php:66
 #, php-format
 msgid "%01.2f"
 msgstr ""

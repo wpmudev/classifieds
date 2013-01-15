@@ -164,6 +164,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 
 		/* Handles request for classifieds page */
 		$templates = array();
+		$taxonomy = (empty($wp_query->query_vars['taxonomy']) ) ? '' : $wp_query->query_vars['taxonomy'];
 
 		//Check if a custom template is selected, if not or not a page, default to the one selected for the directory_listing virtual page. 
 		$id = get_queried_object_id();
@@ -186,8 +187,17 @@ class Classifieds_Core_Main extends Classifieds_Core {
 			$this->is_classifieds_page = true;
 		}
 
-		elseif ( is_archive() ) {
-			add_filter( 'the_title', array( &$this, 'page_title_output' ), 10 , 2 );
+		elseif (is_archive() && in_array($taxonomy, array('classifieds_categories','classifieds_tags') ) ) {
+			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
+			$templates = array( "taxonomy-{$taxonomy}.php" );
+			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
+				$this->classifieds_template = $page_template;
+				$wp_query->post_count = 1;
+				add_filter( 'the_title', array( &$this, 'page_title_output' ), 10 , 2 );
+				add_filter('the_content', array(&$this, 'classifieds_content'));
+			}
+			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			$this->is_classifieds_page = true;
 		}
 		elseif(is_single() && 'classifieds' == get_query_var('post_type')){
 			$templates = array( 'single-classifieds.php' );

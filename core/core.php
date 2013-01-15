@@ -1585,7 +1585,7 @@ class Classifieds_Core {
 		'view' => 'both', //loggedin, loggedout, both
 		), $atts ) );
 
-		if(! $this->use_credits) return '';
+		if(! $this->use_credits || (!$this->use_paypal && ! $this->use_authorizenet)) return ''; //No way to pay no button
 
 		$view = strtolower($view);
 		if(is_user_logged_in())	{if($view == 'loggedout') return '';}

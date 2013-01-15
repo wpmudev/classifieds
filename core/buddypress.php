@@ -321,7 +321,6 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 			$this->js_redirect( $logged_url . $this->my_classifieds_page_slug . '/active', true);
 		}
 
-		//		elseif ( is_page($this->classifieds_page_id) ) {
 		elseif ( is_post_type_archive('classifieds') ) {
 			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
 			$templates = array( 'page-classifieds.php' );

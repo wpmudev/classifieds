@@ -80,6 +80,30 @@ function the_cf_categories_home( $echo = true ){
 	return $output;
 }
 
+/**
+* the_dir_breadcrumbs
+*
+* @access public
+* @return void
+*/
+function the_cf_breadcrumbs() {
+	global $wp_query;
+	
+	$output = '';
+	$category = get_queried_object();
+	$category_parent_ids = get_ancestors( $category->term_id, $category->taxonomy );
+	$category_parent_ids = array_reverse( $category_parent_ids );
+	
+	foreach ( $category_parent_ids as $category_parent_id ) {
+		$category_parent = get_term( $category_parent_id, $category->taxonomy );
+
+		$output .= '<a href="' . get_term_link( $category_parent ) . '" title="' . sprintf( __( 'View all posts in %s', CF_TEXT_DOMAIN ), $category_parent->name ) . '" >' . $category_parent->name . '</a> / ';
+	}
+
+	$output .= '<a href="' . get_term_link( $category ) . '" title="' . sprintf( __( 'View all posts in %s', CF_TEXT_DOMAIN ), $category->name ) . '" >' . $category->name . '</a>';
+
+	echo $output;
+}
 
 //function allow_classifieds_filter($allow = false){
 //
