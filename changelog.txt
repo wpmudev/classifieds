@@ -4,6 +4,9 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.1.6 Arnold Bailey =
+* Fixed bread crumbs in Buddypress.
+
 = 2.3.1.5 Arnold Bailey =
 * Added breadcrumbs to the taxonomy pages.
 

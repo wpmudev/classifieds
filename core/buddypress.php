@@ -307,6 +307,9 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		/* Handles request for classifieds page */
 
 		$templates = array();
+	
+		$taxonomy = (empty($wp_query->query_vars['taxonomy']) ) ? '' : $wp_query->query_vars['taxonomy'];
+		
 		$page_template = locate_template( array('page.php', 'index.php' ) );
 
 		$logged_url = trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug . '/';
@@ -334,6 +337,18 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 			$this->is_classifieds_page = true;
 		}
 
+		elseif (is_archive() && in_array($taxonomy, array('classifieds_categories','classifieds_tags') ) ) {
+			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
+			$templates = array( 'page-classifieds.php' );
+			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
+				$this->classifieds_template = $page_template;
+				$wp_query->post_count = 1;
+				add_filter( 'the_title', array( &$this, 'page_title_output' ), 10 , 2 );
+				add_filter('the_content', array(&$this, 'classifieds_content'));
+			}
+			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			$this->is_classifieds_page = true;
+		}
 		elseif(is_single() && 'classifieds' == get_query_var('post_type')){
 			$templates = array( 'single-classifieds.php' );
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {

@@ -77,6 +77,8 @@ class Classifieds_Core {
 	/** @public string classifieds_page_name the Classifieds default page name for templates. Track by ID so the page permalink and slug may be internationalized */
 	public $checkout_page_name = 'checkout';
 
+	public $is_classifieds_page = false;
+
 	public $use_credits = false;
 	public $use_paypal = false;
 	public $use_authorizenet = false;
@@ -989,10 +991,10 @@ class Classifieds_Core {
 	**/
 	function handle_contact_form_requests() {
 
+		if(! session_id() ) session_start();
 		/* Only handle request if on single{}.php template and our post type */
 		if ( get_post_type() == $this->post_type && is_single($_SESSION['cf_random_value']) ) {
 
-			if(! session_id() ) session_start();
 
 			if (isset( $_POST['contact_form_send'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'send_message' ) ){
 				if ( isset( $_POST['name'] ) && '' != $_POST['name']
@@ -1900,9 +1902,9 @@ class Classifieds_Core {
 
 		if( $current_user->ID == 0 ) return;
 
-		if($_POST['action'] == 'query-attachments' 
-		&& !current_user_can('administrator') 
-		&& !current_user_can('edit_others_classifieds') ) 
+		if(! empty($_POST['action']) && $_POST['action'] == 'query-attachments'
+		&& !current_user_can('administrator')
+		&& !current_user_can('edit_others_classifieds') )
 		$wp_query_obj->set('author', $current_user->ID );
 	}
 
