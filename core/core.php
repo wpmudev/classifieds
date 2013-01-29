@@ -252,7 +252,7 @@ class Classifieds_Core {
 		$this->pagination_bottom = ( ! empty($options['pagination_bottom']));
 
 		/* Set the member role for classifieds */
-		$this->user_role = $options['member_role'];
+		$this->user_role = (empty($options['member_role']) ) ? get_option('default_role') : $options['member_role'];
 
 		//How do we sell stuff
 		$options = $this->get_options('payment_types');
@@ -613,6 +613,8 @@ class Classifieds_Core {
 			$page_id = wp_insert_post( $args );
 			$classifieds_page = get_post($page_id);
 			add_post_meta( $page_id, "classifieds_type",  'add_classified_page' );
+		} else {
+			if($classifieds_page->post_status != 'virtual') wp_update_post( array('ID' => $page_id, 'post_status' => 'virtual') );
 		}
 
 		$this->add_classified_page_id = $page_id; // Remember the number
@@ -637,6 +639,8 @@ class Classifieds_Core {
 			$page_id = wp_insert_post( $args );
 			$classifieds_page = get_post($page_id);
 			add_post_meta( $page_id, "classifieds_type",  'edit_classified' );
+		} else {
+			if($classifieds_page->post_status != 'virtual') wp_update_post( array('ID' => $page_id, 'post_status' => 'virtual') );
 		}
 
 		$this->edit_classified_page_id = $page_id; // Remember the number
@@ -662,6 +666,8 @@ class Classifieds_Core {
 			$page_id = wp_insert_post( $args );
 			$classifieds_page = get_post($page_id);
 			add_post_meta( $page_id, "classifieds_type", 'my_classifeds_credits' );
+		} else {
+			if($classifieds_page->post_status != 'virtual') wp_update_post( array('ID' => $page_id, 'post_status' => 'virtual') );
 		}
 
 		$this->my_credits_page_id = $page_id; // Remember the number
@@ -710,6 +716,8 @@ class Classifieds_Core {
 			$page_id = wp_insert_post( $args );
 			$classifieds_page = get_post($page_id);
 			add_post_meta( $page_id, "classifieds_type", "classifieds_signin" );
+		} else {
+			if($classifieds_page->post_status != 'virtual') wp_update_post( array('ID' => $page_id, 'post_status' => 'virtual') );
 		}
 
 		$this->signin_page_id = $page_id; //Remember the number
