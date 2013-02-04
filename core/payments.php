@@ -267,7 +267,7 @@ class CF_Payments{
 				elseif($_SESSION['billing_type'] == 'credits') {
 					$_SESSION['cost'] = sprintf( "%01.2f", $_POST['credits'] * $options['payments']['cost_credit']);
 					$_SESSION['credits'] = $_POST['credits'];
-					$_SESSION['billing_agreement'] = $options['payments']['description'];
+					$_SESSION['billing_agreement'] = "{$_POST['credits']}: " . $options['payments']['description'];
 				}
 
 				$_SESSION['credits'] = (empty($_SESSION['credits']) ) ? '0' : $_SESSION['credits'];
@@ -282,7 +282,7 @@ class CF_Payments{
 				'cc_zip'          => empty($current_user->cc_zip) ? '' : $current_user->cc_zip,
 				'cc_country_code' => empty($current_user->cc_country_code) ? '' : $current_user->cc_country_code,
 				'total_amount' 		=> $_SESSION['cost'],
-				'currancy_code'   => 'USD',
+				'currancy_code'   => empty($this->paypal_options['currancy']) ? 'USD' : $this->paypal_options['currancy'],
 				); //For credit card details
 
 				// Set the proper step which will be loaded by "page-checkout.php"

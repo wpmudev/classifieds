@@ -137,10 +137,13 @@ class Paypal_Express_Gateway {
 		$nvpstr .= '&RETURNURL='                      . urlencode( $this->return_url );
 		$nvpstr .= '&CANCELURL='                      . urlencode( $this->cancel_url );
 		// Set additional arguments if recurring billing
-		if ( $billing_type == 'recurring' ) {
+		if ( $billing_type == 'recurring' ) 
+		{
 			$nvpstr .= '&L_BILLINGTYPE0='                 . urlencode( 'RecurringPayments' );
 			$nvpstr .= '&L_BILLINGAGREEMENTDESCRIPTION0=' . urlencode( $billing_agreement );
 		}
+		$nvpstr .= '&L_PAYMENTREQUEST_0_NAME0=' . urlencode( $billing_agreement );
+		$nvpstr .= '&L_PAYMENTREQUEST_0_AMT0=' .	urlencode( $payment_amount );
 
 		/*
 		* Make the API call to PayPal

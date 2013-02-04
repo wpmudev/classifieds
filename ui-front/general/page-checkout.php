@@ -494,7 +494,7 @@ $countries = array (
 		<tr>
 			<td><?php _e( 'Total Amount', $this->text_domain ); ?>:</td>
 			<td>
-				<strong><?php echo $_SESSION['cost']; ?> USD</strong>
+				<strong><?php echo $_SESSION['cost']; ?> <?php echo (empty($options['payment_types']['paypal']['currency']) ) ? 'USD' : $options['payment_types']['paypal']['currency']; ?></strong>
 				<input type="hidden" name="total_amount" value="<?php echo $_SESSION['cost']; ?>" />
 			</td>
 		</tr>

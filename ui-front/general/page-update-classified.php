@@ -93,7 +93,8 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 		</div>
 		<?php endif; ?>
 
-		<div class="editfield" style="width:300px;">
+		<?php if(post_type_supports('classifieds','thumbnail') && current_theme_supports('post-thumbnails') ): ?>
+		<div class="editfield">
 			<div id="postimagediv">
 				<div class="inside">
 					<?php
@@ -103,6 +104,7 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 				</div>
 			</div>
 		</div>
+		<?php endif; ?>
 
 		<?php if(post_type_supports('classifieds','editor') ): ?>
 		<label for="classifiedcontent"><?php _e( 'Content', $this->text_domain ); ?></label>
