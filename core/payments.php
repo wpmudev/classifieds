@@ -282,7 +282,7 @@ class CF_Payments{
 				'cc_zip'          => empty($current_user->cc_zip) ? '' : $current_user->cc_zip,
 				'cc_country_code' => empty($current_user->cc_country_code) ? '' : $current_user->cc_country_code,
 				'total_amount' 		=> $_SESSION['cost'],
-				'currancy_code'   => empty($this->paypal_options['currancy']) ? 'USD' : $this->paypal_options['currancy'],
+				'currency_code'   => empty($this->paypal_options['currency']) ? 'USD' : $this->paypal_options['currency'],
 				); //For credit card details
 
 				// Set the proper step which will be loaded by "page-checkout.php"

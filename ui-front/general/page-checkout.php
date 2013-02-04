@@ -608,7 +608,7 @@ $countries = array (
 		<tr>
 			<td><label><?php _e('Total Amount', $this->text_domain); ?>:</label></td>
 			<td>
-				<strong><?php echo $cc['total_amount']; ?> <?php echo (empty($cc['currancy_code']) ) ? 'USD' : $cc['currancy_code']; ?></strong>
+				<strong><?php echo $cc['total_amount']; ?> <?php echo (empty($cc['currency_code']) ) ? 'USD' : $cc['currency_code']; ?></strong>
 			</td>
 		</tr>
 	</table>
@@ -699,7 +699,7 @@ $countries = array (
 		<tr>
 			<td><label><?php _e('Total Amount', $this->text_domain); ?>:</label></td>
 			<td>
-				<strong><?php echo $cc['total_amount']; ?> <?php echo (empty($cc['currancy_code']) ) ? 'USD' : $cc['currancy_code']; ?></strong>
+				<strong><?php echo $cc['total_amount']; ?> <?php echo (empty($cc['currency_code']) ) ? 'USD' : $cc['currency_code']; ?></strong>
 			</td>
 		</tr>
 	</table>

@@ -6,7 +6,7 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 = 2.3.2 Arnold Bailey =
 * Version 1.3.1 of CustomPress
-* Fixed currancy display.
+* Fixed currency display.
 
 = 2.3.1.7 Arnold Bailey =
 * Fixed some translation items.
