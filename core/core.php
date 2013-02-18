@@ -1896,10 +1896,6 @@ class Classifieds_Core {
 		}
 	}
 
-	function hide_duration($content=''){
-		return str_replace('_ct_selectbox_4cf582bd61fa4','',$content);
-	}
-
 	/**
 	* Restrict Media library to current user's files
 	*

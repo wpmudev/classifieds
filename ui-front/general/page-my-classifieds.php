@@ -59,8 +59,8 @@ remove_filter('the_content', array(&$this, 'my_classifieds_content'));
 <?php endif; ?>
 
 <div>
-	<?php echo do_shortcode('[cf_add_classified_btn text="Create New Classified" view="loggedin"]'); ?>
-	<?php echo do_shortcode('[cf_my_credits_btn text="My Credits" view="loggedin"]'); ?>
+	<?php echo do_shortcode('[cf_add_classified_btn text="' . __('Create New Classified', $this->text_domain) . '" view="loggedin"]'); ?>
+	<?php echo do_shortcode('[cf_my_credits_btn text="' . __('My Credits', $this->text_domain) . '" view="loggedin"]'); ?>
 </div>
 
 <ul class="cf_tabs">
@@ -127,7 +127,7 @@ remove_filter('the_content', array(&$this, 'my_classifieds_content'));
 					<input type="hidden" name="url" value="<?php the_permalink(); ?>" />
 					<?php
 					if(current_user_can('edit_classified', get_the_ID())){
-						echo do_shortcode('[cf_edit_classified_btn text="Edit Ad" view="always" post="' . get_the_ID() . '"]');
+						echo do_shortcode('[cf_edit_classified_btn text="' . __('Edit Ad', $this->text_domain) . '" view="always" post="' . get_the_ID() . '"]');
 					}
 					?>
 

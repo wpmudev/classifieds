@@ -32,7 +32,7 @@ elseif( isset($_REQUEST['post_id']) ) {
 	$classified_data = get_post(  $_REQUEST['post_id'], ARRAY_A );
 	$post_ID = $classified_data['ID'];
 	$editing = true;
-}	
+}
 $post = get_post($post_ID);
 
 if ( isset( $_POST['classified_data'] ) ) $classified_data = $_POST['classified_data'];
@@ -194,11 +194,7 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 		</div>
 
 		<?php if ( isset( $CustomPress_Core ) ) : ?>
-		<div class="editfield">
-			<?php
-			echo do_shortcode('[custom_fields_input id="' . $classified_data['ID'] . '"][/custom_fields_input]');
-			?>
-		</div>
+		<?php echo do_shortcode('[custom_fields_input" style="editfield"]'); ?>
 		<?php endif; ?>
 
 		<?php if ( !empty( $error ) ): ?>

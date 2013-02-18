@@ -158,8 +158,8 @@ if(is_multisite() ){
 				<p>
 					<a href="<?php echo wp_logout_url('index.php'); ?>"><?php _e('Log out', $this->text_domain); ?></a> |
 					<?php if (current_user_can('manage_options')) {
-					echo '<a href="' . admin_url() . '">' . __('Admin') . '</a>'; } else {
-					echo '<a href="' . admin_url() . 'profile.php">' . __('Profile') . '</a>'; } ?>
+					echo '<a href="' . admin_url() . '">' . __('Admin', $this->text_domain) . '</a>'; } else {
+					echo '<a href="' . admin_url() . 'profile.php">' . __('Profile', $this->text_domain) . '</a>'; } ?>
 				</p>
 			</div>
 		</div>

@@ -89,9 +89,7 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 
 			<?php
 			//filter the duration field from the output
-			add_filter('custom_field_filter', array(&$this, 'hide_duration') );
-			echo do_shortcode('[custom_fields_block wrap="table"][/custom_fields_block]');
-			remove_filter('custom_field_filter', array(&$this, 'hide_duration') );
+			echo do_shortcode('[custom_fields_block wrap="table"][ct_filter not="true"]_ct_selectbox_4cf582bd61fa4[/ct_filter][/custom_fields_block]');
 			?>
 		</div>
 	</div>

@@ -151,7 +151,7 @@ query_posts($query_args);
 
 						<?php if ( bp_is_my_profile() ):
 						if(current_user_can('edit_classified', get_the_ID())){
-							echo do_shortcode('[cf_edit_classified_btn text="Edit Ad" view="always" post="' . get_the_ID() . '"]');
+							echo do_shortcode('[cf_edit_classified_btn text="' . __('Edit Ad', $this->text_domain) . '" view="always" post="' . get_the_ID() . '"]');
 						}
 						?>
 
