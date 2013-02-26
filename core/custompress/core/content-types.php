@@ -949,13 +949,12 @@ class CustomPress_Content_Types extends CustomPress_Core {
 				}
 			}
 		}
-
 	}
 
 	/**
 	* Flush rewrite rules based on boolean check
 	*  Setting 'ct_flush_rewrite_rules' site_option to a unique triggers across network
-	* @return void
+	* @return $wp_roles;
 	*/
 	function flush_rewrite_rules() {
 		// Mechanism for detecting changes in sub-site content types for flushing rewrite rules
@@ -1832,6 +1831,23 @@ class CustomPress_Content_Types extends CustomPress_Core {
 			update_option('ct_custom_fields', $custom_fields);
 		}
 
+	}
+
+	/**
+	* Returns an array of the custom fields belonging to a given post_type.
+	* @param string post_type to get custom fields for
+	* @return array 
+	*/
+	function get_custom_fields_set($post_type = ''){
+		if(empty($post_type) ) return array();
+		
+		$result = array();
+		
+		foreach($this->all_custom_fields as $key => $field) {
+			if( in_array($post_type, $field['object_type']) ) $result[$key] = $field;
+		} 
+		
+		return $result;
 	}
 
 }

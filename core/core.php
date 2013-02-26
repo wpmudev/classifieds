@@ -933,6 +933,16 @@ class Classifieds_Core {
 				global $CustomPress_Core;
 				$CustomPress_Core->save_custom_fields( $post_id );
 			}
+			
+			if ( isset($_FILES['feature_image']) && empty( $_FILES['feature_image']['error'] )) {
+				/* Require WordPress utility functions for handling media uploads */
+				require_once( ABSPATH . '/wp-admin/includes/media.php' );
+				require_once( ABSPATH . '/wp-admin/includes/image.php' );
+				require_once( ABSPATH . '/wp-admin/includes/file.php' );
+				/* Upload the image ( handles creation of thumbnails etc. ), set featured image  */
+				$thumbnail_id = media_handle_upload( 'feature_image', $post_id );
+				set_post_thumbnail( $post_id, $thumbnail_id );
+			}
 
 			return $post_id;
 		}
@@ -1001,7 +1011,7 @@ class Classifieds_Core {
 
 		if(! session_id() ) session_start();
 		/* Only handle request if on single{}.php template and our post type */
-		if ( get_post_type() == $this->post_type && is_single($_SESSION['cf_random_value']) ) {
+		if ( get_post_type() == $this->post_type && is_single() ) {
 
 
 			if (isset( $_POST['contact_form_send'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'send_message' ) ){

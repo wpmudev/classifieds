@@ -4,9 +4,13 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.2.2 Arnold Bailey =
+* Reworked contact email to handle the captcha a little better.
+* Added "Simple" image upload mode choice. Default is the Simple mode. Settings > General > Media manager to enable full media manager.  
+* Added CustomPress 1.3.2.2
+
 = 2.3.2.1 Arnold Bailey =
 * Added CustomPress 1.3.2.1
-
 
 = 2.3.2 Arnold Bailey =
 * Version 1.3.1 of CustomPress

@@ -102,6 +102,13 @@ $options = $this->get_options( 'general' );
 						</td>
 					</tr>
 					<tr>
+						<th><label for="media_manager"><?php _e( 'Media manager:', $this->text_domain ); ?></label></th>
+						<td>
+							<input type="checkbox" id="media_manager" name="media_manager" value="1" <?php echo ( isset( $options['media_manager'] ) && 1 == $options['media_manager'] ) ? 'checked' : ''; ?> />
+							<span class="description"><?php _e( 'enable full media manager for feature image uploads', $this->text_domain ); ?></span>
+						</td>
+					</tr>
+					<tr>
 						<th><label for="field_image_def"><?php _e( 'Use default image (URL):', $this->text_domain ); ?></label></th>
 						<td>
 							<input type="text" id="field_image_def" name="field_image_def" size="70" value="<?php echo ( isset( $options['field_image_def'] ) && '' != $options['field_image_def'] ) ? $options['field_image_def'] : ''; ?>" />

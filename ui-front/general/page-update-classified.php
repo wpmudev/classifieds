@@ -13,8 +13,10 @@ $classified_data   = '';
 $selected_cats  = '';
 $error = get_query_var('cf_error');
 $post_statuses = get_post_statuses(); // get the wp post status list
-$allowed_statuses = $this->get_options('general'); // Get the ones we allow
-$allowed_statuses['moderation'] = (empty($allowed_statuses['moderation']) ) ? array('publish' => 1, 'draft'=> 1 ) : $allowed_statuses['moderation']; // Get the ones we allow
+
+$options = $this->get_options('general');
+
+$allowed_statuses['moderation'] = (empty($options['moderation']) ) ? array('publish' => 1, 'draft'=> 1 ) : $options['moderation']; // Get the ones we allow
 $allowed_statuses = array_reverse(array_intersect_key($post_statuses, $allowed_statuses['moderation']) ); //return the reduced list
 
 //Are we adding a Classified?
@@ -67,6 +69,8 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 <!-- Begin Update Classifieds -->
 <script type="text/javascript" src="<?php echo $this->plugin_url . 'ui-front/js/jquery.tagsinput.min.js?ver=2'; ?>" ></script>
 <script type="text/javascript" src="<?php echo $this->plugin_url . 'ui-front/js/media-post.js'; ?>" ></script>
+<script type="text/javascript" src="<?php echo $this->plugin_url . 'ui-front/js/ui-front.js'; ?>" >
+</script>
 
 <?php if ( !empty( $error ) ): ?>
 <br /><div class="error"><?php echo $error . '<br />'; ?></div>
@@ -95,6 +99,19 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 
 		<?php if(post_type_supports('classifieds','thumbnail') && current_theme_supports('post-thumbnails') ): ?>
 		<div class="editfield">
+
+			<?php if(empty($options['media_manager']) ): ?>
+
+			<?php if(has_post_thumbnail()) the_post_thumbnail('thumbnail'); ?><br />
+			<script type="text/javascript">js_translate.image_chosen = '<?php _e("Feature Image Chosen", $this->text_domain); ?>';</script>
+			<span class="upload-button">
+				<input type="file" name="feature_image" size="1" id="image" />
+				<button type="button" class="button"><?php _e('Set Feature Image', $this->text_domain); ?></button>
+			</span>
+			<br />
+
+			<?php else: ?>
+
 			<div id="postimagediv">
 				<div class="inside">
 					<?php
@@ -103,6 +120,8 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 					?>
 				</div>
 			</div>
+			<?php endif; ?>
+
 		</div>
 		<?php endif; ?>
 
