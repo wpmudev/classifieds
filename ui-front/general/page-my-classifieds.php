@@ -69,12 +69,12 @@ remove_filter('the_content', array(&$this, 'my_classifieds_content'));
 	<li class="<?php if (  $sub == 'ended') echo 'cf_active'; ?>"><a href="<?php echo $cf_path . '/?ended'; ?>"><?php _e( 'Ended Ads', $this->text_domain ); ?></a></li>
 </ul>
 <div class="clear"></div>
-	<?php if ( !have_posts() ): ?>
-	<br /><br />
-	<div class="info" id="message">
-		<p><?php _e( 'No Classifieds found.', $this->text_domain ); ?></p>
-	</div>
-	<?php endif; ?>
+<?php if ( !have_posts() ): ?>
+<br /><br />
+<div class="info" id="message">
+	<p><?php _e( 'No Classifieds found.', $this->text_domain ); ?></p>
+</div>
+<?php endif; ?>
 
 <div class="cf_tab_container">
 
@@ -136,7 +136,10 @@ remove_filter('the_content', array(&$this, 'my_classifieds_content'));
 					<?php elseif ( isset( $sub ) && ( $sub == 'saved' || $sub == 'ended' ) ): ?>
 					<button type="submit" name="renew" value="<?php _e('Renew Ad', $this->text_domain ); ?>" onclick="classifieds.toggle_renew('<?php the_ID(); ?>'); return false;" ><?php _e('Renew Ad', $this->text_domain ); ?></button>
 					<?php endif; ?>
+
+					<?php if(current_user_can( 'delete_classifieds' )) ?>
 					<button type="submit" name="delete" value="<?php _e('Delete Ad', $this->text_domain ); ?>" onclick="classifieds.toggle_delete('<?php the_ID(); ?>'); return false;" ><?php _e('Delete Ad', $this->text_domain ); ?></button>
+					<?php endif; ?>
 				</form>
 
 				<form action="#" method="post" id="confirm-form-<?php the_ID(); ?>" class="confirm-form">

@@ -74,7 +74,7 @@ class CF_Transactions{
 		if(! $cf_transactions ){ //First time transactions
 			$cf_transactions = $this->struc;
 			$options = $this->get_options('payments');
-			$dr_transactions['credits'] = (empty($options['signup_credits']) ) ? 0 : $options['signup_credits'];
+			$cf_transactions['credits'] = (empty($options['signup_credits']) ) ? 0 : $options['signup_credits'];
 			update_user_option($this->user_id, 'cf_transactions', $cf_transactions);
 		}
 
