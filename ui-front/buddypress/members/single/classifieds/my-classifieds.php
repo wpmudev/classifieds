@@ -161,7 +161,7 @@ query_posts($query_args);
 						<button type="submit" name="renew" value="<?php _e('Renew Ad', $this->text_domain ); ?>" onclick="classifieds.toggle_renew('<?php the_ID(); ?>'); return false;" ><?php _e('Renew Ad', $this->text_domain ); ?></button>
 						<?php endif; ?>
 
-						<?php if(current_user_can( 'delete_classifieds' )) ?>
+						<?php if(current_user_can( 'delete_classifieds' )): ?>
 						<button type="submit" name="delete" value="<?php _e('Delete Ad', $this->text_domain ); ?>" onclick="classifieds.toggle_delete('<?php the_ID(); ?>'); return false;" ><?php _e('Delete Ad', $this->text_domain ); ?></button>
 						<?php endif; ?>
 

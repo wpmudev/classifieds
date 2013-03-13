@@ -4,6 +4,9 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.2.6 Arnold Bailey =
+* Fixed typo on delete button
+
 = 2.3.2.5 Arnold Bailey =
 * Fixed signup credits not being registered.
 * Hide delete button if user doesn't have delete rights
