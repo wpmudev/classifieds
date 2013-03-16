@@ -1464,7 +1464,10 @@ class Classifieds_Core {
 	*/
 	function on_admin_post_thumbnail_html($content = ''){
 
-		if($this->get_options('general')['field_image_req'] || stripos($content, 'set-post-thumbnail') === false) return $content;
+		$options = $this->get_options('general');
+		$required = empty($options['field_image_req']); 
+		
+		if($required || (stripos($content, 'set-post-thumbnail') === false) ) return $content;
 		$content = str_replace('<a', '<input type="text" style="visibility: hidden;" value="" class="required" /><a', $content);
 		return $content;
 	}
