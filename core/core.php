@@ -169,7 +169,6 @@ class Classifieds_Core {
 		add_action('wp_enqueue_scripts', array(&$this, 'on_enqueue_scripts'));
 		add_action('pre_get_posts', array(&$this,'on_pre_get_posts') );
 
-
 		/* Check expiration dates */
 		add_action( 'check_expiration_dates', array( &$this, 'check_expiration_dates_callback' ) );
 
@@ -182,6 +181,7 @@ class Classifieds_Core {
 		add_filter( 'pre_get_posts', array( &$this, 'pre_get_posts_for_classifieds' ), 101 );
 
 		add_filter( 'user_contactmethods', array( &$this, 'contact_fields' ), 10, 2 );
+		add_filter('admin_post_thumbnail_html', array(&$this,'on_admin_post_thumbnail_html') );
 
 
 		//Shortcodes
@@ -933,7 +933,7 @@ class Classifieds_Core {
 				global $CustomPress_Core;
 				$CustomPress_Core->save_custom_fields( $post_id );
 			}
-			
+
 			if ( isset($_FILES['feature_image']) && empty( $_FILES['feature_image']['error'] )) {
 				/* Require WordPress utility functions for handling media uploads */
 				require_once( ABSPATH . '/wp-admin/includes/media.php' );
@@ -1456,6 +1456,17 @@ class Classifieds_Core {
 		ob_end_clean();
 
 		return $result;
+	}
+
+	/**
+	*  on_admin_post_thumbnail_html adds a hidden required field if the feature image is empty
+	*
+	*/
+	function on_admin_post_thumbnail_html($content = ''){
+
+		if($this->get_options('general')['field_image_req'] || stripos($content, 'set-post-thumbnail') === false) return $content;
+		$content = str_replace('<a', '<input type="text" style="visibility: hidden;" value="" class="required" /><a', $content);
+		return $content;
 	}
 
 
