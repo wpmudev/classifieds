@@ -987,7 +987,9 @@ class Classifieds_Core {
 		if ( !isset( $options['credits_per_week'] ) || $this->use_free)
 		$options['credits_per_week'] = 0;
 
-		$weeks = $duration + 0; //convert to leading number. Allows use of things like 1.5 weeks.
+		$now = time();
+		$interval = strtotime("+{$duration}", $now) - $now;
+		$weeks = $interval / (60 * 60 * 24 * 7); // Weeks
 
 		return round($weeks * $options['credits_per_week']);
 	}
@@ -1464,9 +1466,11 @@ class Classifieds_Core {
 	*/
 	function on_admin_post_thumbnail_html($content = ''){
 
+		if(! get_post_type == 'classifieds') return $content;
+
 		$options = $this->get_options('general');
-		$required = empty($options['field_image_req']); 
-		
+		$required = empty($options['field_image_req']);
+
 		if($required || (stripos($content, 'set-post-thumbnail') === false) ) return $content;
 		$content = str_replace('<a', '<input type="text" style="visibility: hidden;" value="" class="required" /><a', $content);
 		return $content;

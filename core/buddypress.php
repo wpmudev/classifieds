@@ -171,7 +171,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 
 			elseif ( isset( $_POST['update_classified'] ) ) {
 				/* The credits required to renew the classified for the selected period */
-				$credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
+				$credits_required = $this->get_credits_from_duration( $_POST[$this->custom_fields['duration']] );
 				/* If user have more credits of the required credits proceed with renewing the ad */
 				if ( $this->is_full_access() || $this->user_credits >= $credits_required ) {
 					/* Update ad */
@@ -199,7 +199,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 						$this->render_front('my-classifieds', array( 'action' => 'end', 'post_title' => $_POST['post_title'] ));
 					} elseif ( $_POST['action'] == 'renew' ) {
 						/* The credits required to renew the classified for the selected period */
-						$credits_required = $this->get_credits_from_duration( $_POST['duration'] );
+						$credits_required = $this->get_credits_from_duration( $_POST[$this->custom_fields['duration']] );
 						/* If user have more credits of the required credits proceed with renewing the ad */
 						if ( $this->is_full_access() || $this->user_credits >= $credits_required ) {
 							/* Process the status of the post */
@@ -236,7 +236,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 			if ( isset( $_POST['update_classified'] ) ) {
 
 				// The credits required to create the classified for the selected period
-				$credits_required = $this->get_credits_from_duration( $_POST['custom_fields'][$this->custom_fields['duration']] );
+				$credits_required = $this->get_credits_from_duration( $_POST[$this->custom_fields['duration']] );
 				// If user have more credits of the required credits proceed with create the ad
 				if ( $this->is_full_access() || $this->user_credits >= $credits_required ) {
 					global $bp;
@@ -307,9 +307,9 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		/* Handles request for classifieds page */
 
 		$templates = array();
-	
+
 		$taxonomy = (empty($wp_query->query_vars['taxonomy']) ) ? '' : $wp_query->query_vars['taxonomy'];
-		
+
 		$page_template = locate_template( array('page.php', 'index.php' ) );
 
 		$logged_url = trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug . '/';

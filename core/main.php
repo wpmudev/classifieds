@@ -76,7 +76,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 					// Renew action
 					elseif ( $_POST['action'] == 'renew' ) {
 						// The credits required to renew the classified for the selected period
-						$credits_required = $this->get_credits_from_duration( $_POST['duration'] );
+						$credits_required = $this->get_credits_from_duration( $_POST[$this->custom_fields['duration']] );
 						// If user have more credits of the required credits proceed with renewing the ad
 						if ( $this->is_full_access() || ($this->user_credits >= $credits_required ) ){
 							// Process the status of the post
@@ -116,7 +116,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 			if ( isset( $_POST['update_classified'] ) ) {
 				// The credits required to renew the classified for the selected period
 
-				$credits_required = $this->get_credits_from_duration( $_POST[$this->custom_fields['duration'] ] );
+				$credits_required = $this->get_credits_from_duration( $_POST[$this->custom_fields['duration']] );
 				// If user have more credits of the required credits proceed with renewing the ad
 				if ( $this->is_full_access() || ($this->user_credits >= $credits_required ) ){
 					// Update ad
