@@ -614,7 +614,7 @@ class Classifieds_Core {
 			$classifieds_page = get_post($page_id);
 			add_post_meta( $page_id, "classifieds_type",  'add_classified_page' );
 		} else {
-			if($classifieds_page->post_status != 'virtual') wp_update_post( array('ID' => $page_id, 'post_status' => 'virtual') );
+			if(! in_array($classifieds_page->post_status, array('virtual', 'trash') ) ) wp_update_post( array('ID' => $page_id, 'post_status' => 'virtual') );
 		}
 
 		$this->add_classified_page_id = $page_id; // Remember the number
@@ -640,7 +640,7 @@ class Classifieds_Core {
 			$classifieds_page = get_post($page_id);
 			add_post_meta( $page_id, "classifieds_type",  'edit_classified' );
 		} else {
-			if($classifieds_page->post_status != 'virtual') wp_update_post( array('ID' => $page_id, 'post_status' => 'virtual') );
+			if(! in_array($classifieds_page->post_status, array('virtual', 'trash') ) ) wp_update_post( array('ID' => $page_id, 'post_status' => 'virtual') );
 		}
 
 		$this->edit_classified_page_id = $page_id; // Remember the number
@@ -667,35 +667,11 @@ class Classifieds_Core {
 			$classifieds_page = get_post($page_id);
 			add_post_meta( $page_id, "classifieds_type", 'my_classifeds_credits' );
 		} else {
-			if($classifieds_page->post_status != 'virtual') wp_update_post( array('ID' => $page_id, 'post_status' => 'virtual') );
+			if(! in_array($classifieds_page->post_status, array('virtual', 'trash') ) ) wp_update_post( array('ID' => $page_id, 'post_status' => 'virtual') );
 		}
 
 		$this->my_credits_page_id = $page_id; // Remember the number
 		$this->my_credits_page_slug = $classifieds_page->post_name; //Remember the slug
-		/*
-		$classifieds_page = $this->get_page_by_meta( 'classifieds_signup' );
-		$page_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
-
-		if ( empty($page_id) ) {
-		// Construct args for the new post
-		$args = array(
-		'post_title'     => 'Classifieds Signup',
-		'post_status'    => 'virtual',
-		'post_author'    => $current_user->ID,
-		'post_parent'    => $this->classifieds_page_id,
-		'post_type'      => 'page',
-		'post_content'   => $post_content,
-		'ping_status'    => 'closed',
-		'comment_status' => 'closed'
-		);
-		$page_id = wp_insert_post( $args );
-		$classifieds_page = get_post($page_id);
-		add_post_meta( $page_id, "classifieds_type", "classifieds_signup" );
-		}
-
-		$this->signup_page_id = $page_id; //Remember the number
-		$this->signup_page_slug = $classifieds_page->post_name; //Remember the slug
-		*/
 
 		$classifieds_page = $this->get_page_by_meta( 'classifieds_signin' );
 		$page_id = ($classifieds_page && $classifieds_page->ID > 0) ? $classifieds_page->ID : 0;
@@ -717,7 +693,7 @@ class Classifieds_Core {
 			$classifieds_page = get_post($page_id);
 			add_post_meta( $page_id, "classifieds_type", "classifieds_signin" );
 		} else {
-			if($classifieds_page->post_status != 'virtual') wp_update_post( array('ID' => $page_id, 'post_status' => 'virtual') );
+			if(! in_array($classifieds_page->post_status, array('virtual', 'trash') ) ) wp_update_post( array('ID' => $page_id, 'post_status' => 'virtual') );
 		}
 
 		$this->signin_page_id = $page_id; //Remember the number

@@ -4,6 +4,10 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.2.9 Arnold Bailey =
+* Allow virtual pages to be moved to Trash
+* Fixed query loop count
+
 = 2.3.2.8 Arnold Bailey =
 * Simple upload was acting as if it's always empty when required.
 * Changed Simple Upload css

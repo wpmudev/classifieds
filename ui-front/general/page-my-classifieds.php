@@ -182,5 +182,5 @@ remove_filter('the_content', array(&$this, 'my_classifieds_content'));
 	<?php /* Display navigation to next/previous pages when applicable */ ?>
 	<?php echo $this->pagination( $this->pagination_bottom ); ?>
 </div><!-- .cf_tab_container -->
-<?php wp_reset_query(); ?>
+<?php $wp_query->post_count = 0; ?>
 <!-- End my Classifieds -->
