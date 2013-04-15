@@ -34,7 +34,7 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		add_action( 'admin_menu', array( &$this, 'add_navigation' ), 2 );
 
 		/* Enqueue styles */
-		add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ), 99 );
 
 		add_action( 'bp_template_content', array( &$this, 'process_page_requests' ) );
 

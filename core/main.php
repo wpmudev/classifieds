@@ -27,7 +27,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 		add_action( 'template_redirect', array( &$this, 'handle_page_requests' ) );
 
 		/* Enqueue scripts */
-		add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ), 99 );
 
 		add_filter( 'author_link', array( &$this, 'on_author_link' ) );
 

@@ -4,6 +4,9 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.3 Arnold Bailey =
+* Changed login url calculation
+
 = 2.3.2.9 Arnold Bailey =
 * Allow virtual pages to be moved to Trash
 * Fixed query loop count
