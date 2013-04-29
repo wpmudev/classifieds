@@ -43,4 +43,4 @@ query_posts($query_args);
 
 load_template( CF_PLUGIN_DIR . 'ui-front/general/loop-taxonomy.php' );
 
-$wp_query->post_count = 0;
+if(is_object($wp_query)) $wp_query->post_count = 0; 

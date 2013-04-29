@@ -55,10 +55,11 @@ remove_filter('the_content', array(&$this, 'my_classifieds_content'));
 <?php if ( $this->is_full_access() ): ?>
 <div class="av-credits"><?php _e( 'You have access to create new ads', $this->text_domain ); ?></div>
 <?php elseif($this->use_credits): ?>
-<div class="av-credits"><?php _e( 'Available Credits:', $this->text_domain ); ?> <?php echo $this->transactions->credits; ?></div>
+<?php _e( 'Available Credits:', $this->text_domain ); ?> <?php echo $this->transactions->credits; ?></div>
+	<?php elseif($this->use_one_time): echo do_shortcode('[cf_checkout_btn text="' . __('Purchase ads', $this->text_domain) . '" view="loggedin"]'); ?>
 <?php endif; ?>
 
-<div>
+<div >
 	<?php echo do_shortcode('[cf_add_classified_btn text="' . __('Create New Classified', $this->text_domain) . '" view="loggedin"]'); ?>
 	<?php echo do_shortcode('[cf_my_credits_btn text="' . __('My Credits', $this->text_domain) . '" view="loggedin"]'); ?>
 </div>
@@ -182,5 +183,7 @@ remove_filter('the_content', array(&$this, 'my_classifieds_content'));
 	<?php /* Display navigation to next/previous pages when applicable */ ?>
 	<?php echo $this->pagination( $this->pagination_bottom ); ?>
 </div><!-- .cf_tab_container -->
-<?php $wp_query->post_count = 0; ?>
+<?php 
+if(is_object($wp_query)) $wp_query->post_count = 0; 
+?>
 <!-- End my Classifieds -->

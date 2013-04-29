@@ -258,7 +258,9 @@ padding-bottom: 15px;
 .button-nav li.current a {
 	color: #000;
 }
-.create-new-btn {
+.create-new-btn,
+.credits_btn,
+.checkout_btn {
 	float: right;
 }
 .cf-custom-fields .alt {
@@ -273,10 +275,6 @@ padding-bottom: 15px;
 .cf-contact-form {
 	width: 300px;
 	float: left;
-}
-
-.credits_btn{
-	float: right;
 }
 
 .av-credits {
