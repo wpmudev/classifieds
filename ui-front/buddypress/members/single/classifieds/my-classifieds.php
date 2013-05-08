@@ -196,8 +196,12 @@ query_posts($query_args);
 							//make duration options
 							foreach ( $durations as $key => $field_option ):
 							if( empty($field_option ) ) continue;
+							if($this->use_credits):
 							?>
 							<option value="<?php echo $field_option; ?>"><?php  echo sprintf(__('%s for %s Credits', $this->text_domain), $field_option, round($field_option + 0) * $cf_payments['credits_per_week']); ?></option>
+							<?php else: ?>
+							<option value="<?php echo $field_option; ?>"><?php  echo $field_option; ?></option>
+							<?php endif; ?>
 							<?php endforeach; ?>
 						</select>
 						<?php endif; ?>

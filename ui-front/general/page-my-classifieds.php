@@ -56,7 +56,7 @@ remove_filter('the_content', array(&$this, 'my_classifieds_content'));
 <div class="av-credits"><?php _e( 'You have access to create new ads', $this->text_domain ); ?></div>
 <?php elseif($this->use_credits): ?>
 <?php _e( 'Available Credits:', $this->text_domain ); ?> <?php echo $this->transactions->credits; ?></div>
-	<?php elseif($this->use_one_time): echo do_shortcode('[cf_checkout_btn text="' . __('Purchase ads', $this->text_domain) . '" view="loggedin"]'); ?>
+<?php elseif($this->use_one_time): echo do_shortcode('[cf_checkout_btn text="' . __('Purchase ads', $this->text_domain) . '" view="loggedin"]'); ?>
 <?php endif; ?>
 
 <div >
@@ -166,8 +166,12 @@ remove_filter('the_content', array(&$this, 'my_classifieds_content'));
 						//make duration options
 						foreach ( $durations as $key => $field_option ):
 						if( empty($field_option ) ) continue;
+						if($this->use_credits):
 						?>
-						<option value="<?php echo $field_option; ?>"><?php  echo sprintf(__('%s for %s Credits', $this->text_domain), $field_option, round($field_option + 0) * $cf_payments['credits_per_week']); ?></option>
+						<option value="<?php echo $field_option; ?>"><?php echo sprintf(__('%s for %s Credits', $this->text_domain), $field_option, round($field_option + 0) * $cf_payments['credits_per_week']); ?></option>
+						<?php else: ?>
+						<option value="<?php echo $field_option; ?>"><?php echo $field_option; ?></option>
+						<?php endif; ?>
 						<?php endforeach; ?>
 					</select>
 					<?php endif; ?>
@@ -183,7 +187,7 @@ remove_filter('the_content', array(&$this, 'my_classifieds_content'));
 	<?php /* Display navigation to next/previous pages when applicable */ ?>
 	<?php echo $this->pagination( $this->pagination_bottom ); ?>
 </div><!-- .cf_tab_container -->
-<?php 
-if(is_object($wp_query)) $wp_query->post_count = 0; 
+<?php
+if(is_object($wp_query)) $wp_query->post_count = 0;
 ?>
 <!-- End my Classifieds -->
