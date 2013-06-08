@@ -4,6 +4,12 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.3.4 Arnold Bailey =
+* CustomPress 1.3.3.4
+
+= 2.3.3.3 Arnold Bailey =
+* Fixes for BuddyPress in Theme comaptability mode.
+
 = 2.3.3.2 Arnold Bailey =
 * If credits are disabled then don't display credit oprice on duration field in My Classified renew.
 

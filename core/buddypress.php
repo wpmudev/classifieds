@@ -315,10 +315,9 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		$logged_url = trailingslashit($bp->loggedin_user->domain) . $this->classifieds_page_slug . '/';
 
 
-		if ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == 'all' ) {
-			$this->js_redirect( $logged_url . $this->my_classifieds_page_slug . '/active', true);
+		if ( $bp->current_component == $this->classifieds_page_slug && $bp->current_action == '' ) {
+			$this->process_page_requests(); return;			
 		}
-
 		elseif( is_page($this->my_classifieds_page_id ) ){
 			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
 			$this->js_redirect( $logged_url . $this->my_classifieds_page_slug . '/active', true);
