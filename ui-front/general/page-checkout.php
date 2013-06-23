@@ -584,26 +584,36 @@ $countries = array (
 
 	<strong><?php _e( 'Confirm Payment', $this->text_domain ); ?></strong>
 	<table>
+		
+		<?php if( !empty($cc['cc_email']) ): ?>
 		<tr>
 			<td><label><?php _e( 'Email Address', $this->text_domain ); ?>:</label></td>
 			<td><?php echo $cc['cc_email']; ?></td>
 		</tr>
+		<?php endif; ?>
+		
+		<?php if( !empty($cc['cc_firstname']) ): ?>
 		<tr>
 			<td><label><?php _e( 'Name', $this->text_domain ); ?>:</label></td>
 			<td><?php echo $cc['cc_firstname']; ?> <?php echo $cc['cc_lastname']; ?></td>
 		</tr>
+		<?php endif; ?>
+
+		<?php if( !empty($cc['cc_street']) ): ?>
 		<tr>
 			<td><label><?php _e( 'Address', $this->text_domain ); ?>:</label></td>
 			<td>
 				<?php echo trim( sprintf( __ ( '%1$s, %2$s, %3$s %4$s %5$s', $this->text_domain), $cc['cc_street'], $cc['cc_city'], $cc['cc_state'], $cc['cc_zip'], $cc['cc_country_code']), ', ') ; ?>
 			</td>
 		</tr>
+		<?php endif; ?>
 
 		<?php if ( $_SESSION['billing_type'] == 'recurring' ): ?>
 		<tr>
 			<td><label><?php _e( 'Billing Agreement', $this->text_domain ); ?>:</label></td>
 			<td><?php echo $_SESSION['billing_agreement']; ?></td>
 		</tr>
+
 		<?php endif; ?>
 		<tr>
 			<td><label><?php _e('Total Amount', $this->text_domain); ?>:</label></td>
@@ -611,6 +621,7 @@ $countries = array (
 				<strong><?php echo $cc['total_amount']; ?> <?php echo (empty($cc['currency_code']) ) ? 'USD' : $cc['currency_code']; ?></strong>
 			</td>
 		</tr>
+
 	</table>
 
 	<div class="submit">
@@ -682,20 +693,29 @@ $countries = array (
 
 	<strong><?php _e( 'Confirm Payment', $this->text_domain ); ?></strong>
 	<table>
+		<?php if( !empty($cc['cc_email']) ): ?>
 		<tr>
 			<td><label><?php _e( 'Email Address', $this->text_domain ); ?>:</label></td>
 			<td><?php echo empty($cc['cc_email']) ? $current_user->user_email : $cc['cc_email']; ?></td>
 		</tr>
+		<?php endif; ?>
+		
+		<?php if( !empty($cc['cc_firstname']) ): ?>
 		<tr>
 			<td><label><?php _e( 'Name', $this->text_domain ); ?>:</label></td>
 			<td><?php echo empty($cc['cc_firstname']) ? $current_user->first_name : $cc['cc_firstname']; ?> <?php echo empty($cc['cc_lastname']) ? $current_user->last_name : $cc['cc_lastname']; ?></td>
 		</tr>
+		<?php endif; ?>
+
+		<?php if( !empty($cc['cc_street']) ): ?>
 		<tr>
 			<td><label><?php _e( 'Address', $this->text_domain ); ?>:</label></td>
 			<td>
 				<?php echo trim( sprintf( __ ( '%1$s, %2$s, %3$s %4$s %5$s', $this->text_domain), $cc['cc_street'], $cc['cc_city'], $cc['cc_state'], $cc['cc_zip'], $cc['cc_country_code']), ', ') ; ?>
 			</td>
 		</tr>
+		<?php endif; ?>
+
 		<tr>
 			<td><label><?php _e('Total Amount', $this->text_domain); ?>:</label></td>
 			<td>
