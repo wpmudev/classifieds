@@ -55,8 +55,12 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 
 					<?php
 					/* For BuddyPress compatibility */
-					if ( isset( $bp ) ):?>
-					<a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . 'classifieds/';?>" alt="<?php the_author(); ?> Profile" ><?php echo $user->display_name; ?></a>
+					global $bp;
+					if ( isset( $bp ) ):
+						$obj = get_post_type_object('classifieds');
+						$rewrite_slug = ($obj->has_archive) ? $obj->has_archive : '';
+					?>
+					<a href="<?php echo bp_core_get_user_domain( $post->post_author ) . $rewrite_slug;?>" alt="<?php echo get_the_author_meta('display_name',$post->post_author); ?> Profile" ><?php echo get_the_author_meta('display_name',$post->post_author); ?></a>
 					<?php else: ?>
 
 					<?php the_author_posts_link(); ?>

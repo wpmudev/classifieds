@@ -1064,7 +1064,7 @@ class Classifieds_Core {
 	function get_expiration_date( $post_id ) {
 		$date = get_post_meta( $post_id, '_expiration_date', true );
 		if ( !empty( $date ) )
-		return date( get_option('date_format'), $date );
+		return date_i18n( get_option('date_format'), $date );
 		else
 		return __( 'No expiration date set.', $this->text_domain );
 	}
@@ -1210,7 +1210,7 @@ class Classifieds_Core {
 	* @return string formatted date
 	**/
 	function format_date( $date ) {
-		return date( get_option('date_format'), $date );
+		return date_i18n( get_option('date_format'), $date );
 	}
 
 	/**
