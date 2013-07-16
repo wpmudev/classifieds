@@ -4,6 +4,9 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.3.7 Arnold Bailey =
+* Fixed author overwrite
+
 = 2.3.3.6 Arnold Bailey =
 * Fixed date formatting to allow localization
 * Author slug incorrect if has_archive and rewrite sluga changed in BuddyPress
