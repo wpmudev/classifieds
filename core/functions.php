@@ -12,14 +12,14 @@ function cf_supports_taxonomy($taxonomy=''){
 }
 
 function the_cf_categories_home( $echo = true ){
-	
+
 	//get plugin options
 	$options  = get_option( CF_OPTIONS_NAME );
 
 	$cat_num                = ( isset( $options['general']['count_cat'] ) && is_numeric( $options['general']['count_cat'] ) && 0 < $options['general']['count_cat'] ) ? $options['general']['count_cat'] : 10;
 	$sub_cat_num            = ( isset( $options['general']['count_sub_cat'] ) && is_numeric( $options['general']['count_sub_cat'] ) && 0 < $options['general']['count_sub_cat'] ) ? $options['general']['count_sub_cat'] : 5;
 	$hide_empty_sub_cat     = ( isset( $options['general']['hide_empty_sub_cat'] ) && is_numeric( $options['general']['hide_empty_sub_cat'] ) && 0 < $options['general']['hide_empty_sub_cat'] ) ? $options['general']['hide_empty_sub_cat'] : 0;
-	
+
 	$taxonomies = array_values(get_taxonomies(array('object_type' => array('classifieds'), 'hierarchical' => 1)));
 
 	$args = array(
@@ -68,7 +68,7 @@ function the_cf_categories_home( $echo = true ){
 		'taxonomy'           => $category->taxonomy,
 		'walker'             => null
 		);
-		$output .= 	wp_list_categories($args);
+		$output .=   wp_list_categories($args);
 
 		$output .= "</li>\n";
 
@@ -88,12 +88,12 @@ function the_cf_categories_home( $echo = true ){
 */
 function the_cf_breadcrumbs() {
 	global $wp_query;
-	
+
 	$output = '';
 	$category = get_queried_object();
 	$category_parent_ids = get_ancestors( $category->term_id, $category->taxonomy );
 	$category_parent_ids = array_reverse( $category_parent_ids );
-	
+
 	foreach ( $category_parent_ids as $category_parent_id ) {
 		$category_parent = get_term( $category_parent_id, $category->taxonomy );
 
@@ -113,4 +113,16 @@ function the_cf_breadcrumbs() {
 //  return $allow;
 //}
 //add_filter('classifieds_full_access', 'allow_classifieds_filter');
+
+
+//function sort_alpha($query){
+//
+//  if( is_admin()
+//  || !is_archive('directory_listing')
+//  ) return;
+//
+//  $query->set('orderby', 'title');
+//  $query->set('order', 'ASC');
+//}
+//add_action('pre_get_posts', 'sort_alpha');
 
