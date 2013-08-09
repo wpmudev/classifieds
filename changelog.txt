@@ -6,6 +6,7 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 = 2.3.4 Arnold Bailey =
 * Fixed problem with required images switch.
+* Removed explicit author setting on saving post. Sometimes set the wrong author.
 * Changed signin to better handle Buddypress registration.
 
 = 2.3.3.9 Arnold Bailey =
