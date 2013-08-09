@@ -4,6 +4,10 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.4 Arnold Bailey =
+* Fixed problem with required images switch.
+* Changed signin to better handle Buddypress registration.
+
 = 2.3.3.9 Arnold Bailey =
 * Changes cabapility for Classifieds Settings to create_users from edit_users to better handle changes in WP 3x
 

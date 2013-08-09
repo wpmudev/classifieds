@@ -105,7 +105,9 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 			<?php if(has_post_thumbnail()) the_post_thumbnail('thumbnail'); ?><br />
 			<script type="text/javascript">js_translate.image_chosen = '<?php _e("Feature Image Chosen", $this->text_domain); ?>';</script>
 			<span class="upload-button">
-				<?php $class = (empty($options['field_image_req']) && !has_post_thumbnail() ) ? 'required' : ''; ?>
+			
+				<?php $class = ( empty($options['field_image_req']) && !has_post_thumbnail() ) ? 'required' : ''; ?>
+				
 				<input type="file" name="feature_image" size="1" id="image" class="<?php echo $class; ?>" />
 				<button type="button" class="button"><?php _e('Set Feature Image', $this->text_domain); ?></button>
 			</span>

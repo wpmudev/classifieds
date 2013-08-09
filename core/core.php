@@ -1440,55 +1440,16 @@ class Classifieds_Core {
 	*
 	*/
 	function on_admin_post_thumbnail_html($content = ''){
-
-		if(! get_post_type == 'classifieds') return $content;
+		if( get_post_type() != 'classifieds') return $content;
 
 		$options = $this->get_options('general');
 		$required = empty($options['field_image_req']);
 
-		if($required || (stripos($content, 'set-post-thumbnail') === false) ) return $content;
-		$content = str_replace('<a', '<input type="text" style="visibility: hidden;" value="" class="required" /><a', $content);
+		if( !$required || (stripos($content, 'set-post-thumbnail') === false) ) return $content;
+
+		$content = str_replace('<a', '<input type="text" style="visibility: hidden;width:0;" value="" class="required" /><a', $content);
+
 		return $content;
-	}
-
-
-	function get_post_image_link($post_id = 0){
-
-		if ( ! ( post_type_supports( 'classifieds', 'thumbnail' )
-		&& current_theme_supports( 'post-thumbnails', 'classifieds' ) ) )
-		return '';
-
-		ob_start();
-		?>
-		<div id="postimagediv">
-			<div class="inside">
-				<?php
-
-				$tb_url = esc_attr(admin_url("/media-upload.php?post_id={$post_id}&type=image&TB_iframe=1&width=640&height=510") );
-				$html = '<p>';
-
-				$options = $this->get_options( 'general' );
-				if( empty($options['field_image_req']) ){
-					$html .= '<input type="text" style="visibility: hidden;" value="" class="required" /><br />';
-				}
-				$html .= '<a class="thickbox" href="' . $tb_url . '" id="set-post-thumbnail" >' . esc_html__( 'Set Featured Image') . '</a></p>';
-
-				if(has_post_thumbnail($post_id)){
-					$html = get_the_post_thumbnail($post_id, array(200,150));
-					$ajax_nonce = wp_create_nonce( "set_post_thumbnail-{$post_id}" );
-					$html .= '<p class="hide-if-no-js"><a href="#" id="remove-post-thumbnail" onclick="WPRemoveThumbnail(\'' . $ajax_nonce . '\');return false;">' . esc_html__( 'Remove featured image' ) . '</a></p>';
-				}
-				echo $html;
-
-				?>
-
-			</div>
-		</div>
-		<?php
-		$result = ob_get_contents();
-		ob_end_clean();
-
-		return $result;
 	}
 
 	/**
