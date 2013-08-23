@@ -4,6 +4,10 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.4.1 Arnold Bailey =
+* Removed PHP 4 type constructors which now cause Warnings
+* Fixed Feeds for custom types so all are sent instead of just the first one.
+
 = 2.3.4 Arnold Bailey =
 * Fixed problem with required images switch.
 * Removed explicit author setting on saving post. Sometimes set the wrong author.

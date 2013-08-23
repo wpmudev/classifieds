@@ -11,8 +11,7 @@ class Classifieds_Core_Data {
 	*
 	* @return void
 	**/
-	function Classifieds_Core_Data() { $this->__construct(); }
-	
+
 	function __construct() {
 		add_action( 'init', array( &$this, 'load_data' ) );
 		add_action( 'init', array( &$this, 'load_payment_data' ) );

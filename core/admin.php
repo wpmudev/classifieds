@@ -20,13 +20,6 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 
 	var $tutorial_script = '';
 
-	/**
-	* Constructor. Hooks the whole module to the "init" hook.
-	*
-	* @return void
-	**/
-	function Classifieds_Core_Admin() { __construct(); }
-
 	function __construct(){
 
 		parent::__construct();

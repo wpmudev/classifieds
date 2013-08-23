@@ -18,8 +18,6 @@ if(! class_exists('CF_Meta')) {
 
 		);
 
-		function CF_Meta($id = 0){ __construct($id); }
-
 		function __construct($id = 0){
 			global $post_id;
 

@@ -90,13 +90,6 @@ class Classifieds_Core {
 	public $transactions = null;
 
 	/**
-	* Constructor. Old style
-	*
-	* @return void
-	**/
-	function Classifieds_Core() { __construct(); }
-
-	/**
 	* Constructor.
 	*
 	* @return void
@@ -1184,7 +1177,7 @@ class Classifieds_Core {
 		global $wp_query, $post;
 
 		//filter out nav titles
-		if ($post->ID != $id )
+		if (!is_object($post) || ($post->ID != $id) )
 		return $title;
 
 		//taxonomy pages

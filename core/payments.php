@@ -51,8 +51,6 @@ class CF_Payments{
 	* Constructor.
 	*/
 
-	function CF_Payments() { __construct(); }
-
 	function __construct() {
 		global $Classifieds_Core;
 

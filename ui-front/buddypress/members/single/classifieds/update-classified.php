@@ -105,7 +105,7 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 			<span class="upload-button">
 
 				<?php $class = ( empty($options['field_image_req']) && !has_post_thumbnail() ) ? 'required' : ''; ?>
-				
+
 				<input type="file" name="feature_image" size="1" id="image" class="<?php echo $class; ?>" />
 				<button type="button" class="button"><?php _e('Set Feature Image', $this->text_domain); ?></button>
 			</span>
@@ -195,8 +195,8 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 		<div class="cf_taxonomydiv">
 			<div id="<?php echo $tag_name; ?>-checklist" class="tagchecklist">
 				<label><?php echo $labels->name; ?></label>
-					<input id="tag_<?php echo $tag_name; ?>" name="tag_input[<?php echo $tag_name; ?>]" type="text" value="<?php echo $tag_list?>" />
-				
+				<input id="tag_<?php echo $tag_name; ?>" name="tag_input[<?php echo $tag_name; ?>]" type="text" value="<?php echo $tag_list?>" />
+
 			</div>
 			<span class="description"><?php echo $labels->add_or_remove_items; ?></span>
 		</div>
@@ -235,10 +235,13 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 			<input type="button" value="<?php _e( 'Cancel', $this->text_domain ); ?>" onclick="location.href='<?php echo get_permalink($this->my_classifieds_page_id); ?>'">
 		</div>
 	</form>
-	<?php if($editing): // disable duration ?>
 	<script type="text/javascript">
-		jQuery("#<?php echo $this->custom_fields['duration']; ?>" ).val(0);
+		jQuery(document).ready( function($) {
+			$('#title').closest('form').validate(); //find the form we're validating
+			<?php if($editing): // disable duration ?>
+			$("#<?php echo $this->custom_fields['duration']; ?>" ).val(0);
+			<?php endif; ?>
+		});
 	</script>
-	<?php endif; ?>
 </div><!-- .cf_update_form -->
 <!-- End Update Classifieds -->

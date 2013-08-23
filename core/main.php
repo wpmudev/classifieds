@@ -12,8 +12,6 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	* @return void
 	**/
 
-	function Classifieds_Core_Main() { __construct();}
-
 	function __construct(){
 
 		parent::__construct(); //Get the inheritance right
@@ -166,15 +164,17 @@ class Classifieds_Core_Main extends Classifieds_Core {
 		$templates = array();
 		$taxonomy = (empty($wp_query->query_vars['taxonomy']) ) ? '' : $wp_query->query_vars['taxonomy'];
 
-		//Check if a custom template is selected, if not or not a page, default to the one selected for the directory_listing virtual page. 
+		//Check if a custom template is selected, if not or not a page, default to the one selected for the directory_listing virtual page.
 		$id = get_queried_object_id();
 		if(empty($id) ) $id = $this->classifieds_page_id;
 		$slug = get_page_template_slug($id);
 		if(empty($slug) ) $page_template = get_page_template();
 		else $page_template = locate_template(array($slug, 'page.php', 'index.php' ) );
 
-
-		if ( is_post_type_archive('classifieds') ) {
+		if(is_feed()){
+			return;
+		}
+		elseif ( is_post_type_archive('classifieds') ) {
 			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
 			$templates = array( 'archive-classifieds.php' );
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {

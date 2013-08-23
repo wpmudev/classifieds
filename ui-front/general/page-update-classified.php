@@ -105,9 +105,9 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 			<?php if(has_post_thumbnail()) the_post_thumbnail('thumbnail'); ?><br />
 			<script type="text/javascript">js_translate.image_chosen = '<?php _e("Feature Image Chosen", $this->text_domain); ?>';</script>
 			<span class="upload-button">
-			
+
 				<?php $class = ( empty($options['field_image_req']) && !has_post_thumbnail() ) ? 'required' : ''; ?>
-				
+
 				<input type="file" name="feature_image" size="1" id="image" class="<?php echo $class; ?>" />
 				<button type="button" class="button"><?php _e('Set Feature Image', $this->text_domain); ?></button>
 			</span>
@@ -230,10 +230,13 @@ $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $class
 			<input type="button" value="<?php _e( 'Cancel', $this->text_domain ); ?>" onclick="location.href='<?php echo get_permalink($this->my_classifieds_page_id); ?>'">
 		</div>
 	</form>
-	<?php if($editing): // disable duration ?>
 	<script type="text/javascript">
-		jQuery("#<?php echo $this->custom_fields['duration']; ?>" ).val(0);
+		jQuery(document).ready( function($) {
+			$('#title').closest('form').validate(); //find the form we're validating
+			<?php if($editing): // disable duration ?>
+			$("#<?php echo $this->custom_fields['duration']; ?>" ).val(0);
+			<?php endif; ?>
+		});
 	</script>
-	<?php endif; ?>
 </div><!-- .cf_update_form -->
 <!-- End Update Classifieds -->
