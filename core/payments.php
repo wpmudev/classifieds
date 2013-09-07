@@ -668,8 +668,8 @@ class CF_Payments{
 				$transactions->billing_type = 'recurring';
 				$transactions->paypal = array('key' => $key);
 
-				$on_payment_url = empty($options['paypal']['payment_url']) ? get_permalink($Classifieds_Core->my_classifieds_page_id) : $options['paypal']['payment_url'];
-				$on_cancel_url = empty($options['paypal']['cancel_url']) ? get_option( 'siteurl' ) : $options['paypal']['cancel_url'];
+				$on_payment_url = empty($options['payment_types']['paypal']['payment_url']) ? get_permalink($Classifieds_Core->my_classifieds_page_id) : $options['payment_types']['paypal']['payment_url'];
+				$on_cancel_url = empty($options['payment_types']['paypal']['cancel_url']) ? get_option( 'siteurl' ) : $options['payment_types']['paypal']['cancel_url'];
 
 				$custom .= $this->session_string($_SESSION);
 

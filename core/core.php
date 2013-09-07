@@ -1491,6 +1491,7 @@ class Classifieds_Core {
 
 		if( ! current_user_can('create_classifieds') ) return '';
 		$view = strtolower($view);
+		
 		if(is_user_logged_in())	{if($view == 'loggedout') return '';}
 		else if($view == 'loggedin') return '';
 

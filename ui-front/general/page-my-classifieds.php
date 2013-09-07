@@ -55,8 +55,10 @@ remove_filter('the_content', array(&$this, 'my_classifieds_content'));
 <?php if ( $this->is_full_access() ): ?>
 <div class="av-credits"><?php _e( 'You have access to create new ads', $this->text_domain ); ?></div>
 <?php elseif($this->use_credits): ?>
-<?php _e( 'Available Credits:', $this->text_domain ); ?> <?php echo $this->transactions->credits; ?></div>
-<?php elseif($this->use_one_time): echo do_shortcode('[cf_checkout_btn text="' . __('Purchase ads', $this->text_domain) . '" view="loggedin"]'); ?>
+<div class="av-credits"><?php _e( 'Available Credits:', $this->text_domain ); ?> <?php echo $this->transactions->credits; ?></div>
+<?php else:
+echo do_shortcode('[cf_checkout_btn text="' . __('Purchase ads', $this->text_domain) . '" view="loggedin"]');
+?>
 <?php endif; ?>
 
 <div >

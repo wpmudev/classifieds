@@ -70,8 +70,8 @@
 				<tr>
 					<th scope="row"><?php _e( 'Edit Classified Button:', $this->text_domain ) ?></th>
 					<td>
-						<code><strong>[cf_edit_classified_btn text="<?php _e('Edit Classified', $this->text_domain);?>" id="post_id" view="loggedin | loggedout | always"]</strong></code> or
-						<br /><code><strong>[cf_edit_classified_btn id="post_id" view="loggedin | loggedout | always"]&lt;img src="<?php _e('someimage.jpg', $this->text_domain); ?>" /&gt;<?php _e('Edit Classified', $this->text_domain);?>[/cf_edit_classified_btn]</strong></code>
+						<code><strong>[cf_edit_classified_btn text="<?php _e('Edit Classified', $this->text_domain);?>" post="post_id" view="loggedin | loggedout | always"]</strong></code> or
+						<br /><code><strong>[cf_edit_classified_btn post="post_id" view="loggedin | loggedout | always"]&lt;img src="<?php _e('someimage.jpg', $this->text_domain); ?>" /&gt;<?php _e('Edit Classified', $this->text_domain);?>[/cf_edit_classified_btn]</strong></code>
 						<br /><span class="description"><?php _e( 'Links to the Edit Classifieds Page. Generates a &lt;button&gt; &lt;/button&gt; with the contents you define.', $this->text_domain ) ?></span>
 					</td>
 				</tr>

@@ -59,7 +59,7 @@ function the_cf_categories_home( $echo = true ){
 		'include'            => '',
 		'hierarchical'       => true,
 		'title_li'           => '',
-		'show_option_none'   => __('No categories', CF_TEXT_DOMAIN ),
+		'show_option_none'   => sprintf('<span class="cf-empty">%s</span>', __('No categories', CF_TEXT_DOMAIN ) ),
 		'number'             => $sub_cat_num,
 		'echo'               => 0,
 		'depth'              => 1,
