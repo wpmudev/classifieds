@@ -1,8 +1,6 @@
 
 var WPSetThumbnailHTML, WPSetThumbnailID, WPRemoveThumbnail;
 
-(function($){
-
 WPSetThumbnailHTML = function(html){
 	$('.inside', '#postimagediv').html(html);
 };
@@ -26,5 +24,3 @@ WPRemoveThumbnail = function(nonce){
 	}
 	);
 };
-
-})(jQuery);

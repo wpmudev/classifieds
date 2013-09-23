@@ -941,6 +941,7 @@ class Classifieds_Core {
 				}
 			}
 		}
+
 		return apply_filters('classifieds_full_access', $result);
 	}
 
@@ -1438,7 +1439,7 @@ class Classifieds_Core {
 		$options = $this->get_options('general');
 		$required = empty($options['field_image_req']);
 
-		if( !$required || (stripos($content, 'set-post-thumbnail') === false) ) return $content;
+		if( !$required || (stripos($content, 'remove-post-thumbnail') !== false) ) return $content;
 
 		$content = str_replace('<a', '<input type="text" style="visibility: hidden;width:0;" value="" class="required" /><a', $content);
 

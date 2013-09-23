@@ -79,6 +79,7 @@ if ( $step == 'terms'): ?>
 					$bastr .= __( ' per ', $this->text_domain );
 					$bastr .= ( ! empty( $options['payments']['billing_frequency'] ) && $options['payments']['billing_frequency'] != 1 ) ? $options['payments']['billing_frequency'] . ' ' : '';
 					$bastr .= empty( $options['payments']['billing_period'] ) ? '' : $options['payments']['billing_period'];
+					$bastr .= ($options['payments']['billing_frequency'] > 1) ? __(' period', $this->text_domain) : '';
 					echo $bastr;
 					?>
 				</span>

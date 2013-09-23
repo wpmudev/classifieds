@@ -61,6 +61,7 @@ $editor_settings =   array(
 );
 
 $classified_content = (empty( $classified_data['post_content'] ) ) ? '' : $classified_data['post_content'];
+wp_enqueue_script('set-post-thumbnail');
 
 ?>
 
