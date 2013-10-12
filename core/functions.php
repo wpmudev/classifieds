@@ -42,6 +42,9 @@ function the_cf_categories_home( $echo = true ){
 
 		$output .= "<li>\n";
 		$output .= '<h2><a href="' . get_term_link( $category ) . '" title="' . __( 'View all posts in ', CF_TEXT_DOMAIN ) . $category->name . '" >' . $category->name . "</a> </h2>\n";
+		
+		$output .= '<div class="term-list">';
+
 		$args = array(
 		'show_option_all'    => '',
 		'orderby'            => 'name',
@@ -69,6 +72,8 @@ function the_cf_categories_home( $echo = true ){
 		'walker'             => null
 		);
 		$output .=   wp_list_categories($args);
+
+		$output .= "</div><!-- .term-list -->\n";
 
 		$output .= "</li>\n";
 

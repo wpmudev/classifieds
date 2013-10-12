@@ -8,5 +8,3 @@ if( ! function_exists('flush_network_rewrite_rules') ){
 		update_site_option('ct_flush_rewrite_rules', uniqid( ($hard ? '1 ' : '0 '), true));
 	}
 }
-
-add_filter('custom_fields', 'make_clickable' );
