@@ -27,10 +27,18 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 	<?php _e( "Send message failed: you didn't fill all required fields correctly in contact form!", $this->text_domain ); ?>
 </div>
 <br clear="all" />
+
 <?php elseif ( isset( $_GET['sent'] ) && 1 == $_GET['sent'] ): ?>
 <br clear="all" />
 <div id="cf-message">
 	<?php _e( 'Message is sent!', $this->text_domain ); ?>
+</div>
+<br clear="all" />
+
+<?php elseif ( isset( $_GET['sent'] ) && 0 == $_GET['sent'] ): ?>
+<br clear="all" />
+<div id="cf-message-error">
+	<?php _e( 'Email service is not responding!', $this->text_domain ); ?>
 </div>
 <br clear="all" />
 <?php endif; ?>
@@ -57,8 +65,8 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 					/* For BuddyPress compatibility */
 					global $bp;
 					if ( isset( $bp ) ):
-						$obj = get_post_type_object('classifieds');
-						$rewrite_slug = ($obj->has_archive) ? $obj->has_archive : '';
+					$obj = get_post_type_object('classifieds');
+					$rewrite_slug = ($obj->has_archive) ? $obj->has_archive : '';
 					?>
 					<a href="<?php echo bp_core_get_user_domain( $post->post_author ) . $rewrite_slug;?>" alt="<?php echo get_the_author_meta('display_name',$post->post_author); ?> Profile" ><?php echo get_the_author_meta('display_name',$post->post_author); ?></a>
 					<?php else: ?>
@@ -99,74 +107,77 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 	</div>
 	<div class="clear"></div>
 
+	<?php if( !$options['disable_contact_form'] ): ?>
 	<form method="post" action="#" class="contact-user-btn action-form" id="action-form">
-		<input type="submit" name="contact_user" value="<?php _e('Contact User', $this->text_domain ); ?>" onclick="classifieds.toggle_contact_form(); return false;" />
+	<input type="submit" name="contact_user" value="<?php _e('Contact User', $this->text_domain ); ?>" onclick="classifieds.toggle_contact_form(); return false;" />
 	</form>
 	<div class="clear"></div>
 
 	<form method="post" action="#" class="standard-form base cf-contact-form" id="confirm-form">
-		<?php
-		global $current_user;
+	<?php
+	global $current_user;
 
-		$name   = ( isset( $current_user->display_name ) && '' != $current_user->display_name ) ? $current_user->display_name :
-		( ( isset( $current_user->first_name ) && '' != $current_user->first_name ) ? $current_user->first_name : '' );
-		$email  = ( isset( $current_user->user_email ) && '' != $current_user->user_email ) ? $current_user->user_email : '';
-		?>
-		<div class="editfield">
-			<label for="name"><?php _e( 'Name', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
-			<input type="text" id="name" name ="name" value="<?php echo ( isset( $_POST['name'] ) ) ? $_POST['name'] : $name; ?>" />
-			<p class="description"><?php _e( 'Enter your full name here.', $this->text_domain ); ?></p>
-		</div>
-		<div class="editfield">
-			<label for="email"><?php _e( 'Email', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
-			<input type="text" id="email" name ="email" value="<?php echo ( isset( $_POST['email'] ) ) ? $_POST['email'] : $email; ?>" />
-			<p class="description"><?php _e( 'Enter a valid email address here.', $this->text_domain ); ?></p>
-		</div>
-		<div class="editfield">
-			<label for="subject"><?php _e( 'Subject', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
-			<input type="text" id="subject" name ="subject" value="<?php echo ( isset( $_POST['subject'] ) ) ? $_POST['subject'] : ''; ?>" />
-			<p class="description"><?php _e( 'Enter the subject of your enquiry here.', $this->text_domain ); ?></p>
-		</div>
-		<div class="editfield">
-			<label for="message"><?php _e( 'Message', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
-			<textarea id="message" name="message"><?php echo ( isset( $_POST['message'] ) ) ? $_POST['message'] : ''; ?></textarea>
-			<p class="description"><?php _e( 'Enter the content of your enquiry here.', $this->text_domain ); ?></p>
-		</div>
+	$name   = ( isset( $current_user->display_name ) && '' != $current_user->display_name ) ? $current_user->display_name :
+	( ( isset( $current_user->first_name ) && '' != $current_user->first_name ) ? $current_user->first_name : '' );
+	$email  = ( isset( $current_user->user_email ) && '' != $current_user->user_email ) ? $current_user->user_email : '';
+	?>
+	<div class="editfield">
+	<label for="name"><?php _e( 'Name', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
+	<input type="text" id="name" name ="name" value="<?php echo ( isset( $_POST['name'] ) ) ? $_POST['name'] : $name; ?>" />
+	<p class="description"><?php _e( 'Enter your full name here.', $this->text_domain ); ?></p>
+	</div>
+	<div class="editfield">
+	<label for="email"><?php _e( 'Email', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
+	<input type="text" id="email" name ="email" value="<?php echo ( isset( $_POST['email'] ) ) ? $_POST['email'] : $email; ?>" />
+	<p class="description"><?php _e( 'Enter a valid email address here.', $this->text_domain ); ?></p>
+	</div>
+	<div class="editfield">
+	<label for="subject"><?php _e( 'Subject', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
+	<input type="text" id="subject" name ="subject" value="<?php echo ( isset( $_POST['subject'] ) ) ? $_POST['subject'] : ''; ?>" />
+	<p class="description"><?php _e( 'Enter the subject of your enquiry here.', $this->text_domain ); ?></p>
+	</div>
+	<div class="editfield">
+	<label for="message"><?php _e( 'Message', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
+	<textarea id="message" name="message"><?php echo ( isset( $_POST['message'] ) ) ? $_POST['message'] : ''; ?></textarea>
+	<p class="description"><?php _e( 'Enter the content of your enquiry here.', $this->text_domain ); ?></p>
+	</div>
 
-		<div class="editfield">
-			<label for="cf_random_value"><?php _e( 'Security image', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
-			<img class="captcha" src="<?php echo $this->plugin_url; ?>ui-front/general/cf-captcha-image.php" />
-			<input type="text" id="cf_random_value" name ="cf_random_value" value="" size="8" />
-			<p class="description"><?php _e( 'Enter the characters from the image.', $this->text_domain ); ?></p>
-		</div>
+	<div class="editfield">
+	<label for="cf_random_value"><?php _e( 'Security image', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
+	<img class="captcha" src="<?php echo $this->plugin_url; ?>ui-front/general/cf-captcha-image.php" />
+	<input type="text" id="cf_random_value" name ="cf_random_value" value="" size="8" />
+	<p class="description"><?php _e( 'Enter the characters from the image.', $this->text_domain ); ?></p>
+	</div>
 
-		<div class="submit">
-			<p>
-				<?php wp_nonce_field( 'send_message' ); ?>
-				<input type="submit" class="button confirm" value="<?php _e( 'Send', $this->text_domain ); ?>" name="contact_form_send" />
-				<input type="submit" class="button cancel"  value="<?php _e( 'Cancel', $this->text_domain ); ?>" onclick="classifieds.cancel_contact_form(); return false;" />
-			</p>
-		</div>
+	<div class="submit">
+	<p>
+	<?php wp_nonce_field( 'send_message' ); ?>
+	<input type="submit" class="button confirm" value="<?php _e( 'Send', $this->text_domain ); ?>" name="contact_form_send" />
+	<input type="submit" class="button cancel"  value="<?php _e( 'Cancel', $this->text_domain ); ?>" onclick="classifieds.cancel_contact_form(); return false;" />
+	</p>
+	</div>
 
 	</form>
+
+	<?php endif; ?>
 
 	<div class="clear"></div>
 
 	<table class="cf-description">
-		<thead>
-			<tr>
-				<th><?php _e( 'Description', $this->text_domain ); ?></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>
-					<?php
-					//$content is already filled with the database text. This just add classified specfic code around it.
-					echo $content;
-					?>
-				</td>
-			</tr>
-		</tbody>
+	<thead>
+	<tr>
+	<th><?php _e( 'Description', $this->text_domain ); ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+	<td>
+	<?php
+	//$content is already filled with the database text. This just add classified specfic code around it.
+	echo $content;
+	?>
+	</td>
+	</tr>
+	</tbody>
 	</table>
-</div>
+	</div>

@@ -92,43 +92,43 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 
 		if ( ! current_user_can('unfiltered_html') ) {
 			remove_submenu_page('edit.php?post_type=classifieds', 'post-new.php?post_type=classifieds' );
-			add_submenu_page( 
-			'edit.php?post_type=classifieds', 
-			__( 'Add New', $this->text_domain ), 
-			__( 'Add New', $this->text_domain ), 
-			'create_classifieds', 
-			'classifieds_add', 
+			add_submenu_page(
+			'edit.php?post_type=classifieds',
+			__( 'Add New', $this->text_domain ),
+			__( 'Add New', $this->text_domain ),
+			'create_classifieds',
+			'classifieds_add',
 			array( &$this, 'redirect_add' ) );
 		}
 
 		//add_menu_page( __( 'Classifieds', $this->text_domain ), __( 'Classifieds', $this->text_domain ), 'read', $this->menu_slug, array( &$this, 'handle_admin_requests' ) );
-		add_submenu_page( 
-		'edit.php?post_type=classifieds', 
-		__( 'Dashboard', $this->text_domain ), 
-		__( 'Dashboard', $this->text_domain ), 
-		'read', 
-		$this->menu_slug, 
+		add_submenu_page(
+		'edit.php?post_type=classifieds',
+		__( 'Dashboard', $this->text_domain ),
+		__( 'Dashboard', $this->text_domain ),
+		'read',
+		$this->menu_slug,
 		array( &$this, 'handle_admin_requests' ) );
-		
-		$settings_page = add_submenu_page( 
-		'edit.php?post_type=classifieds', 
-		__( 'Classifieds Settings', $this->text_domain ), 
-		__( 'Settings', $this->text_domain ), 
+
+		$settings_page = add_submenu_page(
+		'edit.php?post_type=classifieds',
+		__( 'Classifieds Settings', $this->text_domain ),
+		__( 'Settings', $this->text_domain ),
 		'create_users', //create_users so on multisite you can turn on and off Settings with the Admin add users switch
-		'classifieds_settings', 
+		'classifieds_settings',
 		array( &$this, 'handle_admin_requests' ) );
 
 		add_action( 'admin_print_styles-' .  $settings_page, array( &$this, 'enqueue_scripts' ) );
 
 		if($this->use_credits	&& (current_user_can('manage_options') || $this->use_paypal || $this->authorizenet ) ){
-			$settings_page = add_submenu_page( 
-			'edit.php?post_type=classifieds', 
-			__( 'Classifieds Credits', $this->text_domain ), 
-			__( 'Credits', $this->text_domain ), 
-			'read', 
-			'classifieds_credits', 
+			$settings_page = add_submenu_page(
+			'edit.php?post_type=classifieds',
+			__( 'Classifieds Credits', $this->text_domain ),
+			__( 'Credits', $this->text_domain ),
+			'read',
+			'classifieds_credits',
 			array( &$this, 'handle_credits_requests' ) );
-			
+
 			add_action( 'admin_print_styles-' .  $settings_page, array( &$this, 'enqueue_scripts' ) );
 		}
 
@@ -182,7 +182,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 		);
 
 		$params = stripslashes_deep($_POST);
-		
+
 		$page = (empty($_GET['page'])) ? '' : $_GET['page'] ;
 
 		if ( $page == $this->menu_slug ) {
@@ -253,7 +253,7 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 		);
 
 		$params = stripslashes_deep($_POST);
-		
+
 		$page = (empty($_GET['page'])) ? '' : $_GET['page'] ;
 		$tab = (empty($_GET['tab'])) ? 'my-credits' : $_GET['tab']; //default tab
 
@@ -336,37 +336,37 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 	function admin_print_scripts() {
 		?>
 		<script type="text/javascript">//<![CDATA[
-			jQuery(document).ready(function($) {
-				$('form.cf-form').hide();
-			});
-			var classifieds = {
-				toggle_end: function(key) {
-					jQuery('#form-'+key).show();
-					jQuery('.action-links-'+key).hide();
-					jQuery('.separators-'+key).hide();
-					jQuery('input[name="action"]').val('end');
-				},
-				toggle_publish: function(key) {
-					jQuery('#form-'+key).show();
-					jQuery('#form-'+key+' select').show();
-					jQuery('.action-links-'+key).hide();
-					jQuery('.separators-'+key).hide();
-					jQuery('input[name="action"]').val('publish');
-				},
-				toggle_delete: function(key) {
-					jQuery('#form-'+key).show();
-					jQuery('#form-'+key+' select').hide();
-					jQuery('.action-links-'+key).hide();
-					jQuery('.separators-'+key).hide();
-					jQuery('input[name="action"]').val('delete');
-				},
-				cancel: function(key) {
-					jQuery('#form-'+key).hide();
-					jQuery('.action-links-'+key).show();
-					jQuery('.separators-'+key).show();
-				}
-			};
-			//]]>
+		jQuery(document).ready(function($) {
+			$('form.cf-form').hide();
+		});
+		var classifieds = {
+			toggle_end: function(key) {
+				jQuery('#form-'+key).show();
+				jQuery('.action-links-'+key).hide();
+				jQuery('.separators-'+key).hide();
+				jQuery('input[name="action"]').val('end');
+			},
+			toggle_publish: function(key) {
+				jQuery('#form-'+key).show();
+				jQuery('#form-'+key+' select').show();
+				jQuery('.action-links-'+key).hide();
+				jQuery('.separators-'+key).hide();
+				jQuery('input[name="action"]').val('publish');
+			},
+			toggle_delete: function(key) {
+				jQuery('#form-'+key).show();
+				jQuery('#form-'+key+' select').hide();
+				jQuery('.action-links-'+key).hide();
+				jQuery('.separators-'+key).hide();
+				jQuery('input[name="action"]').val('delete');
+			},
+			cancel: function(key) {
+				jQuery('#form-'+key).hide();
+				jQuery('.action-links-'+key).show();
+				jQuery('.separators-'+key).show();
+			}
+		};
+		//]]>
 		</script>
 		<?php
 	}
@@ -613,7 +613,9 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 				$terms = get_terms($tax_slug);
 				echo "<select name='$tax_slug' id='$tax_slug' class='postform'>";
 				echo "<option value=''>{$tax_obj->labels->all_items}&nbsp;</option>";
-				foreach ($terms as $term) { echo '<option value='. $term->slug, $_GET[$tax_slug] == $term->slug ? ' selected="selected"' : '','>' . $term->name .' (' . $term->count .')</option>'; }
+				foreach ($terms as $term) {
+					echo '<option value='. $term->slug, $_GET[$tax_slug] == $term->slug ? ' selected="selected"' : '','>' . $term->name .' (' . $term->count .')</option>';
+				}
 				echo "</select>";
 			}
 		}

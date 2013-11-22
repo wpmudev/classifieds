@@ -1,8 +1,14 @@
 === Classifieds ===
-Authors: Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub)   
-Plugin Page: http://premium.wpmudev.org/project/classifieds     
+Authors: Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub)
+Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
+
+= 2.3.4.7 Arnold Bailey =
+* Changed author links to only display BudyPress author urls on BP_ROOT
+* Made contact email editable
+* Added setting to disable contact form
+* CustomPress 1.3.4.7
 
 = 2.3.4.5 Arnold Bailey =
 * CustomPress 1.3.4.5
@@ -11,7 +17,7 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 = 2.3.4.4 Arnold Bailey =
 * Fixed incorrect required message on Feature image on the backend;
 * Added "period" to price display for things like 4 Month => 4 Month period.
- 
+
 = 2.3.4.3 Arnold Bailey =
 * CustomPress 1.3.4.3
 
@@ -97,7 +103,7 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 = 2.3.2.2 Arnold Bailey =
 * Reworked contact email to handle the captcha a little better.
-* Added "Simple" image upload mode choice. Default is the Simple mode. Settings > General > Media manager to enable full media manager.  
+* Added "Simple" image upload mode choice. Default is the Simple mode. Settings > General > Media manager to enable full media manager.
 * Added CustomPress 1.3.2.2
 
 = 2.3.2.1 Arnold Bailey =
@@ -269,20 +275,20 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 =
  2.0.7 =
 * fixed display menu credits for all user
-* fixed display page of edit classifieds 
+* fixed display page of edit classifieds
 * fixed problem with deduction credits when create new ad
 * some template changes of checkout page
 * fixed problem with adding credits of checkout (when we logged)
 * some text changes
 * fixed problem with deduction credits when create new/edit/renew ad for BP
-* fixed display count of available credits for BP 
+* fixed display count of available credits for BP
 
 =
  2.0.6 =
 * fixed problem with permalink structure
 * fixed header error
 * fixed page of classified tags
-* fixed link on page of classified author 
+* fixed link on page of classified author
 
 =
  2.0.5 =
@@ -327,4 +333,4 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 = 1.1.1 =
 
-* Initial release. 
+* Initial release.

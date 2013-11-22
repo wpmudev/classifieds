@@ -3,6 +3,20 @@
 global $wp_roles;
 $options = $this->get_options( 'general' );
 
+$default_email = __(
+'Hi TO_NAME, you have received a message from
+
+  Name: FROM_NAME
+  Email: FROM_EMAIL
+  Subject: FROM_SUBJECT
+  Message:
+
+  FROM_MESSAGE
+
+
+  Classifieds link: POST_LINK
+', $this->text_domain);
+
 ?>
 
 <div class="wrap">
@@ -182,22 +196,71 @@ $options = $this->get_options( 'general' );
 							<span class="description"><?php _e( 'display at bottom of page.', $this->text_domain ); ?></span>
 						</td>
 					</tr>
-<!--
+					<!--
 					<tr>
-						<th><label for="ads_per_page"><?php _e( 'Ads per Page:', $this->text_domain ); ?></label></th>
-						<td>
-							<input type="text" id="ads_per_page" name="ads_per_page" size="4" value="<?php echo ( isset( $options['ads_per_page'] ) && '' != $options['ads_per_page'] ) ? $options['ads_per_page'] : '10'; ?>" />
-							<br />
-							<span class="description"><?php _e( 'Number of ads displayed on each page.', $this->text_domain ); ?></span>
-						</td>
+					<th><label for="ads_per_page"><?php _e( 'Ads per Page:', $this->text_domain ); ?></label></th>
+					<td>
+					<input type="text" id="ads_per_page" name="ads_per_page" size="4" value="<?php echo ( isset( $options['ads_per_page'] ) && '' != $options['ads_per_page'] ) ? $options['ads_per_page'] : '10'; ?>" />
+					<br />
+					<span class="description"><?php _e( 'Number of ads displayed on each page.', $this->text_domain ); ?></span>
+					</td>
 					</tr>
--->
+					-->
 					<tr>
 						<th><label for="pagination_range"><?php _e( 'Pagination Range:', $this->text_domain ); ?></label></th>
 						<td>
 							<input type="text" id="pagination_range" name="pagination_range" size="4" value="<?php echo ( isset( $options['pagination_range'] ) && '' != $options['pagination_range'] ) ? $options['pagination_range'] : '4'; ?>" />
 							<br />
 							<span class="description"><?php _e( 'Number of page links to show at one time in pagination', $this->text_domain ); ?></span>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="postbox">
+			<h3 class='hndle'><span><?php _e( 'Notification Settings', $this->text_domain ); ?></span></h3>
+			<div class="inside">
+				<table class="form-table">
+					<tr>
+						<th><label for="disable_contact_form"><?php _e( 'Disable Contact Form:', $this->text_domain ); ?></label></th>
+						<td>
+							<input type="hidden" name="disable_contact_form" value="0" />
+							<input type="checkbox" id="disable_contact_form" name="disable_contact_form" value="1" <?php checked( isset( $options['disable_contact_form'] ) && 1 == $options['disable_contact_form'] ); ?> />
+							<span class="description"><?php _e( 'disable contact form', $this->text_domain ); ?></span>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="cc_admin"><?php _e( 'CC the Administrator:', $this->text_domain ); ?></label></th>
+						<td>
+							<input type="hidden" name="cc_admin" value="0" />
+							<input type="checkbox" id="cc_admin" name="cc_admin" value="1" <?php checked( isset( $options['cc_admin'] ) && 1 == $options['cc_admin'] ); ?> />
+							<span class="description"><?php _e( 'cc the administrator', $this->text_domain ); ?></span>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="cc_sender"><?php _e( 'CC the Sender:', $this->text_domain ); ?></label></th>
+						<td>
+							<input type="hidden" name="cc_sender" value="0" />
+							<input type="checkbox" id="cc_sender" name="cc_admin" value="1" <?php checked( isset( $options['cc_sender'] ) && 1 == $options['cc_sender'] ); ?> />
+							<span class="description"><?php _e( 'cc the sender', $this->text_domain ); ?></span>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="email_subject"><?php _e( 'Email Subject:', $this->text_domain ); ?></label></th>
+						<td>
+							<input type="text" id="email_subject" name="email_subject" size="116" value="<?php echo ( isset( $options['email_subject'] ) && '' != $options['email_subject'] ) ? $options['email_subject'] : 'SITE_NAME Contact Request: FROM_SUBJECT [ POST_TITLE ]'; ?>" />
+							<br />
+							<span class="description"><?php _e( 'Variables: TO_NAME, FROM_NAME, FROM_EMAIL, FROM_SUBJECT, FROM_MESSAGE, POST_TITLE, POST_LINK, SITE_NAME', $this->text_domain ); ?></span>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="field_image_req"><?php _e( 'Email Content:', $this->text_domain ); ?></label></th>
+						<td>
+							<textarea id="email_content" name="email_content" cols="120" rows="10" wrap="hard" ><?php
+								echo esc_textarea( empty($options['email_content']) ? $default_email : $options['email_content'] );
+							?></textarea>
+							<br />
+							<span class="description"><?php _e( 'Variables: TO_NAME, FROM_NAME, FROM_EMAIL, FROM_SUBJECT, FROM_MESSAGE, POST_TITLE, POST_LINK, SITE_NAME', $this->text_domain ); ?></span>
 						</td>
 					</tr>
 				</table>

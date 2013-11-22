@@ -228,7 +228,6 @@ wp_enqueue_script('set-post-thumbnail');
 	</form>
 	<script type="text/javascript">
 		jQuery(document).ready( function($) {
-			$('#title').closest('form').validate(); //find the form we're validating
 			<?php if($editing): // disable duration ?>
 			$("#<?php echo $this->custom_fields['duration']; ?>" ).val(0);
 			<?php endif; ?>

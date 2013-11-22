@@ -5,7 +5,7 @@
 */
 if ( !class_exists('Classifieds_Core_Data') ):
 class Classifieds_Core_Data {
-	
+
 	/**
 	* Constructor.
 	*
@@ -16,6 +16,7 @@ class Classifieds_Core_Data {
 		add_action( 'init', array( &$this, 'load_data' ) );
 		add_action( 'init', array( &$this, 'load_payment_data' ) );
 		add_action( 'init', array( &$this, 'load_mu_plugins' ) );
+		add_action( 'init', array( &$this, 'rewrite_rules' ) );
 	}
 
 	/**
@@ -231,13 +232,13 @@ class Classifieds_Core_Data {
 		if(is_multisite()){
 			update_site_option( 'allow_per_site_content_types', true );
 			update_site_option( 'display_network_content_types', true );
-			
+
 		}
 
 		flush_network_rewrite_rules();
 
 	}
-	
+
 	function load_payment_data() {
 
 		$options = ( get_option( CF_OPTIONS_NAME ) ) ? get_option( CF_OPTIONS_NAME ) : array();
@@ -304,17 +305,29 @@ class Classifieds_Core_Data {
 
 		update_option( CF_OPTIONS_NAME, $options );
 	}
-	
+
 	function load_mu_plugins(){
 
-	if(!is_dir(WPMU_PLUGIN_DIR . '/logs')):
+		if(!is_dir(WPMU_PLUGIN_DIR . '/logs')):
 		mkdir(WPMU_PLUGIN_DIR . '/logs', 0755, true);
-	endif;
-		
-	copy(	CF_PLUGIN_DIR . 'mu-plugins/gateway-relay.php', WPMU_PLUGIN_DIR .'/gateway-relay.php');
-	copy(	CF_PLUGIN_DIR . 'mu-plugins/wpmu-assist.php', WPMU_PLUGIN_DIR .'/wpmu-assist.php');
-		
+		endif;
+
+		copy(	CF_PLUGIN_DIR . 'mu-plugins/gateway-relay.php', WPMU_PLUGIN_DIR .'/gateway-relay.php');
+		copy(	CF_PLUGIN_DIR . 'mu-plugins/wpmu-assist.php', WPMU_PLUGIN_DIR .'/wpmu-assist.php');
+
 	}
+
+	function rewrite_rules() {
+
+		add_rewrite_rule("classifieds/author/([^/]+)/page/?([2-9][0-9]*)",
+		"index.php?post_type=classifieds&author_name=\$matches[1]&paged=\$matches[2]", 'top');
+
+		add_rewrite_rule("classifieds/author/([^/]+)",
+		"index.php?post_type=classifieds&author_name=\$matches[1]", 'top');
+
+		flush_network_rewrite_rules();
+	}
+
 }
 
 endif;

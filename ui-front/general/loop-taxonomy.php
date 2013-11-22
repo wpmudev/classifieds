@@ -94,17 +94,8 @@ $cost = is_numeric($cost) ? sprintf(__('%01.2f',CF_TEXT_DOMAIN), $cost) : $cost;
 						<th><?php _e( 'Posted By', CF_TEXT_DOMAIN ); ?></th>
 
 						<td>
-							<?php
-							/* For BuddyPress compatibility */
-							global $bp;
-							if ( isset( $bp ) ):
-							$obj = get_post_type_object('classifieds');
-							$rewrite_slug = ($obj->has_archive) ? $obj->has_archive : '';
-							?>
-							<span class="cf-author"><a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . $rewrite_slug;?>" alt="<?php the_author(); ?> Profile" ><?php the_author(); ?></a></span>
-							<?php else: ?>
-							<span class="cf-author"><?php the_author_posts_link(); ?></a></span>
-							<?php endif; ?>
+
+							<span class="cf-author"><?php echo the_author_classifieds_link(); ?></a></span>
 
 						</td>
 					</tr>

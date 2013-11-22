@@ -96,9 +96,10 @@ $cf_options = $cf->get_options( 'general' );
 						<th><?php _e( 'Posted By', CF_TEXT_DOMAIN ); ?></th>
 
 						<td>
+							<?php echo the_author_classifieds_link(); ?>
 							<?php /* For BuddyPress compatibility */ ?>
-							<?php global $bp; 
-							if ( isset( $bp ) ): 
+							<?php global $bp;
+							if ( isset( $bp ) ):
 							$obj = get_post_type_object('classifieds');
 							$rewrite_slug = ($obj->has_archive) ? $obj->has_archive : '';
 							?><a href="<?php echo bp_core_get_user_domain( get_the_author_meta('ID') ) . $rewrite_slug;?>" alt="<?php the_author(); ?> Profile" ><?php endif; ?>

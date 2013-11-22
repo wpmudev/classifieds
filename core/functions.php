@@ -42,7 +42,7 @@ function the_cf_categories_home( $echo = true ){
 
 		$output .= "<li>\n";
 		$output .= '<h2><a href="' . get_term_link( $category ) . '" title="' . __( 'View all posts in ', CF_TEXT_DOMAIN ) . $category->name . '" >' . $category->name . "</a> </h2>\n";
-		
+
 		$output .= '<div class="term-list">';
 
 		$args = array(
@@ -62,7 +62,7 @@ function the_cf_categories_home( $echo = true ){
 		'include'            => '',
 		'hierarchical'       => true,
 		'title_li'           => '',
-		'show_option_none'   => sprintf('<span class="cf-empty">%s</span>', __('No categories', CF_TEXT_DOMAIN ) ),
+		'show_option_none'   => '', //sprintf('<span class="cf-empty">%s</span>', __('No categories', CF_TEXT_DOMAIN ) ),
 		'number'             => $sub_cat_num,
 		'echo'               => 0,
 		'depth'              => 1,
@@ -108,6 +108,74 @@ function the_cf_breadcrumbs() {
 	$output .= '<a href="' . get_term_link( $category ) . '" title="' . sprintf( __( 'View all posts in %s', CF_TEXT_DOMAIN ), $category->name ) . '" >' . $category->name . '</a>';
 
 	echo $output;
+}
+
+/**
+* Retrieve the URL to the author page for the user with the ID provided.
+*
+* @since 2.1.0
+* @uses $wp_rewrite WP_Rewrite
+* @return string The URL to the author's page.
+*/
+function get_author_classifieds_url($author_id, $author_nicename = '') {
+	global $wp_rewrite, $bp, $blog_id;
+	$auth_ID = (int) $author_id;
+	$link = $wp_rewrite->get_author_permastruct();
+
+	$classifieds_obj = get_post_type_object('classifieds');
+
+	if( is_object( $classifieds_obj ) ) {
+		$slug = $classifieds_obj->has_archive;
+		if( !is_string($slug) ) $slug = 'classifieds';
+	}
+
+	if ( isset( $bp ) && $bp->root_blog_id == $blog_id ){
+		$link = trailingslashit( bp_core_get_user_domain( $author_id ) . $slug);
+	} else {
+		if ( empty($link) ) {
+			$file = home_url( '/' );
+			$link = $file . "?post_type={$slug}&author=" . $auth_ID;
+		} else {
+			$link = $link . "/{$slug}";
+			if ( '' == $author_nicename ) {
+				$user = get_userdata($author_id);
+				if ( !empty($user->user_nicename) )
+				$author_nicename = $user->user_nicename;
+			}
+			$link = str_replace('%author%', $author_nicename, $link);
+			$link = home_url( user_trailingslashit( $link ) );
+		}
+	}
+
+	/**
+	* Filter the URL to the author's page.
+	*
+	* @since 2.1.0
+	*
+	* @param string $link            The URL to the author's page.
+	* @param int    $author_id       The author's id.
+	* @param string $author_nicename The author's nice name.
+	*/
+	$link = apply_filters( 'author_classifieds_link', $link, $author_id, $author_nicename );
+
+	return $link;
+}
+
+
+function the_author_classifieds_link(){
+
+	global $authordata;
+
+	if ( !is_object( $authordata ) )
+	return false;
+
+	$link = sprintf(
+	'<a href="%1$s" title="%2$s" rel="author">%3$s</a>',
+	esc_url( get_author_classifieds_url( $authordata->ID, $authordata->user_nicename ) ),
+	esc_attr( sprintf( __( 'Posts by %s' ), get_the_author() ) ),
+	get_the_author()
+	);
+	return $link;
 }
 
 //function allow_classifieds_filter($allow = false){

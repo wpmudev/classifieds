@@ -16,7 +16,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 
 		parent::__construct(); //Get the inheritance right
 
-		add_action( 'init', array(&$this, 'init'));
+		//add_action( 'init', array(&$this, 'init'));
 
 		/* Handle requests for plugin pages */
 
@@ -47,7 +47,7 @@ class Classifieds_Core_Main extends Classifieds_Core {
 
 		add_rewrite_rule( 'cf-author/(.+?)(/page/(.+?))?/?$', $result, 'top' );
 		$rules = get_option( 'rewrite_rules' );
-		if ( ! isset( $rules['cf-author/(.+?)(/page/(.+?))?/?$'] ) ) $wp_rewrite->flush_rules();
+		if ( ! isset( $rules['cf-author/(.+?)(/page/(.+?))?/?$'] ) ) 		$wp_rewrite->flush_rules();
 
 	}
 

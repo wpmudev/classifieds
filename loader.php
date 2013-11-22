@@ -3,7 +3,7 @@
 Plugin Name: Classifieds
 Plugin URI: http://premium.wpmudev.org/project/classifieds
 Description: Add Classifieds to your blog, network or BuddyPress site. Create and manage ads, upload images, send emails, enable the credit system and charge your users for placing ads on your network or BuddyPress site.
-Version: 2.3.4.5
+Version: 2.3.4.7
 Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub)
 Author URI: http://premium.wpmudev.org
 License: GNU General Public License (Version 2 - GPLv2)
@@ -13,10 +13,10 @@ Network: false
 WDP ID: 158
 */
 
-$plugin_header_translate = array(    
-__('Classifieds - Add Classifieds to your blog, network or BuddyPress site. Create and manage ads, upload images, send emails, enable the credit system and charge your users for placing ads on your network or BuddyPress site.', 'classifieds'),    
-__('Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub)', 'classifieds'),    
-__('http://premium.wpmudev.org', 'classifieds'),    
+$plugin_header_translate = array(
+__('Classifieds - Add Classifieds to your blog, network or BuddyPress site. Create and manage ads, upload images, send emails, enable the credit system and charge your users for placing ads on your network or BuddyPress site.', 'classifieds'),
+__('Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub)', 'classifieds'),
+__('http://premium.wpmudev.org', 'classifieds'),
 __('Classifieds', 'classifieds'),
 );
 
@@ -39,7 +39,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /* Define plugin version */
-define ( 'CF_VERSION', '2.3.4.5' );
+define ( 'CF_VERSION', '2.3.4.7' );
 define ( 'CF_DB_VERSION', '2.0' );
 
 /* define the plugin folder url */
@@ -52,7 +52,6 @@ define( 'CF_TEXT_DOMAIN', 'classifieds' );
 define( 'CF_OPTIONS_NAME', 'classifieds_options' );
 
 // include core files
-include_once 'core/wpmudev-dash-notification.php';
 //If another version of CustomPress not loaded, load ours.
 if(!class_exists('CustomPress_Core')) include_once 'core/custompress/loader.php';
 
@@ -61,3 +60,15 @@ include_once 'core/core.php';
 include_once 'core/payments.php';
 include_once 'core/paypal-express-gateway.php';
 include_once 'core/functions.php';
+
+global $wpmudev_notices;
+$wpmudev_notices[] = array( 'id'=> 158,
+'name'=> 'Classifieds',
+'screens' => array(
+'edit-classifieds',
+'classifieds',
+'edit-classifieds_tags',
+'edit-classifieds_categories',
+'classifieds_page_classifieds_settings',
+) );
+include_once 'core/wpmudev-dash-notification.php';
