@@ -25,3 +25,8 @@
 .purchase_credits .submit { padding: 0; margin: 0; float: left; }
 .purchase_credits #purchase_credits { float: left; }
 .subsubsub h3 { margin: 0; }
+
+textarea.cf-full ,
+input.cf-full{
+	width: 100%
+}
