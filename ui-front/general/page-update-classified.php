@@ -212,7 +212,7 @@ wp_enqueue_script('set-post-thumbnail');
 		</div>
 
 		<?php if ( isset( $CustomPress_Core ) ) : ?>
-		<?php echo do_shortcode('[custom_fields_input" style="editfield"]'); ?>
+		<?php echo do_shortcode('[custom_fields_input style="editfield"]'); ?>
 		<?php endif; ?>
 
 		<?php if ( !empty( $error ) ): ?>
@@ -226,12 +226,5 @@ wp_enqueue_script('set-post-thumbnail');
 			<input type="button" value="<?php _e( 'Cancel', $this->text_domain ); ?>" onclick="location.href='<?php echo get_permalink($this->my_classifieds_page_id); ?>'">
 		</div>
 	</form>
-	<script type="text/javascript">
-		jQuery(document).ready( function($) {
-			<?php if($editing): // disable duration ?>
-			$("#<?php echo $this->custom_fields['duration']; ?>" ).val(0);
-			<?php endif; ?>
-		});
-	</script>
 </div><!-- .cf_update_form -->
 <!-- End Update Classifieds -->

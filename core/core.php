@@ -916,7 +916,11 @@ class Classifieds_Core {
 			if ( class_exists( 'CustomPress_Core' ) ) {
 				global $CustomPress_Core;
 				$CustomPress_Core->save_custom_fields( $post_id );
+				//Blank the duration field so it won't be reused after calculating the expiration time.
+				update_post_meta($post_id, $this->custom_fields['duration'], '');
 			}
+
+
 
 			if ( isset($_FILES['feature_image']) && empty( $_FILES['feature_image']['error'] )) {
 				/* Require WordPress utility functions for handling media uploads */
@@ -943,7 +947,7 @@ class Classifieds_Core {
 		$result = false;
 
 		//for admin
-		if ( current_user_can('manage_options') )	$result = true;
+		if ( current_user_can('manage_options') || $this->use_free)	$result = true;
 
 		//for paid users
 		if ( $this->transactions->billing_type ) {
@@ -1074,6 +1078,7 @@ class Classifieds_Core {
 		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
 		return;
 		/* Update  */
+
 		if ( isset( $_POST[$this->custom_fields['duration']] ) ) {
 			$date = $this->calculate_expiration_date( $post_id, $_POST[$this->custom_fields['duration']] );
 			update_post_meta( $post_id, '_expiration_date', $date );

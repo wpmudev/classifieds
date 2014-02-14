@@ -4,11 +4,17 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+
+= 2.3.4.9 Arnold Bailey =
+- Changed Duration field to reset after updating expiration date. Also display expiration date now.
+- Changed Role dropdown to not display non-editable roles.
+- CC Sender checkbox saved wrong value.
+
 = 2.3.4.8 Arnold Bailey =
 - BOM in file causing problems
 
 = 2.3.4.7 Arnold Bailey =
-* Changed author links to only display BudyPress author urls on BP_ROOT
+* Changed author links to only display BuddyPress author urls on BP_ROOT
 * Made contact email editable
 * Added setting to disable contact form
 * CustomPress 1.3.4.7

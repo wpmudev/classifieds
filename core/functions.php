@@ -178,6 +178,39 @@ function the_author_classifieds_link(){
 	return $link;
 }
 
+/**
+* Modifies the select box to display thre expiration date if available
+*/
+add_filter('ct_in_shortcode', 'duration_input_fix', 10, 3);
+function duration_input_fix($result='', $atts=array(), $content=null) {
+	global $post;
+
+	extract( shortcode_atts( array(
+	'id' => '',
+	'property' => 'input',
+	'class' => '',
+	), $atts ) );
+
+	if( $id == '_ct_selectbox_4cf582bd61fa4' && $property == 'input') {
+		if( ! empty($post->ID) ) {
+			$expires = get_post_meta($post->ID, '_expiration_date', true);
+			$expires_date = ( empty($expires) ) ? '' : date_i18n( get_option('date_format'), $expires );
+			if(empty($expires_date) ){
+				$result = preg_replace('#</option>#',
+				__('How long is this Ad open from today?</option>', CF_TEXT_DOMAIN),
+				$result, 1);
+			} else {
+				$result = preg_replace('#value=""#', 'value="0"', $result, 1); //Give it zero value so it will validate but not change anything.
+				$result = preg_replace('#</option>#',
+				sprintf('%s %s</option>', __('Expires on', CF_TEXT_DOMAIN),
+				$expires_date),
+				$result, 1);
+			}
+		}
+	}
+	return $result;
+}
+
 //function allow_classifieds_filter($allow = false){
 //
 //  //Whatever logic to decide whether they should have access.

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Classifieds\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-23 20:20-0500\n"
+"POT-Creation-Date: 2014-02-14 17:09-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arnold Bailey <arnold@incsub.com>\n"
 "Language-Team: Arnold Bailey <arnold@incsub.com>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "esc_html__;esc_html_e;esc_html_x\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Poedit 1.6.3\n"
 "X-Poedit-SearchPath-0: ..\n"
 
 #: ../loader.php:17
@@ -37,7 +37,7 @@ msgstr ""
 msgid "http://premium.wpmudev.org"
 msgstr ""
 
-#: ../loader.php:20 ../core/core.php:1506 ../core/data.php:51
+#: ../loader.php:20 ../core/core.php:1511 ../core/data.php:51
 #: ../ui-admin/settings-shortcodes.php:33
 #: ../ui-admin/settings-shortcodes.php:34 ../ui-front/general/taxonomy.php:33
 msgid "Classifieds"
@@ -117,7 +117,7 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: ../core/buddypress.php:167 ../core/buddypress.php:225 ../core/core.php:1170
+#: ../core/buddypress.php:167 ../core/buddypress.php:225 ../core/core.php:1175
 #: ../core/main.php:107
 msgid "Security check failed!"
 msgstr ""
@@ -214,50 +214,50 @@ msgstr ""
 msgid "Please fill in the required fields."
 msgstr ""
 
-#: ../core/core.php:1100
+#: ../core/core.php:1105
 msgid "No expiration date set."
 msgstr ""
 
-#: ../core/core.php:1439 ../core/core.php:1440
+#: ../core/core.php:1444 ../core/core.php:1445
 msgid "You are being redirected. Please wait."
 msgstr ""
 
-#: ../core/core.php:1526 ../ui-admin/settings-shortcodes.php:65
+#: ../core/core.php:1531 ../ui-admin/settings-shortcodes.php:65
 #: ../ui-admin/settings-shortcodes.php:66
 msgid "Add Classified"
 msgstr ""
 
-#: ../core/core.php:1548 ../core/data.php:55
+#: ../core/core.php:1553 ../core/data.php:55
 #: ../ui-admin/settings-shortcodes.php:50
 #: ../ui-admin/settings-shortcodes.php:73
 #: ../ui-admin/settings-shortcodes.php:74
 msgid "Edit Classified"
 msgstr ""
 
-#: ../core/core.php:1569 ../ui-admin/settings-checkout.php:13
+#: ../core/core.php:1574 ../ui-admin/settings-checkout.php:13
 msgid "Classifieds Checkout"
 msgstr ""
 
-#: ../core/core.php:1589 ../ui-admin/credits-my-credits.php:13
+#: ../core/core.php:1594 ../ui-admin/credits-my-credits.php:13
 msgid "My Classifieds Credits"
 msgstr ""
 
-#: ../core/core.php:1611 ../ui-admin/settings-shortcodes.php:41
+#: ../core/core.php:1616 ../ui-admin/settings-shortcodes.php:41
 #: ../ui-admin/settings-shortcodes.php:42
 msgid "My Classifieds"
 msgstr ""
 
-#: ../core/core.php:1631 ../ui-admin/settings-shortcodes.php:81
+#: ../core/core.php:1636 ../ui-admin/settings-shortcodes.php:81
 #: ../ui-admin/settings-shortcodes.php:82
 msgid "Go to Profile"
 msgstr ""
 
-#: ../core/core.php:1651 ../ui-admin/settings-shortcodes.php:89
+#: ../core/core.php:1656 ../ui-admin/settings-shortcodes.php:89
 #: ../ui-admin/settings-shortcodes.php:90
 msgid "Signin"
 msgstr ""
 
-#: ../core/core.php:1675 ../core/core.php:1699
+#: ../core/core.php:1680 ../core/core.php:1704
 #: ../ui-admin/settings-shortcodes.php:105
 #: ../ui-admin/settings-shortcodes.php:106
 msgid "Logout"
@@ -399,6 +399,14 @@ msgstr ""
 #: ../core/functions.php:175
 #, php-format
 msgid "Posts by %s"
+msgstr ""
+
+#: ../core/functions.php:200
+msgid "How long is this Ad open from today?</option>"
+msgstr ""
+
+#: ../core/functions.php:205
+msgid "Expires on"
 msgstr ""
 
 #: ../core/main.php:94
@@ -607,7 +615,7 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: ../ui-admin/navigation.php:11 ../ui-admin/settings-capabilities.php:18
+#: ../ui-admin/navigation.php:11 ../ui-admin/settings-capabilities.php:17
 msgid "Capabilities"
 msgstr ""
 
@@ -672,15 +680,15 @@ msgstr ""
 msgid "2. The <b>Classifieds add-on</b> in the Affiliate plugin"
 msgstr ""
 
-#: ../ui-admin/settings-capabilities.php:14
+#: ../ui-admin/settings-capabilities.php:13
 msgid "Capabilities Settings"
 msgstr ""
 
-#: ../ui-admin/settings-capabilities.php:23
+#: ../ui-admin/settings-capabilities.php:22
 msgid "Assign Capabilities"
 msgstr ""
 
-#: ../ui-admin/settings-capabilities.php:32
+#: ../ui-admin/settings-capabilities.php:29
 msgid "Select a role to which you want to assign Classifieds capabilities."
 msgstr ""
 
@@ -717,7 +725,7 @@ msgstr ""
 msgid "Text for \"Terms of Service\""
 msgstr ""
 
-#: ../ui-admin/settings-checkout.php:55 ../ui-admin/settings-general.php:272
+#: ../ui-admin/settings-checkout.php:55 ../ui-admin/settings-general.php:268
 #: ../ui-admin/settings-payment-types.php:327
 #: ../ui-admin/settings-payments.php:181
 #: ../ui-front/buddypress/members/single/classifieds/update-classified.php:234
@@ -725,7 +733,7 @@ msgstr ""
 msgid "Save Changes"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:7
+#: ../ui-admin/settings-general.php:6
 msgid ""
 "Hi TO_NAME, you have received a message from\n"
 "\n"
@@ -740,213 +748,213 @@ msgid ""
 "  Classifieds link: POST_LINK\n"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:27
+#: ../ui-admin/settings-general.php:26
 msgid "General Settings"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:31
+#: ../ui-admin/settings-general.php:30
 msgid "Classified Member Role"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:36
+#: ../ui-admin/settings-general.php:35
 msgid "Assign Member's Role"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:46
+#: ../ui-admin/settings-general.php:41
 msgid ""
 "Select the role to which you want to assign a Classifieds member on signup."
 msgstr ""
 
-#: ../ui-admin/settings-general.php:47
+#: ../ui-admin/settings-general.php:42
 msgid ""
 "If you are running multiple plugins that have signups use the same role for "
 "both."
 msgstr ""
 
-#: ../ui-admin/settings-general.php:57
+#: ../ui-admin/settings-general.php:52
 msgid "Add a Role"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:58
+#: ../ui-admin/settings-general.php:53
 msgid "Add a new role. Alphanumerics only."
 msgstr ""
 
-#: ../ui-admin/settings-general.php:59
+#: ../ui-admin/settings-general.php:54
 msgid ""
 "When you add a new role you must add the appropriate capabilities to make it "
 "functional."
 msgstr ""
 
-#: ../ui-admin/settings-general.php:75
+#: ../ui-admin/settings-general.php:70
 msgid "Remove a Role"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:76
+#: ../ui-admin/settings-general.php:71
 msgid "Confirm Remove this Role"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:85
+#: ../ui-admin/settings-general.php:80
 msgid "Classifieds Status Options"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:90
+#: ../ui-admin/settings-general.php:85
 msgid "Available Classified Status Options"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:93
+#: ../ui-admin/settings-general.php:88
 msgid "Published"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:94
+#: ../ui-admin/settings-general.php:89
 msgid "Allow members to Publish Classifieds themselves."
 msgstr ""
 
-#: ../ui-admin/settings-general.php:95
+#: ../ui-admin/settings-general.php:90
 msgid "Pending Review"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:96
+#: ../ui-admin/settings-general.php:91
 msgid "Classified is pending review by an administrator."
 msgstr ""
 
-#: ../ui-admin/settings-general.php:97
+#: ../ui-admin/settings-general.php:92
 msgid "Draft"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:98
+#: ../ui-admin/settings-general.php:93
 msgid "Allow members to save Drafts."
 msgstr ""
 
-#: ../ui-admin/settings-general.php:107
+#: ../ui-admin/settings-general.php:102
 msgid "Form Fields"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:112
+#: ../ui-admin/settings-general.php:107
 msgid "Image field:"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:115
+#: ../ui-admin/settings-general.php:110
 msgid "not required"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:119
+#: ../ui-admin/settings-general.php:114
 msgid "Media manager:"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:122
+#: ../ui-admin/settings-general.php:117
 msgid "enable full media manager for feature image uploads"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:126
+#: ../ui-admin/settings-general.php:121
 msgid "Use default image (URL):"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:130
+#: ../ui-admin/settings-general.php:125
 msgid "this image will be show for all ads without images"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:138
+#: ../ui-admin/settings-general.php:133
 msgid "Display Options"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:143
+#: ../ui-admin/settings-general.php:138
 msgid "Count of category:"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:147
+#: ../ui-admin/settings-general.php:142
 msgid ""
 "a number of categories that will be displayed in the list of categories."
 msgstr ""
 
-#: ../ui-admin/settings-general.php:152
+#: ../ui-admin/settings-general.php:147
 msgid "Count of sub-category:"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:156
+#: ../ui-admin/settings-general.php:151
 msgid ""
 "a number of sub-category that will be displayed for each category in the "
 "list of categories."
 msgstr ""
 
-#: ../ui-admin/settings-general.php:161
+#: ../ui-admin/settings-general.php:156
 msgid "Empty sub-category:"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:165
+#: ../ui-admin/settings-general.php:160
 msgid "Hide empty sub-category"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:186
+#: ../ui-admin/settings-general.php:181
 msgid "Pagination Settings"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:190
+#: ../ui-admin/settings-general.php:185
 msgid "Pagination position:"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:193
+#: ../ui-admin/settings-general.php:188
 msgid "display at top of page."
 msgstr ""
 
-#: ../ui-admin/settings-general.php:196
+#: ../ui-admin/settings-general.php:191
 msgid "display at bottom of page."
 msgstr ""
 
-#: ../ui-admin/settings-general.php:201
+#: ../ui-admin/settings-general.php:196
 msgid "Ads per Page:"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:205
+#: ../ui-admin/settings-general.php:200
 msgid "Number of ads displayed on each page."
 msgstr ""
 
-#: ../ui-admin/settings-general.php:210
+#: ../ui-admin/settings-general.php:205
 msgid "Pagination Range:"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:214
+#: ../ui-admin/settings-general.php:209
 msgid "Number of page links to show at one time in pagination"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:221
+#: ../ui-admin/settings-general.php:217
 msgid "Notification Settings"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:225
+#: ../ui-admin/settings-general.php:221
 msgid "Disable Contact Form:"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:229
+#: ../ui-admin/settings-general.php:225
 msgid "disable contact form"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:233
+#: ../ui-admin/settings-general.php:229
 msgid "CC the Administrator:"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:237
+#: ../ui-admin/settings-general.php:233
 msgid "cc the administrator"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:241
+#: ../ui-admin/settings-general.php:237
 msgid "CC the Sender:"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:245
+#: ../ui-admin/settings-general.php:241
 msgid "cc the sender"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:249
+#: ../ui-admin/settings-general.php:245
 msgid "Email Subject:"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:253 ../ui-admin/settings-general.php:263
+#: ../ui-admin/settings-general.php:249 ../ui-admin/settings-general.php:259
 msgid ""
 "Variables: TO_NAME, FROM_NAME, FROM_EMAIL, FROM_SUBJECT, FROM_MESSAGE, "
 "POST_TITLE, POST_LINK, SITE_NAME"
 msgstr ""
 
-#: ../ui-admin/settings-general.php:257
+#: ../ui-admin/settings-general.php:253
 msgid "Email Content:"
 msgstr ""
 

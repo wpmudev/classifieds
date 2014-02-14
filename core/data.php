@@ -189,7 +189,7 @@ class Classifieds_Core_Data {
 			5 => '4 Weeks',
 			),
 			'field_default_option' => '1',
-			'field_description' => 'The duration of this ad. ',
+			'field_description' => 'Extend the duration of this ad. ',
 			'object_type' => array ('classifieds'),
 
 			'field_required' => NULL,

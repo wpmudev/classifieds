@@ -2,7 +2,6 @@
 
 global $wp_roles;
 $options = $this->get_options( 'general' );
-
 $default_email = __(
 'Hi TO_NAME, you have received a message from
 
@@ -37,11 +36,7 @@ $default_email = __(
 						</th>
 						<td>
 							<select id="member_role" name="member_role" style="width:200px;">
-								<?php
-								$roles = array_reverse($wp_roles->role_names);
-								foreach ( $roles as $role => $name ): ?>
-								<option value="<?php echo $role; ?>" <?php selected(isset($options['member_role'] ) && $role == $options['member_role']); ?> ><?php echo $name; ?></option>
-								<?php endforeach; ?>
+							<?php wp_dropdown_roles(@$options['member_role']); ?>
 							</select>
 							<br /><span class="description"><?php _e('Select the role to which you want to assign a Classifieds member on signup.', $this->text_domain); ?></span>
 							<br /><span class="description"><?php _e('If you are running multiple plugins that have signups use the same role for both.', $this->text_domain); ?></span>
@@ -217,6 +212,7 @@ $default_email = __(
 				</table>
 			</div>
 		</div>
+
 		<div class="postbox">
 			<h3 class='hndle'><span><?php _e( 'Notification Settings', $this->text_domain ); ?></span></h3>
 			<div class="inside">
@@ -241,7 +237,7 @@ $default_email = __(
 						<th><label for="cc_sender"><?php _e( 'CC the Sender:', $this->text_domain ); ?></label></th>
 						<td>
 							<input type="hidden" name="cc_sender" value="0" />
-							<input type="checkbox" id="cc_sender" name="cc_admin" value="1" <?php checked( isset( $options['cc_sender'] ) && 1 == $options['cc_sender'] ); ?> />
+							<input type="checkbox" id="cc_sender" name="cc_sender" value="1" <?php checked( isset( $options['cc_sender'] ) && 1 == $options['cc_sender'] ); ?> />
 							<span class="description"><?php _e( 'cc the sender', $this->text_domain ); ?></span>
 						</td>
 					</tr>

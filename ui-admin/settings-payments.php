@@ -50,9 +50,9 @@
 							<select id="billing_period" name="billing_period"  >
 								<option value="Day" <?php selected( isset( $options['billing_period'] ) && $options['billing_period'] == 'Day' ); ?>><?php _e( 'Day', $this->text_domain ); ?></option>
 								<option value="Week" <?php selected( isset( $options['billing_period'] ) && $options['billing_period'] == 'Week' ); ?>><?php _e( 'Week', $this->text_domain ); ?></option>
-<!--		
+<!--
 								<option value="SemiMonth" <?php selected( isset( $options['billing_period'] ) && $options['billing_period'] == 'SemiMonth' ); ?>><?php _e( 'Semi Monthly', $this->text_domain ); ?></option>
--->		
+-->
 								<option value="Month" <?php selected( isset( $options['billing_period'] ) && $options['billing_period'] == 'Month' ); ?>><?php _e( 'Month', $this->text_domain ); ?></option>
 								<option value="Year" <?php selected( isset( $options['billing_period'] ) && $options['billing_period'] == 'Year' ); ?>><?php _e( 'Year', $this->text_domain ); ?></option>
 							</select>
@@ -73,7 +73,7 @@
 							<label for="billing_agreement"><?php _e('Billing Agreement', $this->text_domain) ?></label>
 						</th>
 						<td>
-							<input type="text" name="billing_agreement" id="billing_agreement" size="100" value="<?php echo ( empty( $options['billing_agreement'] ) ) ? '' :esc_attr( $options['billing_agreement']); ?>" />
+							<input class="cf-full" type="text" name="billing_agreement" id="billing_agreement" value="<?php echo ( empty( $options['billing_agreement'] ) ) ? '' :esc_attr( $options['billing_agreement']); ?>" />
 							<br /><span class="description"><?php _e('The description of the goods or services associated with that billing agreement. PayPal recommends that the description contain a brief summary of the billing agreement terms and conditions. For example, customer will be billed at "$9.99 per month for 2 years."', $this->text_domain); ?></span>
 						</td>
 					</tr>
@@ -102,7 +102,7 @@
 							<input type="text" id="one_time_cost" class="small-text" name="one_time_cost" value="<?php echo ( empty( $options['one_time_cost'] ) ) ? '0' : $options['one_time_cost']; ?>" />
 							<span class="description"><?php _e( 'Cost of "One Time" service.', $this->text_domain ); ?></span>
 							<br /><br />
-							<input type="text" name="one_time_txt" value="<?php echo (empty( $options['one_time_txt'] ) ) ? '' : $options['one_time_txt']; ?>" />
+							<input class="cf-full" type="text" name="one_time_txt" value="<?php echo (empty( $options['one_time_txt'] ) ) ? '' : $options['one_time_txt']; ?>" />
 							<span class="description"><?php _e( 'Text of "One Time" service.', $this->text_domain ); ?></span>
 						</td>
 					</tr>
@@ -147,7 +147,7 @@
 					<tr>
 						<th><label for="description"><?php _e( 'Description', $this->text_domain ); ?></label></th>
 						<td>
-							<textarea id="description" name="description" rows="1" cols="55"><?php echo ( empty( $options['description'] ) ) ? '' : sanitize_text_field($options['description']); ?></textarea>
+							<textarea class="cf-full" id="description" name="description" rows="1" ><?php echo ( empty( $options['description'] ) ) ? '' : sanitize_text_field($options['description']); ?></textarea>
 							<br />
 							<span class="description"><?php _e( 'Description of the costs and durations associated with publishing an ad. Will be displayed in the admin area.', $this->text_domain ); ?></span>
 						</td>
@@ -166,7 +166,7 @@
 							<label for="tos_txt"><?php _e('Terms of Service Text', $this->text_domain ) ?></label>
 						</th>
 						<td>
-							<textarea name="tos_txt" id="tos_txt" rows="15" cols="125"><?php echo ( empty( $options['tos_txt'] ) ) ? '' : sanitize_text_field($options['tos_txt']); ?></textarea>
+							<textarea name="tos_txt" id="tos_txt" rows="15" class="cf-full"><?php echo ( empty( $options['tos_txt'] ) ) ? '' : sanitize_text_field($options['tos_txt']); ?></textarea>
 							<br />
 							<span class="description"><?php _e( 'Text for "Terms of Service"', $this->text_domain ); ?></span>
 						</td>
