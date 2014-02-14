@@ -4,7 +4,7 @@ Plugin Name: Classifieds
 Plugin URI: http://premium.wpmudev.org/project/classifieds
 Description: Add Classifieds to your blog, network or BuddyPress site. Create and manage ads, upload images, send emails, enable the credit system and charge your users for placing ads on your network or BuddyPress site.
 Version: 2.3.4.9
-Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub)
+Author: WPMU DEV
 Author URI: http://premium.wpmudev.org
 License: GNU General Public License (Version 2 - GPLv2)
 Text Domain: classifieds
@@ -21,7 +21,11 @@ __('Classifieds', 'classifieds'),
 );
 
 /*
+Authors - Ivan Shaovchev, Andrey Shipilov, Arnold Bailey
+
+
 Copyright 2007-2012 Incsub (http://incsub.com)
+
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
