@@ -4,6 +4,8 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.5.1 Arnold Bailey =
+- Fixed finding virtual pages where content protecting plugins like membership hides them.
 
 = 2.3.4.9 Arnold Bailey =
 - Changed Duration field to reset after updating expiration date. Also display expiration date now.
