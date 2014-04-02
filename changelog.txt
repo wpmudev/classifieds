@@ -4,6 +4,9 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.5.3 Arnold Bailey =
+* Fixed Attachment custom fields save that got broken in WP 3.5
+
 = 2.3.5.1 Arnold Bailey =
 - Fixed finding virtual pages where content protecting plugins like membership hides them.
 
