@@ -175,6 +175,9 @@ class Classifieds_Core {
 		add_filter( 'user_contactmethods', array( &$this, 'contact_fields' ), 10, 2 );
 		add_filter('admin_post_thumbnail_html', array(&$this,'on_admin_post_thumbnail_html') );
 
+		add_filter('wp_ajax_captcha', array(&$this,'on_captcha') );
+		add_filter('wp_ajax_nopriv_captcha', array(&$this,'on_captcha') );
+
 
 		//Shortcodes
 		add_shortcode( 'cf_list_categories', array( &$this, 'classifieds_categories_sc' ) );
@@ -388,6 +391,8 @@ class Classifieds_Core {
 		if( get_site_option('cf_activate', false))	{
 			include_once($this->plugin_dir . 'core/data.php');
 			new Classifieds_Core_Data();
+			//Tell custompress to activate as well
+			do_action('activated_plugin','custompress/loader.php');
 			delete_site_option('cf_activate');
 		}
 	}
@@ -511,6 +516,7 @@ class Classifieds_Core {
 
 		if( count($ids) != 1 ) { //There can be only one.
 			foreach( $ids as $id ) { //Delete all and start over.
+				delete_post_meta($id, "classifieds_type");
 				wp_delete_post($id, true);
 			}
 			return false;
@@ -1031,18 +1037,20 @@ class Classifieds_Core {
 	**/
 	function handle_contact_form_requests() {
 
-		if(! session_id() ) session_start();
 		/* Only handle request if on single{}.php template and our post type */
 		if ( get_post_type() == $this->post_type && is_single() ) {
-
+			
+			$captcha = get_transient( CF_CAPTCHA.$_SERVER['REMOTE_ADDR']);
 
 			if (isset( $_POST['contact_form_send'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'send_message' ) ){
 				$_POST = stripslashes_deep($_POST);
+				
 				if ( isset( $_POST['name'] ) && '' != $_POST['name']
 				&& isset( $_POST['email'] ) && '' != $_POST['email']
 				&& isset( $_POST['subject'] ) && '' != $_POST['subject']
 				&& isset( $_POST['message'] ) && '' != $_POST['message']
-				&& isset( $_POST['cf_random_value'] ) && (md5(strtoupper($_POST['cf_random_value']) )  == $_SESSION['cf_random_value'] )
+				&& ($captcha 
+				&& (md5(strtoupper($_POST['cf_random_value']) ) == $captcha ) )
 
 				) {
 
@@ -1924,6 +1932,58 @@ class Classifieds_Core {
 		$wp_query_obj->set('author', $current_user->ID );
 	}
 
+	function imagettftext_cr(&$im, $size, $angle, $x, $y, $color, $fontfile, $text)
+	{
+		// retrieve boundingbox
+		$bbox = imagettfbbox($size, $angle, $fontfile, $text);
+		// calculate deviation
+		$dx = ($bbox[2]-$bbox[0])/2.0 - ($bbox[2]-$bbox[4])/2.0;         // deviation left-right
+		$dy = ($bbox[3]-$bbox[1])/2.0 + ($bbox[7]-$bbox[1])/2.0;        // deviation top-bottom
+		// new pivotpoint
+		$px = $x-$dx;
+		$py = $y-$dy;
+		return imagettftext($im, $size, $angle, $px, $y, $color, $fontfile, $text);
+	}
+
+	function on_captcha(){
+		//exit;
+
+		
+		$alphanum = "ABCDEFGHIJKLMNPQRSTUVWXYZ123456789";
+		$rand = substr( str_shuffle( $alphanum ), 0, 5 );
+
+		$image = imagecreate(120,36);
+		$black = imagecolorallocate($image,0,0,0);
+		$grey_shade = imagecolorallocate($image,128,128,128);
+		$white = imagecolorallocate($image,255,255,255);
+
+		$otherFont = 'fonts/StardosStencil-Regular.ttf';
+		$font = $this->plugin_dir . 'ui-front/fonts/StardosStencil-Bold.ttf';
+
+		//imagestring( $image, 5, 28, 4, $rand, $white );
+		//BG text for Name
+		$i =1;
+		while($i<10){
+			$this->imagettftext_cr($image,rand(2,20),rand(-50,50),rand(10,120),rand(0,40),$grey_shade,$font,$rand);
+			$i++;
+		}
+
+		$this->imagettftext_cr($image,14,0,60,26,$white,$font, $rand );
+	
+		//Use transient
+		set_transient( CF_CAPTCHA.$_SERVER['REMOTE_ADDR'], md5($rand), 600 );
+		
+		header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
+		header( "Last-Modified: ".gmdate( "D, d M Y H:i:s" )." GMT" );
+		header( "Cache-Control: no-store, no-cache, must-revalidate" );
+		header( "Cache-Control: post-check=0, pre-check=0", false );
+		header( "Pragma: no-cache" );
+		header( "Content-type: image/png");
+
+		imagepng($image);
+		imagedestroy( $image );
+		exit;
+	}
 
 }
 
@@ -1941,13 +2001,17 @@ function cf_flag_activation($plugin=''){
 //Decide whether to load Admin, Buddypress or Standard version
 add_action('plugins_loaded', 'cf_on_plugins_loaded');
 function cf_on_plugins_loaded(){
+
+	if( defined('BP_VERSION')){
+		global $bp, $blog_id;
+	}
+
 	if(is_admin()){ 	//Are we admin
 		include_once CF_PLUGIN_DIR . 'core/admin.php';
 	}
-	elseif(defined('BP_VERSION')){ //Are we BuddyPress
+	elseif( isset($bp) && $bp->root_blog_id == $blog_id ){ //Are we BuddyPress
 		include_once CF_PLUGIN_DIR . 'core/buddypress.php';
-	}
-	else {
+	} else {
 		include_once CF_PLUGIN_DIR . 'core/main.php';
 	}
 }

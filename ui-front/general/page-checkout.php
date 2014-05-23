@@ -28,12 +28,11 @@ if ( $this->is_full_access() && $step != 'success' && $step != 'api_call_error' 
 }
 
 //STEP = DISABLED
-if ( $step == 'disabled' ): ?>
+if ( $step == 'disabled' ): 
 _e( 'This feature is currently disabled by the system administrator.', $this->text_domain );
 elseif ( !empty($error) ): ?>
 <div class="invalid-login"><?php echo $error; ?></div>
 <?php endif; 
-
 
 //STEP = TERMS
 if ( $step == 'terms'): ?>

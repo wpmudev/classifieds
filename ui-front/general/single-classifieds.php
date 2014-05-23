@@ -107,7 +107,7 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 	</div>
 	<div class="clear"></div>
 
-	<?php if( !$options['disable_contact_form'] ): ?>
+	<?php if( ! $options['disable_contact_form'] ): ?>
 	<form method="post" action="#" class="contact-user-btn action-form" id="action-form">
 		<input type="submit" name="contact_user" value="<?php _e('Contact User', $this->text_domain ); ?>" onclick="classifieds.toggle_contact_form(); return false;" />
 	</form>
@@ -144,7 +144,7 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 
 		<div class="editfield">
 			<label for="cf_random_value"><?php _e( 'Security image', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
-			<img class="captcha" src="<?php echo $this->plugin_url; ?>ui-front/general/cf-captcha-image.php" />
+			<img class="captcha" src="<?php echo admin_url('admin-ajax.php?action=captcha');?>" />
 			<input type="text" id="cf_random_value" name ="cf_random_value" value="" size="8" />
 			<p class="description"><?php _e( 'Enter the characters from the image.', $this->text_domain ); ?></p>
 		</div>
@@ -156,11 +156,13 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 				<input type="submit" class="button cancel"  value="<?php _e( 'Cancel', $this->text_domain ); ?>" onclick="classifieds.cancel_contact_form(); return false;" />
 			</p>
 		</div>
-
 	</form>
 
 	<?php endif; ?>
+<?php
+//print_r( session_get_cookie_params()  );
 
+?>
 	<div class="clear"></div>
 
 	<table class="cf-description">
