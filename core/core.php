@@ -175,8 +175,8 @@ class Classifieds_Core {
 		add_filter( 'user_contactmethods', array( &$this, 'contact_fields' ), 10, 2 );
 		add_filter('admin_post_thumbnail_html', array(&$this,'on_admin_post_thumbnail_html') );
 
-		add_filter('wp_ajax_captcha', array(&$this,'on_captcha') );
-		add_filter('wp_ajax_nopriv_captcha', array(&$this,'on_captcha') );
+		add_filter('wp_ajax_cf-captcha', array(&$this,'on_captcha') );
+		add_filter('wp_ajax_nopriv_cf-captcha', array(&$this,'on_captcha') );
 
 
 		//Shortcodes

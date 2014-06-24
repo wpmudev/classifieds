@@ -144,7 +144,7 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 
 		<div class="editfield">
 			<label for="cf_random_value"><?php _e( 'Security image', $this->text_domain ); ?> (<?php _e( 'required', $this->text_domain ); ?>)</label>
-			<img class="captcha" src="<?php echo admin_url('admin-ajax.php?action=captcha');?>" />
+			<img class="captcha" src="<?php echo admin_url('admin-ajax.php?action=cf-captcha');?>" />
 			<input type="text" id="cf_random_value" name ="cf_random_value" value="" size="8" />
 			<p class="description"><?php _e( 'Enter the characters from the image.', $this->text_domain ); ?></p>
 		</div>
