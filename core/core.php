@@ -1515,7 +1515,9 @@ class Classifieds_Core {
 	function classifieds_categories_sc( $atts, $content = null ) {
 		extract( shortcode_atts( array(
 		'style' => '', //list, grid
+		'ccats' => '', //list, grid
 		), $atts ) );
+		
 		if($style == 'grid') $result = PHP_EOL . '<div class="cf_list_grid">' .PHP_EOL;
 		elseif($style == 'list') $result .= '<div class="cf_list">' .PHP_EOL;
 		else $result .= "<ul>\n";

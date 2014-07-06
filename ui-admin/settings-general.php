@@ -56,6 +56,7 @@ $default_email = __(
 							<label>Custom Roles</label><br />
 							<select id="delete_role" name="delete_role"  style="width:200px;">
 								<?php
+								global $wp_roles;
 								$system_roles = array('administrator', 'editor', 'author', 'contributor', 'subscriber');
 								$role_names = $wp_roles->role_names;
 								foreach ( $role_names as $role => $name ):
@@ -106,15 +107,21 @@ $default_email = __(
 					<tr>
 						<th><label for="field_image_req"><?php _e( 'Image field:', $this->text_domain ); ?></label></th>
 						<td>
+							<input type="hidden" name="field_image_req" value="0" />
+							<label>
 							<input type="checkbox" id="field_image_req" name="field_image_req" value="1" <?php checked( isset( $options['field_image_req'] ) && 1 == $options['field_image_req'] ); ?> />
 							<span class="description"><?php _e( 'not required', $this->text_domain ); ?></span>
+							</label>
 						</td>
 					</tr>
 					<tr>
 						<th><label for="media_manager"><?php _e( 'Media manager:', $this->text_domain ); ?></label></th>
 						<td>
+							<input type="hidden" name="media_manager" value="0" />
+							<label>
 							<input type="checkbox" id="media_manager" name="media_manager" value="1" <?php checked(isset( $options['media_manager'] ) && 1 == $options['media_manager'] ); ?> />
 							<span class="description"><?php _e( 'enable full media manager for feature image uploads', $this->text_domain ); ?></span>
+							</label>
 						</td>
 					</tr>
 					<tr>
@@ -135,29 +142,55 @@ $default_email = __(
 				<table class="form-table">
 					<tr>
 						<th>
-							<label for="count_cat"><?php _e( 'Count of category:', $this->text_domain ) ?></label>
+							<label for="count_cat"><?php _e( 'Count of categories:', $this->text_domain ) ?></label>
 						</th>
 						<td>
 							<input type="text" name="count_cat" id="count_cat" value="<?php echo (empty( $options['count_cat'] ) ) ? '10' : $options['count_cat']; ?>" size="2" />
 							<span class="description"><?php _e( 'a number of categories that will be displayed in the list of categories.', $this->text_domain ) ?></span>
 						</td>
 					</tr>
+
+					<tr>
+						<th><label for="display_parent_count"><?php esc_html_e( 'Display count in parent categories:', $this->text_domain ); ?></label></th>
+						<td>
+							<input type="hidden" name="display_parent_count" value="0" />
+							<label>
+							<input type="checkbox" id="display_parent_count" name="display_parent_count" value="1" <?php checked( isset( $options['display_parent_count'] ) && 1 == $options['display_parent_count'] ); ?> />
+							<span class="description"><?php esc_html_e( 'Display the count of listings for the top parent categories', $this->text_domain ); ?></span>
+							</label>
+						</td>
+					</tr>
+
 					<tr>
 						<th>
-							<label for="count_sub_cat"><?php _e( 'Count of sub-category:', $this->text_domain ) ?></label>
+							<label for="count_sub_cat"><?php _e( 'Count of sub-categories:', $this->text_domain ) ?></label>
 						</th>
 						<td>
 							<input type="text" name="count_sub_cat" id="count_sub_cat" value="<?php echo ( empty( $options['count_sub_cat'] ) ) ? '5' : $options['count_sub_cat']; ?>" size="2" />
-							<span class="description"><?php _e( 'a number of sub-category that will be displayed for each category in the list of categories.', $this->text_domain ) ?></span>
+							<span class="description"><?php _e( 'a number of sub-categories that will be displayed for each category in the list of categories.', $this->text_domain ) ?></span>
 						</td>
 					</tr>
+
+					<tr>
+						<th><label for="display_sub_count"><?php esc_html_e( 'Display count for sub categories:', $this->text_domain ); ?></label></th>
+						<td>
+							<input type="hidden" name="display_sub_count" value="0" />
+							<label>
+								<input type="checkbox" id="display_sub_count" name="display_sub_count" value="1" <?php checked( !isset( $options['display_sub_count'] ) || 1 == $options['display_sub_count'] ); ?> />
+								<span class="description"><?php esc_html_e( 'Display the count of listings for sub categories', $this->text_domain ); ?></span>
+							</label>
+						</td>
+					</tr>
+
 					<tr>
 						<th>
 							<?php _e( 'Empty sub-category:', $this->text_domain ) ?>
 						</th>
 						<td>
+							<label>
 							<input type="checkbox" name="hide_empty_sub_cat" id="hide_empty_sub_cat" value="1" <?php checked( empty( $options['hide_empty_sub_cat'] ) ? false : ! empty($options['hide_empty_sub_cat']) ); ?> />
-							<label for="hide_empty_sub_cat"><?php _e( 'Hide empty sub-category', $this->text_domain ) ?></label>
+							<span class="description"><?php _e( 'Hide empty sub-category', $this->text_domain ) ?></span>
+							</label>
 						</td>
 					</tr>
 					<?php
@@ -184,11 +217,17 @@ $default_email = __(
 					<tr>
 						<th><label for="field_image_req"><?php _e( 'Pagination position:', $this->text_domain ); ?></label></th>
 						<td>
+							<input type="hidden" name="pagination_top" value="0" />
+							<label>
 							<input type="checkbox" id="pagination_top" name="pagination_top" value="1" <?php echo ( isset( $options['pagination_top'] ) && 1 == $options['pagination_top'] ) ? 'checked' : ''; ?> />
 							<span class="description"><?php _e( 'display at top of page.', $this->text_domain ); ?></span>
+							</label>
 							<br />
+							<input type="hidden" name="pagination_bottom" value="0" />
+							<label>
 							<input type="checkbox" id="pagination_bottom" name="pagination_bottom" value="1" <?php echo ( isset( $options['pagination_bottom'] ) && 1 == $options['pagination_bottom'] ) ? 'checked' : ''; ?> />
 							<span class="description"><?php _e( 'display at bottom of page.', $this->text_domain ); ?></span>
+							</label>
 						</td>
 					</tr>
 					<!--
@@ -205,7 +244,6 @@ $default_email = __(
 						<th><label for="pagination_range"><?php _e( 'Pagination Range:', $this->text_domain ); ?></label></th>
 						<td>
 							<input type="text" id="pagination_range" name="pagination_range" size="4" value="<?php echo ( isset( $options['pagination_range'] ) && '' != $options['pagination_range'] ) ? $options['pagination_range'] : '4'; ?>" />
-							<br />
 							<span class="description"><?php _e( 'Number of page links to show at one time in pagination', $this->text_domain ); ?></span>
 						</td>
 					</tr>
@@ -221,24 +259,30 @@ $default_email = __(
 						<th><label for="disable_contact_form"><?php _e( 'Disable Contact Form:', $this->text_domain ); ?></label></th>
 						<td>
 							<input type="hidden" name="disable_contact_form" value="0" />
+							<label>
 							<input type="checkbox" id="disable_contact_form" name="disable_contact_form" value="1" <?php checked( isset( $options['disable_contact_form'] ) && 1 == $options['disable_contact_form'] ); ?> />
 							<span class="description"><?php _e( 'disable contact form', $this->text_domain ); ?></span>
+							</label>
 						</td>
 					</tr>
 					<tr>
 						<th><label for="cc_admin"><?php _e( 'CC the Administrator:', $this->text_domain ); ?></label></th>
 						<td>
 							<input type="hidden" name="cc_admin" value="0" />
+							<label>
 							<input type="checkbox" id="cc_admin" name="cc_admin" value="1" <?php checked( isset( $options['cc_admin'] ) && 1 == $options['cc_admin'] ); ?> />
 							<span class="description"><?php _e( 'cc the administrator', $this->text_domain ); ?></span>
+							</label>
 						</td>
 					</tr>
 					<tr>
 						<th><label for="cc_sender"><?php _e( 'CC the Sender:', $this->text_domain ); ?></label></th>
 						<td>
 							<input type="hidden" name="cc_sender" value="0" />
+							<label>
 							<input type="checkbox" id="cc_sender" name="cc_sender" value="1" <?php checked( isset( $options['cc_sender'] ) && 1 == $options['cc_sender'] ); ?> />
 							<span class="description"><?php _e( 'cc the sender', $this->text_domain ); ?></span>
+							</label>
 						</td>
 					</tr>
 					<tr>

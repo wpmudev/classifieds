@@ -11,7 +11,12 @@ function cf_supports_taxonomy($taxonomy=''){
 	return (is_array($wp_taxonomies[$taxonomy]->object_type)) ? in_array('classifieds', $wp_taxonomies[$taxonomy]->object_type) : false;
 }
 
-function the_cf_categories_home( $echo = true ){
+function the_cf_categories_home( $echo = true, $atts = null ){
+
+	extract( shortcode_atts( array(
+	'style' => '', //list, grid
+	'ccats' => '', //list, grid
+	), $atts ) );
 
 	//get plugin options
 	$options  = get_option( CF_OPTIONS_NAME );
@@ -33,6 +38,13 @@ function the_cf_categories_home( $echo = true ){
 	'pad_counts'   => 1
 	);
 
+	if( !empty($ccats) ){
+		$ccats = array_filter( explode(',', $ccats), 'is_numeric' );
+		asort($ccats);
+		$ccats = implode(',', $ccats);
+		$args['include'] = $ccats;
+	}
+
 	$categories = get_categories( $args );
 
 	$output = '<div id="cf_list_categories" class="cf_list_categories" >' . "\n";
@@ -40,8 +52,18 @@ function the_cf_categories_home( $echo = true ){
 
 	foreach( $categories as $category ){
 
+
 		$output .= "<li>\n";
-		$output .= '<h2><a href="' . get_term_link( $category ) . '" title="' . __( 'View all posts in ', CF_TEXT_DOMAIN ) . $category->name . '" >' . $category->name . "</a> </h2>\n";
+
+		if( isset( $options['general']['display_parent_count'] ) && $options['general']['display_parent_count'] ) $parent_count = sprintf(' (%d)', $category->count );
+		else $parent_count = '';
+
+		$output .= sprintf('<h2><a href="%s" title="%s %s" >%s%s</a></h2>',
+		get_term_link( $category ),
+		esc_html__( 'View all posts in ', CF_TEXT_DOMAIN ),
+		$category->name,
+		$category->name,
+		$parent_count );
 
 		$output .= '<div class="term-list">';
 
@@ -50,7 +72,7 @@ function the_cf_categories_home( $echo = true ){
 		'orderby'            => 'name',
 		'order'              => 'ASC',
 		'style'              => 'none',
-		'show_count'         => 1,
+		'show_count'         => ( !isset($options['general']['display_sub_count']) || $options['general']['display_sub_count'] == 1 ),
 		'hide_empty'         => $hide_empty_sub_cat,
 		'use_desc_for_title' => 1,
 		'child_of'           => $category->term_id,
@@ -59,7 +81,6 @@ function the_cf_categories_home( $echo = true ){
 		'feed_image'         => '',
 		'exclude'            => '',
 		'exclude_tree'       => '',
-		'include'            => '',
 		'hierarchical'       => true,
 		'title_li'           => '',
 		'show_option_none'   => '', //sprintf('<span class="cf-empty">%s</span>', __('No categories', CF_TEXT_DOMAIN ) ),
@@ -71,6 +92,11 @@ function the_cf_categories_home( $echo = true ){
 		'taxonomy'           => $category->taxonomy,
 		'walker'             => null
 		);
+
+		if( !empty($ccats) ) {
+			$args['include'] = $ccats;
+		}
+
 		$output .=   wp_list_categories($args);
 
 		$output .= "</div><!-- .term-list -->\n";

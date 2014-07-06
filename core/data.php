@@ -43,7 +43,7 @@ class Classifieds_Core_Data {
 			'menu_position' => '',
 			'public' => true,
 			'query_var' => true,
-			'rewrite' => array ( 'slug' => 'classified', 'with_front' => false),
+			'rewrite' => array ( 'slug' => 'classified', 'with_front' => false, 'pages' => true),
 
 			'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments', 'revisions', /*'post-formats'*/ ),
 
@@ -191,6 +191,7 @@ class Classifieds_Core_Data {
 			'field_default_option' => '1',
 			'field_description' => 'Extend the duration of this ad. ',
 			'object_type' => array ('classifieds'),
+			'hide_type' => array (),
 
 			'field_required' => NULL,
 			'field_id' => 'selectbox_4cf582bd61fa4',
@@ -210,6 +211,7 @@ class Classifieds_Core_Data {
 			$text_4cfeb3eac6f1f_default =
 			array (
 			'object_type' => array ('classifieds'),
+			'hide_type' => array (),
 			'field_title' => 'Cost',
 			'field_type' => 'text',
 			'field_sort_order' => 'default',
