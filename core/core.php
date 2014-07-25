@@ -1748,6 +1748,10 @@ class Classifieds_Core {
 	* @return void
 	**/
 	function custom_classifieds_template( $template ) {
+
+		if( empty( $this->classifieds_template ) ) {
+			$this->classifieds_template = $this->template_file($template);
+		}
 		return $this->classifieds_template;
 	}
 
@@ -1761,7 +1765,7 @@ class Classifieds_Core {
 		ob_start();
 		remove_filter( 'the_title', array( &$this, 'page_title_output' ), 10 , 2 );
 		remove_filter('the_content', array(&$this, 'classifieds_content'));
-		require($this->template_file('classifieds'));
+		require($this->custom_classifieds_template('classifieds'));
 		wp_reset_query();
 
 		$new_content = ob_get_contents();
@@ -1777,7 +1781,7 @@ class Classifieds_Core {
 	function update_classified_content($content = null){
 		if(! in_the_loop()) return $content;
 		ob_start();
-		require($this->template_file('update-classified'));
+		require($this->custom_classifieds_template('update-classified'));
 		$new_content = ob_get_contents();
 		ob_end_clean();
 		return $new_content;
@@ -1791,7 +1795,7 @@ class Classifieds_Core {
 	function my_classifieds_content($content = null){
 		if(! in_the_loop()) return $content;
 		ob_start();
-		require($this->template_file('my-classifieds'));
+		require($this->custom_classifieds_template('my-classifieds'));
 		$new_content = ob_get_contents();
 		ob_end_clean();
 		return $new_content;
@@ -1806,7 +1810,7 @@ class Classifieds_Core {
 		if(! in_the_loop()) return $content;
 		remove_filter('the_content', array(&$this, 'checkout_content'));
 		ob_start();
-		require($this->template_file('checkout'));
+		require($this->custom_classifieds_template('checkout'));
 		$new_content = ob_get_contents();
 		ob_end_clean();
 		return $new_content;
@@ -1822,7 +1826,7 @@ class Classifieds_Core {
 		remove_filter( 'the_title', array( &$this, 'delete_post_title' ) ); //after wpautop
 		remove_filter('the_content', array(&$this, 'signin_content'));
 		ob_start();
-		require($this->template_file('signin'));
+		require($this->custom_classifieds_template('signin'));
 		$new_content = ob_get_contents();
 		ob_end_clean();
 		return $new_content;
@@ -1838,7 +1842,7 @@ class Classifieds_Core {
 
 		remove_filter('the_content', array(&$this, 'my_credits_content'));
 		ob_start();
-		require($this->plugin_dir . 'ui-front/general/page-my-credits.php');
+		require($this->custom_classifieds_template('page-my-credits'));
 		$new_content = ob_get_contents();
 		ob_end_clean();
 		return $new_content;
@@ -1852,9 +1856,8 @@ class Classifieds_Core {
 	function single_content($content = null){
 		if(! in_the_loop()) return $content;
 		remove_filter('the_content', array(&$this, 'single_content'));
-
 		ob_start();
-		require($this->plugin_dir . 'ui-front/general/single-classifieds.php');
+		require($this->custom_classifieds_template('single-classifieds'));
 		$new_content = ob_get_contents();
 		ob_end_clean();
 		return $new_content;
