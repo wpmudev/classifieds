@@ -8,7 +8,7 @@
 * @since Classifieds 2.0
 */
 
-global $current_user;
+global $current_user, $wp_query;
 
 $current_user = wp_get_current_user();
 $error = get_query_var('cf_error');
