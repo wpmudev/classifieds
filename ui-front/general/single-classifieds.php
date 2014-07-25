@@ -107,7 +107,7 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 	</div>
 	<div class="clear"></div>
 
-	<?php if( ! $options['disable_contact_form'] ): ?>
+	<?php if( ! empty( $options['disable_contact_form'] ) ): ?>
 	<form method="post" action="#" class="contact-user-btn action-form" id="action-form">
 		<input type="submit" name="contact_user" value="<?php _e('Contact User', $this->text_domain ); ?>" onclick="classifieds.toggle_contact_form(); return false;" />
 	</form>
