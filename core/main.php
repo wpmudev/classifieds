@@ -160,6 +160,9 @@ class Classifieds_Core_Main extends Classifieds_Core {
 	function handle_page_requests() {
 		global $wp_query;
 
+		/** The subfolder where to search for custom templates in themes or child themes. e.g: twentyfourteen/classifieds */
+		$templates_dir = apply_filters( 'classifieds_templates_dir', 'classifieds/' );
+				
 		/* Handles request for classifieds page */
 		$templates = array();
 		$taxonomy = (empty($wp_query->query_vars['taxonomy']) ) ? '' : $wp_query->query_vars['taxonomy'];
@@ -176,87 +179,86 @@ class Classifieds_Core_Main extends Classifieds_Core {
 		}
 		elseif ( is_post_type_archive('classifieds') ) {
 			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-			$templates = array( 'archive-classifieds.php' );
+			$templates = array( $templates_dir . 'archive-classifieds.php' );
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
 				$this->classifieds_template = $page_template;
 				$wp_query->post_count = 1;
-				add_filter( 'the_title', array( &$this, 'page_title_output' ), 10 , 2 );
-				add_filter('the_content', array(&$this, 'classifieds_content'));
 			}
-			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			add_filter('the_content', array(&$this, 'classifieds_content'));
+// 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
 			$this->is_classifieds_page = true;
 		}
 
 		elseif (is_archive() && in_array($taxonomy, array('classifieds_categories','classifieds_tags') ) ) {
 			/* Set the proper step which will be loaded by "page-my-classifieds.php" */
-			$templates = array( "taxonomy-{$taxonomy}.php" );
+			$templates = array( $templates_dir . "taxonomy-{$taxonomy}.php" );
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
 				$this->classifieds_template = $page_template;
 				$wp_query->post_count = 1;
-				add_filter( 'the_title', array( &$this, 'page_title_output' ), 10 , 2 );
-				add_filter('the_content', array(&$this, 'classifieds_content'));
 			}
-			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			add_filter( 'the_title', array( &$this, 'page_title_output' ), 10 , 2 );
+			add_filter('the_content', array(&$this, 'classifieds_content'));
+// 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
 			$this->is_classifieds_page = true;
 		}
 		elseif(is_single() && 'classifieds' == get_query_var('post_type')){
-			$templates = array( 'single-classifieds.php' );
+			$templates = array( $templates_dir. 'single-classifieds.php' );
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
 				$this->classifieds_template = $page_template;
-				add_filter('the_content', array(&$this, 'single_content'));
 			}
-			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			add_filter('the_content', array(&$this, 'single_content'));
+//			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
 			$this->is_classifieds_page = true;
 		}
 
 		elseif(is_page($this->my_credits_page_id) ){
-			$templates = array( 'page-my-credits.php' );
+			$templates = array( $templates_dir . 'page-my-credits.php' );
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
 				$this->classifieds_template = $page_template;
-				add_filter('the_content', array(&$this, 'my_credits_content'));
 			}
-			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			add_filter('the_content', array(&$this, 'my_credits_content'));
+// 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
 			$this->is_classifieds_page = true;
 		}
 
 		elseif(is_page($this->checkout_page_id) ){
-			$templates = array( 'page-checkout.php' );
+			$templates = array( $templates_dir . 'page-checkout.php' );
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
 				$this->classifieds_template = $page_template;
-				add_filter('the_content', array(&$this, 'checkout_content'));
 			}
-			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			add_filter('the_content', array(&$this, 'checkout_content'));
+// 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
 			$this->is_classifieds_page = true;
 		}
 
 		elseif(is_page($this->signin_page_id) ){
-			$templates = array( 'page-signin.php' );
+			$templates = array( $templates_dir . 'page-signin.php' );
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
 				$this->classifieds_template = $page_template;
-				add_filter( 'the_title', array( &$this, 'delete_post_title' ), 11 ); //after wpautop
-				add_filter('the_content', array(&$this, 'signin_content'));
 			}
-			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			add_filter( 'the_title', array( &$this, 'delete_post_title' ), 11 ); //after wpautop
+			add_filter('the_content', array(&$this, 'signin_content'));
+// 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
 			$this->is_classifieds_page = true;
 		}
 		//My Classifieds page
 		elseif (is_page($this->my_classifieds_page_id) ){
-			$templates = array( 'page-my-classifieds.php' );
+			$templates = array( $templates_dir . 'page-my-classifieds.php' );
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
 				$this->classifieds_template = $page_template;
-				add_filter('the_content', array(&$this, 'my_classifieds_content'));
 			}
-			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			add_filter('the_content', array(&$this, 'my_classifieds_content'));
+// 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
 			$this->is_classifieds_page = true;
 		}
 		//Classifieds update pages
 		elseif(is_page($this->add_classified_page_id) || is_page($this->edit_classified_page_id)){
-			$templates = array( 'page-update-classified.php' );
+			$templates = array( $templates_dir . 'page-update-classified.php' );
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
 				$this->classifieds_template = $page_template;
-				add_filter('the_content', array(&$this, 'update_classified_content'));
 			}
-			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			add_filter('the_content', array(&$this, 'update_classified_content'));
+// 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
 			$this->is_classifieds_page = true;
 		}
 		/* If user wants to go to My Classifieds main page  */
