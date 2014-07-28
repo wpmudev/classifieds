@@ -1743,15 +1743,45 @@ class Classifieds_Core {
 	}
 
 	/**
-	* Custom Template.
+	* Custom Template path.
 	*
-	* @return void
+	* @param string $template The template to find. 
+	* @return string Template path.
 	**/
 	function custom_classifieds_template( $template ) {
 
-		if( empty( $this->classifieds_template ) ) {
-			$this->classifieds_template = $this->template_file($template);
+		$tpldir = get_stylesheet_directory();
+		$subdir = apply_filters( 'classifieds_custom_templates_dir', $tpldir.'/classifieds' );
+		
+		$id = get_queried_object_id();
+		if( empty( $id ) ) { 
+			$id = $this->classifieds_page_id;
 		}
+		$slug = get_page_template_slug( $id );
+		if( empty( $slug ) ) {
+			$page_template = get_page_template();
+		}
+		else {
+			$page_template = locate_template( array( $slug, 'page.php', 'index.php' ) );
+		}
+		
+		$template_priority = array(
+				"{$tpldir}/page-{$template}.php",
+				"{$tpldir}/{$template}.php",
+				"{$subdir}/page-{$template}.php",
+				"{$subdir}/{$template}.php",
+				"{$this->plugin_dir}ui-front/general/page-{$template}.php",
+				"{$this->plugin_dir}ui-front/general/{$template}.php",
+				$page_template,
+		);
+
+		foreach( $template_priority as $temp ) {
+			if( file_exists( $temp ) ) {
+				$this->classifieds_template = $temp;
+				break;
+			}
+		}
+
 		return $this->classifieds_template;
 	}
 
