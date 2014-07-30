@@ -1431,6 +1431,13 @@ class Classifieds_Core {
 		$$key = $val;
 		/* Include templates */
 
+		/** allow custom template */
+		$result = $this->custom_classifieds_template( $name );
+		if ( file_exists( $result ) ){
+			include($result);
+			return;
+		}
+/*		
 		$result = get_template_directory() . "/{$name}.php";
 		if ( file_exists( $result ) ){
 			include($result);
@@ -1449,7 +1456,7 @@ class Classifieds_Core {
 			include($result);
 			return;
 		}
-
+*/
 		echo "<p>Rendering of template $result {$name}.php failed</p>";
 	}
 
@@ -1749,6 +1756,9 @@ class Classifieds_Core {
 	* @return string Template path.
 	**/
 	function custom_classifieds_template( $template ) {
+		if( empty( $this->classifieds_template ) ) {
+			$this->classifieds_template = '';
+		}
 
 		$tpldir = get_stylesheet_directory();
 		$subdir = apply_filters( 'classifieds_custom_templates_dir', $tpldir.'/classifieds' );
@@ -1765,16 +1775,29 @@ class Classifieds_Core {
 			$page_template = locate_template( array( $slug, 'page.php', 'index.php' ) );
 		}
 		
+		/** Render template is this priority. */
 		$template_priority = array(
-				"{$tpldir}/page-{$template}.php",
-				"{$tpldir}/{$template}.php",
-				"{$subdir}/page-{$template}.php",
-				"{$subdir}/{$template}.php",
-				"{$this->plugin_dir}ui-front/general/page-{$template}.php",
-				"{$this->plugin_dir}ui-front/general/{$template}.php",
-				$page_template,
+				'wp' => $this->classifieds_template,
+				'theme_root' => "{$tpldir}/{$template}.php",
+				'theme_root1' => "{$tpldir}/page-{$template}.php",
+				'theme_sub' => "{$subdir}/{$template}.php",
+				'theme_sub1' => "{$subdir}/page-{$template}.php",
+				'plugin_bp' => "{$this->plugin_dir}ui-front/buddypress/members/single/classifieds/{$template}.php",
+				'plugin_cf' => "{$this->plugin_dir}ui-front/general/page-{$template}.php",
+				'plugin_cf1' => "{$this->plugin_dir}ui-front/general/{$template}.php",
+				'default' => $page_template,
 		);
 
+		/** if $this->classifieds_template is set to default template, has low priority. */
+		if( in_array( basename( $this->classifieds_template ), array( 'page.php', 'index.php' ) ) ) {
+			unset( $template_priority['wp'] );
+		}
+		
+		/** Only if buddypress is active */
+		if( ! $this->bp_active ) {
+			unset( $template_priority['plugin_bp'] );
+		}
+		
 		foreach( $template_priority as $temp ) {
 			if( file_exists( $temp ) ) {
 				$this->classifieds_template = $temp;
