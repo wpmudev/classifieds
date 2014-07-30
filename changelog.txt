@@ -4,13 +4,14 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
-= 2.3.5.7 - @todo
+= 2.3.5.7
 * Fixed: testing field before accessing it to avoid errors in the single-classifieds template.
 * Fixed: declaring global $wp_query used in the page-my-classifieds.php
 * Fixed: Undefined index: signin_url in options array. Testing before accessing it.
 * Fixed: WPEngine issue. Registration and login form urls not the same as WP uses.
 * Changed: custom_classifieds_template method to get template hierarchy (1-theme_dir, 2-theme_dir/classifieds, 3-plugin_dir/ui-front/general/)
 * Changed: Classifieds_Core and Classifieds_Core_BuddyPress using custom_classifieds_template instead of including template file directly
+* Fixed: including buddypress templates in templates hierarchy and testing for conditions where template comes with wordpress default page.php.
 
 = 2.3.5.6 - 2014-07-06 Arnold Bailey =
 - Added category filter to the [cf_list_categories] shortcode.
