@@ -9,7 +9,7 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 * Fixed: declaring global $wp_query used in the page-my-classifieds.php
 * Fixed: Undefined index: signin_url in options array. Testing before accessing it.
 * Fixed: WPEngine issue. Registration and login form urls not the same as WP uses.
-* Changed: custom_classifieds_template method to get template hierarchy (1-theme_dir, 2-theme_dir/classifieds, 3-plugin_dir/ui-front/general/)
+* Changed: custom_classifieds_template method to get template hierarchy (1-theme_dir/classifieds/, 2-plugin_dir/ui-front/general/)
 * Changed: Classifieds_Core and Classifieds_Core_BuddyPress using custom_classifieds_template instead of including template file directly
 * Fixed: including buddypress templates in templates hierarchy and testing for conditions where template comes with wordpress default page.php.
 
