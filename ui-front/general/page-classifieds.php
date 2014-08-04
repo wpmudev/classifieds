@@ -41,6 +41,6 @@ if ( in_array($tax_key, $taxonomies) ) {
 query_posts($query_args);
 
 
-load_template( CF_PLUGIN_DIR . 'ui-front/general/loop-taxonomy.php' );
+load_template( $this->custom_classifieds_template( 'loop-taxonomy' ) );
 
 if(is_object($wp_query)) $wp_query->post_count = 0; 
