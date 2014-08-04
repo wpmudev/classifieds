@@ -4,6 +4,9 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
+= 2.3.5.8
+* Fixed: Removed Hard coded template part for loop-taxonomy and loop-author. Using custom_classifieds_template method.
+
 = 2.3.5.7
 * Fixed: testing field before accessing it to avoid errors in the single-classifieds template.
 * Fixed: declaring global $wp_query used in the page-my-classifieds.php
