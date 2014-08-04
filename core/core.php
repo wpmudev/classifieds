@@ -1777,7 +1777,6 @@ class Classifieds_Core {
 		
 		/** Render template is this priority. */
 		$template_priority = array(
-				'wp' => $this->classifieds_template,
 				'theme_root' => "{$tpldir}/{$template}.php",
 				'theme_root1' => "{$tpldir}/page-{$template}.php",
 				'theme_sub' => "{$subdir}/{$template}.php",
@@ -1785,6 +1784,7 @@ class Classifieds_Core {
 				'plugin_bp' => "{$this->plugin_dir}ui-front/buddypress/members/single/classifieds/{$template}.php",
 				'plugin_cf' => "{$this->plugin_dir}ui-front/general/page-{$template}.php",
 				'plugin_cf1' => "{$this->plugin_dir}ui-front/general/{$template}.php",
+				'wp' => $this->classifieds_template,
 				'default' => $page_template,
 		);
 
@@ -1797,7 +1797,7 @@ class Classifieds_Core {
 		if( ! $this->bp_active ) {
 			unset( $template_priority['plugin_bp'] );
 		}
-		
+
 		foreach( $template_priority as $temp ) {
 			if( file_exists( $temp ) ) {
 				$this->classifieds_template = $temp;
