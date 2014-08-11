@@ -682,6 +682,8 @@ class CF_Payments{
 
 				$form .= '<input type="hidden" name="business" value="' . esc_attr($options['payment_types']['paypal']['business_email']) .'">';
 				$form .= '<input type="hidden" name="cmd" value="_xclick-subscriptions">';
+				// our Incsub BN code
+				$form .= '<input type="hidden" name="bn" value="incsub_SP">';
 				$form .= '<input type="hidden" name="item_name" value="' . esc_attr($options['payments']['recurring_name']) . '">';
 				$form .= '<input type="hidden" name="item_number" value="a" >';
 				$form .= '<input type="hidden" name="invoice" value="' . uniqid("CLS-{$blog_id}-") . '">'; // 'CLS' is the prefix for Gateway Relay
