@@ -3,6 +3,8 @@ Authors: Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub
 Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
+=2.3.5.9
+* Added: incsub partner code in paypal gateway
 
 = 2.3.5.8
 * Fixed: Removed Hard coded template part for loop-taxonomy and loop-author. Using custom_classifieds_template method.
