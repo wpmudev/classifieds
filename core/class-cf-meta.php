@@ -70,3 +70,4 @@ if(! class_exists('CF_Meta')) {
 		}
 
 	}
+}
