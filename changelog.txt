@@ -3,7 +3,11 @@ Authors: Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub
 Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
-=2.3.5.9
+= 2.3.6 - 2014-08-29
+* Fixed: unexpected EOF and inexistent variable using.
+* Changed: Merged CustomPress plugin 1.3.5.7
+
+= 2.3.5.9
 * Added: incsub partner code in paypal gateway
 
 = 2.3.5.8
