@@ -366,7 +366,6 @@ class Classifieds_Core {
 			$args = array(
 			'hierarchical'  => 0,
 			'meta_key'      => 'classifieds_type',
-			'meta_value'    => $value,
 			'post_type'     => 'page',
 			'post_status'   => $post_status
 			);
