@@ -3,6 +3,9 @@ Authors: Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub
 Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
+= 2.3.6.1 - 2014-09-02
+* Fix warning messages "implode(): Invalid arguments passed..."
+
 = 2.3.6 - 2014-08-29
 * Fixed: unexpected EOF and inexistent variable using.
 * Changed: Merged CustomPress plugin 1.3.5.7
