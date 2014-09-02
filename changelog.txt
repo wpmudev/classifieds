@@ -3,6 +3,10 @@ Authors: Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub
 Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
+
+= 2.3.6.2 - 2014-09-03
+* Fix contact button not showing in classified
+
 = 2.3.6.1 - 2014-09-02
 * Fix warning messages "implode(): Invalid arguments passed..."
 
