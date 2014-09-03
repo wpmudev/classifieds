@@ -6,6 +6,7 @@
 if ( !class_exists('Classifieds_Core_Main') ):
 class Classifieds_Core_Main extends Classifieds_Core {
 
+	public $cf_ads_per_page = 20;
 	/**
 	* Constructor.
 	*
@@ -173,6 +174,18 @@ class Classifieds_Core_Main extends Classifieds_Core {
 
 		if(is_feed()){
 			return;
+		}
+		elseif ( '' != get_query_var( 'cf_author_name' ) || isset( $_REQUEST['cf_author'] ) && '' != $_REQUEST['cf_author'] )  {
+			$templates = array( 'page-author.php' );
+			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
+				$this->classifieds_template = $page_template;
+				$wp_query->post_count = 1;
+				add_filter( 'the_title', array( &$this, 'page_title_output' ), 10 , 2 );
+				add_filter('the_content', array(&$this, 'classifieds_content'));
+			}
+			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+			$this->is_classifieds_page = true;
+			
 		}
 		elseif ( is_post_type_archive('classifieds') ) {
 			/* Set the proper step which will be loaded by "page-my-classifieds.php" */

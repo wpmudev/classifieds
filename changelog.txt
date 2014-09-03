@@ -6,6 +6,7 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 = 2.3.6.2 - 2014-09-03
 * Fix contact button not showing in classified
+* Fix classifieds author page template not loading
 
 = 2.3.6.1 - 2014-09-02
 * Fix warning messages "implode(): Invalid arguments passed..."

@@ -148,9 +148,7 @@ class Classifieds_Core {
 		add_filter( 'parse_query', array( &$this, 'on_parse_query' ) ) ;
 
 		add_filter( 'wp_page_menu_args', array( &$this, 'hide_menu_pages' ), 99 );
-
-		/* template for cf-author page */
-		add_action( 'template_redirect', array( &$this, 'get_cf_author_template' ) );
+		
 		/* Handle login requests */
 		add_action( 'template_redirect', array( &$this, 'handle_login_requests' ) );
 		/* Handle all requests for checkout */
@@ -1255,6 +1253,9 @@ class Classifieds_Core {
 		if ( is_post_type_archive('classifieds' ) ){
 			return post_type_archive_title('', false);
 		}
+		if ( '' != get_query_var( 'cf_author_name' ) || isset( $_REQUEST['cf_author'] ) && '' != $_REQUEST['cf_author'] )  {
+			$title = sprintf( __( '%s classifieds', CF_TEXT_DOMAIN ), get_query_var( 'cf_author_name' ) );
+		}
 		return $title;
 	}
 
@@ -1362,22 +1363,6 @@ class Classifieds_Core {
 			return "{$this->plugin_dir}ui-front/general/page-{$name}.php";
 		} else {
 			return $template;
-		}
-	}
-
-	/**
-	*Get Template for classifieds author page
-	**/
-	function get_cf_author_template() {
-		global $wp_query;
-
-		if ( '' != get_query_var( 'cf_author_name' ) || isset( $_REQUEST['cf_author'] ) && '' != $_REQUEST['cf_author'] )  {
-			if ( file_exists(get_template_directory() . '/author.php')){
-				load_template( get_template_directory() . '/author.php' );
-			} else {
-				load_template( "{$this->plugin_dir}ui-front/general/author.php" );
-			}
-			exit();
 		}
 	}
 

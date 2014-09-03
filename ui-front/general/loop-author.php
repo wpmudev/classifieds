@@ -31,7 +31,13 @@ $cf_page = '1';
 
 $GLOBALS['paged'] = $cf_page;
 
-query_posts( array( 'posts_per_page' => $cf->cf_ads_per_page, 'paged' => $cf_page, 'author_name' => get_query_var( 'cf_author_name' ), 'post_status' => 'publish', 'post_type' => 'classifieds'  ) );
+query_posts( array( 
+	'posts_per_page' => $cf->cf_ads_per_page, 
+	'paged' => $cf_page, 
+	'author_name' => get_query_var( 'cf_author_name' ), 
+	'post_status' => 'publish', 
+	'post_type' => 'classifieds',
+) );
 
 $cf_options = $cf->get_options( 'general' );
 
@@ -121,7 +127,7 @@ $cf_options = $cf->get_options( 'general' );
 					</tr>
 					<tr>
 						<th><?php _e( 'Expires', CF_TEXT_DOMAIN ); ?></th>
-						<td><?php echo Classifieds_Core::get_expiration_date( get_the_ID() ); ?></td>
+						<td><?php echo $cf->get_expiration_date( get_the_ID() ); ?></td>
 					</tr>
 				</table>
 			</div>
