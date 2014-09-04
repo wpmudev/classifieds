@@ -18,7 +18,6 @@
 * @subpackage Taxonomy
 * @since Classifieds 2.0
 */
-
 global $bp, $Classifieds_Core;
 $cf = $Classifieds_Core; //shorthand
 

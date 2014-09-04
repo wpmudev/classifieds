@@ -1788,7 +1788,6 @@ class Classifieds_Core {
 				break;
 			}
 		}
-
 		return $this->classifieds_template;
 	}
 
