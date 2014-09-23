@@ -176,14 +176,14 @@ class Classifieds_Core_Main extends Classifieds_Core {
 			return;
 		}
 		elseif ( '' != get_query_var( 'cf_author_name' ) || isset( $_REQUEST['cf_author'] ) && '' != $_REQUEST['cf_author'] )  {
-			$templates = array( 'page-author.php' );
+			$templates = array( 'page-author' );
 			if ( ! $this->classifieds_template = locate_template( $templates ) ) {
 				$this->classifieds_template = $page_template;
 				$wp_query->post_count = 1;
 				add_filter( 'the_title', array( &$this, 'page_title_output' ), 10 , 2 );
 				add_filter('the_content', array(&$this, 'classifieds_content'));
 			}
-			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
+// 			add_filter( 'template_include', array( &$this, 'custom_classifieds_template' ) );
 			$this->is_classifieds_page = true;
 			
 		}

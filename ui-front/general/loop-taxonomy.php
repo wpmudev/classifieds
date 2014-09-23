@@ -94,7 +94,7 @@ $cost = is_numeric($cost) ? sprintf(__('%01.2f',CF_TEXT_DOMAIN), $cost) : $cost;
 
 						<td>
 
-							<span class="cf-author"><?php echo the_author_classifieds_link(); ?></a></span>
+							<span class="cf-author"><?php echo the_author_posts_link(); ?></a></span>
 
 						</td>
 					</tr>

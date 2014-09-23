@@ -1740,6 +1740,11 @@ class Classifieds_Core {
 	* @return string Template path.
 	**/
 	function custom_classifieds_template( $template ) {
+		if ( '' != get_query_var( 'cf_author_name' ) || isset( $_REQUEST['cf_author'] ) && '' != $_REQUEST['cf_author'] )  {
+			if( 'loop-author' != $template ) {
+				$template = 'page-author';
+			}
+		}
 		if( empty( $this->classifieds_template ) ) {
 			$this->classifieds_template = '';
 		}
