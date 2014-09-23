@@ -71,9 +71,13 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		else
 		$nav_title = 'Classifieds';
 
+		$slug = ( bp_is_my_profile() ) ? '/my-classifieds' : '/all';
+		$slug = $bp->classifieds->slug . $slug;
+		$slug = apply_filters( 'cf_buddypress_add_navigation_slug', $slug );
+		
 		bp_core_new_nav_item( array(
 		'name'                    => __( $nav_title, $this->text_domain ),
-		'slug'                    => $bp->classifieds->slug,
+		'slug'                    => $slug,
 		'position'                => 100,
 		'show_for_displayed_user' => true,
 		'screen_function'         => array( &$this, 'load_template' ),
