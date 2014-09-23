@@ -94,7 +94,7 @@ echo do_shortcode('[cf_checkout_btn text="' . __('Purchase ads', $this->text_dom
 					<?php
 					if ( '' == get_post_meta( get_the_ID(), '_thumbnail_id', true ) ) {
 						if ( ! empty( $options_general['field_image_def'] ) )
-						echo '<img width="150" height="150" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $options_general['field_image_def'] . '">';
+						echo '<img width="150" height="150" title="no image" alt="no image" class="cf-no-image wp-post-image" src="' . $options_general['field_image_def'] . '">';
 					} else {
 						echo get_the_post_thumbnail( get_the_ID(), array( 200, 150 ) );
 					}

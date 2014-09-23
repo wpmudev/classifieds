@@ -38,7 +38,7 @@
 					<?php
 					if ( '' == get_post_meta( get_the_ID(), '_thumbnail_id', true ) ) {
 						if ( isset( $options['field_image_def'] ) && '' != $options['field_image_def'] )
-						echo '<img width="16" height="16" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $options['field_image_def'] . '">';
+						echo '<img width="16" height="16" title="no image" alt="no image" class="cf-no-image wp-post-image" src="' . $options['field_image_def'] . '">';
 					} else {
 						echo get_the_post_thumbnail( get_the_ID(), array( 16, 16 ) );
 					}
@@ -90,7 +90,7 @@
 					<?php
 					if ( '' == get_post_meta( get_the_ID(), '_thumbnail_id', true ) ) {
 						if ( isset( $options['field_image_def'] ) && '' != $options['field_image_def'] )
-						echo '<img width="16" height="16" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $options['field_image_def'] . '">';
+						echo '<img width="16" height="16" title="no image" alt="no image" class="cf-no-image wp-post-image" src="' . $options['field_image_def'] . '">';
 					} else {
 						echo get_the_post_thumbnail( get_the_ID(), array( 16, 16 ) );
 					}
@@ -159,7 +159,7 @@
 					<?php
 					if ( '' == get_post_meta( get_the_ID(), '_thumbnail_id', true ) ) {
 						if ( isset( $options['field_image_def'] ) && '' != $options['field_image_def'] )
-						echo '<img width="16" height="16" title="no image" alt="no image" class="cf-no-imege wp-post-image" src="' . $options['field_image_def'] . '">';
+						echo '<img width="16" height="16" title="no image" alt="no image" class="cf-no-image wp-post-image" src="' . $options['field_image_def'] . '">';
 					} else {
 						echo get_the_post_thumbnail( get_the_ID(), array( 16, 16 ) );
 					}
