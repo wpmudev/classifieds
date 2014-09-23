@@ -6,6 +6,8 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 = 2.3.6.3 - 2014-09-23
 * Fix author classifieds template showing all classifieds
 * Fix BuddyPress profile classifieds double redirection issue
+* Fix typo cf-no-imege -> cf-no-image in page templates
+* Fix wrong dimensions for default classifieds image 
 
 = 2.3.6.2 - 2014-09-03
 * Fix contact button not showing in classified

@@ -49,7 +49,7 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 		if(has_post_thumbnail()){
 			$thumbnail = get_the_post_thumbnail( $post->ID, array( 300, 300 ) );
 		} else {
-			$thumbnail = '<img width="300" height="300" title="no image" alt="no image" class="cf-no-image wp-post-image" src="' . $field_image . '">';
+			$thumbnail = '<img title="no image" alt="no image" class="cf-no-image wp-post-image" src="' . $field_image . '">';
 		}
 		?>
 		<a href="<?php the_permalink(); ?>" ><?php echo $thumbnail; ?></a>

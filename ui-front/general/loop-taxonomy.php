@@ -73,7 +73,7 @@ $cost = is_numeric($cost) ? sprintf(__('%01.2f',CF_TEXT_DOMAIN), $cost) : $cost;
 				<?php
 				if ( '' == get_post_meta( get_the_ID(), '_thumbnail_id', true ) ) {
 					if ( isset( $cf_options['field_image_def'] ) && '' != $cf_options['field_image_def'] )
-					echo '<img width="200" height="150" title="no image" alt="no image" class="cf-no-image wp-post-image" src="' . $field_image . '">';
+					echo '<img width="150" height="150" title="no image" alt="no image" class="cf-no-image wp-post-image" src="' . $field_image . '">';
 				} else {
 					echo get_the_post_thumbnail( get_the_ID(), array( 200, 150 ) );
 				}
