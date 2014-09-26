@@ -3,6 +3,10 @@ Authors: Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub
 Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
+
+= 2.3.6.4 - 2014-09-26
+* Fix BuddyPress profile links redirection
+
 = 2.3.6.3 - 2014-09-23
 * Fix author classifieds template showing all classifieds
 * Fix BuddyPress profile classifieds double redirection issue
