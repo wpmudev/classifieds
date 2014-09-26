@@ -60,22 +60,7 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 			<tr>
 				<th><?php _e( 'Posted By', $this->text_domain ); ?></th>
 				<td>
-
-					<?php
-					/* For BuddyPress compatibility */
-					global $bp;
-					if ( isset( $bp ) ):
-					$obj = get_post_type_object('classifieds');
-					$rewrite_slug = ($obj->has_archive) ? $obj->has_archive : '';
-					?>
-					<a href="<?php echo bp_core_get_user_domain( $post->post_author ) . $rewrite_slug;?>" alt="<?php echo get_the_author_meta('display_name',$post->post_author); ?> Profile" ><?php echo get_the_author_meta('display_name',$post->post_author); ?></a>
-					<?php else: ?>
-
-					<?php the_author_posts_link(); ?>
-
-					<?php endif; ?>
-
-
+					<?php echo the_author_classifieds_link(); ?>
 				</td>
 			</tr>
 			<tr>

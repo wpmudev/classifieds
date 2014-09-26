@@ -39,8 +39,25 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 		/* template for  page */
 		//add_action( 'template_redirect', array( &$this, 'handle_nav' ) );
 		add_action( 'template_redirect', array( &$this, 'handle_page_requests' ) );
+		
+		add_filter( 'page_link', array( &$this, 'fix_menu_page_links' ), 999, 3 );
 
 	}
+
+	function fix_menu_page_links($link, $postID, $sample){
+		global $bp;
+		$my_classifieds_page = get_post($this->my_classifieds_page_id);
+		if($postID == $this->my_classifieds_page_id){
+		    if ( is_user_logged_in()) {
+		        $user_domain = ( !empty( $bp->displayed_user->domain ) ) ? $bp->displayed_user->domain : $bp->loggedin_user->domain;
+		        $link = $user_domain . $bp->classifieds->slug . '/' . $my_classifieds_page->post_name . '/';
+		    } else {
+		        $link = bp_get_signup_page();
+		    }
+		}
+
+		return $link;
+	    }
 
 	/**
 	* Add BuddyPress navigation.
@@ -48,95 +65,86 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	* @return void
 	**/
 	function add_navigation() {
-		global $bp;
+        global $bp;
 
-		/* Set up classifieds as a sudo-component for identification and nav selection */
-		$classifieds_page = get_page($this->classifieds_page_id);
+        $classifieds_page = get_post($this->classifieds_page_id);
+        $my_classifieds_page = get_post($this->my_classifieds_page_id);
+        $default_sub_slug = bp_is_my_profile() ? $my_classifieds_page->post_name : 'all';
 
-		if (! @is_object($bp->classifieds) ){
-			$bp->classifieds = new stdClass;
-		}
+        if (! @is_object($bp->classifieds) ){
+            $bp->classifieds = new stdClass;
+        }
 
-		$bp->classifieds->slug = $classifieds_page->post_name;
-		/* Construct URL to the BuddyPress profile URL */
-		$user_domain = ( !empty( $bp->displayed_user->domain ) ) ? $bp->displayed_user->domain : $bp->loggedin_user->domain;
-		$parent_url = $user_domain . $bp->classifieds->slug . '/';
+        $bp->classifieds->slug = $classifieds_page->post_name;
+        /* Construct URL to the BuddyPress profile URL */
+        $user_domain = ( !empty( $bp->displayed_user->domain ) ) ? $bp->displayed_user->domain : $bp->loggedin_user->domain;
+        $parent_url = $user_domain . $bp->classifieds->slug . '/';
 
-		/* Add the settings navigation item */
-		//		$Classifieds_Core = new Classifieds_Core();
-		//		$classifieds_page = $Classifieds_Core->get_page_by_meta( 'classifieds' );
+        if ( 0 < $classifieds_page->ID )
+            $nav_title = $classifieds_page->post_title;
+        else
+            $nav_title = 'Classifieds';
 
-		if ( 0 < $classifieds_page->ID )
-		$nav_title = $classifieds_page->post_title;
-		else
-		$nav_title = 'Classifieds';
+        bp_core_new_nav_item( array(
+            'name'                    => __( $nav_title, $this->text_domain ),
+            'slug'                    => $bp->classifieds->slug . '/' . $default_sub_slug . '/',
+            'position'                => 100,
+            'show_for_displayed_user' => true,
+            'screen_function'         => array( &$this, 'load_template' ),
+        ));
 
-		$slug = ( bp_is_my_profile() ) ? '/my-classifieds' : '/all';
-		$slug = $bp->classifieds->slug . $slug;
-		$slug = apply_filters( 'cf_buddypress_add_navigation_slug', $slug );
-		
-		bp_core_new_nav_item( array(
-		'name'                    => __( $nav_title, $this->text_domain ),
-		'slug'                    => $slug,
-		'position'                => 100,
-		'show_for_displayed_user' => true,
-		'screen_function'         => array( &$this, 'load_template' ),
-		));
+        if ( bp_is_my_profile() ) {
 
-		if ( bp_is_my_profile() ) {
+            if ( 0 < $my_classifieds_page->ID )
+                $nav_title = $my_classifieds_page->post_title;
+            else
+                $nav_title = 'My Classifieds';
 
-			$classifieds_page = get_page($this->my_classifieds_page_id);;
+            bp_core_new_subnav_item( array(
+                'name'            => __( $nav_title, $this->text_domain ),
+                'slug'            => $my_classifieds_page->post_name,
+                'parent_url'      => $parent_url,
+                'parent_slug'     => $bp->classifieds->slug,
+                'screen_function' => array( &$this, 'load_template' ),
+                'position'        => 10,
+                'user_has_access' => true
+            ));
 
-			if ( 0 < $classifieds_page->ID )
-			$nav_title = $classifieds_page->post_title;
-			else
-			$nav_title = 'My Classifieds';
-
-			bp_core_new_subnav_item( array(
-			'name'            => __( $nav_title, $this->text_domain ),
-			'slug'            => $classifieds_page->post_name,
-			'parent_url'      => $parent_url,
-			'parent_slug'     => $bp->classifieds->slug,
-			'screen_function' => array( &$this, 'load_template' ),
-			'position'        => 10,
-			'user_has_access' => true
-			));
-
-			if($this->use_credits && ! $this->is_full_access()){
-				bp_core_new_subnav_item( array(
-				'name'            => __( 'My Credits', $this->text_domain ),
-				'slug'            => 'my-credits',
-				'parent_url'      => $parent_url,
-				'parent_slug'     => $bp->classifieds->slug,
-				'screen_function' => array( &$this, 'load_template' ),
-				'position'        => 10,
-				'user_has_access' => true
-				));
-			}
-			if(current_user_can('create_classifieds') ){
-				bp_core_new_subnav_item( array(
-				'name'            => __( 'Create New Ad', $this->text_domain ),
-				'slug'            => 'create-new',
-				'parent_url'      => $parent_url,
-				'parent_slug'     => $bp->classifieds->slug,
-				'screen_function' => array( &$this, 'load_template' ),
-				'position'        => 10,
-				'user_has_access' => true
-				));
-			}
-		} else {
-			//display author classifids page
-			bp_core_new_subnav_item( array(
-			'name'            => __( 'All', $this->text_domain ),
-			'slug'            => 'all',
-			'parent_url'      => $parent_url,
-			'parent_slug'     => $bp->classifieds->slug,
-			'screen_function' => array( &$this, 'load_template' ),
-			'position'        => 10,
-			'user_has_access' => true
-			));
-		}
-	}
+            if($this->use_credits && ! $this->is_full_access()){
+                bp_core_new_subnav_item( array(
+                    'name'            => __( 'My Credits', $this->text_domain ),
+                    'slug'            => 'my-credits',
+                    'parent_url'      => $parent_url,
+                    'parent_slug'     => $bp->classifieds->slug,
+                    'screen_function' => array( &$this, 'load_template' ),
+                    'position'        => 10,
+                    'user_has_access' => true
+                ));
+            }
+            if(current_user_can('create_classifieds') ){
+                bp_core_new_subnav_item( array(
+                    'name'            => __( 'Create New Ad', $this->text_domain ),
+                    'slug'            => 'create-new',
+                    'parent_url'      => $parent_url,
+                    'parent_slug'     => $bp->classifieds->slug,
+                    'screen_function' => array( &$this, 'load_template' ),
+                    'position'        => 10,
+                    'user_has_access' => true
+                ));
+            }
+        } else {
+            //display author classifids page
+            bp_core_new_subnav_item( array(
+                'name'            => __( 'All', $this->text_domain ),
+                'slug'            => 'all',
+                'parent_url'      => $parent_url,
+                'parent_slug'     => $bp->classifieds->slug,
+                'screen_function' => array( &$this, 'load_template' ),
+                'position'        => 10,
+                'user_has_access' => true
+            ));
+        }
+    }
 
 	/**
 	* Load BuddyPress theme template file for plugin specific page.
