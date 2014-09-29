@@ -66,6 +66,11 @@ class Classifieds_Core_BuddyPress extends Classifieds_Core {
 	**/
 	function add_navigation() {
         global $bp;
+        
+        /** Only add menu if current user can create classifieds */
+        if( ! $this->current_user->has_cap( 'create_classifieds') ) {
+        	return;
+        }
 
         $classifieds_page = get_post($this->classifieds_page_id);
         $my_classifieds_page = get_post($this->my_classifieds_page_id);
