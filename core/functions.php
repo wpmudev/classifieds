@@ -157,6 +157,7 @@ function get_author_classifieds_url($author_id, $author_nicename = '') {
 
 	if ( isset( $bp ) && $bp->root_blog_id == $blog_id ){
 		$link = trailingslashit( bp_core_get_user_domain( $author_id ) . $slug);
+		$link .= ( $author_id == bp_loggedin_user_id() ) ? 'my-classifieds' : 'all';
 	} else {
 		if ( empty($link) ) {
 			$file = home_url( '/' );

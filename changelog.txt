@@ -6,6 +6,7 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 = 2.3.6.4 - 2014-09-26
 * Fix BuddyPress profile links redirection
+* Fix Single Classifieds template "posted by" loading gif/redir issue
 
 = 2.3.6.3 - 2014-09-23
 * Fix author classifieds template showing all classifieds
