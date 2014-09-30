@@ -4,7 +4,7 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 
-= 2.3.6.4 - 2014-09-26
+= 2.3.6.4 - 2014-09-30
 * Fix BuddyPress profile links redirection
 * Fix Single Classifieds template "posted by" loading gif/redir issue
 * Fix create_classifieds capability added to everyone. Checking role config
