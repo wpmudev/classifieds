@@ -43,8 +43,8 @@ get_header();
 			* If you want to overload this in a child theme then include a file
 			* called loop-archives.php and that will be used instead.
 			*/
-			load_template( $this->custom_classifieds_template( 'loop-taxonomy' ) );
-			
+			load_template( $this->custom_classifieds_template( 'loop-taxonomy' ) );?>
+
 			<?php /* For BuddyPress compatibility */ ?>
 			<?php if ( isset( $bp ) ): ?>
 		</div>
