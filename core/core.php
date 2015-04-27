@@ -420,9 +420,9 @@ if (!class_exists('Classifieds_Core')):
                 if (!is_user_logged_in()) {
                     if (@is_page($this->add_classified_page_id)
                         || @is_page($this->edit_classified_page_id)
-                            || @is_page($this->my_classifieds_page_id)
-                                || @is_page($this->my_credits_page_id)
-                                    || @is_page($this->checkout_page_id)
+                        || @is_page($this->my_classifieds_page_id)
+                        || @is_page($this->my_credits_page_id)
+                        || @is_page($this->checkout_page_id)
                     ) {
 
                         $args = array('redirect_to' => urlencode(get_permalink($query->queried_object_id)));
@@ -1881,6 +1881,9 @@ if (!class_exists('Classifieds_Core')):
                     $this->classifieds_template = $temp;
                     break;
                 }
+            }
+            if (empty($this->classifieds_template)) {
+                return $template;
             }
             return $this->classifieds_template;
         }
