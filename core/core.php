@@ -429,7 +429,7 @@ if (!class_exists('Classifieds_Core')):
                         if (!empty($_REQUEST['register'])) $args['register'] = $_REQUEST['register'];
                         if (!empty($_REQUEST['reset'])) $args['reset'] = $_REQUEST['reset'];
 
-                        wp_redirect(add_query_arg($args, get_permalink($this->signin_page_id)));
+                        wp_redirect(esc_url_raw(add_query_arg($args, get_permalink($this->signin_page_id))));
                         exit;
                     }
                 }
@@ -1188,8 +1188,13 @@ if (!class_exists('Classifieds_Core')):
          **/
         function schedule_expiration_check()
         {
-            if (!wp_next_scheduled('check_expiration_dates')) {
-                wp_schedule_event(time(), 'twicedaily', 'check_expiration_dates');
+            if (wp_get_schedule('check_expiration_dates') == false) {
+                wp_schedule_event(time(), 'hourly', 'check_expiration_dates');
+            } else {
+                //we will reschedule this for quicker time
+                if (wp_get_schedule('check_expiration_dates') != 'hourly') {
+                    wp_reschedule_event(wp_next_scheduled('check_expiration_dates'), 'hourly', 'check_expiration_dates');
+                }
             }
         }
 
