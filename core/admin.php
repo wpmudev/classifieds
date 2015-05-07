@@ -56,6 +56,12 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 
 			add_action('admin_init', array($this, 'tutorial_script') );
 			add_action('admin_print_footer_scripts', array($this, 'print_tutorial_script') );
+
+            /**
+             * @since 2.3.6.7
+             * @author hoang
+             */
+            add_filter('user_has_cap', array(&$this,'determine_backend_cap'), 10, 3);
 		}
 	}
 
@@ -621,7 +627,33 @@ class Classifieds_Core_Admin extends Classifieds_Core {
 		}
 	}
 
+    /**
+     * Fix the bug user still can publish in backend
+     * @since 2.3.6.7
+     * @author Hoang
+     */
+    function determine_backend_cap($data, $cap, $args)
+    {
+        if (!is_admin()) {
+            return $data;
+        }
+        if (!in_array('publish_classifieds', $cap)) {
+            return $data;
+        }
+        global $current_user;
+        //check does this page is add classifield
+        if (!isset($current_user->allcaps['manage_options'])) {
+            //user is normal user
+            global $Classifieds_Core;
+            $options = $Classifieds_Core->get_options();
+            if (!isset($options['moderation']['publish'])) {
+                //no publish allowed, we will remove the publish classifield cap, admin only
+                unset($data['publish_classifieds']);
+            }
+        }
 
+        return $data;
+    }
 }
 
 global $Classifieds_Core;
