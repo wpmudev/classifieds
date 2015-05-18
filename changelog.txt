@@ -3,12 +3,10 @@ Authors: Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub
 Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
-= 2.3.6.6
-* Update CustomPress to latest version
-* Fix classified not expires
-
 = 2.3.6.5
 * Fix bug invalid credit amount
+* Update CustomPress to latest version
+* Fix classified not expires
 
 = 2.3.6.4 - 2014-09-30
 * Fix BuddyPress profile links redirection
