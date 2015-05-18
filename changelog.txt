@@ -4,8 +4,8 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 = 2.3.6.6
-* update custompress to newest version
-* fix classified not expires
+* Update CustomPress to latest version
+* Fix classified not expires
 
 = 2.3.6.5
 * Fix bug invalid credit amount
