@@ -3,6 +3,9 @@ Authors: Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub
 Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
+= 2.3.6.6
+* Fix bug accident extend expire date
+
 = 2.3.6.5
 * Fix bug invalid credit amount
 * Update CustomPress to latest version
