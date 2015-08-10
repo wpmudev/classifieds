@@ -102,6 +102,7 @@ if (!class_exists('Classifieds_Core_BuddyPress')):
                 'position' => 100,
                 'show_for_displayed_user' => true,
                 'screen_function' => array(&$this, 'load_template'),
+                'item_css_id' => $bp->classifieds->slug
             ));
 
             if (bp_is_my_profile()) {
