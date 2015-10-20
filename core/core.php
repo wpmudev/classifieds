@@ -1305,7 +1305,7 @@ if ( ! class_exists( 'Classifieds_Core' ) ):
 			global $wp_query, $post;
 
 			//filter out nav titles
-			if ( ! is_object( $post ) || ( $post->ID != $id ) ) {
+			if ( ! is_object( $post ) || ( $post->ID != $id ) || $post->post_type != 'directory_listing' ) {
 				return $title;
 			}
 
@@ -1555,7 +1555,7 @@ if ( ! class_exists( 'Classifieds_Core' ) ):
 			<script type="text/javascript">//<![CDATA[
 				window.location = '<?php echo $url; ?>';	//]]>
 			</script>
-		<?php
+			<?php
 		}
 
 
@@ -1991,6 +1991,7 @@ if ( ! class_exists( 'Classifieds_Core' ) ):
 			if ( ! in_the_loop() ) {
 				return $content;
 			}
+
 			ob_start();
 			remove_filter( 'the_title', array( &$this, 'page_title_output' ), 10, 2 );
 			remove_filter( 'the_content', array( &$this, 'classifieds_content' ) );
