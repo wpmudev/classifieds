@@ -228,3 +228,8 @@ wp_enqueue_script('set-post-thumbnail');
 	</form>
 </div><!-- .cf_update_form -->
 <!-- End Update Classifieds -->
+<script type="text/javascript">
+	jQuery('input[name="update_classified"]').mousedown( function() {
+		tinyMCE.triggerSave();
+	});
+</script>
