@@ -23,7 +23,7 @@ $allowed_statuses = array_reverse(array_intersect_key($post_statuses, $allowed_s
 if(! isset($_REQUEST['post_id']) ){
 
 	//Make an auto-draft so we have a post id to connect attachments to. Set global $post_ID so media editor can hook up. Watch the case
-	$post_ID = wp_insert_post( array( 'post_title' => __( 'Auto Draft' ), 'post_type' => 'classifieds', 'post_status' => 'auto-draft', 'comment_status' => 'closed'), true );
+	$post_ID = wp_insert_post( array( 'post_title' => __( 'Auto Draft' ), 'post_type' => 'classifieds', 'post_status' => 'auto-draft', 'comment_status' => 'closed', 'ping_status' => 'closed'), true );
 	$classified_data = get_post($post_ID, ARRAY_A );
 	$classified_data['post_title'] = ''; //Have to have a title to insert the auto-save but we don't want it as final.
 	$editing = false;
