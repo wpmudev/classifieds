@@ -267,3 +267,28 @@ function duration_input_fix($result = '', $atts = array(), $content = null)
 //}
 //add_action('pre_get_posts', 'sort_alpha');
 
+
+add_action( 'admin_footer', function() {
+        global $post;
+        if( ! isset( $post ) ) return;
+        if( 'classifieds' != $post->post_type ) return;
+        ?>
+        <script type="text/javascript">
+        jQuery(function($){
+                $( '#publish' ).click(function(){
+                        $('.cf-error').remove();
+                        var val = $('.ct-field.ct-selectbox').val();
+                        if( val == '' ){
+                                $('.ct-field.ct-selectbox').next('br').next('span').after('<div class="cf-error" style="color:red; font-size: 12px;">Please select a duration</div>');
+                                $('html,body').animate({
+                                        scrollTop: $(".ct-field.ct-selectbox").offset().top - 50},
+                                        'slow');
+                                return false;
+                        }
+
+                        return true;
+                });
+        });
+        </script>
+        <?php
+} );
