@@ -119,7 +119,7 @@ if ( ! class_exists( 'Classifieds_Core' ) ):
 
 			/* Initiate class variables from core class */
 			add_action( 'init', array( &$this, 'init' ) );
-			add_action( 'plugins_loaded', array( &$this, 'on_plugins_loaded' ), 8 );
+			add_action( 'plugins_loaded', array( &$this, 'on_plugins_loaded' ), 12 );
 
 			add_action( 'wp_print_scripts', array( &$this, 'on_print_scripts' ), 8 );
 
