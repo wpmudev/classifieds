@@ -1193,13 +1193,8 @@ if ( ! class_exists( 'Classifieds_Core' ) ):
 				return $expiration_date;
 			}
 			/* Process normal request */
-			$post            = get_post( $post_id );
-			$expiration_date = get_post_meta( $post_id, '_expiration_date', true );
-			if ( empty( $expiration_date ) || $expiration_date < time() ) {
-				$expiration_date = time();
-			}
-			$date = strtotime( "+{$duration}", $expiration_date );
-
+			$publish_date = strtotime( get_the_date( 'Y-m-d H:i:s', $post_id ) );
+			$date = strtotime( "+{$duration}", $publish_date );
 			return $date;
 		}
 
