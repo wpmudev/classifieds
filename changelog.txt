@@ -4,7 +4,17 @@ Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
 = 2.3.6.6
-* Fix bug accident extend expire date
+* WP 4.7 Compatible
+* Force to select a duration while creating classified
+* Fix: bug accident extend expire date
+* Fix: Showing comment in update classified page
+* Fix: Ping status in update classified page
+* Fix: custom_fields_input shortcode breaking in page template
+* Fix: Duration being added repetadly after each update
+* Fix: Wrong classieif title in loop
+* Fix: BuddyPress navigation slug issue
+* Fix: Accidentaly extend expire date
+
 
 = 2.3.6.5
 * Fix bug invalid credit amount
