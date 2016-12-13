@@ -161,7 +161,7 @@ $field_image = (empty($options['field_image_def'])) ? $this->plugin_url . 'ui-fr
 				<td>
 					<?php
 					//$content is already filled with the database text. This just add classified specfic code around it.
-					echo $content;
+					echo wp_kses($content,wp_kses_allowed_html());
 					?>
 				</td>
 			</tr>

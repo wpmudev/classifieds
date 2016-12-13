@@ -113,7 +113,7 @@ $cost = is_numeric($cost) ? sprintf(__('%01.2f',CF_TEXT_DOMAIN), $cost) : $cost;
 					<td><span class="cf-expires"><?php echo $cf->get_expiration_date( get_the_ID() ); ?></span></td>
 				</tr>
 				<tr>
-					<td colspan="2"><span class="cf-excerpt"><?php the_excerpt(); ?></span></td>
+					<td colspan="2"><span class="cf-excerpt"><?php wp_kses(get_the_excerpt(),wp_kses_allowed_html()); ?></span></td>
 				</tr>
 			</table>
 		</div>

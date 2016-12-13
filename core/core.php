@@ -928,8 +928,8 @@ if ( ! class_exists( 'Classifieds_Core' ) ):
 				'ID'           => ( isset( $params['classified_data']['ID'] ) ) ? $params['classified_data']['ID'] : '',
 				'post_title'   => wp_strip_all_tags( $params['classified_data']['post_title'] ),
 				'post_name'    => '',
-				'post_content' => $params['classified_data']['post_content'],
-				'post_excerpt' => ( empty( $params['classified_data']['post_excerpt'] ) ) ? '' : $params['classified_data']['post_excerpt'],
+				'post_content' => wp_kses( $params['classified_data']['post_content'], wp_kses_allowed_html() ),
+				'post_excerpt' => ( empty( $params['classified_data']['post_excerpt'] ) ) ? '' : wp_kses( $params['classified_data']['post_excerpt'], wp_kses_allowed_html() ),
 				'post_status'  => $params['classified_data']['post_status'],
 				//'post_author'    => get_current_user_id(),
 				'post_type'    => $this->post_type,
@@ -1194,7 +1194,8 @@ if ( ! class_exists( 'Classifieds_Core' ) ):
 			}
 			/* Process normal request */
 			$publish_date = strtotime( get_the_date( 'Y-m-d H:i:s', $post_id ) );
-			$date = strtotime( "+{$duration}", $publish_date );
+			$date         = strtotime( "+{$duration}", $publish_date );
+
 			return $date;
 		}
 
