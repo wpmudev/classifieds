@@ -3,6 +3,9 @@ Authors: Author: Ivan Shaovchev, Andrey Shipilov (Incsub), Arnold Bailey (Incsub
 Plugin Page: http://premium.wpmudev.org/project/classifieds
 
 == Changelog ==
+= 2.3.6.7
+* Fix: XSS vulnerability when saving classifieds
+
 = 2.3.6.6
 * WP 4.7 Compatible
 * Force to select a duration while creating classified
