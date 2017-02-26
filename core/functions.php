@@ -292,3 +292,8 @@ add_action( 'admin_footer', function() {
         </script>
         <?php
 } );
+
+function cf_wp_kses_allowed_html()
+{
+    return apply_filters( 'cf_wp_kses_allowed_html', wp_kses_allowed_html( 'post' ) );
+}
