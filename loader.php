@@ -107,15 +107,3 @@ include_once 'core/core.php';
 include_once 'core/payments.php';
 include_once 'core/paypal-express-gateway.php';
 include_once 'core/functions.php';
-
-global $wpmudev_notices;
-$wpmudev_notices[] = array( 'id'=> 158,
-'name'=> 'Classifieds',
-'screens' => array(
-'edit-classifieds',
-'classifieds',
-'edit-classifieds_tags',
-'edit-classifieds_categories',
-'classifieds_page_classifieds_settings',
-) );
-include_once 'ext/wpmudev-dash-notification.php';
